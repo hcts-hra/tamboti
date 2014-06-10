@@ -1,0 +1,109 @@
+<collection xmlns="http://exist-db.org/collection-config/1.0">
+    <!--from Tamboti-->
+    <index xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:vra="http://www.vraweb.org/vracore4.htm" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mods="http://www.loc.gov/mods/v3">
+        <fulltext default="none" attributes="false"/>
+        <lucene>
+            <analyzer class="org.apache.lucene.analysis.standard.StandardAnalyzer">
+                <param name="stopwords" type="org.apache.lucene.analysis.util.CharArraySet"/>
+            </analyzer>
+            
+            <!--MODS-->
+            <text qname="mods:mods"/>
+            
+            <!--top level elements-->
+            <text qname="mods:titleInfo" boost="2.0"/>
+            <text qname="mods:language"/>
+            <text qname="mods:note"/>
+            <!--<text qname="mods:location"/>-->
+            <text qname="mods:name" boost="2.0"/>
+            <!--<text qname="mods:physicalDescription"/>-->
+            <text qname="mods:subject" boost="2.0"/>
+            <!--<text qname="mods:accessCondition"/>-->
+            <!--<text qname="mods:typeOfResource"/>-->
+            <text qname="mods:abstract"/>
+            <!--<text qname="mods:classification"/>-->
+            <!--<text qname="mods:part"/>-->
+            <text qname="mods:genre"/>
+            <!--<text qname="mods:tableOfContents"/>-->
+            <!--<text qname="mods:relatedItem"/>-->
+            <!--<text qname="mods:extension"/>-->
+            <!--<text qname="mods:originInfo"/>-->
+            <!--<text qname="mods:targetAudience"/>-->
+            <text qname="mods:identifier"/>
+            <!--<text qname="mods:recordInfo"/>-->
+            
+            <!--deeper MODS elements accessed by search module-->
+            <text qname="mods:date"/>
+            <text qname="mods:dateCreated"/>
+            <text qname="mods:dateIssued"/>
+            <text qname="mods:dateCaptured"/>
+            <text qname="mods:copyrightDate"/>
+            <text qname="mods:placeTerm"/>
+            <text qname="mods:publisher"/>
+            
+            <!--VRA-->
+            <text qname="vra:vra"/>
+            <text qname="vra:work"/>
+            <text qname="vra:image"/>
+            <text qname="vra:titleSet" boost="2.0"/>
+            <text qname="vra:subjectSet" boost="2.0"/>
+            <text qname="vra:agentSet" boost="2.0"/>
+            <text qname="vra:inscriptionSet"/>
+            <text qname="vra:descriptionSet"/>
+            
+            <!--TEI-->
+            <text qname="tei:TEI"/>
+            <text qname="tei:orth"/>
+            <text qname="tei:name" boost="2.0"/>
+            <text qname="tei:bibl"/>
+            <text qname="tei:term" boost="2.0"/>
+            <text qname="tei:div"/>
+            <text qname="tei:head"/>
+            <text qname="tei:p"/>
+            <text qname="tei:author"/>
+            <text qname="tei:title" boost="2.0"/>
+            <text qname="tei:date"/>
+            <text qname="tei:person"/>
+            <text qname="tei:persName"/>
+            <text qname="tei:titleStmt"/>
+            <text qname="rdfs:label"/>
+            
+            <!-- Wiki -->
+            <text qname="html:article"/>
+            <text qname="html:p"/>
+            <text qname="atom:entry"/>
+            <text qname="atom:title" boost="2.0"/>
+        </lucene>
+        
+        <!--TEI, MODS and MODS-->
+        <create qname="@type" type="xs:string"/>
+        
+        <!--TEI-->
+        <create qname="@key" type="xs:string"/>
+        <create qname="@xml:id" type="xs:string"/>
+        <create qname="@uuid" type="xs:string"/>
+        <create qname="@names" type="xs:int"/><!--categories-all.xml-->
+        <create qname="@count" type="xs:int"/>
+        
+        <!--VRA-->
+        <create qname="@id" type="xs:string"/>
+        
+        <!--MODS-->
+        <create qname="@ID" type="xs:string"/>
+        <create qname="@authority" type="xs:string"/>
+        <create qname="@lang" type="xs:string"/>
+        <create qname="@xlink:href" type="xs:string"/>
+        
+        <!--Wiki-->
+        <create qname="@src" type="xs:string"/>
+        <create qname="atom:id" type="xs:string"/>
+        <create qname="atom:name" type="xs:string"/>
+        <create qname="atom:published" type="xs:dateTime"/>
+        <create qname="atom:updated" type="xs:dateTime"/>
+    </index>
+    <triggers>
+        <trigger event="create,delete,update" class="org.exist.versioning.VersioningTrigger">
+            <parameter name="overwrite" value="yes"/>
+        </trigger>
+    </triggers>
+</collection>

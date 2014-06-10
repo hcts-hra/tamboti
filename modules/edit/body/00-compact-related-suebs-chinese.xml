@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--node insertions: --><!--hints moved to code-table: --><!--hints checked: --><!--saving of all nodes: -->
+<div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="compact block-form" tab-id="compact-b-suebs-chinese" ext:dummy="dummy" xlink:dummy="dummy">
+    <xf:group>
+        <fieldset class="level-1">
+            <div class="label-box">
+                <span class="legend">
+                    <span class="legend">Related Items</span>
+                </span>
+            </div>
+            <!--relatedItem repeat begins-->
+            <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-suebs-chinese-repeat">
+                <!--Output: <xf:output ref="./@xlink:href"/>-->
+                <fieldset class="level-2">
+                    <div class="label-box">
+                        <span class="legend">Type of Related Item</span>
+                    </div>
+                    <xf:group ref=".[@type]" class="hide-label margin-plus">
+                        <xf:select1 ref="./@type">
+                            <xf:label>Type</xf:label>
+                            <xf:hint>
+                                <p> The type field describes the relationship between the resource
+                                    in Related Item and the resource in the parent record. Use one
+                                    of the following values: Host, Constituent, Series, Other
+                                    Version. "Host" is used to describe a host or parent resource,
+                                    for example an periodical in which an article appears or an
+                                    edited volume in which a contribution belongs. "Constituent" is
+                                    used to describe parts of the resource, except information that
+                                    falls within the scope of the Table Of Contents element.
+                                    "Series" is used to describe a named series of which the
+                                    resource is a part. "Other Version" is used to describe other
+                                    versions of the work contained in the resource. </p>
+                            </xf:hint>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='related-item-type-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                </fieldset>
+                <fieldset class="level-2">
+                    <div class="label-box">
+                        <span class="legend">XLink</span>
+                    </div>
+                    <xf:group class="hide-label margin-plus">
+                        <xf:input ref="./@xlink:href" class="text_50">
+                            <xf:label>XLink</xf:label>
+                            <xf:hint>
+                                <p> The XLink field is used to reference an external resource, such
+                                    as a second metadata record, a Related Item or a Table Of
+                                    Contents. </p>
+                            </xf:hint>
+                        </xf:input>
+                    </xf:group>
+                </fieldset>
+                <xf:group ref=".[mods:identifier]">
+                    <fieldset class="level-2">
+                        <div class="label-box">
+                            <span class="legend">Identifiers</span>
+                        </div>
+                        <xf:repeat nodeset="./mods:identifier" id="identifier-suebs-chinese-repeat">
+                            <xf:group ref=".[@type]" selection="open" class="hide-label margin-plus">
+                                <xf:select1 ref="./@type">
+                                    <xf:label>Type of Identifier</xf:label>
+                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
+                                        <xf:label ref="label"/>
+                                        <xf:value ref="value"/>
+                                    </xf:itemset>
+                                </xf:select1>
+                            </xf:group>
+                            <xf:group class="hide-label margin-plus">
+                                <xf:input ref="." class="text_50">
+                                    <xf:label>Identifier</xf:label>
+                                </xf:input>
+                            </xf:group>
+                        </xf:repeat>
+                    </fieldset>
+                </xf:group>
+                <xf:group ref=".[mods:titleInfo/mods:title]">
+                    <fieldset class="level-2">
+                        <div class="label-box">
+                            <span class="legend">Title</span>
+                        </div>
+                        <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-suebs-chinese-repeat">
+                            <xf:group class="margin-plus">
+                                <xf:select1 ref="./@lang">
+                                    <xf:label>Language</xf:label>
+                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
+                                        <xf:label ref="label"/>
+                                        <xf:value ref="value"/>
+                                    </xf:itemset>
+                                </xf:select1>
+                            </xf:group>
+                            <xf:group class="margin-plus">
+                                <xf:select1 ref="./@transliteration">
+                                    <xf:label>Transliteration</xf:label>
+                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+                                        <xf:label ref="label"/>
+                                        <xf:value ref="value"/>
+                                    </xf:itemset>
+                                </xf:select1>
+                            </xf:group>
+                            <xf:group class="hide-label margin-plus">
+                                <xf:input ref="./mods:title" class="text_150">
+                                    <xf:label>Title</xf:label>
+                                </xf:input>
+                            </xf:group>
+                        </xf:repeat>
+                    </fieldset>
+                </xf:group>
+                <xf:group ref=".[mods:part]">
+                    <fieldset class="level-3">
+                        <div class="label-box">
+                            <span class="legend">Location of Text in Collection</span>
+                        </div>
+                        <!--relatedItem/part repeat begins-->
+                        <xf:repeat nodeset="./mods:part" id="related-item-part-suebs-chinese-repeat">
+                            <!--relatedItem/part input begins-->
+                            <!--NB 3.4 adds altRepGroup-->
+                            <!--relatedItem/part input ends-->
+                            <!--relatedItem/part/detail begins-->
+                            <xf:group ref=".[mods:detail]">
+                                <fieldset class="level-4">
+                                    <div class="label-box">
+                                        <span class="legend">Part</span>
+                                    </div>
+                                    <!--relatedItem/part/detail repeat begins-->
+                                    <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-suebs-chinese-repeat">
+                                        <!--relatedItem/part/detail input ends-->
+                                        <!--relatedItem/part/detail/number begins-->
+                                        <xf:group ref=".[mods:number]" class="hide-label margin-plus">
+                                            <xf:input ref="./mods:number" class="text_10">
+                                                <xf:label>Number</xf:label>
+                                            </xf:input>
+                                        </xf:group>
+                                        <!--relatedItem/part/detail/number ends-->
+                                    </xf:repeat>
+                                    <!--relatedItem/part/detail repeat ends-->
+                                </fieldset>
+                            </xf:group>
+                            <!--relatedItem/part/detail ends-->
+                            <!--relatedItem/part/extent begins-->
+                            <xf:group ref=".[mods:extent]">
+                                <fieldset class="level-4">
+                                    <div class="label-box">
+                                        <span class="legend">Page Extent</span>
+                                        <div class="xforms-help-value">
+                                            <p> Use this field to indicate from which page and to
+                                                which page the anthology contribution you are
+                                                cataloguing occurs in the volume (if any) of the
+                                                anthology noted above. </p>
+                                        </div>
+                                    </div>
+                                    <!--relatedItem/part/extent repeat begins-->
+                                    <xf:repeat nodeset="./mods:extent" id="related-item-extent-suebs-chinese-repeat">
+                                        <!--relatedItem/part/extent input begins-->
+                                        <!--relatedItem/part/extent input ends-->
+                                        <!--relatedItem/part/start begins-->
+                                        <xf:group ref=".[mods:start]" class="margin-plus">
+                                            <xf:input ref="./mods:start" class="text_10">
+                                                <xf:label>Start</xf:label>
+                                            </xf:input>
+                                        </xf:group>
+                                        <!--relatedItem/part/start ends-->
+                                        <!--relatedItem/part/end begins-->
+                                        <xf:group ref=".[mods:end]" class="margin-plus">
+                                            <xf:input ref="./mods:end" class="text_10">
+                                                <xf:label>End</xf:label>
+                                            </xf:input>
+                                        </xf:group>
+                                        <!--relatedItem/part/end ends-->
+                                    </xf:repeat>
+                                    <!--relatedItem/part/extent repeat ends-->
+                                </fieldset>
+                            </xf:group>
+                            <!--relatedItem/part/extent ends-->
+                            <!--relatedItem/part/text begins-->
+                            <xf:group ref=".[mods:part/mods:text]" class="margin-plus">
+                                <xf:textarea ref="instance('save-data')/mods:part/mods:text" class="textarea">
+                                    <xf:label>Text</xf:label>
+                                </xf:textarea>
+                            </xf:group>
+                            <!--relatedItem/part/text ends-->
+                        </xf:repeat>
+
+                        <!--relatedItem/part repeat ends-->
+                    </fieldset>
+                </xf:group>
+            </xf:repeat>
+            <!--title repeat ends-->
+        </fieldset>
+    </xf:group>
+</div>

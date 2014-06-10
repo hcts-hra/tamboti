@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
+    <image id="i_e1a29053-6987-4210-b922-39042e36ff9d" source="$nnn$" refid="a60cd6ae-b445-4423-8937-f8b561f67a6d" href="i_e1a29053-6987-4210-b922-39042e36ff9d.jpg">
+        <agentSet>
+            <agent>
+                <name vocab="local" refid="uuid-edeaf4e7-ee99-5733-a841-fdb06decebb5" pref="false" type="corporate">Cluster of Excellence "Asia and Europe in a Global Context", Heidelberg University.</name>
+                <role vocab="marcrelator" type="code">mdc</role>
+            </agent>
+            <agent>
+                <name vocab="local" refid="($uuid$)" pref="true" type="corporate">($projectName$)</name><!-- project name needs authority record -->
+                <role vocab="AAT" refid="300202383">digitizing</role>
+            </agent>
+            <agent>
+                <name vocab="local" refid="(UUID of $IMAGE Creator ID$)" pref="true" type="($corporate$)">[value of (UUID of $IMAGE Creator ID$)]</name><!-- agent is controlled by viaf/gnd, may contain multiple values -->
+                <role vocab="marcrelator" type="code">pht</role>
+            </agent>
+        </agentSet>
+        <dateSet>
+            <date type="creation">
+                <earliestDate>$IMAGE Original Date$</earliestDate>
+                <latestDate>$IMAGE Original Date$</latestDate>
+            </date>
+            <date type="view">
+                <earliestDate>($fileDate$)</earliestDate><!-- date of image file zb. 2008-11-11T14:26:40+01:00 -->
+                <latestDate>($fileDate$)</latestDate>
+            </date>
+        </dateSet>
+        <descriptionSet>
+            <description lang="eng" script="Latn">
+                <text>$IMAGE View Description$</text>
+            </description>
+        </descriptionSet>
+        <locationSet>
+            <location type="repository">
+                <name vocab="local" refid="uuid-a86fcf82-1200-58c6-91d6-2d537f5b58e2" type="corporate">Heidelberg Research Architecture, Visual Resources</name>
+                <name type="geographic" vocab="TGN" refid="7005177" extent="inhabited place">Heidelberg</name>
+            </location>
+        </locationSet>
+        <measurementsSet><!-- values to be taken from binar file -->
+            <measurements type="resolution" unit="ppi">($resolution$)</measurements>
+            <measurements type="width" unit="px">($width$)</measurements>
+            <measurements type="height" unit="px">($height$)</measurements>
+            <measurements type="fileSize" unit="kb">($fileSize$)</measurements>
+            <measurements type="bitDepth" unit="bit">($bitDepth$)</measurements>
+        </measurementsSet>
+        <relationSet>
+            <relation type="imageOf" relids="w_46647ced-6a0a-4a06-9575-f7bed1a2d07f" refid="w_46647ced-6a0a-4a06-9575-f7bed1a2d07f" source="($project Name$)">$IMAGE View Description$</relation>
+        </relationSet>
+        <rightsSet>
+            <notes>The Priya Paul Collection. Reproduced with kind permission of the collector.</notes>
+            <rights type="copyrighted">
+                <rightsHolder/>
+                <text>$IMAGE Copyright Status$.</text>
+            </rights>
+        </rightsSet>
+        <techniqueSet>
+            <technique vocab="local" refid="uuid-fc6b0d7d-c757-5bc2-aa52-b2c59bbd52f1">digital imaging</technique>
+        </techniqueSet>
+        <titleSet>
+            <title lang="eng" script="Latn" type="generalView">$IMAGE View Description$</title>
+        </titleSet>
+        <worktypeSet>
+            <worktype vocab="AAT" refid="300215302">digital images</worktype>
+        </worktypeSet>
+    </image>
+</vra>
