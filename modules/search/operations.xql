@@ -1,8 +1,10 @@
-xquery version "1.0";
+xquery version "3.0";
 
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "../../frameworks/vra-hra/vra-hra.xqm";
+import module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework" at "../../frameworks/mods-hra/mods-hra.xqm";
 
 declare namespace group = "http://commons/sharing/group";
 declare namespace op="http://exist-db.org/xquery/biblio/operations";
@@ -181,60 +183,18 @@ TODO: Perform search for record after it has been moved.
 :)
 declare function op:move-resource($resource-id as xs:string, $destination-collection as xs:string) as element(status) {
 
-    let $mods-record := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
-    let $mods-record-collection := base-uri($mods-record)
-    let $mods-record-collection := functx:substring-before-last($mods-record-collection, '/')
-    let $id := 
-        if (contains($resource-id, "#"))
-        then substring-after($resource-id, "#")
-        else $resource-id
-    let $path := 
-        if (contains($destination-collection, "#"))
-        then substring-before($destination-collection, "#")
-        else $destination-collection
-    let $destination-resource-name := concat($id, ".xml")
-    let $destination-path := concat($destination-collection, "/", $destination-resource-name)
-    let $sourceDoc := doc($destination-path)
-    
-    let $id :=
-        if (contains($resource-id, "#"))
-        then substring-after($resource-id, "#")
-        else $resource-id
-    let $path :=
-        if (contains($destination-collection, "#"))
-        then substring-before($destination-collection, "#")
-        else $destination-collection
-    let $destination-resource-name := concat($id, ".xml")
-    let $destination-path := concat($destination-collection, "/", $destination-resource-name)
-    let $sourceDoc := doc($destination-path)
-    
-    return
-        (:if (contains($id, ".")) 
-        then
-            let $resource := util:node-by-id($sourceDoc, $id)
-            let $mods-destination := 
-                if (doc-available($destination-path))
-                then
-                    doc($destination-path)/mods:modsCollection
-                else
-                    let $mods-collection-doc-path := xmldb:store($destination-collection, $destination-resource-name, <modsCollection xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 ../../webapp/WEB-INF/entities/mods-3-3.xsd"/>) 
-                    return
-                        let $null := security:apply-parent-collection-permissions($mods-collection-doc-path) 
-                        return
-                            doc($mods-collection-doc-path)/mods:modsCollection
-            return
-            (
-                update insert util:node-by-id(doc($path), $id) into $mods-destination,
-                update delete util:node-by-id(doc($path), $id),
-                
-                <status id="moved" from="{$resource-id}">{$destination-path}</status>
-            )
-        else:)
-            let $moved := xmldb:move($mods-record-collection, $destination-collection, $destination-resource-name) 
-            return
-                let $null := security:apply-parent-collection-permissions($destination-path) 
-                return
-                    <status id="moved" from="{$resource-id}">{$destination-path}</status>
+    let $resource := collection($config:mods-root-minus-temp)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1])
+    let $record-namespace := namespace-uri($resource)
+    let $move-record :=
+        switch($record-namespace)
+            case "http://www.loc.gov/mods/v3"
+                return mods-hra-framework:move-resource($resource-id, $destination-collection)
+            case "http://www.vraweb.org/vracore4.htm"
+                return vra-hra-framework:move-resource($resource-id, $destination-collection)
+            default return ()
+
+        return $move-record
+
 };
 
 declare function op:set-ace-writeable($collection as xs:anyURI, $id as xs:int, $is-writeable as xs:boolean) as element(status) {
