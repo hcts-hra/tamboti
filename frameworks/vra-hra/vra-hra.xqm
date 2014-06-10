@@ -2,8 +2,6 @@ xquery version "3.0";
 
 module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework";
 
-(:This has to be separated by actions: collection-actions, resource-actions, etc.:)
-
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 
