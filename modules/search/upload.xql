@@ -32,15 +32,19 @@ as xs:string
 declare function local:generate-vra-image($uuid, $file-uuid, $title, $workrecord)
 {
     let $vra-content :=
-                    <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-                 <image id="{ $uuid }" source="Tamboti" refid="" href="{ $file-uuid }">
-                     <titleSet><display/><title type="generalView">
-        { concat('Image record ', $title) }</title></titleSet>
-                 <relationSet>
-                    <relation type="imageOf" relids="{ $workrecord }" refid="" source="Tamboti">attachment</relation>
+        <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
+            <image id="{$uuid}" source="Tamboti" refid="" href="{$file-uuid}">
+                <titleSet>
+                    <display/>
+                    <title type="generalView">{concat('Image record ', xmldb:decode($title))}</title>
+                </titleSet>
+                <relationSet>
+                    <relation type="imageOf" relids="{$workrecord}" refid="" source="Tamboti">attachment</relation>
                 </relationSet>
-             </image> </vra>
-    return $vra-content
+            </image>
+        </vra>
+
+    return $vra-content    
 };
 
 declare function upload:generate-object($size, $mimetype, $uuid, $title, $file-uuid, $doc-type, $workrecord)

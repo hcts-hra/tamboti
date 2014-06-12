@@ -61,6 +61,8 @@ declare function op:create-collection($parent-collection-uri as xs:string, $new-
     (:if this collection was created inside a different user's collection,
     allow the owner of the parent collection access:)
     let $null := security:grant-parent-owner-access-if-foreign-collection($new-collection)
+    (: to be sure that the collection owner's group is the intended one :)
+    let $change-group := sm:chgrp(xs:anyURI($collection), $config:biblio-users-group)    
     
     return
         <status id="created">{$new-collection}</status>
