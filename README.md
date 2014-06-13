@@ -19,4 +19,7 @@ N. B.  Maven 3.1.1+ is needed.
 * For Cluster Asia and Europe... instance of tamboti, use "clean package -Pcluster-production-build".
 
 ### Dependencies
-* dropDownListCheckbox - can be found at https://github.com/claudius108/jquery.dropDownListCheckbox. It has to be build with maven and installed as xar.
+* dropDownListCheckbox - https://github.com/claudius108/jquery.dropDownListCheckbox. It has to be build with maven and installed as xar.
+* functx EXPath package - can be found in the eXist's public repo.
+* xsltforms EXPath package - can be found in the eXist's public repo.
+* eXist’s content extraction module.
