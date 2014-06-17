@@ -42,10 +42,13 @@ declare function vra-hra-framework:move-resource($resource-id as xs:string, $des
                 (
                     if (starts-with($resource-relative-path, 'VRA_images'))
                     then (
-                        xmldb:create-collection($destination-collection, "VRA_images"),
-                        security:apply-parent-collection-permissions(xs:anyURI($destination-collection || "/VRA_images")),
-                        xmldb:move($resource-collection || "/VRA_images/", $destination-collection || "/VRA_images", substring-after($resource-relative-path, 'VRA_images/')),
-                        security:apply-parent-collection-permissions(xs:anyURI($destination-collection || "/VRA_images/" || substring-after($resource-relative-path, 'VRA_images/')))
+                    	let $image-collection := xs:anyURI($destination-collection || "/VRA_images")
+                    	return
+                    		xmldb:create-collection($destination-collection, "VRA_images"),
+                        	sm:chgrp($image-collection, $config:biblio-users-group),
+                        	security:apply-parent-collection-permissions($image-collection),
+                        	xmldb:move($resource-collection || "/VRA_images/", $destination-collection || "/VRA_images", substring-after($resource-relative-path, 'VRA_images/')),
+                        	security:apply-parent-collection-permissions(xs:anyURI($destination-collection || "/VRA_images/" || substring-after($resource-relative-path, 'VRA_images/')))
                     )
                     else (
                         xmldb:move($resource-collection, $destination-collection, $resource-relative-path),
