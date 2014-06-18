@@ -49,23 +49,23 @@ declare function sharing:remove-collection-ace($collection as xs:anyURI, $id as 
 };
 
 (: adds a user ace on a collection, and also to all the documents in that collection (at the same acl index) :)
-declare function sharing:add-collection-user-ace($collection as xs:anyURI, $username as xs:string) as xs:boolean {
+declare function sharing:add-collection-user-ace($collection as xs:anyURI, $username as xs:string) as xs:int {
     
     let $id := security:add-user-ace($collection, $username, "r-x") return
-        if(fn:not(fn:empty($id)))then(
-            for $resource in xmldb:get-child-resources($collection)
-            let $resource-path := fn:concat($collection, "/", $resource) return
-                if (security:insert-user-ace($resource-path, $id, $username, "r-x")) then
-                ()
-                else
-                    fn:error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not insert ace at index '", $id, "' for '", $resource-path, "'"))
-            ,
-            
-            sharing:send-share-user-invitation-mail($collection, $username),
-            true()
-        )
-        else
-            false()
+        if (fn:not(fn:empty($id)))
+        then
+            (
+                for $resource in xmldb:get-child-resources($collection)
+                let $resource-path := fn:concat($collection, "/", $resource) return
+                    if (security:insert-user-ace($resource-path, $id, $username, "r-x")) then
+                    ()
+                    else
+                        fn:error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not insert ace at index '", $id, "' for '", $resource-path, "'"))
+                ,
+                sharing:send-share-user-invitation-mail($collection, $username),
+                $id
+            )
+            else -1
 };
 
 (: adds a group ace on a collection, and also to all the documents in that collection (at the same acl index) :)

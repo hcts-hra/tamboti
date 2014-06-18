@@ -1049,7 +1049,6 @@ function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw)
             }
         }
         
-        //that.oApi._fnAddData(oSettings, ('"USER", "dulip.withanage@ad.uni-heidelberg.de", "ALLOWED", "r--", "removeMe"'));
         oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
         that.fnDraw();
         
@@ -1138,11 +1137,11 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     var isWriteable = aData[3].indexOf("w") > -1;
     //add the checkbox, with action to perform an update on the server
     var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
-    $('td:eq(3)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteable(this,\'' + getCurrentCollection() + '\',' + iDisplayIndex + ', this.checked);"/>');
+    $('td:eq(3)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteable(this,\'' + getCurrentCollection() + '\',' + aData[4] + ', this.checked);"/>');
     
     //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    $('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + iDisplayIndex + ');"/>');
+    $('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + aData[4] + ');"/>');
     //add jQuery cick action to image to perform an update on the server
     
     return nRow;
@@ -1209,7 +1208,7 @@ function addUserToShare() {
                             $('#user-auto-list').val(),
                             "ALLOWED",
                             "r--",
-                            "removeMe"
+                            $(data).find("status").attr("ace-id")
                         ]);
             
                         //4) close the dialog

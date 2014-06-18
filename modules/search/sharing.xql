@@ -13,13 +13,9 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.x
 
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace mods="http://www.loc.gov/mods/v3";
-
-
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
 declare namespace group = "http://commons/sharing/group";
-(:
-declare namespace col = "http://library/search/collections";
-:)  
+
 declare option exist:serialize "method=json media-type=text/javascript";
 
 declare function local:get-sharing($collection-path as xs:string) as element(aaData) {
@@ -29,7 +25,7 @@ declare function local:get-sharing($collection-path as xs:string) as element(aaD
             local:empty()
         else
             <aaData>{
-                for $ace in $acl/sm:ace return
+                for $ace at $index in $acl/sm:ace return
                     element json:value {
                         if(xs:integer($acl/@entries) eq 1) then
                             attribute json:array { true() }
@@ -38,15 +34,10 @@ declare function local:get-sharing($collection-path as xs:string) as element(aaD
                         <json:value>{text{system:as-user($config:dba-credentials[1],$config:dba-credentials[2], security:get-human-name-for-user($ace/@who))}}</json:value>,
                         <json:value>{text{$ace/@access_type}}</json:value>,
                         <json:value>{text{$ace/@mode}}</json:value>,
-                        <json:value>removeMe</json:value>
+                        <json:value>{$index - 1}</json:value>
                     }
             }</aaData>
 };
-
-
-
-
-
 
 declare function local:get-folder-files ($upload-folder as xs:string ) {
 let $json-true := attribute json:array { true() }
@@ -55,7 +46,6 @@ let $json-true := attribute json:array { true() }
         {system:as-user($config:dba-credentials[1],$config:dba-credentials[2],file:directory-list($upload-folder,'*.xml'))}
        </aaData>    
 };
-
 
 declare function local:list-collection-contents($collection as xs:string, $user as xs:string) {
     let $subcollections := 
@@ -69,13 +59,10 @@ declare function local:list-collection-contents($collection as xs:string, $user 
         return
             $r
     for $resource in ($subcollections, $resources)
-	order by $resource ascending
-	return
-		$resource
+    order by $resource ascending
+    return
+        $resource
 };
-
-
-
 
 declare function local:resources($collection as xs:string, $user as xs:string) {
     let $start := number(request:get-parameter("start", 0)) + 1
@@ -116,7 +103,7 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
                         if ($isCollection) then
                             security:get-group($path)
                         else
-                        	security:get-group(concat($collection, "/", $resource))
+                            security:get-group(concat($collection, "/", $resource))
                     let $lastMod := 
                         let $date :=
                             if ($isCollection) then
@@ -166,8 +153,6 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
             </items>
         </aaData>
 };
-
-
 
 declare function local:get-attached-files ($file as xs:string ) {
  let $json :=attribute json:array { true() }       
@@ -237,11 +222,9 @@ let $mods-entry :=
              
 };
 
-
 declare function local:empty() {
     <aaData json:array="true"/>
 };
-
  
 <json:value>
     {
@@ -258,4 +241,3 @@ declare function local:empty() {
         local:empty()
     }
 </json:value>
-

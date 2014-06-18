@@ -221,13 +221,16 @@ declare function op:remove-ace($collection as xs:anyURI, $id as xs:int) as eleme
 };
 
 declare function op:add-user-ace($collection as xs:anyURI, $username as xs:string) as element(status) {
+    
+    let $ace-id := sharing:add-collection-user-ace($collection, $username)
 
-    if(sharing:add-collection-user-ace($collection, $username))then
-        <status id="ace">added</status>
-    else (
-        response:set-status-code($HTTP-FORBIDDEN),
-        <status id="ace">Permission Denied</status>
-    )
+    return
+        if ($ace-id != -1)
+        then <status ace-id="{$ace-id}">added</status>
+        else ( 
+            response:set-status-code($HTTP-FORBIDDEN),
+            <status ace-id="{$ace-id}">Permission Denied</status>
+        )
 };
 
 declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:string) as element(status) {
