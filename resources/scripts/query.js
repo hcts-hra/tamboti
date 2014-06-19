@@ -98,6 +98,8 @@ $(function() {
         var $this = $(this);
         if ($this.val() == "edit") {
             $("#edit-action-form").submit();
+        } else {
+        	alert("This action is not yet implemented!");
         }
         $this.val("actions");        
     });   
@@ -1253,7 +1255,7 @@ function addProjectToShare() {
                             $('#project-auto-list').val(),
                             "ALLOWED",
                             "r--",
-                            "removeMe"
+                            $(data).find("status").attr("ace-id")
                         ]);
             
                         //4) close the dialog
