@@ -52,20 +52,19 @@ the buttons do not show up (except Delete Folder).:)
 (:NB: creation does not take place if the new name is already taken.:)
 (:TODO: notify user if the new name is already taken.:)
 declare function op:create-collection($parent-collection-uri as xs:string, $new-collection-name as xs:string) as element(status) {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        let $new-collection :=  xmldb:create-collection($parent-collection-uri, $new-collection-name)
+        (:just the owner has write access to start with:)
+        let $null := sm:chmod(xs:anyURI($new-collection), "rwxr-xr-x")
+        (:if this collection was created inside a different user's collection,
+        allow the owner of the parent collection access:)
+        let $null := security:grant-parent-owner-access-if-foreign-collection($new-collection)
+        (: to be sure that the collection owner's group is the intended one :)
+        let $change-group := sm:chgrp(xs:anyURI($new-collection), $config:biblio-users-group)         
 
-    let $new-collection := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:create-collection($parent-collection-uri, $new-collection-name))
-    
-    (:just the owner has write access to start with:)
-    let $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:chmod(xs:anyURI($new-collection), "rwxr-xr-x"))
-    
-    (:if this collection was created inside a different user's collection,
-    allow the owner of the parent collection access:)
-    let $null := security:grant-parent-owner-access-if-foreign-collection($new-collection)
-    (: to be sure that the collection owner's group is the intended one :)
-    let $change-group := sm:chgrp(xs:anyURI($collection), $config:biblio-users-group)    
-    
-    return
-        <status id="created">{$new-collection}</status>
+        return
+            <status id="created">{$new-collection}</status>    
+    )
 };
 
 (:TODO: Perform search for contents of collection after it has been moved.:)
@@ -227,20 +226,25 @@ declare function op:add-user-ace($collection as xs:anyURI, $username as xs:strin
     return
         if ($ace-id != -1)
         then <status ace-id="{$ace-id}">added</status>
-        else ( 
-            response:set-status-code($HTTP-FORBIDDEN),
-            <status ace-id="{$ace-id}">Permission Denied</status>
-        )
+        else
+            ( 
+                response:set-status-code($HTTP-FORBIDDEN),
+                <status ace-id="{$ace-id}">Permission Denied</status>
+            )
 };
 
 declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:string) as element(status) {
     
-    if(sharing:add-collection-group-ace($collection, $groupname))then
-        <status id="ace">added</status>
-    else (
-        response:set-status-code($HTTP-FORBIDDEN),
-        <status id="ace">Permission Denied</status>
-    )
+    let $ace-id := sharing:add-collection-group-ace($collection, $groupname)    
+    
+    return
+        if ($ace-id != -1)
+            then <status ace-id="{$ace-id}">added</status>
+        else
+            (
+                response:set-status-code($HTTP-FORBIDDEN),
+                <status ace-id="{$ace-id}">Permission Denied</status>
+            )
 };
 
 declare function op:is-valid-user-for-share($username as xs:string) as element(status) {
