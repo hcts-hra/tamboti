@@ -241,10 +241,10 @@ declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:str
         if ($ace-id != -1)
             then <status ace-id="{$ace-id}">added</status>
         else
-            (
+            ( 
                 response:set-status-code($HTTP-FORBIDDEN),
                 <status ace-id="{$ace-id}">Permission Denied</status>
-            )
+            ) 
 };
 
 declare function op:is-valid-user-for-share($username as xs:string) as element(status) {

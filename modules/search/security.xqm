@@ -322,9 +322,12 @@ declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as x
 
 (: adds a group ace and returns its index:)
 declare function security:add-group-ace($resource as xs:anyURI, $groupname as xs:string, $mode as xs:string) as xs:int? {
-    sm:add-group-ace($resource, $groupname, true(), $mode),
-    
-    xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries) - 1 
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        (
+            sm:add-group-ace($resource, $groupname, true(), $mode),
+            sm:get-permissions($resource)//sm:ace[@who = $groupname]/@index/string()
+        )
+    )
 };
 
 declare function security:insert-group-ace($resource as xs:anyURI, $id as xs:int, $groupname as xs:string, $mode as xs:string) as xs:boolean {
