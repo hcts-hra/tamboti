@@ -20,18 +20,28 @@ declare option exist:serialize "method=json media-type=text/javascript";
 
 declare function local:get-sharing($collection-path as xs:string) as element(aaData) {
 
-    let $acl := sm:get-permissions($collection-path)/sm:permission/sm:acl return
-        if(xs:integer($acl/@entries) eq 0)then
-            local:empty()
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+    
+    let $acl := sm:get-permissions($collection-path)/sm:permission/sm:acl
+    
+    return
+        if (xs:integer($acl/@entries) eq 0)
+        then local:empty()
         else
             <aaData>{
-                for $ace at $index in $acl/sm:ace return
+                for $ace at $index in $acl/sm:ace
+                let $target := $ace/@target
+                let $who :=
+                    if ($target = 'USER')
+                    then ( security:get-human-name-for-user($ace/@who/string())))
+                    else ($ace/@who)
+                return
                     element json:value {
                         if(xs:integer($acl/@entries) eq 1) then
                             attribute json:array { true() }
                         else(),
                         <json:value>{text{$ace/@target}}</json:value>,
-                        <json:value>{text{system:as-user($config:dba-credentials[1],$config:dba-credentials[2], security:get-human-name-for-user($ace/@who))}}</json:value>,
+                        <json:value>{text{$who}}</json:value>,
                         <json:value>{text{$ace/@access_type}}</json:value>,
                         <json:value>{text{$ace/@mode}}</json:value>,
                         <json:value>{$index - 1}</json:value>
