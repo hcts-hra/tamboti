@@ -248,12 +248,13 @@ declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:str
 };
 
 declare function op:is-valid-user-for-share($username as xs:string) as element(status) {
-    if(sharing:is-valid-user-for-share($username))then
-        <status id="user">valid</status>
-    else(
-        response:set-status-code($HTTP-FORBIDDEN),
-        <status id="user">invalid</status>
-    )
+    if (sharing:is-valid-user-for-share($username))
+    then <status id="user">valid</status>
+    else
+        (
+            response:set-status-code($HTTP-FORBIDDEN),
+            <status id="user">invalid</status>
+        )
 };
 
 declare function op:get-child-collection-paths($start-collection as xs:anyURI) {
