@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns:xi="http://www.w3.org/2001/XInclude">
+    <bookinfo>
+        <graphic fileref="theme/images/tamboti.png"/>
+        <graphic fileref="theme/images/logovjc.gif" title="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" alt="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" width="75" height="69" style="border-style: none"/>
+        <productname>Tamboti</productname>
+        <title>Tamboti Walkthrough</title>
+        <date>February 2012</date>
+        <author>
+            <firstname>Dulip</firstname>
+            <surname>Withanage</surname>
+            <affiliation>
+                <address format="linespecific">
+                    <email>withanage@asia-europe.uni-heidelberg.de</email>
+                </address>
+                <orgname>Heidelberg Research Architecture</orgname>
+                <orgname>"Asia and Europe in a Global Context"</orgname>
+                <orgname>Heidelberg University</orgname>
+            </affiliation>
+        </author>
+        <author>
+            <firstname>Jens Østergaard</firstname>
+            <surname>Petersen</surname>
+            <affiliation>
+                <address format="linespecific">
+                    <email>petersen@asia-europe.uni-heidelberg.de</email>
+                </address>
+                <orgname>Heidelberg Research Architecture</orgname>
+                <orgname>"Asia and Europe in a Global Context"</orgname>
+                <orgname>Heidelberg University</orgname>
+            </affiliation>
+        </author>
+    </bookinfo>
+    <xi:include href="sidebar.xml"/>
+    <link rel="stylesheet" href="docbook.css" type="text/css"/>
+    <chapter>
+        <title>Advanced Search Options</title>
+        <table frame="all" width="25%" border="0" class="center">
+            <title/>
+            <tgroup cols="4">
+                <colspec colname="c1" colnum="1" colwidth="25%"/>
+                <colspec colname="c2" colnum="2" colwidth="25%"/>
+                <colspec colname="c3" colnum="3" colwidth="25%"/>
+                <colspec colname="c4" colnum="4" colwidth="25%"/>
+                <tbody>
+                    <row>
+                        <entry>
+                            <ulink href="walkthrough.xml">
+                                <div>
+                                    <graphic fileref="images/resultset_previous.png" align="left" alt="Go To Previous"/>&#160;
+                                </div>
+                            </ulink>
+                        </entry>
+                        <entry>
+                            <ulink href="walkthrough.toc.xml">
+                                <div class="toc">
+                                    <graphic fileref="images/text_list_bullets.png" align="center" alt="Table of Contents"/>&#160;
+                                </div>
+                            </ulink>
+                        </entry>
+                        <entry>
+                            <ulink href="walkthrough.02.xml">
+                                <div>
+                                    <graphic fileref="images/resultset_next.png" align="right" alt="Go To Next"/>&#160;
+                                </div>
+                            </ulink>
+                        </entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+        <para>
+            Tamboti supports the use of wildcards. 
+            "?" can be used for a single character and "*" for zero, one or more characters: "Japan" and "Japon" are thus found with "Jap?n" and "Chinese" and "China" are found with "Chin*". 
+            You cannot use "*" and "?" in the beginning of a word.
+        </para>
+        <para>
+            Fuzzy searches are performed by putting a tilde ("~") at the end of a search term, 
+            making it possible to retrieve "Wegner" through "Wagner~". 
+            One can quantify the fuzziness, by appending a number between 0.0 (totally fuzzy) and 0.9 (little fuzziness). 
+            The default is 0.5.
+        </para>
+        <para>One can perform boolean searches (searches involving "and", "or", and "not"), by using Advanced Search, 
+            but this is also possible in Simple Search.</para>
+        <para>One can use "AND" and "OR" between terms. 
+            If one searches for "China AND Japan", one will retrieve all records which contain both these terms, 
+            and if one searches for "China OR Japan", one will find all records in which one or both of these term occur. 
+            "NOT" can also be used: "China NOT Japan" retrieves records in which "China" occurs, 
+            but "Japan" does not occur. 
+            Note that these operators have to be written in upper-case.
+        </para>
+        <para>
+            Operators can be grouped with parentheses, as in "(China OR Japan) NOT modern". One can also combine boolean operators with wildcard searches and fuzzy searches. </para>
+        <para>
+            Phrases can be searched for by putting them in quotation marks. 
+            If one searches for "Modern China" (with quotation marks) one will find all records in which this precise string occurs, 
+            whereas if one searches for "Modern China" (without quotation marks), 
+            one will find all records in which the two words "China" and "Modern" occur, in any order.
+        </para>
+    </chapter>
+</book>

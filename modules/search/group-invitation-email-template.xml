@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mail xmlns:sharing="http://exist-db.org/mods/sharing" xmlns:config="http://exist-db.org/mods/config">
+    <from>
+        <config:smtp-from-address/>
+    </from>
+    <to>
+        <sharing:user-smtp-address/>
+    </to>
+    <subject>You have been added to the shared folder <sharing:collection-path/>
+    </subject>
+    <message>
+        <text>You have been added to the shared folder <sharing:collection-path/>
+        </text>
+        <xhtml>
+            <html xmlns="http://www.w3.org/1999/xhtml">
+                <head>
+                    <title>Share Invitation</title>
+                </head>
+                <body>
+                    <h1>Share Invitation</h1>
+                    <p>Dear <sharing:user-name/> you have been invited to the shared folder <sharing:collection-path/>
+                    </p>
+                </body>
+            </html>
+        </xhtml>
+    </message>
+</mail>

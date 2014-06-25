@@ -1,0 +1,606 @@
+<css>
+
+/* empty rule to recover from parse errors */
+   empty {}
+   
+/*temporary stuff begins*/
+
+.up-down-pointer .value button {
+    float:right;
+    height: 1.5em;
+    margin-bottom: 0;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-top: -1.75em;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    width: 1.75em !important;    
+}
+
+.up-down-pointer .value button .xforms-label {
+    width:1.5em;
+    display: inline;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    text-align: center;
+}
+
+#name-repeat .up-down-pointer .value button,
+#subject-name-repeat .up-down-pointer .value button 
+{
+    margin-top:-3em;
+    }
+
+#compact-name-repeat .up-down-pointer .value button 
+{
+    margin-top:-2em;
+    }
+
+hr {
+    color:#fafafa;
+    width:98%;
+    height:1px;
+}
+
+#dateIssued-repeat {
+    margin-left:0;
+}
+.label {
+	padding:.2em;
+	}
+
+.xforms-repeat {
+	margin-bottom:1em;
+}
+
+.xforms-repeat-item-selected,
+#subject-repeat .xforms-repeat-item-selected,
+#related-item-part-repeat .xforms-repeat-item-selected,
+#relatedItem-reviewed-repeat .xforms-repeat-item-selected,
+#relatedItem-suebs-tibetan-repeat .xforms-repeat-item-selected,
+#relatedItem-suebs-chinese-repeat .xforms-repeat-item-selected
+{
+    background-color:#FCFCFC;
+}
+
+/*.compact .xforms-group .xforms-group-content .output {
+    margin-top:-2em !important;
+}
+*/
+/*temporary stuff ends*/
+
+/*main page elements begin*/
+
+body
+    {
+  border-color:#3681B3;
+  font-size:75%;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+#page-head {
+    height:12em;
+    margin-bottom:2.5em;
+    margin-left:50px;
+    margin-right:50px;
+    margin-top:5px;
+}
+
+#page-head-left { /*used for Tamboti*/
+    position:absolute;
+    margin-top:.45em;
+    left:4.15em;
+}
+
+#page-head-right {display:none;}
+
+/*#navbar {
+    margin:10px 0 0 0;
+    border-top:1px solid #DEDEDE;
+    border-bottom:1px solid #DEDEDE;
+    display:block;
+}
+*/
+
+/*#page-head h1 {
+    color:#0A0AA0;
+    background-color:#FFFFFF;
+    border:0;
+    font-size:1.375em;
+    font-weight:normal;
+    margin:0;
+    padding:5px 0;
+}
+*/
+.container {
+    margin:0 auto;
+    padding-top:0.5em !important;
+    padding-right:1em !important;
+    padding-top:0.5em !important;
+    padding-left:.25em !important;
+    margin-top:-2em !important;
+    border-color:#CCCCCC !important;/*overrules xsltforms.css*/
+    margin-bottom:1em !important;/*overrules xsltforms.css*/
+    width:1150px !important;/*overrules xsltforms.css*/
+    -moz-border-radius:10px 10px 10px 10px;
+    border-radius:10px 10px 10px 10px;
+    border:1px solid #CCCCCC;
+}
+
+.content {
+    margin-left:.75em;
+}
+/*main page elements end*/
+
+/*tabs begin*/
+
+.tabs {
+    margin-bottom:.5em;
+}
+
+.tabs a {
+    text-decoration:none;
+}
+
+.top-tabs {
+    margin-top:1em;
+    margin-bottom:.25em;
+    width:100%;
+    margin-top:.75em;
+}
+
+.bottom-tabs {
+    width:100%;
+    margin-bottom:.5em;
+}
+
+
+table { 
+    margin-bottom:.5em !important;
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+table, td, th {
+    vertical-align:middle;
+}
+
+
+.tabs tr td 
+    {
+    border:1px solid #BEBEBE;	/*outset #BBB*/
+    text-align:center;
+    -moz-border-radius-topleft:4px;
+    -moz-border-radius-topright:4px;
+    border-top-left-radius:4px 4px;
+    border-top-right-radius:4px 4px;
+}
+
+/*tabs end*/
+
+/*other top elements begin*/
+
+.save-buttons {
+    margin-bottom:2em;
+}
+
+.save-buttons .related-title {
+    font-family: Arial,Helvetica,sans-serif;
+    margin-left:5em;
+    }
+    
+.save-buttons .related-title a {
+    text-decoration:none;
+    color:#3681B3;
+    font-weight:600;
+}
+
+.save-buttons .related-title .intro {
+    color:#4d4d4d;
+    font-weight:400;
+}
+
+.save-buttons .xforms-help-value {
+    font-weight:normal;
+}
+
+.save-buttons button {
+    height:2.5em;
+}
+
+.save-buttons .xforms-label
+    {
+    margin:.75em !important;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.documentation-link {
+    font-size:130%; 
+    margin-bottom:.5em;
+}
+
+.documentation-link a {
+    color:#3681B3;
+}
+
+.info-line {
+    color:#666666;
+    }
+
+/*other top elements end*/
+
+/*buttons begin*/
+
+button { 
+    cursor:pointer;
+    margin:.5em;
+    background-color:#EDEDED;
+    border-width:1px;
+    border-style:solid;
+    border-color:#909090;
+    padding:.2em;
+    vertical-align:middle;
+    text-align:center;
+    -moz-border-radius:.4em;
+    border-bottom-left-radius:5px 5px;
+    border-bottom-right-radius:5px 5px;
+    border-top-left-radius:5px 5px;
+    border-top-right-radius:5px 5px;
+    }
+
+.block-form .xforms-label {
+    display:inline-block;
+    width:15em; /* the default width of all the labels in the block form */
+    margin-right:5px; /* margin before the input area */
+    text-align:right; 
+    vertical-align:top;
+    padding-top:.5em;
+    margin-bottom:.1em;
+    }
+
+/*buttons end*/
+
+/*boxes begin*/
+
+.node-adds,
+.xforms-label,
+.label-box
+{
+    color:#3681B3;
+}
+
+.node-adds button .xforms-label 
+    {
+    text-align:center;
+    }
+
+.node-adds .xforms-group .xforms-group-content
+{
+    display:inline !important;
+}
+
+.node-adds .xforms-group {
+    display:inline;
+}
+
+.node-adds .xforms-group button {
+    width:15em;
+}
+
+fieldset,
+.xforms-repeat-item,
+.xforms-repeat-item-selected
+{
+    border-color:#CCCCCC;
+}
+
+fieldset,
+.block-form .xforms-repeat-item,
+.block-form .xforms-repeat-item-selected,
+.node-adds
+    {
+    font-size:inherit !important;
+    border-width:1px;
+    border-color:#CCCCCC !important;
+    border-style:solid;
+    padding-top:1em;
+    padding-bottom:.5em;
+    padding-left:1em !important;
+    padding-right:1em !important;
+    margin-top:2em !important;
+    margin-bottom:1.5em !important;
+    -moz-border-radius:.75em;
+    border-bottom-left-radius:10px 10px;
+    border-bottom-right-radius:10px 10px;
+    border-top-left-radius:10px 10px;
+    border-top-right-radius:10px 10px;
+    }
+
+/*boxes end*/
+
+/*unsorted begins*/
+
+td {
+    font-weight:normal;
+    padding:.5em 1em .5em .5em;
+}
+
+label {
+	white-space:nowrap;
+	font-weight:bold;
+}
+
+input, 
+textarea, 
+select 
+	{
+    margin-bottom:0.5em;
+    margin-top:0.5em;
+    border:1px solid #BBBBBB;
+    padding:.2em; /*to give a little less cramped input field*/
+}
+
+.block-form .xforms-group-label-centered { /*button text*/
+    display:inline-block;
+    text-align:center;
+    padding:0;
+    vertical-align:middle;
+    margin:auto;
+}
+
+.xforms-case {
+    margin-bottom:1em;
+    margin-top:auto;
+}
+
+.xforms-group-content {
+    vertical-align:top;
+    margin-bottom:0;    
+}
+
+select .xforms-value {
+    padding-left:.25em;
+}
+
+.add-delete-button .xforms-control button {
+    width:1.75em !important;
+    height:1.5em;
+    padding:0;
+    margin:-.2em .5em 0 .5em;
+}
+
+.add-delete-button .xforms-control button .xforms-label { /*controls "+" and "-" on buttons for adding and removing repetitions*/
+    display:inline;
+    text-align:center;
+    padding:0;
+    margin:0;
+}
+
+.label-box { 
+    font-weight:bold;
+    border-style:solid;
+    background-color:#EDEDED;
+    border-width:1px;
+    padding:.5em 1em .3em 1em;
+    width:20em;
+    height:1.5em;
+    margin-top:-2.2em; /*to make the fieldset border go through the centre of the box*/
+    margin-left:1.55em;
+    margin-bottom:.75em;
+    text-align:center;    
+}
+
+.label-box.extra-wide {
+    width:25em !important;
+}
+
+.label-box.super-wide {
+    width:35em !important;
+}
+
+.open-close-button .xforms-control button { 
+    height:2em;
+    width:2em;
+    padding:0;
+    margin-bottom:-1.5em;
+    margin-left:.5em;
+    margin-right:0;
+    margin-top:-.5em;
+
+}
+
+.open-close-button .xforms-control button .xforms-label { /*controls the "&gt;" and "&lt;" on the button*/
+    display:inline;
+    width:1em;
+    text-align:center;
+    padding:0;
+}
+
+.node-adds {
+    margin-top:2.25em !important;
+    padding-bottom:1em;
+    background-color:#FFFFFF;
+}
+
+/*unsorted ends*/
+
+/*size of text boxes and text areas begins*/
+
+.text_10 .xforms-value {
+    width:10em;
+    }
+
+.text_50 .xforms-value {
+    width:30em;
+    }
+
+.text_100 .xforms-value {
+    width:40em;
+    }
+
+.text_150 .xforms-value {
+    width:50em;
+    }
+
+.textarea .xforms-value  {
+    width:40em; 
+    height:3em; 
+    padding-left:.2em;
+    }
+
+/*size of text boxes and text areas ends*/
+
+
+/*help, hint, alert begins*/
+/*NB: hint and help should be merged*/
+
+
+.label-box .xforms-hint { /*the hard-coded fieldset hints*/
+    margin-left:1px;
+    vertical-align:top;
+    font-style:normal;
+    font-weight:normal;
+    color:#CCCCCC;
+    cursor:help;    
+}
+
+span.xforms-hint-icon:after { /*the regular hints*/
+    color:#B3B3B3;
+    padding:1px;
+    content:"?";
+    margin-left:-1.2em;
+    margin-right:.2em;
+    margin-bottom:2em;
+}
+
+span.opaque:after { /*the regular hints*/
+    opacity:0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=0)";
+	filter:alpha(opacity=0);
+}
+
+span.xforms-hint-icon { /*negating the xsltforms.css regular hint icon*/
+    background-image:url("");
+}
+
+.xforms-help, 
+.xforms-hint 
+    {
+    margin-left:.2em;
+    }
+
+.xforms-required-icon, 
+.xforms-alert-icon 
+    {
+    display:none;
+    /*margin:2em;*/
+}
+
+div.xforms-help-value { 
+    width:65em;
+    white-space: normal;
+}
+
+div.xforms-help-value { 
+    text-align:left;
+    color:#666666;
+    display:none;
+	background-color:#FFFFFF;
+	position:absolute;
+	border:#666666 1px solid; 
+	margin:0;
+	margin-top:-5em; /*to pull up the help boxes, allowing the lower boxes to be more visible*/
+	padding-top:.5em;
+	padding-left:.5em;
+	padding-right:.5em;
+	z-index:1;
+}
+
+.save-buttons-bottom .xforms-help-value {
+    margin-top:-23em; /*to move up the bottom save button help box*/
+}
+
+div.xforms-help-value p, 
+div.xforms-help-value li
+    { 
+	margin-top:.25em;
+	font-weight:normal;
+}
+
+/*help ends*/
+
+/*compact begins*/
+
+.compact .hide-label .xforms-label {
+    opacity:0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=0)";
+	filter:alpha(opacity=0);
+}
+
+.compact .xforms-repeat-item-selected
+{
+    background-color:#FFFFFF;
+}
+
+.compact .xforms-group .xforms-repeat-item,
+.compact .xforms-group .xforms-repeat-item-selected
+    {
+    border:0;
+    margin:0 !important;
+    padding:0 !important;
+}
+
+.compact .level-1 .margin-plus {/*level-1*/
+    margin-left:11.2em;
+}
+
+.compact .level-1 .margin-plus .xforms-select1 {/*level-1 with select1*/
+    margin-left:0 !important;
+}
+
+.compact .level-2 .margin-plus {/*level-2*/
+    margin-left:9.1em;
+}
+
+.compact .level-2 .margin-plus .xforms-select1 {/*level-2 with name*/
+    margin-left:1em;
+}
+
+.compact .level-1 .margin-plus .xforms-select1 {
+	margin-left:1em;
+}
+.compact .level-3 .margin-plus {/*level-3*/
+    margin-left:8em;
+}
+
+.compact .level-3 .margin-plus .xforms-select1 {/*level-3 with name*/
+    margin-left:1em;
+}
+
+.compact .level-3 .margin-plus input {/*level-2, space between name type and name part*/
+    margin-left:1em;
+}
+
+/*compact ends*/
+
+/*unused stuff begins*/
+
+@media print {
+    #page-head {
+        display:none;
+    }
+}
+
+/*unused stuff ends*/
+
+
+</css>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<code-table xml:id="date-encoding-code">
+    <code-table-name>date-encoding-code</code-table-name>
+    <status>finished</status>
+    <form>closed</form>
+    <basis>http://www.loc.gov/standards/mods/v3/mods-userguide-generalapp.html</basis>
+    <description/>
+    <notes/>
+    <tab-id>origin</tab-id>
+    <tab-id>part</tab-id>
+    <tab-id>record-info</tab-id>
+    <tab-id>related</tab-id>
+    <tab-id>related-abbreviated</tab-id>
+    <tab-id>related-xlink</tab-id>
+    <tab-id>subject</tab-id>
+    <items>
+        <item>
+            <value/>
+            <label>(none selected)</label>
+        </item>
+        <item>
+            <label>YYYY-MM-DD</label>
+            <value>w3cdtf</value>
+            <description>This value identifies dates following the W3C profile of ISO 8601, Date and
+                Time Formats, that specifies the extended format for dates using the pattern:
+                YYYY-MM-DD. If hours, minutes, and seconds are also needed the following pattern is
+                used: YYYY-MM-DDThh:mm:ss.</description>
+        </item>
+        <item>
+            <label>ISO 8601</label>
+            <value>iso8601</value>
+            <description>This value identifies formatted dates allowed in ISO 8601 which use the
+                alternative described as "basic" (i.e., with minimum number of separators) rather
+                than "extended" (i.e., with separators). This alternative specified in the standard
+                uses the following date patterns: YYYY; YYYY-MM if only year and month given;
+                YYYYMMDD if year, month, and day are included (hours, minutes, seconds may also be
+                added: Thhmmss.s). It is also used for other encodings specified in ISO 8601, e.g.,
+                date ranges, which are in the form of
+                &lt;date/time&gt;/&lt;date/time&gt;.</description>
+        </item>
+        <item>
+            <label>MARC</label>
+            <value>marc</value>
+            <description>This value identifies formatted according to MARC 21 rules in field
+                008/07-14 for dates of publication/issuance. Thus, this would only apply to the
+                attribute in &lt;dateIssued&gt;. Examples include: YYYY (for year), MMDD (for month
+                and day), 19uu (MARC convention showing unknown digits in a year date), 9999 (MARC
+                convention showing that the end year date has not occurred or is not
+                known).</description>
+        </item>
+        <item>
+            <label>Extended Date/Time Format</label>
+            <value>edtf</value>
+            <description>This value is used for dates coded according to Extended Date/Time Format
+                which is consistent with ISO 8601 but extends it to express special forms of dates
+                that are not covered by w3cdtf and iso8601, such as open ended ranges.</description>
+        </item>
+        <item>
+            <label>TEMPER</label>
+            <value>temper</value>
+            <description>This value is used for dates coded according to Temporal Enumerated Ranges.
+                TEMPER is a simple date and time syntax for representing points, lists, and ranges
+                of timestamps. The syntax is designed to be easy to parse and for humans to read,
+                and compatible with basic lexical sorting algorithms.</description>
+        </item>
+        <item type="added">
+            <label>text</label>
+            <value>text</value>
+            <description>This value is used only for dates coded according to MARC 21 rules in field
+                008/07-14 for dates of publication/issuance. Thus, this would only apply to the
+                attribute in dateIssued. Examples include: 19uu (a MARC convention to show unknown
+                digits in a date), 9999 (a MARC convention showing that the end date has not
+                occurred or is not known).</description>
+        </item>
+    </items>
+</code-table>

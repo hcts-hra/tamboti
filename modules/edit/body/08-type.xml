@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="type block-form" tab-id="type" ext:dummy="dummy" xlink:dummy="dummy">
+    <xf:group appearance="full">
+        <fieldset class="level-1">
+            <div class="label-box">
+                <span class="legend">Resource Types</span>
+                <span class="xforms-help">
+                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                    <div class="xforms-help-value">
+                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_typeOfResource',instance('code-tables'))/help"/>
+                    </div>
+                </span>
+                <span class="add-delete-button">
+                    <xf:trigger ref=".[mods:typeOfResource]">
+                        <xf:label>+</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:insert nodeset="mods:typeOfResource" at="index('type-of-resource-repeat')" position="before" origin="instance('new-instance')/mods:typeOfResource"/>
+                        </xf:action>
+                    </xf:trigger>
+                </span>
+                <span class="add-delete-button">
+                    <xf:trigger ref=".[mods:typeOfResource]">
+                        <xf:label>–</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:typeOfResource" at="index('type-of-resource-repeat')"/>
+                        </xf:action>
+                    </xf:trigger>
+                </span>
+            </div>
+<!--Attributes: collection, manuscript, displayLabel, usage, altRepGroup-->
+<!--Subelements: none.-->
+            <xf:repeat nodeset="instance('save-data')/mods:typeOfResource" id="type-of-resource-repeat">
+                <xf:group class="show-hide" ref=".[count(@*) &lt; 5]">
+                    <xf:switch>
+                        <xf:case id="typeOfResource-add-node-hide">
+                            <div class="open-close-button">
+                                <xf:trigger class="add-button">
+                                    <xf:label class="xforms-group-label-centered">&gt;</xf:label>
+                                    <xf:toggle case="typeOfResource-add-node-unhide" ev:event="DOMActivate"/>
+                                </xf:trigger>
+                            </div>
+                        </xf:case>
+                        <xf:case id="typeOfResource-add-node-unhide">
+                            <div class="open-close-button">
+                                <xf:trigger>
+                                    <xf:label class="xforms-group-label-centered">&lt;</xf:label>
+                                    <xf:toggle case="typeOfResource-add-node-hide" ev:event="DOMActivate"/>
+                                </xf:trigger>
+                            </div>
+                            <div class="node-adds">
+                                <xf:group appearance="full">
+                                    <xf:trigger ref=".[not(@altRepGroup)]" class="add-button">
+                                        <xf:label class="xforms-group-label-centered">Add Alternate Representation
+                                        Group</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:toggle case="typeOfResource-add-node-hide" ev:event="DOMActivate"/>
+                                            <xf:insert context="." origin="instance('insert-templates')/mods:typeOfResource/@altRepGroup"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                    <xf:trigger ref=".[not(@displayLabel)]" class="add-button">
+                                        <xf:label class="xforms-group-label-centered">Add Display
+                                        Label</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:toggle case="typeOfResource-add-node-hide" ev:event="DOMActivate"/>
+                                            <xf:insert context="." origin="instance('insert-templates')/mods:typeOfResource/@displayLabel"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                    <xf:trigger ref=".[not(@manuscript)]" class="add-button">
+                                        <xf:label class="xforms-group-label-centered">Add Manuscript</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:toggle case="typeOfResource-add-node-hide" ev:event="DOMActivate"/>
+                                            <xf:insert context="." origin="instance('insert-templates')/mods:typeOfResource/@manuscript"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                    <xf:trigger ref=".[not(@usage)]" class="add-button">
+                                        <xf:label class="xforms-group-label-centered">Add
+                                        Usage</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:toggle case="typeOfResource-add-node-hide" ev:event="DOMActivate"/>
+                                            <xf:insert context="." origin="instance('insert-templates')/mods:typeOfResource/@usage"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                </xf:group>
+                            </div>
+                        </xf:case>
+                    </xf:switch>
+                </xf:group>
+                <xf:group appearance="full" ref=".[@altRepGroup]" class="schema_3.4 schema_3.5">
+                    <xf:select1 ref="./@altRepGroup">
+                        <xf:label>Alt. Representation Group<span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='altRepGroup-code']/items/item">
+                            <xf:label ref="label"/>
+                            <xf:value ref="value"/>
+                        </xf:itemset>
+                    </xf:select1>
+                </xf:group>
+                <xf:group appearance="full" ref=".[@collection]" class="schema_3.3 schema_3.4 schema_3.5">
+                    <xf:select1 ref="./@collection">
+                        <xf:label>Collection
+                        <span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_typeOfResource-collection',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='yes-empty-code']/items/item">
+                            <xf:label ref="label"/>
+                            <xf:value ref="value"/>
+                        </xf:itemset>
+                    </xf:select1>
+                </xf:group>
+                <xf:group appearance="full" ref=".[@manuscript]" class="schema_3.3 schema_3.4 schema_3.5">
+                    <xf:select1 ref="./@manuscript">
+                        <xf:label>Manuscript
+                        <span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_typeOfResource-manuscript',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='yes-empty-code']/items/item">
+                            <xf:label ref="label"/>
+                            <xf:value ref="value"/>
+                        </xf:itemset>
+                    </xf:select1>
+                </xf:group>
+                <xf:group appearance="full" ref=".[@displayLabel]" class="schema_3.4 schema_3.5">
+                    <xf:input ref="./@displayLabel" class="text_50">
+                        <xf:label>Display Label
+                        <span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                    </xf:input>
+                </xf:group>
+                <xf:group appearance="full" ref=".[@usage]" class="schema_3.4 schema_3.5">
+                    <xf:select1 ref="./@usage">
+                        <xf:label>Usage
+                        <span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_usage',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='usage-type-code']/items/item">
+                            <xf:label ref="label"/>
+                            <xf:value ref="value"/>
+                        </xf:itemset>
+                    </xf:select1>
+                </xf:group>
+                <br/>
+                <xf:group appearance="full" ref="." class="schema_3.3 schema_3.4 schema_3.5">
+                    <xf:select1 ref=".">
+                        <xf:label>Resource Type
+                        <span class="xforms-help">
+                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
+                                <div class="xforms-help-value">
+                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_typeOfResource',instance('code-tables'))/help"/>
+                                </div>
+                            </span>
+                        </xf:label>
+                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='type-of-resource-code']/items/item">
+                            <xf:label ref="label"/>
+                            <xf:value ref="value"/>
+                        </xf:itemset>
+                    </xf:select1>
+                </xf:group>
+            </xf:repeat>
+            <xf:group appearance="full" ref=".[not(mods:typeOfResource)]">
+                <xf:trigger class="add-button">
+                    <xf:label class="xforms-group-label-centered">Add Missing Resource Type</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="instance('save-data')/mods:typeOfResource" origin="instance('new-instance')/mods:typeOfResource"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
+        </fieldset>
+    </xf:group>
+</div>
