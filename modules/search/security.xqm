@@ -418,7 +418,7 @@ declare function security:apply-parent-collection-permissions($resource as xs:an
 };
 
 declare function security:is-biblio-user($username as xs:string) as xs:boolean {
-    xmldb:get-user-groups($username) = $config:biblio-users-group
+    sm:user-exists($username) and xmldb:get-user-groups($username) = $security:biblio-users-group
 };
 
 declare function security:get-owner($path as xs:string) as xs:string
