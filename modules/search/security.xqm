@@ -168,17 +168,21 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
 : Stores some basic metadata about a user into their home collection
 :)
 declare function security:create-user-metadata($user-collection-uri as xs:string, $owner as xs:string) as xs:string {
-    let $login-time := util:system-dateTime() return
-        let $metadata-doc-uri := xmldb:store($user-collection-uri, $security:user-metadata-file,
-         <security:metadata>
-             <security:last-login-time>{$login-time}</security:last-login-time>
-             <security:login-time>{$login-time}</security:login-time>
-         </security:metadata>
-        ) 
-        return
-            let $null := sm:chmod($metadata-doc-uri, "rwx------") 
-                return
-                    $metadata-doc-uri
+    let $login-time := util:system-dateTime()
+    let $metadata-doc-uri :=
+        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+            (
+                xmldb:store($user-collection-uri, $security:user-metadata-file,
+                    <security:metadata>
+                        <security:last-login-time>{$login-time}</security:last-login-time>
+                        <security:login-time>{$login-time}</security:login-time>
+                    </security:metadata>
+                ),
+                sm:chmod($metadata-doc-uri, "rwx------")
+            )
+        )
+
+    return $metadata-doc-uri
 };
 
 (:~
