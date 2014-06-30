@@ -170,7 +170,7 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
 declare function security:create-user-metadata($user-collection-uri as xs:string, $owner as xs:string) as xs:string {
     let $login-time := util:system-dateTime()
     let $metadata-doc-uri :=
-        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
             let $metadata-doc-uri :=
                 xmldb:store($user-collection-uri, $security:user-metadata-file,
                     <security:metadata>
@@ -179,6 +179,8 @@ declare function security:create-user-metadata($user-collection-uri as xs:string
                     </security:metadata>
                 )
             let $chmod := sm:chmod($metadata-doc-uri, "rwx------")
+            let $chown := sm:chown($metadata-doc-uri, security:get-user-credential-from-session()[1])
+            let $chgrp := sm:chgrp($metadata-doc-uri, $config:biblio-users-group)
             return $metadata-doc-uri
         )
 
