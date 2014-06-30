@@ -82,11 +82,13 @@ declare function op:move-collection($collection-to-move as xs:string, $new-paren
 
 (:NB: name change does not take place if the new name is already taken.:)
 (:TODO: notify user if the new name is already taken.:)
-declare function op:rename-collection($collection-uri as xs:string, $new-collection-name as xs:string) as element(status) {
-
-    let $null := xmldb:rename($collection-uri, $new-collection-name) 
-    return
-        <status id="renamed" from="{$collection-uri}">{$new-collection-name}</status>
+declare function op:rename-collection($path as xs:string, $name as xs:string) as element(status) {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        let $null := xmldb:rename($path, $name)
+        return
+            (:<status id="renamed" from="{uu:unescape-collection-path($path)}">{$name}</status>:)
+            <status id="renamed" from="{xmldb:decode-uri($path)}">{xmldb:decode-uri($name)}</status>
+    )
 };
 
 (:TODO: After removal, perform search in Home collection:)
