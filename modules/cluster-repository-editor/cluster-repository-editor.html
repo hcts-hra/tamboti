@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+        <title>Cluster Repository Editor</title>
+        <link rel="stylesheet" type="text/css" href="cluster-repository-editor.css"/>
+    </head>
+    <body>
+        <div style="display:none">
+            <xf:model id="m-person">
+                <xf:instance xmlns="http://www.tei-c.org/ns/1.0" id="i-template" src="person-template.xq"/>
+                <xf:instance id="i-suggestion">
+                    <pair xmlns=""/>
+                </xf:instance>
+                <xf:instance id="i-history">
+                    <listPerson xmlns="http://www.tei-c.org/ns/1.0">
+                        <person xml:id="uuid">
+                            <persName xml:lang="">
+                                <forename/>
+                                <surname/>
+                            </persName>
+                            <note type="type"/>
+                        </person>
+                    </listPerson>
+                </xf:instance>
+                <xf:instance id="i-utils">
+                    <person xmlns="http://www.tei-c.org/ns/1.0">
+                        <state type="new"/>
+                        <state type="existing"/>
+                    </person>
+                </xf:instance>
+                <xf:submission id="s-add-person" resource="/exist/rest/db/resources/services/repositories/local/persons/{instance('i-template')//tei:person/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
+                    <xf:action ev:event="xforms-submit-error">
+                        <xf:message>The record was not saved.</xf:message>
+                    </xf:action>
+                    <xf:action ev:event="xforms-submit-done">
+                        <xf:insert origin="instance('i-template')//tei:person" ref="instance('i-history')/*" at="last()" position="after"/>
+                        <xf:insert origin="instance('i-utils')/tei:state[@type = 'new']" ref="instance('i-history')/*[last()]/*" at="last()" position="after"/>
+                        <xf:delete ref="instance('i-suggestion')/*"/>
+                        <xf:send submission="s-load-person-template"/>
+                    </xf:action>
+                </xf:submission>
+                <xf:submission id="s-load-person-template" resource="person-template.xq" replace="instance" method="get" instance="i-template"/>
+                <xf:submission id="s-load-suggestions-by-forename" resource="cluster-services.xq?type=local-persons&amp;query={encode-for-uri(instance('i-template')//tei:person/tei:persName/tei:forename)}&amp;page_limit=15&amp;page=1" method="get" replace="instance" instance="i-suggestion"/>
+                <xf:submission id="s-load-suggestions-by-surname" resource="cluster-services.xq?type=local-persons&amp;query={encode-for-uri(instance('i-template')//tei:person/tei:persName/tei:surname)}&amp;page_limit=15&amp;page=1" method="get" replace="instance" instance="i-suggestion"/>
+            </xf:model>
+            <xf:model id="m-organisation">
+                <xf:instance xmlns="http://www.tei-c.org/ns/1.0" id="i-template" src="organisation-template.xq"/>
+                <xf:instance id="i-suggestion">
+                    <pair xmlns=""/>
+                </xf:instance>
+                <xf:instance id="i-history">
+                    <listOrg xmlns="http://www.tei-c.org/ns/1.0">
+                        <org xml:id="uuid">
+                            <orgName xml:lang=""/>
+                            <note type="type"/>
+                        </org>
+                    </listOrg>
+                </xf:instance>
+                <xf:instance id="i-utils">
+                    <org xmlns="http://www.tei-c.org/ns/1.0">
+                        <state type="new"/>
+                        <state type="existing"/>
+                    </org>
+                </xf:instance>
+                <xf:submission id="s-add-organisation" resource="/exist/rest/db/resources/services/repositories/local/organisations/{instance('i-template')//tei:org/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
+                    <xf:action ev:event="xforms-submit-error">
+                        <xf:message>The record was not saved.</xf:message>
+                    </xf:action>
+                    <xf:action ev:event="xforms-submit-done">
+                        <xf:insert origin="instance('i-template')//tei:org" ref="instance('i-history')/*" at="last()" position="after"/>
+                        <xf:insert origin="instance('i-utils')/tei:state[@type = 'new']" ref="instance('i-history')/*[last()]/*" at="last()" position="after"/>
+                        <xf:delete ref="instance('i-suggestion')/*"/>
+                        <xf:send submission="s-load-template"/>
+                    </xf:action>
+                </xf:submission>
+                <xf:submission id="s-load-template" resource="organisation-template.xq" replace="instance" method="get" instance="i-template"/>
+                <xf:submission id="s-load-suggestions" resource="cluster-services.xq?type=local-organisations&amp;query={encode-for-uri(instance('i-template')//tei:orgName)}&amp;page_limit=15&amp;page=1" replace="instance" method="get" instance="i-suggestion"/>
+            </xf:model>
+        </div>
+        <h1>One has to be logged into tamboti in order to work with this form</h1>
+        <xf:group class="record-group" model="m-person">
+            <h2>Persons</h2>
+            <xf:group class="record-adding-group">
+                <xf:group appearance="bf:verticalTable">
+                    <h3>Add</h3>
+                    <xf:select1 ref="instance('i-template')//tei:person/tei:persName/@xml:lang" appearance="minimal">
+                        <xf:label>Language: </xf:label>
+                        <xf:item>
+                            <xf:label>eng</xf:label>
+                            <xf:value>eng</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>san</xf:label>
+                            <xf:value>san</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>jpn</xf:label>
+                            <xf:value>jpn</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>chi</xf:label>
+                            <xf:value>chi</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>ger</xf:label>
+                            <xf:value>ger</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>mar</xf:label>
+                            <xf:value>mar</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>egy</xf:label>
+                            <xf:value>egy</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>grc</xf:label>
+                            <xf:value>grc</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>lat</xf:label>
+                            <xf:value>lat</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>hin</xf:label>
+                            <xf:value>hin</xf:value>
+                        </xf:item>
+                    </xf:select1>
+                    <xf:input ref="instance('i-template')//tei:person/tei:persName/tei:forename" incremental="true">
+                        <xf:label>Forename: </xf:label>
+                        <xf:delete ref="instance('i-suggestion')/*" ev:event="xforms-value-changed"/>
+                        <xf:send submission="s-load-suggestions-by-forename" ev:event="xforms-value-changed" if="string-length(.) &gt; 2"/>
+                        <xf:send submission="s-load-suggestions-by-surname" ev:event="xforms-value-changed" if="string-length(instance('i-template')//tei:person/tei:persName/tei:surname) &gt; 0"/>
+                    </xf:input>
+                    <xf:input ref="instance('i-template')//tei:person/tei:persName/tei:surname" incremental="true">
+                        <xf:label>Surname: </xf:label>
+                        <xf:delete ref="instance('i-suggestion')/*" ev:event="xforms-value-changed"/>
+                        <xf:send submission="s-load-suggestions-by-surname" ev:event="xforms-value-changed" if="string-length(.) &gt; 2"/>
+                        <xf:send submission="s-load-suggestions-by-forename" ev:event="xforms-value-changed" if="string-length(instance('i-template')//tei:person/tei:persName/tei:forename) &gt; 0"/>
+                    </xf:input>
+                    <xf:select1 ref="instance('i-template')//tei:person/tei:note[@type = 'type']" appearance="minimal">
+                        <xf:label>Type: </xf:label>
+                        <xf:item>
+                            <xf:label>corporateName</xf:label>
+                            <xf:value>corporateName</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>deity?</xf:label>
+                            <xf:value>deity?</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>iconographicTopic</xf:label>
+                            <xf:value>iconographicTopic</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>personalName</xf:label>
+                            <xf:value>personalName</xf:value>
+                        </xf:item>
+                    </xf:select1>
+                    <p/>
+                    <xf:trigger>
+                        <xf:label>Save</xf:label>
+                        <xf:send submission="s-add-person"/>
+                    </xf:trigger>
+                </xf:group>
+            </xf:group>
+            <xf:group class="suggestion-group">
+                <h3>Records suggested</h3>
+                <xf:repeat id="r-person-suggestions" ref="instance('i-suggestion')/*" class="suggestions-repeat" appearance="compact">
+                    <xf:output ref="*[@name = 'value']">
+                        <xf:label>Name</xf:label>
+                    </xf:output>
+                    <xf:output ref="*[@name = 'uuid']">
+                        <xf:label>uuid</xf:label>
+                    </xf:output>
+                    <xf:output ref="*[@name = 'type']">
+                        <xf:label>Type</xf:label>
+                    </xf:output>
+                </xf:repeat>
+                <xf:trigger>
+                    <xf:label>-&gt;</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert origin="instance('i-template')//tei:person" ref="instance('i-history')/*" at="last()" position="after"/>
+                        <xf:insert origin="instance('i-utils')/tei:state[@type = 'existing']" ref="instance('i-history')/*[last()]/*" at="last()" position="after"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/tei:persName/tei:surname" value="instance('i-suggestion')/*[index('r-person-suggestions')]/*[@name = 'value']"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/@xml:id" value="instance('i-suggestion')/*[index('r-person-suggestions')]/*[@name = 'uuid']"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/tei:note[@type = 'type']" value="instance('i-suggestion')/*[index('r-person-suggestions')]/*[@name = 'type']"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
+            <xf:group class="history-group">
+                <h3>Records used by me in this session</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>uuid</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody xf:repeat-nodeset="instance('i-history')/tei:person[position() &gt; 1]">
+                        <tr>
+                            <td>
+                                <xf:output ref="@xml:id"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:persName/tei:surname"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:note[@type = 'type']"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:state/@type"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </xf:group>
+        </xf:group>
+        <xf:group class="record-group" model="m-organisation">
+            <h2>Organisations</h2>
+            <xf:group class="record-adding-group">
+                <xf:group appearance="bf:verticalTable">
+                    <h3>Add</h3>
+                    <xf:select1 ref="instance('i-template')//tei:orgName/@xml:lang" appearance="minimal">
+                        <xf:label>Language: </xf:label>
+                        <xf:item>
+                            <xf:label>eng</xf:label>
+                            <xf:value>eng</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>ger</xf:label>
+                            <xf:value>ger</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>chi</xf:label>
+                            <xf:value>chi</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>tib</xf:label>
+                            <xf:value>tib</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>hin</xf:label>
+                            <xf:value>hin</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>ben</xf:label>
+                            <xf:value>ben</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>lat</xf:label>
+                            <xf:value>lat</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>jpn</xf:label>
+                            <xf:value>jpn</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>san</xf:label>
+                            <xf:value>san</xf:value>
+                        </xf:item>
+                    </xf:select1>
+                    <xf:input ref="instance('i-template')//tei:orgName" incremental="true">
+                        <xf:label>Name: </xf:label>
+                        <xf:delete ref="instance('i-suggestion')/*" ev:event="xforms-value-changed"/>
+                        <xf:send submission="s-load-suggestions" ev:event="xforms-value-changed" if="string-length(.) &gt; 2"/>
+                    </xf:input>
+                    <xf:select1 ref="instance('i-template')//tei:note[@type = 'type']" appearance="minimal">
+                        <xf:label>Type: </xf:label>
+                        <xf:item>
+                            <xf:label>corporateName</xf:label>
+                            <xf:value>corporateName</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>descriptiveTopic</xf:label>
+                            <xf:value>descriptiveTopic</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>familyName</xf:label>
+                            <xf:value>familyName</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>iconographicTopic</xf:label>
+                            <xf:value>iconographicTopic</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>otherName</xf:label>
+                            <xf:value>otherName</xf:value>
+                        </xf:item>
+                        <xf:item>
+                            <xf:label>personalName</xf:label>
+                            <xf:value>personalName</xf:value>
+                        </xf:item>
+                    </xf:select1>
+                    <p/>
+                    <xf:trigger>
+                        <xf:label>Save</xf:label>
+                        <xf:send submission="s-add-organisation"/>
+                    </xf:trigger>
+                </xf:group>
+            </xf:group>
+            <xf:group class="suggestion-group">
+                <h3>Records suggested</h3>
+                <xf:repeat id="r-organisation-suggestions" ref="instance('i-suggestion')/*" class="suggestions-repeat" appearance="compact">
+                    <xf:output ref="*[@name = 'value']">
+                        <xf:label>Name</xf:label>
+                    </xf:output>
+                    <xf:output ref="*[@name = 'uuid']">
+                        <xf:label>uuid</xf:label>
+                    </xf:output>
+                    <xf:output ref="*[@name = 'type']">
+                        <xf:label>Type</xf:label>
+                    </xf:output>
+                </xf:repeat>
+                <xf:trigger>
+                    <xf:label>-&gt;</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert origin="instance('i-template')//tei:org" ref="instance('i-history')/*" at="last()" position="after"/>
+                        <xf:insert origin="instance('i-utils')/tei:state[@type = 'existing']" ref="instance('i-history')/*[last()]/*" at="last()" position="after"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/tei:orgName" value="instance('i-suggestion')/*[index('r-organisation-suggestions')]/*[@name = 'value']"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/@xml:id" value="instance('i-suggestion')/*[index('r-organisation-suggestions')]/*[@name = 'uuid']"/>
+                        <xf:setvalue ref="instance('i-history')/*[last()]/tei:note[@type = 'type']" value="instance('i-suggestion')/*[index('r-organisation-suggestions')]/*[@name = 'type']"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
+            <xf:group class="history-group">
+                <h3>Records used by me in this session</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>uuid</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody xf:repeat-nodeset="instance('i-history')/tei:org[position() &gt; 1]">
+                        <tr>
+                            <td>
+                                <xf:output ref="@xml:id"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:orgName"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:note[@type = 'type']"/>
+                            </td>
+                            <td>
+                                <xf:output ref="tei:state/@type"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </xf:group>
+        </xf:group>
+    </body>
+</html>
