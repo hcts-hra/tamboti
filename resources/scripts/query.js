@@ -1,4 +1,39 @@
 $(function() {
+    $("#edit-action-form").submit(function() {
+        console.log("Submit ................");
+        var $form = $(this);
+        var records = $form.find("input").val().split(',');
+        var url = $form.attr("action");
+        var xml = "<data>";
+        
+        for (var i = 0; i < records.length; i++) {
+            xml += "<file>" + records[0] + "</file>";
+        }
+        xml += "</data>";
+        
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/xml",
+            dataType: 'text',
+            data: xml,
+            error: function() { alert("Could not send recordids to ziziphus.") },
+            success: function(data) {
+                if(data != null) {
+                    var win=window.open('about:blank');
+                    with(win.document)
+                    {
+                      open();
+                      write(data);
+                      close();
+                    }
+                }
+            }
+        });
+        
+        return false;
+    });
+    
     $('#keyword-form').submit(function () {
         loadIndexTerms();
         return false; 
@@ -86,11 +121,14 @@ $(function() {
         //ev.preventDefault();
         var $this = $(this);
         if ($this.is(":checked")) {
+            
             tamboti.ddlcb.dropDownListCheckbox.registerExternalOption([$this.attr("data-tamboti-record-id")]);
-            $("#edit-action-form input").val(tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex.toString().replace(/,/gi, "<br/>"));
+            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
+            $("#edit-action-form input").val(value.toString());
         } else {
             tamboti.ddlcb.dropDownListCheckbox.unregisterExternalOption([$this.attr("data-tamboti-record-id")]);
-            $("#edit-action-form input").val(tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex.toString().replace(/,/gi, "<br/>"));
+            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
+            $("#edit-action-form input").val(value.toString());
         }
     });	
     
