@@ -33,7 +33,7 @@ declare function local:get-sharing($collection-path as xs:string) as element(aaD
                 let $target := $ace/@target
                 let $who :=
                     if ($target = 'USER')
-                    then ( security:get-human-name-for-user($ace/@who/string())))
+                    then (security:get-human-name-for-user($ace/@who/string()))
                     else ($ace/@who)
                 return
                     element json:value {
@@ -47,6 +47,7 @@ declare function local:get-sharing($collection-path as xs:string) as element(aaD
                         <json:value>{$index - 1}</json:value>
                     }
             }</aaData>
+    )
 };
 
 declare function local:get-folder-files ($upload-folder as xs:string ) {
