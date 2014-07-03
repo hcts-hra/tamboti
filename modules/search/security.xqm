@@ -313,17 +313,17 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
 :   The sequence contains USER or GROUP as the first item, and then the who as the second item
 :)
 declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as xs:string* {
+    let $permissions := sm:get-permissions($resource)
+    let $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id]
     
-    let $permissions := 
-        sm:get-permissions($resource),
-        $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id] 
-            return
-                if (exists($ace)) then (
-                  let $null := sm:remove-ace($resource, $id) return
-                        ($ace/@target, $ace/@who)
-                ) else (
-                    ()
-                )
+    return
+        if (exists($ace))
+        then
+            (
+                let $null := sm:remove-ace($resource, $id)
+                return ($ace/@target, $ace/@who)
+            )
+        else (())
 };
 
 (: adds a group ace and returns its index:)
