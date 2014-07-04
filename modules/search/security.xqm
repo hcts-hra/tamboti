@@ -21,8 +21,7 @@ declare variable $security:user-metadata-file := "security.metadata.xml";
 : @param user The username of the user
 : @param password The password of the user
 :)
-declare function security:login($user as xs:string, $password as xs:string?) as xs:boolean
-{
+declare function security:login($user as xs:string, $password as xs:string?) as xs:boolean {
     let $username := config:rewrite-username(
         if ($config:force-lower-case-usernames) then
             fn:lower-case($user)
@@ -31,23 +30,25 @@ declare function security:login($user as xs:string, $password as xs:string?) as 
         )
         return
             (: authenticate against eXist-db :)
-            if (xmldb:login("/db", $username, $password)) then
-            (
-                (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
-                if (security:home-collection-exists($username)) then
+            if (xmldb:login("/db", $username, $password))
+            then
                 (
-                    (: update the last login time:)
-                    security:update-login-time($username),    
-                    true()
+                    security:store-user-credential-in-session($username, $password),
+                    (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
+                    if (security:home-collection-exists($username))
+                    then
+                        (
+                            (: update the last login time:)
+                            security:update-login-time($username),    
+                            true()
+                        )
+                    else
+                        (
+                            let $users-collection-uri := security:create-home-collection($username)
+                            return true()
+                        )
                 )
-                else
-                (
-                     let $users-collection-uri := security:create-home-collection($username) 
-                        return
-                           true()
-                )
-                
-            ) else
+            else
                 (: authentication failed:)
                 false()
 };
@@ -222,9 +223,11 @@ declare function security:get-last-login-time($user as xs:string) as xs:dateTime
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-read-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'r')
+declare function security:can-read-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "r"))
+    else sm:has-access($collection, "r")
 };
 
 (:~
@@ -233,9 +236,11 @@ declare function security:can-read-collection($collection as xs:string) as xs:bo
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-write-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'rw')
+declare function security:can-write-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "w"))
+    else sm:has-access($collection, "w")
 };
 
 (:~
@@ -244,9 +249,11 @@ declare function security:can-write-collection($collection as xs:string) as xs:b
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-execute-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'rwx')
+declare function security:can-execute-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "x"))
+    else sm:has-access($collection, "x")
 };
 
 (:~
@@ -302,7 +309,8 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
                     "-"
                 ,
                 $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode) return
+                $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                return
                     true()
                 
             )
