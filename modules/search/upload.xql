@@ -229,51 +229,43 @@ declare function upload:upload( $filetype , $filesize,  $filename, $data, $doc-t
         
  };
  
- declare function upload:add-tag-to-parent-doc($parentdoc_path , $parent_type as xs:string, $myuuid){
- 
-  let $parentdoc := doc($parentdoc_path)
- let $add :=
- if  ($parent_type eq 'vra')
-    then (
-    let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" refid=""  pref="true">general view</vra:relation>
-   
-    let $relationTag := $parentdoc/vra:vra/vra:work/vra:relationSet
-    return
-        let $vra-insert := $parentdoc
-       let $insert_or_updata := 
-       if (not($relationTag))
-           then( 
-            if (sm:has-access($parentdoc_path,'w'))
-                then
-                update insert  <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work
-                else (
-                util:log('error','no write access')
-                )
-           )
-       else()
-           
-       let $vra-update := update insert $vra_insert into $parentdoc/vra:vra/vra:work/vra:relationSet
-       return  $vra-update
-    )
-    else if ($parent_type eq 'mods')
+declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $parent_type as xs:string, $myuuid as xs:string) {
+    let $parentdoc := doc($parentdoc_path)
+    let $add :=
+        if ($parent_type eq 'vra')
         then
-        (
-        let $mods-insert := <mods:relatedItem  xmlns:mods="http://www.loc.gov/mods/v3" type="constituent">
-        <mods:typeOfResource>still image</mods:typeOfResource>
-            <mods:location>
-                <mods:url displayLabel="Illustration" access="preview">{$myuuid}</mods:url>
-            </mods:location>
-        </mods:relatedItem>
-        let $mods-insert-tag := $parentdoc
-        let $mods-update :=
-        if (sm:has-access($parentdoc_path,'w'))
-                then update insert  $mods-insert into $mods-insert-tag/mods:mods
-                else (util:log('error','no write access'))
-       return  $mods-update
-        
-        )
-    else  ()
-return $add
+            let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" refid=""  pref="true">general view</vra:relation>
+            let $relationTag := $parentdoc/vra:vra/vra:work/vra:relationSet
+                return
+                    let $vra-insert := $parentdoc
+                    let $insert_or_updata := 
+                        if (not($relationTag))
+                        then 
+                            if (security:can-write-collection($parentdoc_path))
+                            then update insert  <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work
+                            else util:log('error', 'no write access')
+                        else ()
+                    let $vra-update := update insert  $vra_insert into $parentdoc/vra:vra/vra:work/vra:relationSet
+                    return $vra-update
+        else 
+            if ($parent_type eq 'mods')
+            then
+                let $mods-insert := 
+                    <mods:relatedItem type="constituent">
+                        <mods:typeOfResource>still image</mods:typeOfResource>
+                        <mods:location>
+                            <mods:url displayLabel="Illustration" access="preview">{$myuuid}</mods:url>
+                        </mods:location>
+                    </mods:relatedItem>
+                let $mods-insert-tag := $parentdoc
+                let $mods-update :=
+                    if (security:can-write-collection($parentdoc_path))
+                    then update insert  $mods-insert into $mods-insert-tag/mods:mods
+                    else util:log('error', 'no write access')
+                return  $mods-update 
+            else  ()
+       
+    return $add
 };
 
  
