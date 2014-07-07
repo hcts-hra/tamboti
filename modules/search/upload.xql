@@ -131,7 +131,7 @@ declare function upload:upload( $filetype, $filesize, $filename, $data, $doc-typ
                         let $null := upload:mkcol('/', $newcol)
                         let $null := security:apply-parent-collection-permissions(xs:anyURI($newcol))
                             return $null
-                let $create-image-folder := xmldb:create-collection($newcol, $image-collection-name)
+                let $create-image-folder := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:create-collection($newcol, $image-collection-name))
                 let $newcol := concat($newcol, '/', $image-collection-name)
                 (:creae image folder:)
                 let $null := 
