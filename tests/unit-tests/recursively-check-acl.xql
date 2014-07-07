@@ -1,45 +1,42 @@
 xquery version "3.0";
 
+declare function local:collection-permissions($col-path, $col, $show-res) {
+    <collection name="{$col}">
+            <colPermissions>
+                {
+                    sm:get-permissions(xs:anyURI($col-path || "/" || $col))
+                }
+            </colPermissions>
+            {
+                if ($show-res) then
+                    <resources>
+                        {
+                            for $res in xmldb:get-child-resources($col-path || "/" || $col)
+                                return
+                                    <res name="{$col-path || "/" || $col || "/" || $res}">
+                                        {
+                                            sm:get-permissions(xs:anyURI($col-path || "/" || $col || "/" || $res))
+                                        }
+                                    </res>
+                        }
+                    </resources>
+                else
+                    ""
+            }
+            {
+                for $scol in xmldb:get-child-collections($col-path || "/" || $col)
+                    return
+                        local:collection-permissions($col-path || "/" || $col, $scol, $show-res)
+            }
+    </collection>
+
+};
+
 (:let $col-name := "/db/resources/commons/JSIT":)
-let $col-name := "/db/resources/users/vma-editor/VMA-Collection"
+(:let $col-name := "/db/resources/users/matthias.guth@ad.uni-heidelberg.de/aaatest":)
 
 (:let $col-name := request:get-attribute("col"):)
-let $showRes := true()
+(:let $showRes := true():)
 
-let $col := xmldb:get-child-collections($col-name)
-return
-    <result>
-        <collection name="{$col-name}">
-            {
-                (
-                    sm:get-permissions(xs:anyURI($col-name)),
-                        for $scol in $col
-                            return
-                                <collection name="{$scol}">
-                                    <colPermissions>
-                                    {
-                                        sm:get-permissions(xs:anyURI($col-name || "/" || $scol))
-                                    }
-                                    </colPermissions>
-                                    {
-                                    if ($showRes) then
-                                        <resources>
-                                            {
-                                                for $res in xmldb:get-child-resources($col-name || "/" || $scol)
-                                                    return
-                                                        <res name="{$col-name || "/" || $scol || "/" || $res}">
-                                                            {
-                                                                sm:get-permissions(xs:anyURI($col-name || "/" || $scol || "/" || $res))
-                                                            }
-                                                        </res>
-                                            }
-                                        </resources>
-                                    else
-                                        ""
-                
-                                    }
-                                </collection>
-                )
-            }
-        </collection>
-    </result>
+(:return:)
+    local:collection-permissions("/db/resources/users/", "vma-editor", false())
