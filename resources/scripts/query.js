@@ -7,7 +7,7 @@ $(function() {
         var xml = "<data>";
         
         for (var i = 0; i < records.length; i++) {
-            xml += "<file>" + records[0] + "</file>";
+            xml += "<file>" + records[i] + "</file>";
         }
         xml += "</data>";
         
