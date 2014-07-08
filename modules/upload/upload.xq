@@ -1,7 +1,7 @@
 xquery version "3.0";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace security = "http://exist-db.org/mods/security" at "security.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
 declare namespace upload = "http://exist-db.org/eXide/upload";

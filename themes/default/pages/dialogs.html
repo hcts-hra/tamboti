@@ -112,7 +112,7 @@ function FileUploadCtrl(scope) {
         xhr.addEventListener("error", uploadFailed, false)
         xhr.addEventListener("abort", uploadCanceled, false)
         
-        xhr.open("POST", "upload.xql")
+        xhr.open("POST", "../upload/upload.xq")
         scope.progressVisible = false
          
         
