@@ -451,7 +451,7 @@ declare function security:duplicate-acl($source-path as xs:string, $target-path 
         for $ace in sm:get-permissions(xs:anyURI($source-path))//sm:ace
             let $target := $ace/@target
             let $who := $ace/@who
-            let $access_type := $ace/@access_type
+            let $access_type := if ($ace/@access_type = 'ALLOWED') then true() else false()
             let $mode := $ace/@mode
             return
                 if ($target = 'USER')
