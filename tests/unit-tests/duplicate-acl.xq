@@ -11,7 +11,7 @@ declare variable $test-collection := xs:anyURI("/apps/" || $config:actual-app-id
 declare variable $test-resource := xs:anyURI("/apps/" || $config:actual-app-id || "/tests/resources/temp/VRA_images/w_fecddb51-9a2c-4510-881f-1443166bd400.xml");
 declare variable $expected-result :=
     <sm:acl entries="2">
-        <sm:ace index="0" target="USER" who="editor" access_type="ALLOWED" mode="rwx"/>
+        <sm:ace index="0" target="USER" who="{$config:biblio-admin-user}" access_type="ALLOWED" mode="rwx"/>
         <sm:ace index="1" target="GROUP" who="{$config:biblio-users-group}" access_type="ALLOWED" mode="rwx"/>
     </sm:acl>
 ;

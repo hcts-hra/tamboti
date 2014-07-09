@@ -18,7 +18,7 @@ return
 (:        return :)
 (:            ( :)
 (:                xs:anyURI($collection-path || "/"  || $subcollection),:)
-(:                sm:get-permissions(xs:anyURI($collection-path || "/"  || $subcollection))//sm:ace[@who = 'editor']:)
+(:                sm:get-permissions(xs:anyURI($collection-path || "/"  || $subcollection))//sm:ace[@who = $config:biblio-admin-user]:)
 (:            ) :)
             <result>
                 {
