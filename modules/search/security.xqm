@@ -446,6 +446,20 @@ declare function security:get-group($path as xs:string) as xs:string
 	data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
 };
 
+declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        for $ace in sm:get-permissions(xs:anyURI($source-path))//sm:ace
+            let $target := $ace/@target
+            let $who := $ace/@who
+            let $access_type := $ace/@access_type
+            let $mode := $ace/@mode
+            return
+                if ($target = 'USER')
+                then (sm:add-user-ace(xs:anyURI($target-path), $who, $access_type, $mode))
+                else (sm:add-group-ace(xs:anyURI($target-path), $who, $access_type, $mode))
+    )
+};
+
 (:NB: below, commented out group-related functions, not used yet:)
 
 (:~
