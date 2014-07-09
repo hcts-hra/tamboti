@@ -165,12 +165,12 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
                     let $relationTag := $parentdoc/vra:vra/vra:work/vra:relationSet
                         return
                             let $vra-insert := $parentdoc
-                            let $insert_or_updata := 
+                            let $insert_or_update := 
                                 if (not($relationTag))
-                                then 
-                                    if (security:can-write-collection($parentdoc_path))
-                                    then update insert  <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work
-                                    else util:log('error', 'no write access')
+                                then update insert <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work 
+(:                                    if (security:can-write-collection($parentdoc_path)) :)
+(:                                    then update insert  <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work:)
+(:                                    else util:log('error', 'no write access') :)
                                 else ()
                             let $vra-update := update insert $vra_insert into $parentdoc/vra:vra/vra:work/vra:relationSet
                             return $vra-update
@@ -185,10 +185,10 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
                                 </mods:location>
                             </mods:relatedItem>
                         let $mods-insert-tag := $parentdoc
-                        let $mods-update :=
-                            if (security:can-write-collection($parentdoc_path))
-                            then update insert  $mods-insert into $mods-insert-tag/mods:mods
-                            else util:log('error', 'no write access')
+                        let $mods-update := update insert  $mods-insert into $mods-insert-tag/mods:mods
+(:                            if (security:can-write-collection($parentdoc_path)) :)
+(:                            then update insert  $mods-insert into $mods-insert-tag/mods:mods:)
+(:                            else util:log('error', 'no write access') :)
                         return  $mods-update 
                     else  ()
                
