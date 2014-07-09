@@ -11,8 +11,6 @@ import module namespace xmldb="http://exist-db.org/xquery/xmldb";
 declare variable $security:GUEST_CREDENTIALS := ("guest", "guest");
 declare variable $security:SESSION_USER_ATTRIBUTE := "biblio.user";
 declare variable $security:SESSION_PASSWORD_ATTRIBUTE := "biblio.password";
-declare variable $security:biblio-users-group := "biblio.users";
-
 declare variable $security:user-metadata-file := "security.metadata.xml";
 
 (:~
@@ -432,7 +430,7 @@ declare function security:apply-parent-collection-permissions($resource as xs:an
 };
 
 declare function security:is-biblio-user($username as xs:string) as xs:boolean {
-    sm:user-exists($username) and xmldb:get-user-groups($username) = $security:biblio-users-group
+    sm:user-exists($username) and xmldb:get-user-groups($username) = $config:biblio-users-group
 };
 
 declare function security:get-owner($path as xs:string) as xs:string

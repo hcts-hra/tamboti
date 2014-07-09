@@ -1,7 +1,7 @@
 xquery version "3.0";
 
-import module namespace config="http://exist-db.org/mods/config" at "../../modules/config.xqm";
-import module namespace sharing="http://exist-db.org/mods/sharing" at "../../modules/search/sharing.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+import module namespace sharing = "http://exist-db.org/mods/sharing" at "../../modules/search/sharing.xqm";
 
 let $collection-path := xs:anyURI("/resources/commons")
 let $username := "a9k"
@@ -9,7 +9,7 @@ let $username := "a9k"
 return
     (
 (:        sm:remove-ace($collection-path, 2),:)
-(:        sm:add-group-ace($collection-path, "biblio.users", true(), "r--"),:)
+(:        sm:add-group-ace($collection-path, $config:biblio-users-group, true(), "r--"),:)
 (:        system:as-user($config:dba-credentials[1],$config:dba-credentials[2],:)
 (:            sm:get-account-metadata(sm:get-permissions($collection-path)//sm:ace[3]/@who, xs:anyURI("http://axschema.org/namePerson/first")):)
 (:        ):)

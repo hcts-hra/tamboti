@@ -12,7 +12,7 @@ declare variable $test-resource := xs:anyURI("/apps/" || $config:actual-app-id |
 declare variable $expected-result :=
     <sm:acl entries="2">
         <sm:ace index="0" target="USER" who="editor" access_type="ALLOWED" mode="rwx"/>
-        <sm:ace index="1" target="GROUP" who="biblio.users" access_type="ALLOWED" mode="rwx"/>
+        <sm:ace index="1" target="GROUP" who="{$config:biblio-users-group}" access_type="ALLOWED" mode="rwx"/>
     </sm:acl>
 ;
 

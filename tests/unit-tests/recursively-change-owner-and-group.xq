@@ -1,9 +1,11 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare function local:setPerm($path) {
     (
     let $user-id := "vma-editor" 
-    let $group-id := "biblio.users" 
+    let $group-id := $config:biblio-users-group 
     return
         (
 
