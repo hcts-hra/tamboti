@@ -87,70 +87,61 @@ declare function local:apply-perms($path as xs:string, $username as xs:string, $
 };
 
 declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord, $collection-owner-username as xs:string) {
-    let $myuuid := concat('i_', util:uuid())
-    let $parentcol :=
-        if (exists(collection($config:mods-root)//vra:work[@id=$workrecord]/@id))
+    let $image-uuid := concat('i_', util:uuid())
+    let $upload-collection-path :=
+        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord]/@id))
         then util:collection-name(collection($config:mods-root)//vra:work[@id = $workrecord]/@id)
         else 
             if (exists(collection($config:mods-root)//mods:mods[@ID=$workrecord]/@ID))
             then util:collection-name(collection($config:mods-root)//mods:mods[@ID=$workrecord]/@ID)
             else ()
-    let $parentdoc_path := concat($parentcol, '/', $workrecord, '.xml')
-    let $null := util:log('ERROR', $parentcol)
-    let $tag-changed := upload:add-tag-to-parent-doc($parentdoc_path, upload:determine-type($workrecord), $myuuid)
-    
+    let $workrecord-file-path := concat($upload-collection-path, '/', $workrecord, '.xml')
+    let $null := util:log('DEBUG', $upload-collection-path)
+    let $tag-changed := upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord), $image-uuid)
+    let $image-collection-path := concat($upload-collection-path, '/', $image-collection-name)
+    (:create images collection:)
+    let $create-images-collection :=
+        if (not(xmldb:collection-available($image-collection-path)))
+        then
+            system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+                (
+                    xmldb:create-collection($upload-collection-path, $image-collection-name),
+                    security:apply-parent-collection-permissions(xs:anyURI($image-collection-path)),
+                    sm:chown(xs:anyURI($image-collection-path), $collection-owner-username)
+                )
+            )
+        else()
+                    
     (:set the image VRA folder by adding the suffix:)
     let $upload :=  
-        if (exists($parentcol))
-        then system:as-user($user, $userpass, 
-                let $newcol := $parentcol
-                let $mkdir := if (xmldb:collection-available($newcol)) 
-                    then ()
-                    else
-                        let $null := upload:mkcol('/', $newcol)
-                        let $null := security:apply-parent-collection-permissions(xs:anyURI($newcol))
-                            return $null
-                (:create images collection:)
-                let $create-images-collection := 
-                    if (not(xmldb:collection-available(concat($newcol, '/', $image-collection-name))))
-                    then
-                        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-                            (
-                                xmldb:create-collection($newcol, $image-collection-name),
-                                security:apply-parent-collection-permissions(xs:anyURI($newcol)),
-                                sm:chown(xs:anyURI($newcol), $collection-owner-username)
-                            )
-                        )
-                    else()
-                let $newcol := concat($newcol, '/', $image-collection-name)                
+        system:as-user($user, $userpass,
                 (: filenames  :)
-                let $image-filename := concat($myuuid, '.', functx:substring-after-last($filename, '.'))
-                let $image-record-filename := concat($myuuid, '.xml')
+                let $image-filename := concat($image-uuid, '.', functx:substring-after-last($filename, '.'))
+                let $image-record-filename := concat($image-uuid, '.xml')
                 
                 (: store image record :)
-                let $image-record := local:generate-image-record($myuuid, $image-filename, $filename, $workrecord)
-                let $xmlupload := xmldb:store($newcol, $image-record-filename, $image-record)
+                let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord)
+                let $xmlupload := xmldb:store($image-collection-path, $image-record-filename, $image-record)
                 
                 (: store image :)
-                let $upload := xmldb:store($newcol, $image-filename, $data)
+                let $upload := xmldb:store($image-collection-path, $image-filename, $data)
                 
                 let $apply-permissions :=
                     (
-                        sm:chown(xs:anyURI(concat($newcol, '/', $image-filename)), $collection-owner-username),
-                        sm:chmod(xs:anyURI(concat($newcol, '/', $image-filename)), 'rwxr-xr-x'),
-                        sm:chgrp(xs:anyURI(concat($newcol, '/', $image-filename)), $config:biblio-users-group),
+                        sm:chown(xs:anyURI(concat($image-collection-path, '/', $image-filename)), $collection-owner-username),
+                        sm:chmod(xs:anyURI(concat($image-collection-path, '/', $image-filename)), 'rwxr-xr-x'),
+                        sm:chgrp(xs:anyURI(concat($image-collection-path, '/', $image-filename)), $config:biblio-users-group),
                         
-                        sm:chown(xs:anyURI(concat($newcol, '/', $image-record-filename)), $collection-owner-username),
-                        sm:chmod(xs:anyURI(concat($newcol, '/', $image-record-filename)), 'rwxr-xr-x'),
-                        sm:chgrp(xs:anyURI(concat($newcol, '/', $image-record-filename)), $config:biblio-users-group),
+                        sm:chown(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), $collection-owner-username),
+                        sm:chmod(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), 'rwxr-xr-x'),
+                        sm:chgrp(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), $config:biblio-users-group),
                         
-                        security:apply-parent-collection-permissions(xs:anyURI(concat($newcol, '/', $image-filename))),
-                        security:apply-parent-collection-permissions(xs:anyURI(concat($newcol, '/', $image-record-filename)))
+                        security:apply-parent-collection-permissions(xs:anyURI(concat($image-collection-path, '/', $image-filename))),
+                        security:apply-parent-collection-permissions(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)))
                     )
 
                 return concat($filename, ' ' ,$message)
         )
-       else ()
         return $upload
 };
  
