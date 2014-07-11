@@ -445,7 +445,7 @@ declare function security:get-group($path as xs:string) as xs:string
 };
 
 declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
         for $ace in sm:get-permissions(xs:anyURI($source-path))//sm:ace
             let $target := $ace/@target
             let $who := $ace/@who
