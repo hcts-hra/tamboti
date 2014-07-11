@@ -6,8 +6,8 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
 
 declare namespace upload = "http://exist-db.org/eXide/upload";
 declare namespace functx = "http://www.functx.com";
-declare namespace vra="http://www.vraweb.org/vracore4.htm";
-declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 
 declare variable $user := $config:dba-credentials[1];
 declare variable $userpass := $config:dba-credentials[2];
@@ -96,53 +96,50 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
             then util:collection-name(collection($config:mods-root)//mods:mods[@ID=$workrecord]/@ID)
             else ()
     let $workrecord-file-path := concat($upload-collection-path, '/', $workrecord, '.xml')
-    let $null := util:log('DEBUG', $upload-collection-path)
-    let $tag-changed := upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord), $image-uuid)
     let $image-collection-path := concat($upload-collection-path, '/', $image-collection-name)
-    (:create images collection:)
-    let $create-images-collection :=
-        if (not(xmldb:collection-available($image-collection-path)))
-        then
-            system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-                (
-                    xmldb:create-collection($upload-collection-path, $image-collection-name),
-                    security:apply-parent-collection-permissions(xs:anyURI($image-collection-path)),
-                    sm:chown(xs:anyURI($image-collection-path), $collection-owner-username)
-                )
-            )
-        else()
-                    
-    (:set the image VRA folder by adding the suffix:)
+    let $image-filename := concat($image-uuid, '.', functx:substring-after-last($filename, '.'))
+    let $image-file-path := xs:anyURI(concat($image-collection-path, '/', $image-filename))
+    let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord)
+    let $image-record-filename := concat($image-uuid, '.xml')
+    let $image-record-file-path := xs:anyURI(concat($image-collection-path, '/', $image-record-filename))
+
     let $upload :=  
         system:as-user($user, $userpass,
-                (: filenames  :)
-                let $image-filename := concat($image-uuid, '.', functx:substring-after-last($filename, '.'))
-                let $image-record-filename := concat($image-uuid, '.xml')
+            (
+                security:duplicate-acl($upload-collection-path, $workrecord-file-path),
                 
-                (: store image record :)
-                let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord)
-                let $xmlupload := xmldb:store($image-collection-path, $image-record-filename, $image-record)
-                
-                (: store image :)
-                let $upload := xmldb:store($image-collection-path, $image-filename, $data)
-                
-                let $apply-permissions :=
-                    (
-                        sm:chown(xs:anyURI(concat($image-collection-path, '/', $image-filename)), $collection-owner-username),
-                        sm:chmod(xs:anyURI(concat($image-collection-path, '/', $image-filename)), 'rwxr-xr-x'),
-                        sm:chgrp(xs:anyURI(concat($image-collection-path, '/', $image-filename)), $config:biblio-users-group),
-                        
-                        sm:chown(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), $collection-owner-username),
-                        sm:chmod(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), 'rwxr-xr-x'),
-                        sm:chgrp(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)), $config:biblio-users-group),
-                        
-                        security:apply-parent-collection-permissions(xs:anyURI(concat($image-collection-path, '/', $image-filename))),
-                        security:apply-parent-collection-permissions(xs:anyURI(concat($image-collection-path, '/', $image-record-filename)))
+                util:log('DEBUG', $upload-collection-path),
+                if (not(xmldb:collection-available($image-collection-path)))
+                then
+                    system:as-user($user, $userpass,
+                        (
+                            xmldb:create-collection($upload-collection-path, $image-collection-name),
+                            sm:chown(xs:anyURI($image-collection-path), $collection-owner-username),
+                            sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group)
+                        )
                     )
-
-                return concat($filename, ' ' ,$message)
+                else ()
+                ,
+                security:duplicate-acl($upload-collection-path, $image-collection-path),
+                upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord), $image-uuid),
+                
+                xmldb:store($image-collection-path, $image-record-filename, $image-record),
+                sm:chown($image-record-file-path, $collection-owner-username),
+                sm:chmod($image-record-file-path, 'rwxr-xr-x'),
+                sm:chgrp($image-record-file-path, $config:biblio-users-group),
+                security:duplicate-acl($upload-collection-path, $image-record-file-path),
+                
+                xmldb:store($image-collection-path, $image-filename, $data),
+                sm:chown($image-file-path, $collection-owner-username),
+                sm:chmod($image-file-path, 'rwxr-xr-x'),
+                sm:chgrp($image-file-path, $config:biblio-users-group),
+                security:duplicate-acl($upload-collection-path, $image-file-path),                
+                
+                concat($filename, ' ' ,$message)
+            )
         )
-        return $upload
+        
+    return $upload
 };
  
 declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $parent_type as xs:string, $myuuid as xs:string) {
