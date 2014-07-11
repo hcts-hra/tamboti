@@ -396,36 +396,36 @@ declare function security:grant-parent-owner-access-if-foreign-collection($colle
 : Resources always inherit the permissions of the parent collection
 :)
 declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty() {
-
-    let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1"))),
-    $this-permissions := sm:get-permissions($resource),
-	$this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1 return
-
+    let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1")))
+    let $this-permissions := sm:get-permissions($resource)
+    let $this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1
+    
+    return
         (
-            for $ace in $parent-permissions/sm:permission/sm:acl/sm:ace 
-                return             
-    				if ($ace/@target eq "USER") then
-                        sm:add-user-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
-                    else 
-                        if ($ace/@target eq "GROUP") then
-                        sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
-                        else ()
+            for $ace in $parent-permissions/sm:permission/sm:acl/sm:ace
+            return
+                if ($ace/@target eq "USER")
+                then sm:add-user-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
+                else
+                    if ($ace/@target eq "GROUP")
+                    then sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
+                    else ()
 			,
-            if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner) then
-                let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1") 
-                    return
-                        sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
+            if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner)
+            then
+                let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1")
+                return sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
             else ()
     		,
-            if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group) then
+            if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group)
+            then
                 let $group-mode := fn:replace($parent-permissions/sm:permission/@mode, "...(...)...", "$1") 
-                    return
-                        sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
+                return sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
             else ()
 			,
 			(: clear any prev entries :)
-			for $i in 0 to $this-last-acl-index return
-				sm:remove-ace($resource, $i)
+			for $i in 0 to $this-last-acl-index
+			return sm:remove-ace($resource, $i)
         )
 };
 
