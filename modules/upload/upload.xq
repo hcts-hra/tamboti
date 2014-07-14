@@ -6,8 +6,8 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
 
 declare namespace upload = "http://exist-db.org/eXide/upload";
 declare namespace functx = "http://www.functx.com";
-declare namespace vra = "http://www.vraweb.org/vracore4.htm";
-declare namespace mods = "http://www.loc.gov/mods/v3";
+declare namespace vra="http://www.vraweb.org/vracore4.htm";
+declare namespace mods="http://www.loc.gov/mods/v3";
 
 declare variable $user := $config:dba-credentials[1];
 declare variable $userpass := $config:dba-credentials[2];
@@ -86,22 +86,34 @@ declare function local:apply-perms($path as xs:string, $username as xs:string, $
     sm:add-user-ace(xs:anyURI($path), $username,true(), $mode)
 };
 
-declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord, $collection-owner-username as xs:string) {
+declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $collection-uuid as xs:string, $image-filename as xs:string) as element() {
+    <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:hra="http://cluster-schemas.uni-hd.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
+        <work id="{$workrecord-uuid}" source="Kurs" refid="{$collection-uuid}">
+            <titleSet>
+                <display/>
+                <title type="generalView">{concat('Work record ', $image-filename)}</title>
+            </titleSet>
+        </work>
+    </vra>    
+};
+
+declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord-uuid, $collection-owner-username as xs:string) {
     let $image-uuid := concat('i_', util:uuid())
     let $upload-collection-path :=
-        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord]/@id))
-        then util:collection-name(collection($config:mods-root)//vra:work[@id = $workrecord]/@id)
+        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord-uuid]/@id))
+        then util:collection-name(collection($config:mods-root)//vra:work[@id = $workrecord-uuid]/@id)
         else 
-            if (exists(collection($config:mods-root)//mods:mods[@ID=$workrecord]/@ID))
-            then util:collection-name(collection($config:mods-root)//mods:mods[@ID=$workrecord]/@ID)
+            if (exists(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID))
+            then util:collection-name(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID)
             else ()
-    let $workrecord-file-path := concat($upload-collection-path, '/', $workrecord, '.xml')
+    let $workrecord-file-path := concat($upload-collection-path, '/', $workrecord-uuid, '.xml')
     let $image-collection-path := concat($upload-collection-path, '/', $image-collection-name)
     let $image-filename := concat($image-uuid, '.', functx:substring-after-last($filename, '.'))
     let $image-file-path := xs:anyURI(concat($image-collection-path, '/', $image-filename))
-    let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord)
+    let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord-uuid)
     let $image-record-filename := concat($image-uuid, '.xml')
     let $image-record-file-path := xs:anyURI(concat($image-collection-path, '/', $image-record-filename))
+    let $collection-owner-username := if ($collection-owner-username = '') then tamboti-utils:get-username-from-path($upload-collection-path) else $collection-owner-username
 
     let $upload :=  
         system:as-user($user, $userpass,
@@ -121,7 +133,7 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
                 else ()
                 ,
                 security:duplicate-acl($upload-collection-path, $image-collection-path),
-                upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord), $image-uuid),
+                upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord-uuid), $image-uuid),
                 
                 xmldb:store($image-collection-path, $image-record-filename, $image-record),
                 sm:chown($image-record-file-path, $collection-owner-username),
@@ -214,13 +226,13 @@ let $result := for $x in (1 to count($data))
         return
             if ($doc-type eq 'image')
             then
-                let $workrecord :=
+                let $upload-resource-id :=
                     if (string-length(request:get-header('X-File-Parent')) > 0)
                     then config:process-request-parameter(request:get-header('X-File-Parent'))
                     else ()
                 let $upload := 
-                    if (exists($workrecord))
-                    then upload:upload($filetype, $filesize[$x],$filename[$x], $data[$x], $doc-type, $workrecord, tamboti-utils:get-username-from-path($workrecord))
+                    if (exists($upload-resource-id))
+                    then upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id, '')
                     else
                         (:record for the collection:)
                         let $collection-folder := xmldb:decode(request:get-header('X-File-Folder'))
@@ -228,49 +240,27 @@ let $result := for $x in (1 to count($data))
                         (: if the collection file exists in the file folder:)
                         (:read the collection uuid:)
                         let $collection_vra := collection($config:mods-root)//vra:collection
-                        let $collection_uuid :=  
+                        let $collection-uuid :=  
                             if (exists($collection_vra))
                             then $collection_vra/@id
                             else concat('c_', util:uuid())
-                        
-                        (:else generate the new collection file:)
-                        let $null := 
-                            if (exists($collection_vra/@id))
-                            then ()
-                            else
-                                let $vra-collection-xml := 
-                                    <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd" xmlns:ext="http://exist-db.org/vra/extension">
-                                        <collection id="{$collection_uuid}" source="" refid="{$collection_uuid}"></collection>
-                                    </vra>
-                                    (:let $store := system:as-user($user, $userpass, xmldb:store($collection-folder, concat($collection_uuid, '.xml'), $vra-collection-xml))
-                                    return $store
-                                    :)
-                                        return ()
-                                        
+
                         (:generate the  work record, if collection xml exists:)
                         let $work-xml-generate :=
-                            if (exists($collection_uuid))
+                            if (exists($collection-uuid))
                             then
-                                let $work_uuid := concat('w_', util:uuid())
-                                let $vra-work-xml := 
-                                    <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:hra="http://cluster-schemas.uni-hd.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-                                        <work id="{$work_uuid}" source="Kurs" refid="{$collection_uuid}">
-                                        <titleSet>
-                                            <display/>
-                                            <title type="generalView">{concat('Work record ', $filename[$x])}</title>
-                                        </titleSet>  
-                                        </work>
-                                    </vra>
+                                let $workrecord-uuid := concat('w_', util:uuid())
+                                let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x])
                                 let $create-workrecord :=
                                     system:as-user($user, $userpass,
                                         (
-                                            xmldb:store(xmldb:encode($collection-folder), concat($work_uuid, '.xml'), $vra-work-xml),
-                                            sm:chown(xs:anyURI(concat($collection-folder, '/', $work_uuid, '.xml')), $collection-owner-username),
-                                            sm:chmod(xs:anyURI(concat($collection-folder, '/', $work_uuid, '.xml')), 'rwxr-xr-x'),
-                                            sm:chgrp(xs:anyURI(concat($collection-folder, '/', $work_uuid, '.xml')), $config:biblio-users-group)
+                                            xmldb:store(xmldb:encode($collection-folder), concat($workrecord-uuid, '.xml'), $vra-work-xml),
+                                            sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
+                                            sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), 'rwxr-xr-x'),
+                                            sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group)
                                         )
                                     )
-                                let $store := upload:upload( $filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $work_uuid, $collection-owner-username)
+                                let $store := upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid, $collection-owner-username)
                                 
                                 return $message
                             else ()
