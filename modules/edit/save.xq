@@ -2,8 +2,6 @@ xquery version "3.0";
 
 (: XQuery script to save a new MODS record from an incoming HTTP POST :)
 
-import module namespace request = "http://exist-db.org/xquery/request";
-import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (: TODO move security module up one level :)
 

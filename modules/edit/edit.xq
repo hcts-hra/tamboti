@@ -3,11 +3,7 @@ xquery version "3.0";
 (:TODO: change all 'monograph' to 'book' in tabs-data.xml and compact body files:)
 (:TODO: delete all '-compact' from ext:template in records, then delete all code that removes this from type in session.xql, edit.xql, tabs.xqm.:)
 (:TODO: Code related to MADS files.:)
-
-import module namespace request="http://exist-db.org/xquery/request";
-import module namespace sm="http://exist-db.org/xquery/securitymanager"; (:TODO move code into security module:)
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xmldb="http://exist-db.org/xquery/xmldb";
+(:TODO move code into security module:)
 
 import module namespace mods="http://www.loc.gov/mods/v3" at "tabs.xqm";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
@@ -228,8 +224,7 @@ declare function local:assemble-form($dummy-attributes as attribute()*, $style a
         <head>
             <title>
                 {$header-title}
-            </title> 
-
+            </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
             {$style}
