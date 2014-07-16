@@ -14,24 +14,26 @@ declare function local:set-owner($path) {
                 <collection name="{$collection}" path="{$path}">
                     <owner>{$owner}</owner>
                 </collection>
-            ,
-                if (ends-with($collection-path, 'VRA_images'))
-                then
-                    (
-                        sm:chown($collection-path, $owner)
+                ,
+                sm:chown($collection-path, $owner)
                         ,
-                        sm:get-permissions($collection-path)
-                    )
-                else ()
+                sm:get-permissions($collection-path)
                 ,
                 local:set-owner($collection-path)
             )
         ,
         for $resource in xmldb:get-child-resources($path)
+        let $resource-path := xs:anyURI($path || "/" || $resource)
         return
-            <resource name="{$resource}" path="{$path}">
-                <owner>{$owner}</owner>
-            </resource>
+            (
+                <resource name="{$resource}" path="{$path}">
+                    <owner>{$owner}</owner>
+                </resource>
+                ,
+                sm:chown($resource-path, $owner)
+                ,
+                sm:get-permissions($resource-path)
+            )
         )
     )
 };
@@ -44,3 +46,4 @@ return
             return local:set-owner($path || "/" || $user-collection-name)
         }
     </result>
+    
