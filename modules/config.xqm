@@ -27,6 +27,8 @@ declare variable $config:actual-app-id := "tamboti";
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
+declare variable $config:resource-mode := "rw-------";
+declare variable $config:collection-mode := "rwxr-xr-x";
 
 (:~ Various permissions :)
 declare variable $config:commons-resources-permissions := "rwxrwxr-x";
