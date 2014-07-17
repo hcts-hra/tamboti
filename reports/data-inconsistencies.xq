@@ -1,8 +1,8 @@
 xquery version "3.0";
 
-import module namespace config="http://exist-db.org/mods/config" at "../modules/config.xqm";
-
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
+
+import module namespace config="http://exist-db.org/mods/config" at "../modules/config.xqm";
 
 declare option output:method "html5";
 declare option output:media-type "text/html";
@@ -29,11 +29,11 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
     )
 };
 
-let $legal-groups := ($config:biblio-users-group)
+let $legal-groups := ("biblio.users")
 
 let $legal-mode := "rwxr-xr-x"
 
-let $local-users := sm:get-group-members($config:biblio-users-group)
+let $local-users := sm:get-group-members("biblio.users")
 
 let $orphaned-users := ("a02", "am370", "anna.grasskamp", "anna.vinogradova", "ce372", "chenying.pi", "christiane.brosius", "co402", "daniel.stumm", "eric.decker", "f8h", "fx400", "g05", "ge414", "gf395", "hg7", "hx405", "j0k", "j35", "jens.petersen", "johannes.alisch", "kd416", "kjc_hyperimage", "labuerr5", "lucie.bernroider", "m2b", "m5c", "marnold1", "matthias.arnold", "melissa.butcher", "mw385", "mz404", "nina.nessel", "qd418", "rg399", "roos.gerritsen", "simon.gruening", "swithan3", "ty403", "ud011", "ug400", "v4a", "vk383", "vu067", "wg397", "wmeier", "wu399")
 
@@ -101,9 +101,12 @@ return
                         <h3 id="different-group">Different group (there are {count($items)} of {$permissions-number} items)</h3>,
                         <h5>Groups presented: {string-join(distinct-values($permissions//sm:permission/@group), ', ')}</h5>,
                         for $item in $items
+                        let $item-type := $item/local-name()                        
                         return
                             (
-                                "The item '",
+                                "The ",
+                                $item-type,
+                                " '",
                                 <span class="item-name">{$item/@path/string()}</span>,
                                 "' is having the owner '",
                                 <span class="item-name">{$item/*[1]/@owner/string()}</span>,
@@ -118,9 +121,12 @@ return
                     (
                         <h3 id="different-mode">Different mode (there are {count($items-with-different-mode)} of {$permissions-number} items)</h3>,
                         for $item in $items-with-different-mode
+                        let $item-type := $item/local-name()
                         return
                             (
-                                "The item '",
+                                "The ",
+                                $item-type,
+                                " '",
                                 <span class="item-name">{$item/@path/string()}</span>,
                                 "' is having the mode '",
                                 <span class="item-attribute">{$item/*[1]/@mode/string()}</span>,
@@ -133,9 +139,12 @@ return
                     (
                         <h3 id="different-owner">Different owner (there are {count($items-with-different-owner)} of {$permissions-number} items)</h3>,
                         for $item in $items-with-different-owner
+                        let $item-type := $item/local-name()                        
                         return
                             (
-                                "The item '",
+                                "The ",
+                                $item-type,
+                                " '",
                                 <span class="item-name">{$item/@path/string()}</span>,
                                 "' is having the owner '",
                                 <span class="item-attribute">{$item/*[1]/@owner/string()}</span>,
