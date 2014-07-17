@@ -3,9 +3,6 @@ xquery version "3.0";
 module namespace security="http://exist-db.org/mods/security";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace session = "http://exist-db.org/xquery/session";
-import module namespace sm = "http://exist-db.org/xquery/securitymanager";
-import module namespace util = "http://exist-db.org/xquery/util";
 
 declare variable $security:GUEST_CREDENTIALS := ("guest", "guest");
 declare variable $security:SESSION_USER_ATTRIBUTE := "biblio.user";
