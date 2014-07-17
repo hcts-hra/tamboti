@@ -137,13 +137,13 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
                 
                 xmldb:store($image-collection-path, $image-record-filename, $image-record),
                 sm:chown($image-record-file-path, $collection-owner-username),
-                sm:chmod($image-record-file-path, 'rwxr-xr-x'),
+                sm:chmod($image-record-file-path, $config:resource-mode),
                 sm:chgrp($image-record-file-path, $config:biblio-users-group),
                 security:duplicate-acl($upload-collection-path, $image-record-file-path),
                 
                 xmldb:store($image-collection-path, $image-filename, $data),
                 sm:chown($image-file-path, $collection-owner-username),
-                sm:chmod($image-file-path, 'rwxr-xr-x'),
+                sm:chmod($image-file-path, $config:resource-mode),
                 sm:chgrp($image-file-path, $config:biblio-users-group),
                 security:duplicate-acl($upload-collection-path, $image-file-path),                
                 
@@ -254,9 +254,9 @@ let $result := for $x in (1 to count($data))
                                 let $create-workrecord :=
                                     system:as-user($user, $userpass,
                                         (
-                                            xmldb:store(xmldb:encode($collection-folder), concat($workrecord-uuid, '.xml'), $vra-work-xml),
+                                            xmldb:store($collection-folder, concat($workrecord-uuid, '.xml'), $vra-work-xml),
                                             sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
-                                            sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), 'rwxr-xr-x'),
+                                            sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
                                             sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group)
                                         )
                                     )
