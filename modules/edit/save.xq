@@ -398,7 +398,9 @@ return
                         sm:chown($record-path, tamboti-utils:get-username-from-path($target-collection))
                         ,
                         sm:chgrp($record-path, $config:biblio-users-group)
-                        ,                        
+                        ,
+                        sm:chmod($record-path, $config:resource-mode)
+                        ,
                         (:Remove the $doc record from temp if store in target was successful.:)
                         if (doc($record-path)) 
                         then xmldb:remove($config:mods-temp-collection, $file-to-update) 
