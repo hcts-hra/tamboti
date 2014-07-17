@@ -1,5 +1,6 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
 declare function local:set-owner($path) {
@@ -38,7 +39,7 @@ declare function local:set-owner($path) {
     )
 };
 
-let $path := "/resources/users" 
+let $path := $config:users-collection 
 return
     <result>
         {

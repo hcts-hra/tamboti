@@ -20,7 +20,7 @@ declare function local:set-group($path) {
     )
 };
 
-let $path := "/resources/users" 
+let $path := $config:users-collection 
 return
     for $user-collection-name in xmldb:get-child-collections($path)
     return local:set-group($path || "/" || $user-collection-name)
