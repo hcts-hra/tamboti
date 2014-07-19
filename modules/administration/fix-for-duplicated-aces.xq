@@ -1,31 +1,9 @@
 xquery version "3.0";
 
-declare function local:get-aces($collection-path as xs:anyURI) as element()* {
-    (
-        try {
-            <collection path="{$collection-path}">{sm:get-permissions($collection-path)/*}</collection>
-        } catch * {
-            <error>{"Error at: " || $collection-path}</error>
-        },
-        for $subcollection in xmldb:get-child-collections($collection-path)
-        return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection)),
-        for $resource in xmldb:get-child-resources($collection-path)
-        let $resource-path := xs:anyURI($collection-path || "/" || $resource)
-        return
-            try {
-                <resource path="{$resource-path}">{sm:get-permissions($resource-path)/*}</resource>
-            } catch * {
-                <error>{"Error at: " || $resource-path}</error>
-            }            
-            
-            
-    )
-};
-
-let $permissions := local:get-aces(xs:anyURI("/resources/users"))
+import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "../../reports/reports.xqm";
 
 let $items-with-duplicated-aces := 
-    for $item in $permissions
+    for $item in $reports:permission-elements
     let $who-attribute-values := $item/*[1]//sm:ace/@who/string()
     let $multiplicated-who-attribute-values := count($who-attribute-values[index-of($who-attribute-values, .)[2]])
     return 
@@ -35,4 +13,40 @@ let $items-with-duplicated-aces :=
             return $i
         else () 
         
-return $items-with-duplicated-aces
+return
+    <result>
+        {
+            for $item in $reports:items-with-duplicated-aces
+            let $actual-item := map:get($item, "item")
+            let $item-type := $actual-item/local-name()
+            let $duplicated-whos := map:get($item, "duplicated-whos")
+            let $item-path := xs:anyURI($actual-item/@path)
+            return
+                (
+        (:            $actual-item,:)
+                    element {$item-type} {
+                        attribute duplicated-aces {count($duplicated-whos)},
+                        attribute path {$item-path},
+                        for $duplicated-who in $duplicated-whos
+                        let $duplicated-aces := $actual-item//sm:ace[@who = $duplicated-who]
+                        return
+                            <ace>
+                                {
+                                    (
+                                        for $duplicated-ace in $duplicated-aces[position() > 1]
+                                        return
+                                            (
+                                                $duplicated-ace,
+                                                try {
+                                                    sm:remove-ace($item-path, data($duplicated-ace/@index))
+                                                } catch * {
+                                                    <error>{"Error at: " || $duplicated-ace}</error>
+                                                }
+                                            )
+                                    )
+                                }
+                            </ace>
+                    }
+                )
+        }
+    </result>
