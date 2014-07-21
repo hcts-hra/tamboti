@@ -10,11 +10,7 @@ declare option output:media-type "text/html";
 
 let $legal-groups := ($config:biblio-users-group)
 
-let $local-users := sm:get-group-members($config:biblio-users-group)
-
 let $orphaned-users := ("a02", "am370", "anna.grasskamp", "anna.vinogradova", "ce372", "chenying.pi", "christiane.brosius", "co402", "daniel.stumm", "eric.decker", "f8h", "fx400", "g05", "ge414", "gf395", "hg7", "hx405", "j0k", "j35", "jens.petersen", "johannes.alisch", "kd416", "kjc_hyperimage", "labuerr5", "lucie.bernroider", "m2b", "m5c", "marnold1", "matthias.arnold", "melissa.butcher", "mw385", "mz404", "nina.nessel", "qd418", "rg399", "roos.gerritsen", "simon.gruening", "swithan3", "ty403", "ud011", "ug400", "v4a", "vk383", "vu067", "wg397", "wmeier", "wu399")
-
-let $permission-elements-number := count($reports:permission-elements//sm:permission)
 
 let $items-with-different-mode := 
     for $item in $reports:permission-elements
@@ -59,7 +55,7 @@ return
                 let $items := $reports:permission-elements//sm:permission[@group != $legal-groups]/parent::*
                 return
                     (
-                        <h3 id="different-group">Different group (there are {count($items)} of {$permission-elements-number} items)</h3>,
+                        <h3 id="different-group">Different group (there are {count($items)} of {$reports:permission-elements-number} items)</h3>,
                         <h5>Groups presented: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
                         for $item in $items
                         let $item-type := $item/local-name()                        
@@ -80,7 +76,7 @@ return
             }
             {
                     (
-                        <h3 id="different-mode">Different mode (there are {count($items-with-different-mode)} of {$permission-elements-number} items)</h3>,
+                        <h3 id="different-mode">Different mode (there are {count($items-with-different-mode)} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $items-with-different-mode
                         let $item-type := $item/local-name()
                         return
@@ -98,7 +94,7 @@ return
             }
             {
                     (
-                        <h3 id="different-owner">Different owner (there are {count($items-with-different-owner)} of {$permission-elements-number} items)</h3>,
+                        <h3 id="different-owner">Different owner (there are {count($items-with-different-owner)} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $items-with-different-owner
                         let $item-type := $item/local-name()                        
                         return
@@ -116,10 +112,10 @@ return
             }
             {
                     (
-                        <h3 id="duplicated-aces">Duplicated ACEs (there are {count($reports:items-with-duplicated-aces)} of {$permission-elements-number} items)</h3>,
+                        <h3 id="duplicated-aces">Duplicated ACEs (there are {count($reports:items-with-duplicated-aces)} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $reports:items-with-duplicated-aces
-                        let $item-type := $item/local-name()  
                         let $actual-item := map:get($item, "item")
+                        let $item-type := $actual-item/local-name()  
                         return
                             (
                                 "The ",

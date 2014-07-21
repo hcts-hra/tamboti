@@ -33,6 +33,7 @@ declare function reports:get-users-aces($collection-path as xs:anyURI) as elemen
 };
 
 declare variable $reports:permission-elements := reports:get-users-aces(xs:anyURI($config:users-collection));
+declare variable $reports:permission-elements-number := count($reports:permission-elements//sm:permission);
 
 declare variable $reports:items-with-duplicated-aces := 
     for $item in $reports:permission-elements
