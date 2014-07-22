@@ -27,6 +27,8 @@ declare variable $config:actual-app-id := "tamboti";
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
+declare variable $config:resource-mode := "rw-------";
+declare variable $config:collection-mode := "rwxr-xr-x";
 
 (:~ Various permissions :)
 declare variable $config:commons-resources-permissions := "rwxrwxr-x";
@@ -54,8 +56,7 @@ declare variable $config:theme-config := concat($config:themes, "/configuration.
 
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, "/resources/images");
-(:declare variable $config:image-service-url := "http://kjc-ws2.kjc.uni-heidelberg.de/images/service/download_uuid/";:)
-declare variable $config:image-service-url := request:get-context-path() || "/apps/" || $config:actual-app-id || "/modules/display/image-view.xql?uuid=";
+declare variable $config:image-service-url := "../display/image-view.xql?uuid=";
 
 (: If the user has not specified a query, should he see the entire collection contents?
  : Set to true() if a query must be specified, false() to list the entire collection.

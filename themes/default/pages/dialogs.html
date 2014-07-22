@@ -35,8 +35,7 @@
         </form>
     </jquery:dialog>
     <jquery:dialog id="upload-file-dialog" class="upload-file-style" modal="true" title="File attachments" trigger="#upload-file-to-resource" width="900" onOpen="updateAttachmentDialog">
-        <script type="text/javascript">// 
-            
+        <script type="text/javascript">//
 angular.module('app', [], function() {})
 FileUploadCtrl.$inject = ['$scope']
 function FileUploadCtrl(scope) {
@@ -89,16 +88,15 @@ function FileUploadCtrl(scope) {
     //============== DRAG &amp; DROP =============
     
     scope.setFiles = function(element) {
-    scope.$apply(function(scope) {
-      //console.log('files:', element.files);
-      // Turn the FileList object into an Array
-        scope.files = []
-        for (var i = 0; i &lt; element.files.length; i++) {
-        
-          scope.files.push(element.files[i])
-        }
-      scope.progressVisible = true
-      });
+	    scope.$apply(function(scope) {
+	      //console.log('files:', element.files);
+	      // Turn the FileList object into an Array
+	        scope.files = []
+	        for (var i = 0; i &lt; element.files.length; i++) {	        
+	          scope.files.push(element.files[i])
+	        }
+	      scope.progressVisible = true
+	      });
     };
     
     scope.uploadFile = function() {
@@ -112,24 +110,19 @@ function FileUploadCtrl(scope) {
         xhr.addEventListener("error", uploadFailed, false)
         xhr.addEventListener("abort", uploadCanceled, false)
         
-        xhr.open("POST", "upload.xql")
-        scope.progressVisible = false
-         
+        xhr.open("POST", "../upload/upload.xq")
+        scope.progressVisible = false        
         
-        
-        if (document.getElementById('upload-resource-id')!=null)
-        {
+        if (document.getElementById('upload-resource-id')!=null) {
             var parent_record = document.getElementById('upload-resource-id').innerHTML
             xhr.setRequestHeader("X-File-Parent", parent_record)
         }
                 
         //for folder uploads
-	    if (document.getElementById('file-upload-folder')!=null){
+	    if (document.getElementById('file-upload-folder')!=null) {
 		  var upload_folder =  document.getElementById('file-upload-folder').innerHTML
 		  xhr.setRequestHeader("X-File-Folder", upload_folder)
-		}
-        
-       
+		}       
         
         xhr.send(fd)
         scope.files = []
@@ -163,8 +156,6 @@ function FileUploadCtrl(scope) {
         alert("The upload has been canceled by the user or the browser dropped the connection.")
     }
 }
-
-
 //</script>
         <div class="row"/>
         <div class="dropbox-wrapper">

@@ -26,26 +26,29 @@ declare function sharing:set-collection-ace-writeable($collection as xs:anyURI, 
 
 (: removes an ace on a collection and all the documents in that collection :)
 declare function sharing:remove-collection-ace($collection as xs:anyURI, $id as xs:int)  {
+    let $removed := security:remove-ace($collection, $id)
     
-    let $removed := security:remove-ace($collection, $id) return
-        if(exists(fn:not(fn:empty($removed))))then(
-            for $resource in xmldb:get-child-resources($collection)
-            let $resource-path := fn:concat($collection, "/", $resource) return
-                if(exists(security:remove-ace($resource-path, $id)))then
-                ()
-                else
-                    fn:error(xs:QName("sharing:remove-collection-ace"), fn:concat("Could not remove ace at index '", $id, "' for '", $resource-path, "'"))
-            ,
-            if($removed[1] eq "USER")then
-                sharing:send-share-user-removal-mail($collection, $removed[2])
-            else if($removed[1] eq "GROUP")then
-                sharing:send-share-group-removal-mail($collection, $removed[2])
-            else(),
-            
-            true()
+    return
+        if (exists(fn:not(fn:empty($removed))))
+        then
+            (
+                for $resource in xmldb:get-child-resources($collection)
+                let $resource-path := fn:concat($collection, "/", $resource)
+                return
+                    if (exists(security:remove-ace($resource-path, $id)))
+                    then ()
+                    else fn:error(xs:QName("sharing:remove-collection-ace"), fn:concat("Could not remove ace at index '", $id, "' for '", $resource-path, "'"))
+                ,
+                if ($removed[1] eq "USER")
+                then sharing:send-share-user-removal-mail($collection, $removed[2])
+                else 
+                    if ($removed[1] eq "GROUP")
+                    then sharing:send-share-group-removal-mail($collection, $removed[2])
+                    else()
+                ,
+                true()
         )
-        else
-           false()
+        else false()
 };
 
 (: adds a user ace on a collection, and also to all the documents in that collection (at the same acl index) :)
@@ -212,5 +215,5 @@ declare function sharing:is-valid-user-for-share($username as xs:string) as xs:b
 
 declare function sharing:is-valid-group-for-share($groupname as xs:string) as xs:boolean
 {
-    $groupname != ("SYSTEM", "guest", $security:biblio-users-group)
+    $groupname != ("SYSTEM", "guest", $config:biblio-users-group)
 };

@@ -2,17 +2,11 @@ xquery version "3.0";
 
 module namespace security="http://exist-db.org/mods/security";
 
-import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace session="http://exist-db.org/xquery/session";
-import module namespace sm="http://exist-db.org/xquery/securitymanager";
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xmldb="http://exist-db.org/xquery/xmldb";
+import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 
 declare variable $security:GUEST_CREDENTIALS := ("guest", "guest");
 declare variable $security:SESSION_USER_ATTRIBUTE := "biblio.user";
 declare variable $security:SESSION_PASSWORD_ATTRIBUTE := "biblio.password";
-declare variable $security:biblio-users-group := "biblio.users";
-
 declare variable $security:user-metadata-file := "security.metadata.xml";
 
 (:~
@@ -21,8 +15,7 @@ declare variable $security:user-metadata-file := "security.metadata.xml";
 : @param user The username of the user
 : @param password The password of the user
 :)
-declare function security:login($user as xs:string, $password as xs:string?) as xs:boolean
-{
+declare function security:login($user as xs:string, $password as xs:string?) as xs:boolean {
     let $username := config:rewrite-username(
         if ($config:force-lower-case-usernames) then
             fn:lower-case($user)
@@ -31,23 +24,25 @@ declare function security:login($user as xs:string, $password as xs:string?) as 
         )
         return
             (: authenticate against eXist-db :)
-            if (xmldb:login("/db", $username, $password)) then
-            (
-                (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
-                if (security:home-collection-exists($username)) then
+            if (xmldb:login("/db", $username, $password))
+            then
                 (
-                    (: update the last login time:)
-                    security:update-login-time($username),    
-                    true()
+                    security:store-user-credential-in-session($username, $password),
+                    (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
+                    if (security:home-collection-exists($username))
+                    then
+                        (
+                            (: update the last login time:)
+                            security:update-login-time($username),    
+                            true()
+                        )
+                    else
+                        (
+                            let $users-collection-uri := security:create-home-collection($username)
+                            return true()
+                        )
                 )
-                else
-                (
-                     let $users-collection-uri := security:create-home-collection($username) 
-                        return
-                           true()
-                )
-                
-            ) else
+            else
                 (: authentication failed:)
                 false()
 };
@@ -168,17 +163,23 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
 : Stores some basic metadata about a user into their home collection
 :)
 declare function security:create-user-metadata($user-collection-uri as xs:string, $owner as xs:string) as xs:string {
-    let $login-time := util:system-dateTime() return
-        let $metadata-doc-uri := xmldb:store($user-collection-uri, $security:user-metadata-file,
-         <security:metadata>
-             <security:last-login-time>{$login-time}</security:last-login-time>
-             <security:login-time>{$login-time}</security:login-time>
-         </security:metadata>
-        ) 
-        return
-            let $null := sm:chmod($metadata-doc-uri, "rwx------") 
-                return
-                    $metadata-doc-uri
+    let $login-time := util:system-dateTime()
+    let $metadata-doc-uri :=
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+            let $metadata-doc-uri :=
+                xmldb:store($user-collection-uri, $security:user-metadata-file,
+                    <security:metadata>
+                        <security:last-login-time>{$login-time}</security:last-login-time>
+                        <security:login-time>{$login-time}</security:login-time>
+                    </security:metadata>
+                )
+            let $chmod := sm:chmod($metadata-doc-uri, "rwx------")
+            let $chown := sm:chown($metadata-doc-uri, security:get-user-credential-from-session()[1])
+            let $chgrp := sm:chgrp($metadata-doc-uri, $config:biblio-users-group)
+            return $metadata-doc-uri
+        )
+
+    return $metadata-doc-uri
 };
 
 (:~
@@ -216,9 +217,11 @@ declare function security:get-last-login-time($user as xs:string) as xs:dateTime
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-read-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'r')
+declare function security:can-read-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "r"))
+    else sm:has-access($collection, "r")
 };
 
 (:~
@@ -227,9 +230,11 @@ declare function security:can-read-collection($collection as xs:string) as xs:bo
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-write-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'rw')
+declare function security:can-write-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "w"))
+    else sm:has-access($collection, "w")
 };
 
 (:~
@@ -238,9 +243,11 @@ declare function security:can-write-collection($collection as xs:string) as xs:b
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:can-execute-collection($collection as xs:string) as xs:boolean
-{
-    starts-with(data(sm:get-permissions(xs:anyURI($collection))/sm:permission/@mode), 'rwx')
+declare function security:can-execute-collection($collection as xs:string) as xs:boolean {
+    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
+    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        sm:has-access($collection, "x"))
+    else sm:has-access($collection, "x")
 };
 
 (:~
@@ -296,7 +303,8 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
                     "-"
                 ,
                 $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode) return
+                $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                return
                     true()
                 
             )
@@ -307,17 +315,17 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
 :   The sequence contains USER or GROUP as the first item, and then the who as the second item
 :)
 declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as xs:string* {
+    let $permissions := sm:get-permissions($resource)
+    let $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id]
     
-    let $permissions := 
-        sm:get-permissions($resource),
-        $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id] 
-            return
-                if (exists($ace)) then (
-                  let $null := sm:remove-ace($resource, $id) return
-                        ($ace/@target, $ace/@who)
-                ) else (
-                    ()
-                )
+    return
+        if (exists($ace))
+        then
+            (
+                let $null := sm:remove-ace($resource, $id)
+                return ($ace/@target, $ace/@who)
+            )
+        else (())
 };
 
 (: adds a group ace and returns its index:)
@@ -384,41 +392,41 @@ declare function security:grant-parent-owner-access-if-foreign-collection($colle
 : Resources always inherit the permissions of the parent collection
 :)
 declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty() {
-
-    let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1"))),
-    $this-permissions := sm:get-permissions($resource),
-	$this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1 return
-
+    let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1")))
+    let $this-permissions := sm:get-permissions($resource)
+    let $this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1
+    
+    return
         (
-            for $ace in $parent-permissions/sm:permission/sm:acl/sm:ace 
-                return             
-    				if ($ace/@target eq "USER") then
-                        sm:add-user-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
-                    else 
-                        if ($ace/@target eq "GROUP") then
-                        sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
-                        else ()
+            for $ace in $parent-permissions/sm:permission/sm:acl/sm:ace
+            return
+                if ($ace/@target eq "USER")
+                then sm:add-user-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
+                else
+                    if ($ace/@target eq "GROUP")
+                    then sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
+                    else ()
 			,
-            if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner) then
-                let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1") 
-                    return
-                        sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
+            if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner)
+            then
+                let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1")
+                return sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
             else ()
     		,
-            if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group) then
+            if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group)
+            then
                 let $group-mode := fn:replace($parent-permissions/sm:permission/@mode, "...(...)...", "$1") 
-                    return
-                        sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
+                return sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
             else ()
 			,
 			(: clear any prev entries :)
-			for $i in 0 to $this-last-acl-index return
-				sm:remove-ace($resource, $i)
+			for $i in 0 to $this-last-acl-index
+			return sm:remove-ace($resource, $i)
         )
 };
 
 declare function security:is-biblio-user($username as xs:string) as xs:boolean {
-    sm:user-exists($username) and xmldb:get-user-groups($username) = $security:biblio-users-group
+    sm:user-exists($username) and xmldb:get-user-groups($username) = $config:biblio-users-group
 };
 
 declare function security:get-owner($path as xs:string) as xs:string
@@ -430,6 +438,20 @@ declare function security:get-owner($path as xs:string) as xs:string
 declare function security:get-group($path as xs:string) as xs:string
 {
 	data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
+};
+
+declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+        for $ace in sm:get-permissions(xs:anyURI($source-path))//sm:ace
+            let $target := $ace/@target
+            let $who := $ace/@who
+            let $access_type := if ($ace/@access_type = 'ALLOWED') then true() else false()
+            let $mode := $ace/@mode
+            return
+                if ($target = 'USER')
+                then (sm:add-user-ace(xs:anyURI($target-path), $who, $access_type, $mode))
+                else (sm:add-group-ace(xs:anyURI($target-path), $who, $access_type, $mode))
+    )
 };
 
 (:NB: below, commented out group-related functions, not used yet:)

@@ -8,6 +8,10 @@ declare variable $image-service:root-collection := "/db/resources/";
 declare function image-service:get-image-vra($uuid) {
     let $col := collection($image-service:root-collection)
     let $imageVRA := $col//vra-ns:vra/vra-ns:image[@id=$uuid]
-        return $imageVRA
+    return 
+        if(count($imageVRA) > 0) then
+            $imageVRA
+        else
+            false()
 };
 
