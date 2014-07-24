@@ -27,6 +27,13 @@ let $items-with-different-owner :=
         if ($item/sm:permission[@owner != $user-name])
         then $item
         else ()
+        
+let $items-with-orphaned-users := 
+    for $item in $reports:permission-elements
+    return
+        if ($item/sm:permission/@owner = $orphaned-users)
+        then ()
+        else $item
 
 return
     <html>
@@ -50,6 +57,7 @@ return
                 <li><a href="#different-mode">Different mode</a></li>
                 <li><a href="#different-owner">Different owner</a></li>
                 <li><a href="#duplicated-aces">Duplicated ACEs</a></li>
+                <li><a href="#orphaned-users">Orphaned Usernames</a></li>
             </ul>
             {
                 let $items := $reports:permission-elements//sm:permission[@group != $legal-groups]/parent::*
@@ -128,6 +136,24 @@ return
                                 <br />
                             )                            
                     )
-            }            
+            }
+            {
+                    (
+                        <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
+                        for $item in $items-with-orphaned-users
+                        let $item-type := $item/local-name()  
+                        return
+                            (
+                                "The ",
+                                $item-type,
+                                " '",
+                                <span class="item-name">{$item/@path/string()}</span>,
+                                "' is having the orphaned username '",
+                                <span class="item-attribute">{$item/*[1]/@owner/string()}</span>,
+                                "' as owner.",
+                                <br />
+                            )                            
+                    )
+            } 
         </body>
     </html>
