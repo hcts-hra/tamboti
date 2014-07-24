@@ -11,7 +11,6 @@ import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/repor
         let $item-path := xs:anyURI($actual-item/@path)
         return
             (
-    (:            $actual-item,:)
                 element {$item-type} {
                     attribute duplicated-aces {count($duplicated-whos)},
                     attribute path {$item-path},
@@ -37,4 +36,4 @@ import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/repor
                 }
             )
     }
-    </result>
+</result>
