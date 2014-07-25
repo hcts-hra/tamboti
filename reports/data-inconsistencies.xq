@@ -30,10 +30,17 @@ let $items-with-different-owner :=
         
 let $items-with-orphaned-users := 
     for $item in $reports:permission-elements
+    let $username-attrs := ($item/sm:permission/@owner, $item//sm:ace/@who)
     return
-        if ($item/sm:permission/@owner = $orphaned-users)
-        then ()
-        else $item
+        for $username-attr in $username-attrs
+        let $orphaned-username := data($username-attr)
+        return
+            if ($orphaned-username = $orphaned-users)
+            then map{
+                "item" := $username-attr/parent::*/ancestor::*[last()],
+                "orphaned-username" := $orphaned-username
+            }            
+            else ()
 
 return
     <html>
@@ -57,7 +64,7 @@ return
                 <li><a href="#different-mode">Different mode</a></li>
                 <li><a href="#different-owner">Different owner</a></li>
                 <li><a href="#duplicated-aces">Duplicated ACEs</a></li>
-                <li><a href="#orphaned-users">Orphaned Usernames</a></li>
+                <li><a href="#orphaned-users">Orphaned usernames</a></li>
             </ul>
             {
                 let $items := $reports:permission-elements//sm:permission[@group != $legal-groups]/parent::*
@@ -141,15 +148,16 @@ return
                     (
                         <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $items-with-orphaned-users
-                        let $item-type := $item/local-name()  
+                        let $actual-item := map:get($item, "item")
+                        let $item-type := $actual-item/local-name()  
                         return
                             (
                                 "The ",
                                 $item-type,
                                 " '",
-                                <span class="item-name">{$item/@path/string()}</span>,
+                                <span class="item-name">{$actual-item/@path/string()}</span>,
                                 "' is having the orphaned username '",
-                                <span class="item-attribute">{$item/*[1]/@owner/string()}</span>,
+                                <span class="item-attribute">{map:get($item, "orphaned-username")}</span>,
                                 "' as owner.",
                                 <br />
                             )                            
