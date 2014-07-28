@@ -10,8 +10,8 @@ declare option output:media-type "text/html";
 
 let $legal-groups := ($config:biblio-users-group)
 
-let $orphaned-users := ("a02", "am370", "anna.grasskamp", "anna.vinogradova", "ce372", "chenying.pi", "christiane.brosius", "co402", "daniel.stumm", "eric.decker", "f8h", "fx400", "g05", "ge414", "gf395", "hg7", "hx405", "j0k", "j35", "jens.petersen", "johannes.alisch", "kd416", "kjc_hyperimage", "labuerr5", "lucie.bernroider", "m2b", "m5c", "marnold1", "matthias.arnold", "melissa.butcher", "mw385", "mz404", "nina.nessel", "qd418", "rg399", "roos.gerritsen", "simon.gruening", "swithan3", "ty403", "ud011", "ug400", "v4a", "vk383", "vu067", "wg397", "wmeier", "wu399")
-
+let $items-with-different-group := $reports:permission-elements//sm:permission[@group != $legal-groups]/parent::*
+        
 let $items-with-different-mode := 
     for $item in $reports:permission-elements
     return
@@ -27,13 +27,6 @@ let $items-with-different-owner :=
         if ($item/sm:permission[@owner != $user-name])
         then $item
         else ()
-        
-let $items-with-orphaned-users := 
-    for $item in $reports:permission-elements
-    return
-        if ($item/sm:permission/@owner = $orphaned-users)
-        then ()
-        else $item
 
 return
     <html>
@@ -57,30 +50,28 @@ return
                 <li><a href="#different-mode">Different mode</a></li>
                 <li><a href="#different-owner">Different owner</a></li>
                 <li><a href="#duplicated-aces">Duplicated ACEs</a></li>
-                <li><a href="#orphaned-users">Orphaned Usernames</a></li>
+                <li><a href="#orphaned-users">Orphaned usernames</a></li>
             </ul>
             {
-                let $items := $reports:permission-elements//sm:permission[@group != $legal-groups]/parent::*
-                return
-                    (
-                        <h3 id="different-group">Different group (there are {count($items)} of {$reports:permission-elements-number} items)</h3>,
-                        <h5>Groups presented: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
-                        for $item in $items
-                        let $item-type := $item/local-name()                        
-                        return
-                            (
-                                "The ",
-                                $item-type,
-                                " '",
-                                <span class="item-name">{$item/@path/string()}</span>,
-                                "' is having the owner '",
-                                <span class="item-name">{$item/*[1]/@owner/string()}</span>,
-                                "' and the group '",
-                                <span class="item-attribute">{$item/*[1]/@group/string()}</span>,
-                                "'.",
-                                <br />
-                            )
-                    )
+                (
+                    <h3 id="different-group">Different group (there are {count($items-with-different-group)} of {$reports:permission-elements-number} items)</h3>,
+                    <h5>Groups presented: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
+                    for $item in $items-with-different-group
+                    let $item-type := $item/local-name()                        
+                    return
+                        (
+                            "The ",
+                            $item-type,
+                            " '",
+                            <span class="item-name">{$item/@path/string()}</span>,
+                            "' is having the owner '",
+                            <span class="item-name">{$item/*[1]/@owner/string()}</span>,
+                            "' and the group '",
+                            <span class="item-attribute">{$item/*[1]/@group/string()}</span>,
+                            "'.",
+                            <br />
+                        )
+                )
             }
             {
                     (
@@ -139,17 +130,18 @@ return
             }
             {
                     (
-                        <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
-                        for $item in $items-with-orphaned-users
-                        let $item-type := $item/local-name()  
+                        <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($reports:items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
+                        for $item in $reports:items-with-orphaned-users
+                        let $actual-item := map:get($item, "item")
+                        let $item-type := $actual-item/local-name()  
                         return
                             (
                                 "The ",
                                 $item-type,
                                 " '",
-                                <span class="item-name">{$item/@path/string()}</span>,
+                                <span class="item-name">{$actual-item/@path/string()}</span>,
                                 "' is having the orphaned username '",
-                                <span class="item-attribute">{$item/*[1]/@owner/string()}</span>,
+                                <span class="item-attribute">{map:get($item, "orphaned-username")}</span>,
                                 "' as owner.",
                                 <br />
                             )                            

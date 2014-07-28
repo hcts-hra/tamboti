@@ -27,6 +27,8 @@ declare variable $config:actual-app-id := "tamboti";
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
+declare variable $config:special-users := ("admin", $config:biblio-admin-user, "guest", "testuser1", "testuser2", "testuser3", "heraeditor", "vma-editor", "freizo-editor");
+
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwxr-xr-x";
 
@@ -90,7 +92,7 @@ declare function config:rewrite-username($username as xs:string) as xs:string {
         $username
     return
     
-        if(fn:ends-with(fn:lower-case($username), fn:concat("@", $config:enforced-realm-id)) or fn:lower-case($username) = ("admin", $config:biblio-admin-user, "guest","testuser1","testuser2","testuser3")) then
+        if(fn:ends-with(fn:lower-case($username), fn:concat("@", $config:enforced-realm-id)) or fn:lower-case($username) = $config:special-users) then
             $username
         else
             fn:concat($username, "@", $config:enforced-realm-id)
