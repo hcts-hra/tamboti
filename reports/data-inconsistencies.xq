@@ -51,6 +51,7 @@ return
                 <li><a href="#different-owner">Different owner</a></li>
                 <li><a href="#duplicated-aces">Duplicated ACEs</a></li>
                 <li><a href="#orphaned-users">Orphaned usernames</a></li>
+                <li><a href="#encoded-at-sign">Encoded at sign</a></li>
             </ul>
             {
                 (
@@ -146,6 +147,23 @@ return
                                 <br />
                             )                            
                     )
-            } 
+            }
+
+            {
+                    (
+                        <h3 id="encoded-at-sign">Encoded at sign (there are {count($reports:items-with-encoded-at-sign)} of {$reports:permission-elements-number} items)</h3>,
+                        for $item in $reports:items-with-encoded-at-sign
+                        let $item-type := $item/local-name()  
+                        return
+                            (
+                                "The ",
+                                $item-type,
+                                " '",
+                                <span class="item-name">{$item/@path/string()}</span>,
+                                "' is having encoded at sign in name.",
+                                <br />
+                            )                            
+                    )
+            }            
         </body>
     </html>
