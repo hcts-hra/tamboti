@@ -173,7 +173,7 @@ declare function security:create-user-metadata($user-collection-uri as xs:string
                         <security:login-time>{$login-time}</security:login-time>
                     </security:metadata>
                 )
-            let $chmod := sm:chmod($metadata-doc-uri, "rwx------")
+            let $chmod := sm:chmod($metadata-doc-uri, $config:resource-mode)
             let $chown := sm:chown($metadata-doc-uri, security:get-user-credential-from-session()[1])
             let $chgrp := sm:chgrp($metadata-doc-uri, $config:biblio-users-group)
             return $metadata-doc-uri
