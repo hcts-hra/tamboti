@@ -56,7 +56,7 @@ return
             {
                 (
                     <h3 id="different-group">Different group (there are {count($items-with-different-group)} of {$reports:permission-elements-number} items)</h3>,
-                    <h5>Groups presented: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
+                    <h5>Existing groups: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
                     for $item in $items-with-different-group
                     let $item-type := $item/local-name()                        
                     return
@@ -132,6 +132,7 @@ return
             {
                     (
                         <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($reports:items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
+                        <h5>Existing orphaned user accounts ({count($reports:orphaned-users)}): {string-join($reports:orphaned-users, ', ')}</h5>,
                         for $item in $reports:items-with-orphaned-users
                         let $actual-item := map:get($item, "item")
                         let $item-type := $actual-item/local-name()  
