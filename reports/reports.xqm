@@ -66,3 +66,12 @@ declare variable $reports:items-with-orphaned-users :=
             }            
             else ()
 ;
+
+declare variable $reports:items-with-encoded-at-sign := 
+    for $item in $reports:permission-elements
+    let $item-path := $item/@path/string()
+    return
+        if (contains($item-path, '%40'))
+        then $item
+        else ()
+;

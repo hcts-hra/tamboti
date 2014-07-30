@@ -364,33 +364,3 @@ function FileUploadCtrl(scope) {
 		<span class="clear" />
 	</div>
 </div>
-
-<input ng-click="uploadFile()" value="Upload" type="button">
-<div style="display: none;" ng-show="progressVisible">
-	<div class="percent ng-binding">%</div>
-	<div class="progress-bar">
-		<div style="" class="uploaded" ng-style="{'width': progress+'%'}"></div>
-	</div>
-</div>
-
-
-
-<div class="ng-scope" ng-repeat="file in files.slice(0)">
-	<table>
-		<tbody>
-			<tr>
-				<td class="ng-binding" colspan="1">aa.jpeg</td>
-				<td ng-switch="file.size > 1024*1024" colspan="1"><span
-					class="ng-binding">0.00 MB</span><span class="ng-binding">4.50
-						kB</span></td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-<input ng-click="uploadFile()" value="Upload" type="button">
-<div style="display: none;" ng-show="progressVisible">
-	<div class="percent ng-binding">%</div>
-	<div class="progress-bar">
-		<div style="" class="uploaded" ng-style="{'width': progress+'%'}"></div>
-	</div>
-</div>
