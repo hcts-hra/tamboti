@@ -1,6 +1,7 @@
 xquery version "3.0";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "../../reports/reports.xqm";
 
 declare function local:set-mode($path) {
     (
@@ -19,5 +20,7 @@ declare function local:set-mode($path) {
     )
 };
 
-for $user-collection-name in xmldb:get-child-collections($config:users-collection)
-return local:set-mode($config:users-collection || "/" || $user-collection-name)
+for $collection-path in $reports:collections
+return
+    for $collection-name in xmldb:get-child-collections($collection-path)
+    return local:set-mode($collection-path || "/" || $collection-name)
