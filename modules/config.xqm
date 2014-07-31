@@ -47,7 +47,7 @@ declare variable $config:edit-app-root := concat($config:app-root, "/modules/edi
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ad.uni-heidelberg.de";
 
-declare variable $config:users-collection := fn:concat($config:mods-root, "/users");
+declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
 declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
 
 declare variable $config:mods-temp-collection := "/resources/temp";
