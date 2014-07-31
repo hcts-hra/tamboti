@@ -27,6 +27,13 @@ let $items-with-different-owner :=
         if ($item/sm:permission[@owner != $user-name])
         then $item
         else ()
+        
+let $items-with-different-group-number := count($items-with-different-group)
+let $items-with-different-mode-number := count($items-with-different-mode)
+let $items-with-different-owner-number := count($items-with-different-owner)
+let $items-with-duplicated-aces-number := count($reports:items-with-duplicated-aces)
+let $items-with-orphaned-users-number := count($reports:items-with-orphaned-users)
+let $items-with-encoded-at-sign-number := count($reports:items-with-encoded-at-sign)
 
 return
     <html>
@@ -46,16 +53,16 @@ return
         <body>
             <h2>Data inconsistencies</h2>
             <ul>
-                <li><a href="#different-group">Different group</a></li>
-                <li><a href="#different-mode">Different mode</a></li>
-                <li><a href="#different-owner">Different owner</a></li>
-                <li><a href="#duplicated-aces">Duplicated ACEs</a></li>
-                <li><a href="#orphaned-users">Orphaned usernames</a></li>
-                <li><a href="#encoded-at-sign">Encoded at sign</a></li>
+                <li><a href="#different-group">Different group</a> ({$items-with-different-group-number} items)</li>
+                <li><a href="#different-mode">Different mode</a> ({$items-with-different-mode-number} items)</li>
+                <li><a href="#different-owner">Different owner</a> ({$items-with-different-owner-number} items)</li>
+                <li><a href="#duplicated-aces">Duplicated ACEs</a> ({$items-with-duplicated-aces-number} items)</li>
+                <li><a href="#orphaned-users">Orphaned usernames</a> ({$items-with-orphaned-users-number} items)</li>
+                <li><a href="#encoded-at-sign">Encoded at sign</a> ({$items-with-encoded-at-sign-number} items)</li>
             </ul>
             {
                 (
-                    <h3 id="different-group">Different group (there are {count($items-with-different-group)} of {$reports:permission-elements-number} items)</h3>,
+                    <h3 id="different-group">Different group (there are {$items-with-different-group-number} of {$reports:permission-elements-number} items)</h3>,
                     <h5>Existing groups: {string-join(distinct-values($reports:permission-elements//sm:permission/@group), ', ')}</h5>,
                     for $item in $items-with-different-group
                     let $item-type := $item/local-name()                        
@@ -76,7 +83,7 @@ return
             }
             {
                     (
-                        <h3 id="different-mode">Different mode (there are {count($items-with-different-mode)} of {$reports:permission-elements-number} items)</h3>,
+                        <h3 id="different-mode">Different mode (there are {$items-with-different-mode-number} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $items-with-different-mode
                         let $item-type := $item/local-name()
                         return
@@ -94,7 +101,7 @@ return
             }
             {
                     (
-                        <h3 id="different-owner">Different owner (there are {count($items-with-different-owner)} of {$reports:permission-elements-number} items)</h3>,
+                        <h3 id="different-owner">Different owner (there are {$items-with-different-owner-number} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $items-with-different-owner
                         let $item-type := $item/local-name()                        
                         return
@@ -112,7 +119,7 @@ return
             }
             {
                     (
-                        <h3 id="duplicated-aces">Duplicated ACEs (there are {count($reports:items-with-duplicated-aces)} of {$reports:permission-elements-number} items)</h3>,
+                        <h3 id="duplicated-aces">Duplicated ACEs (there are {$items-with-duplicated-aces-number} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $reports:items-with-duplicated-aces
                         let $actual-item := map:get($item, "item")
                         let $item-type := $actual-item/local-name()  
@@ -131,7 +138,7 @@ return
             }
             {
                     (
-                        <h3 id="orphaned-users">Orpahed usernames as owners (there are {count($reports:items-with-orphaned-users)} of {$reports:permission-elements-number} items)</h3>,
+                        <h3 id="orphaned-users">Orpahed usernames as owners (there are {$items-with-orphaned-users-number} of {$reports:permission-elements-number} items)</h3>,
                         <h5>Existing orphaned user accounts ({count($reports:orphaned-users)}): {string-join($reports:orphaned-users, ', ')}</h5>,
                         for $item in $reports:items-with-orphaned-users
                         let $actual-item := map:get($item, "item")
@@ -152,7 +159,7 @@ return
 
             {
                     (
-                        <h3 id="encoded-at-sign">Encoded at sign (there are {count($reports:items-with-encoded-at-sign)} of {$reports:permission-elements-number} items)</h3>,
+                        <h3 id="encoded-at-sign">Encoded at sign (there are {$items-with-encoded-at-sign-number} of {$reports:permission-elements-number} items)</h3>,
                         for $item in $reports:items-with-encoded-at-sign
                         let $item-type := $item/local-name()  
                         return

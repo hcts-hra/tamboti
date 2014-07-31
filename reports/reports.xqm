@@ -26,13 +26,15 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
     )
 };
 
-declare function reports:get-users-aces($collection-path as xs:anyURI) as element()* {
-    for $subcollection in xmldb:get-child-collections($collection-path)
-        return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
+declare function reports:get-permissions($collection-paths as xs:string*) as element()* {
+    for $collection-path in $collection-paths
+    return
+        for $subcollection in xmldb:get-child-collections($collection-path)
+            return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
     
 };
 
-declare variable $reports:permission-elements := reports:get-users-aces(xs:anyURI($config:users-collection));
+declare variable $reports:permission-elements := reports:get-permissions(($config:mods-commons, $config:users-collection));
 declare variable $reports:permission-elements-number := count($reports:permission-elements//sm:permission);
 declare variable $reports:orphaned-users :=
     for $user-account-file-name in xmldb:get-child-resources("/db/system/security/LDAP/accounts")[not(contains(., '@ad.uni-heidelberg.de'))]
