@@ -120,9 +120,9 @@ util:log($log-level, fn:concat("Config: Creating commons collection '", $commons
     ),
     util:log($log-level, "...Config: Uploading samples data..."),
         xdb:store-files-from-pattern($sociology-collection, $dir, "data/sociology/*.xml"),
-        local:set-resources-properties($sociology-collection, $config:commons-collections-permissions),
+        local:set-resources-properties($sociology-collection, $config:resource-mode),
         xdb:store-files-from-pattern($exist-db-collection, $dir, "data/eXist/*.xml"),
-        local:set-resources-properties($exist-db-collection, $config:commons-collections-permissions),
+        local:set-resources-properties($exist-db-collection, $config:resource-mode),
     util:log($log-level, "...Config: Done Uploading samples data."),
 util:log($log-level, "Config: Done."), 
 
