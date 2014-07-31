@@ -736,3 +736,31 @@ declare function security:find-collections-with-group($collection-path as xs:str
 		)
 };
 :)
+
+declare function security:copy-collection-acl-to-child-resources($collection as xs:anyURI) {
+    for $resource-name in xmldb:get-child-resources($collection)
+        return
+            (
+                (: first remove ACL on resource :)
+                sm:clear-acl(xs:anyURI($collection || "/" || $resource-name)),
+                (: add each ACE from collection to resource:)
+                security:duplicate-acl($collection, $collection || "/" || $resource-name)
+            )
+};
+
+declare function security:copy-tamboti-collection-user-acl($collection as xs:anyURI) {
+    (: update ACL for resources in parent collection  :)
+    security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
+    
+    if (xmldb:collection-available($collection || "/VRA_images")) then
+        (
+            (: update ACL for VRA_images collection  :)
+            sm:clear-acl(xs:anyURI($collection || "/VRA_images")),
+            security:duplicate-acl($collection, $collection || "/VRA_images"),
+            (: update ACL for resources in VRA_images   :)
+            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/VRA_images"))
+        )
+    else
+        ()
+
+};
