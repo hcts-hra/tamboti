@@ -9,7 +9,7 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
         try {
             <collection path="{$collection-path}">{sm:get-permissions($collection-path)/*}</collection>
         } catch * {
-            <error>{"Error '" || $err:description || "' at: " || $collection-path}</error>
+            <collection path="Error: {$collection-path}">{"Error '" || $err:description || "' at: " || $collection-path}</collection>
         }
         ,
         for $subcollection in xmldb:get-child-collections($collection-path)
@@ -21,7 +21,7 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
             try {
                 <resource path="{$resource-path}">{sm:get-permissions($resource-path)/*}</resource>
             } catch * {
-                <error>{"Error '" || $err:description || "' at: " || $resource-path}</error>
+                <resource path="Error: {$resource-path}">{"Error '" || $err:description || "' ('" || $err:code || "') at: " || $resource-path}</resource>
             }
     )
 };
@@ -34,7 +34,8 @@ declare function reports:get-permissions($collection-paths as xs:string*) as ele
     
 };
 
-declare variable $reports:permission-elements := reports:get-permissions(($config:mods-commons, $config:users-collection));
+declare variable $reports:collections := ($config:mods-commons, $config:users-collection);
+declare variable $reports:permission-elements := reports:get-permissions($reports:collections);
 declare variable $reports:permission-elements-number := count($reports:permission-elements//sm:permission);
 declare variable $reports:orphaned-users :=
     for $user-account-file-name in xmldb:get-child-resources("/db/system/security/LDAP/accounts")[not(contains(., '@ad.uni-heidelberg.de'))]

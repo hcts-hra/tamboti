@@ -21,10 +21,16 @@ let $items-with-different-mode :=
         
 let $items-with-different-owner := 
     for $item in $reports:permission-elements
-    let $user-name := substring-after($item/@path, $config:users-collection || "/")
-    let $user-name := if (contains($user-name, "/")) then (substring-before($user-name, "/")) else ($user-name)
+    let $item-path := $item/@path
+    let $username :=
+        if (contains($item-path, $config:users-collection))
+        then
+            let $raw-username := substring-after($item/@path, $config:users-collection || "/")
+            return if (contains($raw-username, "/")) then (substring-before($raw-username, "/")) else ($raw-username)
+        else "editor"
+        
     return
-        if ($item/sm:permission[@owner != $user-name])
+        if ($item/sm:permission[@owner != $username])
         then $item
         else ()
         
