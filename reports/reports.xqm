@@ -4,7 +4,7 @@ module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
 
-declare function local:get-aces($collection-path as xs:anyURI) as element()* {
+declare function reports:get-aces($collection-path as xs:anyURI) as element()* {
     (
         try {
             <collection path="{$collection-path}">{sm:get-permissions($collection-path)/*}</collection>
@@ -13,7 +13,7 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
         }
         ,
         for $subcollection in xmldb:get-child-collections($collection-path)
-        return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
+        return reports:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
         ,
         for $resource in xmldb:get-child-resources($collection-path)
         let $resource-path := xs:anyURI($collection-path || "/" || $resource)
@@ -30,7 +30,7 @@ declare function reports:get-permissions($collection-paths as xs:string*) as ele
     for $collection-path in $collection-paths
     return
         for $subcollection in xmldb:get-child-collections($collection-path)
-            return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
+            return reports:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
     
 };
 

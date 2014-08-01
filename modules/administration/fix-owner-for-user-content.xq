@@ -1,11 +1,15 @@
 xquery version "3.0";
 
-import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
+import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "../../reports/reports.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
 declare function local:set-owner($path) {
     (
-    let $owner := tamboti-utils:get-username-from-path($path) 
+    let $owner :=
+        if (contains($path, $config:users-collection))
+        then tamboti-utils:get-username-from-path($path) 
+        else "editor"    
     return
         (
         for $collection in xmldb:get-child-collections($path)
@@ -39,12 +43,11 @@ declare function local:set-owner($path) {
     )
 };
 
-let $path := $config:users-collection 
-return
-    <result>
-        {
-            for $user-collection-name in xmldb:get-child-collections($path)
-            return local:set-owner($path || "/" || $user-collection-name)
-        }
-    </result>
-    
+<result>
+    {
+        for $collection-path in $reports:collections
+        return
+            for $collection-name in xmldb:get-child-collections($collection-path)
+            return local:set-owner($collection-path || "/" || $collection-name) 
+    }
+</result>
