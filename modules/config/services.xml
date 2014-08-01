@@ -1,0 +1,48 @@
+<services>
+    <service>
+        <image-service name="local">
+            <uri type="get" name="tamboti-thumbnail">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://localhost:8080/exist/apps/tamboti/modules/display/image-view.xql?uuid=[1]&amp;width=40&amp;height=40</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-size150">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://localhost:8080/exist/apps/tamboti/modules/display/image-view.xql?uuid=[1]&amp;width=150</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-size1000">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://localhost:8080/exist/apps/tamboti/modules/display/image-view.xql?uuid=[1]&amp;width=1000</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-full">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://localhost:8080/exist/apps/tamboti/modules/display/image-view.xql?uuid=[1]</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+        </image-service>
+        <image-service name="ppcol-service">
+            <uri type="get" name="tamboti-thumbnail">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://kjc-sv016.kjc.uni-heidelberg.de:8600/images/service/download_uuid/[1]?width=40&amp;height=40&amp;crop_type=middle</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-size150">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://kjc-sv016.kjc.uni-heidelberg.de:8600/images/service/download_uuid/[1]?width=150</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-size1000">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://kjc-sv016.kjc.uni-heidelberg.de:8600/images/service/download_uuid/[1]?width=1000</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+            <uri type="get" name="tamboti-full">
+                <authentication/> <!-- username/password or API-Key etc -->
+                <url>http://kjc-sv016.kjc.uni-heidelberg.de:8600/images/service/download_uuid/[1]</url>
+                <element-query key="1">@id</element-query>
+            </uri>
+        </image-service>
+    </service>
+</services>
