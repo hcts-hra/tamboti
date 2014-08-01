@@ -373,6 +373,7 @@ function initCollectionTree() {
     var dynaTree = $('#collection-tree-tree');
     var treeDiv = $('#collection-tree-main').css('display', 'none');
     dynaTree.dynatree({
+        minExpandLevel: 2,
         fx: {height: "toggle", duration: 200},
         persist: true,
         initAjax: {
