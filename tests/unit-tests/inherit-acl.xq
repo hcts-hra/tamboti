@@ -52,7 +52,8 @@ declare function local:inherit-tamboti-collection-user-acl($collection as xs:any
         ()
 
 };
+    
+let $collection-path := "/resources/commons/"
+for $collection-name in xmldb:get-child-collections($collection-path)
+return local:inherit-tamboti-collection-user-acl(xs:anyURI($collection-path || $collection-name || "/"))
 
-let $collection-path := xs:anyURI("/resources/users/freizo-editor/")
-return 
-    local:inherit-tamboti-collection-user-acl($collection-path)
