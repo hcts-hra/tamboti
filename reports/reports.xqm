@@ -4,16 +4,16 @@ module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
 
-declare function local:get-aces($collection-path as xs:anyURI) as element()* {
+declare function reports:get-aces($collection-path as xs:anyURI) as element()* {
     (
         try {
             <collection path="{$collection-path}">{sm:get-permissions($collection-path)/*}</collection>
         } catch * {
-            <error>{"Error '" || $err:description || "' at: " || $collection-path}</error>
+            <collection path="Error: {$collection-path}">{"Error '" || $err:description || "' at: " || $collection-path}</collection>
         }
         ,
         for $subcollection in xmldb:get-child-collections($collection-path)
-        return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
+        return reports:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
         ,
         for $resource in xmldb:get-child-resources($collection-path)
         let $resource-path := xs:anyURI($collection-path || "/" || $resource)
@@ -21,7 +21,7 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
             try {
                 <resource path="{$resource-path}">{sm:get-permissions($resource-path)/*}</resource>
             } catch * {
-                <error>{"Error '" || $err:description || "' at: " || $resource-path}</error>
+                <resource path="Error: {$resource-path}">{"Error '" || $err:description || "' ('" || $err:code || "') at: " || $resource-path}</resource>
             }
     )
 };
@@ -30,11 +30,12 @@ declare function reports:get-permissions($collection-paths as xs:string*) as ele
     for $collection-path in $collection-paths
     return
         for $subcollection in xmldb:get-child-collections($collection-path)
-            return local:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
+            return reports:get-aces(xs:anyURI($collection-path || "/" || $subcollection))
     
 };
 
-declare variable $reports:permission-elements := reports:get-permissions(($config:mods-commons, $config:users-collection));
+declare variable $reports:collections := ($config:mods-commons, $config:users-collection);
+declare variable $reports:permission-elements := reports:get-permissions($reports:collections);
 declare variable $reports:permission-elements-number := count($reports:permission-elements//sm:permission);
 declare variable $reports:orphaned-users :=
     for $user-account-file-name in xmldb:get-child-resources("/db/system/security/LDAP/accounts")[not(contains(., '@ad.uni-heidelberg.de'))]

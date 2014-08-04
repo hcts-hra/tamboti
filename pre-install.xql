@@ -116,13 +116,13 @@ util:log($log-level, "Config: Done."),
 util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
     for $col in ($sociology-collection, $exist-db-collection(:, $mads-collection:)) return
     (
-        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), $config:commons-resources-permissions)
+        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), $config:commons-collections-permissions)
     ),
     util:log($log-level, "...Config: Uploading samples data..."),
         xdb:store-files-from-pattern($sociology-collection, $dir, "data/sociology/*.xml"),
-        local:set-resources-properties($sociology-collection, $config:commons-resources-permissions),
+        local:set-resources-properties($sociology-collection, $config:resource-mode),
         xdb:store-files-from-pattern($exist-db-collection, $dir, "data/eXist/*.xml"),
-        local:set-resources-properties($exist-db-collection, $config:commons-resources-permissions),
+        local:set-resources-properties($exist-db-collection, $config:resource-mode),
     util:log($log-level, "...Config: Done Uploading samples data."),
 util:log($log-level, "Config: Done."), 
 

@@ -29,11 +29,10 @@ declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
 declare variable $config:special-users := ("admin", $config:biblio-admin-user, "guest", "testuser1", "testuser2", "testuser3", "heraeditor", "vma-editor", "freizo-editor");
 
+(:~ Various permissions :)
+declare variable $config:commons-collections-permissions := "rwxrwxr-x";
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwxr-xr-x";
-
-(:~ Various permissions :)
-declare variable $config:commons-resources-permissions := "rwxrwxr-x";
 
 declare variable $config:mods-root := "/resources";
 declare variable $config:mods-root-minus-temp := ("/resources/commons","/resources/users", "/resources/groups");
@@ -47,7 +46,7 @@ declare variable $config:edit-app-root := concat($config:app-root, "/modules/edi
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ad.uni-heidelberg.de";
 
-declare variable $config:users-collection := fn:concat($config:mods-root, "/users");
+declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
 declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
 
 declare variable $config:mods-temp-collection := "/resources/temp";
