@@ -7,9 +7,8 @@ import module namespace mail = "http://exist-db.org/xquery/mail";
 import module namespace security = "http://exist-db.org/mods/security" at "security.xqm";
 import module namespace functx="http://www.functx.com";
 
-(: sets an ace on a collection and all the documents in that collection :) 
+(: sets an ace on a collection and all the documents in that collection :)
 declare function sharing:set-collection-ace-writeable($collection as xs:anyURI, $id as xs:int, $is-writeable as xs:boolean) as xs:boolean {
-    util:log("INFO", $collection),
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         let $parent-collection-result :=
             if (security:set-ace-writeable($collection, $id, $is-writeable)) then
@@ -21,7 +20,6 @@ declare function sharing:set-collection-ace-writeable($collection as xs:anyURI, 
         let $VRA-images-result :=
             if (xmldb:collection-available($collection || "/VRA_images")) then
                 (
-                    util:log("INFO", "avail: " || $collection  || "/VRA_images"),
                     sharing:set-collection-ace-writeable(xs:anyURI($collection || "/VRA_images"), $id, $is-writeable)
                 )
             else
@@ -87,7 +85,6 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                                         let $useless := 
                                             if (xmldb:collection-available($collection || "/VRA_images")) then 
                                                 (
-                                                    util:log("INFO", $collection || "/VRA_images exists!"),
                                                     sharing:add-collection-user-ace(xs:anyURI($collection || "/VRA_images"), $username)
                                                 )
                                             else ()
