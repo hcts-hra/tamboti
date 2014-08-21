@@ -8,7 +8,9 @@ cd into the tamboti directory and call ant; a file, tamboti-X.XX.xar, is created
 
 log in as admin to eXist, go to the Package Reposistory, choose tamboti-X.XX.xar and upload it.
 
-click "Install" and access tamboti at <http://localhost:8080/exist/apps/library/> or <http://localhost:8080/exist/apps/tamboti/>.
+click "Install", copy "modules/config.default.xqm" to "modules/config.xqm" and modify it for your needs. 
+
+access tamboti at <http://localhost:8080/exist/apps/library/> or <http://localhost:8080/exist/apps/tamboti/>.
 
 Note that in $EXIST_HOME/webapp/WEB-INF/controller-config.xml, the following mappings have to be set
 

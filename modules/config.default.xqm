@@ -21,7 +21,7 @@ declare variable $config:app-root :=
 ;
 
 declare variable $config:biblio-users-group := "biblio.users";
-declare variable $config:special-users := ("admin", "editor", "guest", "testuser1", "testuser2", "testuser3");
+declare variable $config:special-users := ("admin", "editor", "guest");
 
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwxr-xr-x";
