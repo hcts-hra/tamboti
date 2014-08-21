@@ -1,5 +1,5 @@
 /*Code adapted from Chris Coyier's jquery.ie6blocker.js, <http://css-tricks.com/ie-6-blocker-script/>*/
-var IE = (navigator.userAgent.indexOf("MSIE 6")>=0 || navigator.userAgent.indexOf("MSIE 11">=0)>=0) ? true: false;
+var IE = (navigator.userAgent.indexOf("MSIE 6")>=0 || navigator.userAgent.indexOf("MSIE 7">=0)>=0) ? true: false;
 if(IE){
 
 	$(function(){

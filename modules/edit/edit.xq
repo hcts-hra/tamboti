@@ -3,16 +3,13 @@ xquery version "3.0";
 (:TODO: change all 'monograph' to 'book' in tabs-data.xml and compact body files:)
 (:TODO: delete all '-compact' from ext:template in records, then delete all code that removes this from type in session.xql, edit.xql, tabs.xqm.:)
 (:TODO: Code related to MADS files.:)
-
-import module namespace request="http://exist-db.org/xquery/request";
-import module namespace sm="http://exist-db.org/xquery/securitymanager"; (:TODO move code into security module:)
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xmldb="http://exist-db.org/xquery/xmldb";
+(:TODO move code into security module:)
 
 import module namespace mods="http://www.loc.gov/mods/v3" at "tabs.xqm";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "../search/security.xqm"; (:TODO move security module up one level:)
+import module namespace uu="http://exist-db.org/mods/uri-util" at "../search/uri-util.xqm";
 
 declare namespace xf="http://www.w3.org/2002/xforms";
 declare namespace ev="http://www.w3.org/2001/xml-events";
@@ -69,11 +66,14 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     let $doc-name := concat($id, '.xml')
     let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
     (:Make the record accessible to the user alone in the temp collection.:)
-    let $null := sm:chmod(xs:anyURI($stored), "rwx------")
+    let $permissions := 
+        (
+            sm:chmod(xs:anyURI($stored), "rwx------")
+        )
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, "/commons/")) 
-        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:commons-resources-permissions)
+        then xmldb:set-resource-permissions($config:mods-temp-collection, $doc-name, "editor", "biblio.users", xmldb:string-to-permissions("rwxrwxr-x"))
         else ():)
     
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
@@ -229,7 +229,7 @@ declare function local:assemble-form($dummy-attributes as attribute()*, $style a
             <title>
                 {$header-title}
             </title> 
-
+            <script type="text/javascript" src="../session.js.xql"></script>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
             {$style}
@@ -335,7 +335,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     then (' with the title ', <strong>{$publication-title}</strong>) 
                     else ()
                 }, to be saved in <strong> {
-                    let $target-collection-display := replace(replace($target-collection, '/db/resources/users/', ''), '/db/resources/commons/', '') 
+                    let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db/resources/users/', ''), '/db/resources/commons/', '') 
                     return
                         if ($target-collection-display eq security:get-user-credential-from-session()[1])
                         then 'resources/Home'
@@ -471,8 +471,8 @@ let $tab-id :=
 let $tab-id := request:get-parameter('tab-id', $tab-id)
 
 (:Get the chosen location for the record.:)
-(:let $target-collection := request:get-parameter("collection", ''):)
-let $target-collection := config:process-request-parameter(request:get-parameter("collection", ''))
+let $target-collection := xmldb:encode-uri(request:get-parameter("collection", ''))
+(:let $target-collection := uu:escape-collection-path(request:get-parameter("collection", '')):)
 
 (:Get the id of the record, if it has one; otherwise mark it "new" in order to give it one.:)
 let $id-param := request:get-parameter('id', 'new')
@@ -503,151 +503,5 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection)
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
-
-    (:Copy the template and store it with the ID as file name.:)
-    (:First, get the right template, based on the type-request and the presence or absence of transliteration.:)
-    let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
-    let $template-request := 
-        if ($type-request = (
-                        'suebs-tibetan', 
-                        'suebs-chinese', 
-                        'insert-templates', 
-                        'new-instance', 
-                        'mads'))
-        (:These document types do not divide into latin and transliterated.:)
-        then $type-request
-        else
-            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
-            if ($transliterationOfResource) 
-            then concat($type-request, '-transliterated') 
-            else concat($type-request, '-latin') 
-    let $template := doc(concat($config:edit-app-root, '/instances/', $template-request, '.xml'))
-    
-    (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
-    let $doc-name := concat($id, '.xml')
-    let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
-    (:Make the record accessible to the user alone in the temp collection.:)
-    let $null := sm:chmod(xs:anyURI($stored), "rwx------")
-    (:If the record is created in a collection inside commons, it should be visible to all.:)
-    (:let $null := 
-        if (contains($target-collection, "/commons/")) 
-        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:commons-resources-permissions)
-        else ():)
-    
-    (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
-    let $scriptOfResource := request:get-parameter("scriptOfResource", '')
-    let $languageOfResource := request:get-parameter("languageOfResource", '')
-    let $languageOfCataloging := request:get-parameter("languageOfCataloging", '')
-    let $scriptOfCataloging := request:get-parameter("scriptOfCataloging", '')           
-    (:Parameter 'host' is used when related records with type "host" are created.:)
-    let $host := request:get-parameter('host', '')
-    
-    let $doc := doc($stored)
-          let $language-insert :=
-              <mods:language>
-                  <mods:languageTerm authority="iso639-2b" type="code">
-                      {$languageOfResource}
-                  </mods:languageTerm>
-                  <mods:scriptTerm authority="iso15924" type="code">
-                      {$scriptOfResource}
-                  </mods:scriptTerm>
-              </mods:language>
-          let $recordInfo-insert :=
-              <mods:recordInfo lang="eng" script="Latn">
-                  <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
-                  <mods:recordCreationDate encoding="w3cdtf">
-                      {current-date()}
-                  </mods:recordCreationDate>
-                  <mods:recordChangeDate encoding="w3cdtf"/>
-                  <mods:languageOfCataloging>
-                      <mods:languageTerm authority="iso639-2b" type="code">
-                          {$languageOfResource}
-                      </mods:languageTerm>
-                      <mods:scriptTerm authority="iso15924" type="code">
-                          {$scriptOfResource}
-                  </mods:scriptTerm>
-                  </mods:languageOfCataloging>
-              </mods:recordInfo>                
-    let $updates := 
-        (
-            update value $doc/mods:mods/@ID with $id,
-            update value $doc/mads:mads/@ID with $id,
-            update insert $language-insert into $doc/mods:mods,
-            update insert $recordInfo-insert into $doc/mods:mods,
-              update insert
-                  <extension xmlns="http://www.loc.gov/mods/v3" xmlns:e="http://exist-db.org/mods/extension">
-                      <ext:template>{$template-request}</ext:template>
-                      <ext:transliterationOfResource>{$transliterationOfResource}</ext:transliterationOfResource>
-                      <ext:catalogingStage/>
-                  </extension>
-              into $doc/mods:mods,
-              if ($host)
-              then
-                (
-                    update value doc($stored)/mods:mods/mods:relatedItem[string-length(@type) eq 0][1]/@type with "host",
-                    update value doc($stored)/mods:mods/mods:relatedItem[@type eq 'host'][1]/@xlink:href with concat('#', $host)
-                )
-              else ()              
-        )
-    
-    (:Note that we cannot use "update replace" if we want to keep the default namespace.:)
-
-           
-           (:
-
-          ,
-          (:If the user requests to create a related record, 
-          a record which refers to the record being browsed, 
-          insert the ID into @xlink:href on the first empty <relatedItem> in the new record.:)
-
-      )
-      
-     :) 
-
-
-
 return 
-    (:Set serialization options.:)
-    (util:declare-option('exist:serialize', 'method=xhtml media-type=text/xml indent=yes process-xsl-pi=no')
-    ,
-    (:Reference the stylesheet.:)
-    processing-instruction xml-stylesheet {concat('type="text/xsl" href="', '/exist/rest/db/apps/xsltforms/xsltforms.xsl"')}
-    ,
-
-    (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">
-        <head>
-            <title>
-                {$header-title}
-            </title> 
-
-            <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
-            {$style}
-            {$model}
-        </head>
-        <body>
-    <div id="page-head">
-        <div id="page-head-left">
-            <a href="../.." style="text-decoration: none">
-                <img src="{$img-left-src}" title="{$img-left-title}" alt="{$img-left-title}" style="border-style: none;" width="250px"/>
-            </a>
-            <div class="documentation-link"><a href="../../docs/" style="text-decoration: none" target="_blank">Help</a></div>
-        </div>
-        <div id="page-head-right">
-            <a href="{$img-right-href}" target="_blank">
-                <img src="{$img-right-src}" title="{$img-right-title}" alt="{$img-right-title}" width="{$img-right-width}" style="border-style: none"/>
-            </a>
-        </div>
-    </div>
-            <div>
-            <div class="container">
-                <div>
-                    {$content}
-                </div>
-            </div>
-            </div>
-        </body>
-    </html>  )  
-    
-(:    local:assemble-form(attribute {'mods:dummy'} {'dummy'}, $style, $model, $content, false()):)
+    local:assemble-form(attribute {'mods:dummy'} {'dummy'}, $style, $model, $content, false())

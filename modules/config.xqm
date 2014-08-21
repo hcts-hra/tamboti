@@ -20,13 +20,8 @@ declare variable $config:app-root :=
         substring-before($modulePath, "/modules")
 ;
 
-declare variable $config:app-id := "tamboti";
-(: this will replace $config:app-id when theming will be solved :)
-declare variable $config:actual-app-id := "tamboti";
-
-(:~ Biblio security - admin user and users group :)
-declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
+declare variable $config:special-users := ("admin", "editor", "guest", "testuser1", "testuser2", "testuser3");
 
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwxr-xr-x";
@@ -54,8 +49,7 @@ declare variable $config:theme-config := concat($config:themes, "/configuration.
 
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, "/resources/images");
-(:declare variable $config:image-service-url := "http://kjc-ws2.kjc.uni-heidelberg.de/images/service/download_uuid/";:)
-declare variable $config:image-service-url := request:get-context-path() || "/apps/" || $config:actual-app-id || "/modules/display/image-view.xql?uuid=";
+declare variable $config:image-service-url := "/path/to/image/service";
 
 (: If the user has not specified a query, should he see the entire collection contents?
  : Set to true() if a query must be specified, false() to list the entire collection.
@@ -69,7 +63,7 @@ declare variable $config:smtp-server := "smtp.yourdomain.com";
 declare variable $config:smtp-from-address := "exist@yourdomain.com";
 
 (:~ Credentials for the dba admin user :)
-declare variable $config:dba-credentials := ("admin", "");
+declare variable $config:dba-credentials := ("admin","");
 
 declare variable $config:allow-origin := "";
 
@@ -89,12 +83,12 @@ declare function config:rewrite-username($username as xs:string) as xs:string {
         $username
     return
     
-        if(fn:ends-with(fn:lower-case($username), fn:concat("@", $config:enforced-realm-id)) or fn:lower-case($username) = ("admin", $config:biblio-admin-user, "guest","testuser1","testuser2","testuser3")) then
+        if(fn:ends-with(fn:lower-case($username), fn:concat("@", $config:enforced-realm-id)) or fn:lower-case($username) = $config:special-users) then
             $username
         else
             fn:concat($username, "@", $config:enforced-realm-id)
 };
 
 declare function config:process-request-parameter($key as xs:string?) as xs:string {
-    xmldb:encode(replace(replace($key, "%2C", ","), "%2F", "/"))
+    replace(replace($key, "%2C", ","), "%2F", "/")
 };

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "1.0";
 
 import module namespace session ="http://exist-db.org/xquery/session";
 
@@ -104,7 +104,7 @@ return
         </dispatch>
 
     else if (starts-with($exist:path, "/item/theme")) then
-        let $path := theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, substring-after($exist:path, "/item/theme"))
+        let $path := theme:resolve-uri($exist:prefix, $exist:root, substring-after($exist:path, "/item/theme"))
         let $themePath := replace($path, "^(.*)/[^/]+$", "$1")
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -130,7 +130,7 @@ return
             </dispatch>
             
     else if(fn:starts-with($exist:path, "/item/")) then
-        local:get-item($exist:controller, $exist:root, $exist:prefix || "/" || $config:app-id, $exist:path, $exist:resource, $username, $password)
+        local:get-item($exist:controller, $exist:root, $exist:prefix, $exist:path, $exist:resource, $username, $password)
         
     else
         (: everything else is passed through :)

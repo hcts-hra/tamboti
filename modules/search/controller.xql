@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "1.0";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
@@ -67,7 +67,7 @@ else if (ends-with($exist:resource, '.html')) then
     else
     (
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="{theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, concat('pages/', $exist:resource))}">
+            <forward url="{theme:resolve-uri($exist:prefix, $exist:root, concat('pages/', $exist:resource))}">
                 { local:set-user() }
             </forward>
             <view>
@@ -77,7 +77,7 @@ else if (ends-with($exist:resource, '.html')) then
             		<set-attribute name="xquery.report-errors" value="yes"/>
             		<set-attribute name="exist:root" value="{$exist:root}"/>
                     <set-attribute name="exist:path" value="{$exist:path}"/>
-                    <set-attribute name="exist:prefix" value="{$exist:prefix || "/" || $config:app-id}"/>
+                    <set-attribute name="exist:prefix" value="{$exist:prefix}"/>
                 </forward>
     		</view>
     	</dispatch>,
@@ -92,7 +92,7 @@ else if ($exist:resource eq 'retrieve') then
 
 	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 	   { local:set-user() }
-		<forward url="{ theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, 'modules/session.xql') }">
+		<forward url="{ theme:resolve-uri($exist:prefix, $exist:root, 'modules/session.xql') }">
 		</forward>
 	</dispatch>
 
@@ -102,7 +102,7 @@ else if (contains($exist:path, "/$shared/")) then
     </dispatch>
 
 else if (starts-with($exist:path, "/theme")) then
-    let $path := theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, substring-after($exist:path, "/theme"))
+    let $path := theme:resolve-uri($exist:prefix, $exist:root, substring-after($exist:path, "/theme"))
     let $themePath := replace($path, "^(.*)/[^/]+$", "$1")
     return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -124,13 +124,6 @@ else if (starts-with($exist:path, "/resources")) then
             <forward url="{$real-resources-path}">
             </forward>
         </dispatch>
-        
-else if (starts-with($exist:path, "/core")) then
-    let $real-resources-path := fn:concat(substring-before($exist:controller, "/modules/"), $exist:path) return
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="{$real-resources-path}">
-            </forward>
-        </dispatch>        
 
 else if (starts-with($exist:path, "/db")) then
     let $resource := concat("/rest", $exist:path)

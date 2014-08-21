@@ -7,7 +7,6 @@ declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace html="http://www.w3.org/1999/xhtml";
 
 import module namespace biblio="http://exist-db.org/xquery/biblio" at "application.xql";
-import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 
 declare option exist:serialize "media-type=text/json";
 
@@ -17,7 +16,7 @@ declare function local:key($key, $options) {
     concat('"', $key, '"')
 };
 
-let $collection := config:process-request-parameter(request:get-parameter("collection", $local:COLLECTION))
+let $collection := xmldb:encode(request:get-parameter("collection", $local:COLLECTION))
 let $term := request:get-parameter("term", ())
 let $field := request:get-parameter("field", "any Field (MODS, TEI, VRA, Wiki)")
 let $qnames :=

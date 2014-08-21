@@ -24,8 +24,6 @@ color scheme ends*/
 
 /*new or temporary stuff begins*/
 
-.error {color: red;}
-
 code {/*used in url generated for embedding images*/
     font-size: 75%;
 }
@@ -217,18 +215,17 @@ img {border:0;
     display: none;
 }
 
+#query-panel .search-form td input[type='image'] {
+  width: 22px;
+  margin-left:-12em;
+}
+
 #query-panel .search-form input {
     width:800px;
 }
 
 #query-panel .search-form td input{
     width:260px;    
-}
-
-.delete-search-field-button {
-  height: 16px;    
-  width: 16px !important;
-  margin-left: -12em;
 }
 
 #query-panel .advanced-search {
@@ -248,7 +245,7 @@ img {border:0;
     padding-top:2px;
 }
 
-#advanced-search-form-submit-button, #simple-search-form-submit-button
+#form-submit /*two id="form-submit"!*/
 {
     font-weight:700; 
     display:inline;
@@ -435,7 +432,6 @@ span.readable .dynatree-title {
     list-style:none;
     margin:0;
     font-size:1em;
-    height: 300px;
 }
 
 #filters ul li {
@@ -569,25 +565,6 @@ span.readable .dynatree-title {
 }
 
 /*main structures for display of search results begins*/
-#results-toolbar {
-  height: 30px;
-}
-
-#results-toolbar > * {
-  display: inline-block;
-}
-
-#ddlcb {
-  margin-right: 20px;
-  margin-left: -4px;
-}
-
-#search-list-action {
-  position: relative;
-  top: -10px;
-  margin-left: 170px;
-}
-
 #results {
     margin-top:.5em;
     overflow:auto;
@@ -641,7 +618,7 @@ span.readable .dynatree-title {
     display:block;
 }
 
-.detail-xml .magnify, .paginate_button {
+.detail-xml .magnify {
     cursor:pointer;
 }
 

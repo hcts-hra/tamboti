@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:jquery="http://exist-db.org/xquery/jquery" id="query-panel">
     <jquery:tabset id="query-tabs" on-select="searchTabSelected">
-        <jquery:tab id="simple-search-form-tab" label="Simple Search">
+        <jquery:tab id="simple" label="Simple Search">
             <form id="simple-search-form" class="search-form" action="?" name="simple-search" method="POST">
                 <table>
                     <tr>
@@ -14,7 +15,7 @@
                     <tr>
                         <td class="label">inside </td>
                         <td id="collection-path">
-                            <input class="biblio:collection-path collection-input" type="text" name="render-collection-path" readonly="true"/>
+                            <input class="biblio:collection-path collection-input" type="text" name="collection" readonly="true"/>
                         </td>
                         <td/>
                     </tr>
@@ -27,14 +28,13 @@
                                 <jquery:option value="Title"/>
                                 <jquery:option value="Date Issued"/>
                             </jquery:select>
-                            <button id="simple-search-form-submit-button" type="button">Search</button>
+                            <button name="action" id="form-submit" type="submit">Search</button>
                             <input type="hidden" name="field1" value="All"/>
                         </td>
                     </tr>
                 </table>
-                <input type="hidden" name="query-tabs" value="simple-search-form-tab"/>
+                <input type="hidden" name="query-tabs" value="simple"/>
                 <input type="hidden" name="collection-tree" value="hidden"/>
-                <input type="hidden" name="collection" value=""/>
             </form>
         </jquery:tab>
         <jquery:tab id="advanced-search-form" label="Advanced Search">
@@ -49,7 +49,7 @@
                     <tr>
                         <td class="label">inside </td>
                         <td colspan="2">
-                            <input class="biblio:collection-path collection-input" type="text" name="render-collection-path" readonly="true"/>
+                            <input class="biblio:collection-path collection-input" type="text" name="collection" readonly="true"/>
                         </td>
                     </tr>
                     <tr>
@@ -81,7 +81,7 @@
                         <td colspan="2">
                             <button id="clear-all" class="button" name="clear" value="clear" type="submit">Clear All</button>
                             <div class="advanced-search">
-                                <button id="advanced-search-form-submit-button" type="button">Search</button>
+                                <button class="advanced-search" name="action" id="form-submit" type="submit">Search</button>
                             </div>
                         </td>
                         <td/>
@@ -89,7 +89,6 @@
                 </table>
                 <input type="hidden" name="query-tabs" value="advanced-search-form"/>
                 <input type="hidden" name="collection-tree" value="hidden"/>
-                <input type="hidden" name="collection" value=""/>
             </form>
         </jquery:tab>
         <jquery:tab id="query-history" label="Query History">
@@ -111,11 +110,54 @@
             </p>
         </jquery:tab>
         <jquery:tab id="search-help" label="Search Help">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/search-help.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
+            <div xmlns:xi="http://www.w3.org/2001/XInclude">
+                <h4>Search syntax</h4>
+                <p>
+        Tamboti performs a search with the exact term you enter. A search for "Chin" does not retrieve all words beginning with "Chin"
+        ("China", "Chinese" …), but only the word "Chin" itself.</p>
+                <p>
+        You can use <em>wildcards</em> to perform broader searches. "?" can be used as a wildcard for a single
+        character and "*" for zero, one or more characters: "China" is thus found with "Ch?na" and
+        "C*a", and "China" and "Chine" are found with "Chin?", just as "China", "Chine" and
+        "Chinese" are all found with "Chin*". Note that "*" and "?" cannot occur in the
+        beginning of a word.</p>
+                <p>
+                    <em>Fuzzy searches</em> can be performed by putting "~" at the end of a word. To find "Chine", enter "China~". You can quantify the fuzziness, by appending
+        a number between 0.0 and 1.0, "complete fuzziness" (finding everything) being 0.0 and
+        complete identity being "1.0". 
+        If you append a "~" with no number, the default value 0.5 is applied.</p>
+                <p>
+                    <em>Phrases</em> can be searched for by putting them in quotation marks. Use "straight"
+        double quotation marks only.</p>
+                <p>
+        Tamboti searches for the exact word order you enter. If you enter "Reform and Progress", you will
+        only find records in which the three words occur in that exact sequence. Tamboti does not display records containing, for example, "Progress and Reform".</p>
+                <p>
+        Note that Chinese, Japanese and Korean characters are indexed as separate words, so a search
+        for "日本" (without quotation marks) will find records with the two characters in the opposite
+        order, that is, it will find records with "本日" as well. 
+        However, if you enclose "日本" in quotation marks, you
+        only retrieve records with the two characters in that specific sequence.</p>
+                <p>
+        You can use the <em>boolean operators</em> "AND" and "OR". If you search for "China AND
+        Japan", you will find only records containing both terms. If you search for "China OR Japan",
+        you will find records in which either one or both the two terms occur. A search with "AND"
+        normally results in fewer records than a search with "OR". "NOT" can also be used. If you
+        search for "China NOT Japan", you will only find records that have "China" but not "Japan".
+        </p>
+                <p>
+        You can also make boolean searches using Advanced Search.</p>
+                <p>
+        You can use more advanced search functions by using parentheses: "(China OR Japan) NOT
+        Korea" will find records in which the words "China" or "Japan" occur, but only those in
+        which "Korea" does not occur.</p>
+                <p>
+        "AND", "OR" and "NOT" must be written with uppercase letters. Otherwise, searches are made using
+        lower-case letters only, so writing "China" with initial lower-case "C" (as "china") has the exact same
+        effect as using an initial upper-case "C". 
+        This means that there is no way you can search for e.g. "Bush" without finding "bush" as well.
+    </p>
+            </div>
         </jquery:tab>
     </jquery:tabset>
 </div>

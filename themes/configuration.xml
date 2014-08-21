@@ -1,13 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <themes>
-    <theme id="default-theme" name="tamboti" root="/resources/commons/Cluster Publications"/>
-    <theme name="wsc" root="/resources/commons/Wissenschaftssprache Chinesisch"/>
-    <theme name="library" root="/resources/commons/Samples"/>
-    <theme name="dungan" root="/resources/commons/Dungan Archive"/>
-    <theme name="ppcoll" root="/resources/commons/ppcoll"/>
-    <theme name="default" root="/resources/commons/Cluster Publications"/>
+    <map path="/apps/library" theme="library" root="/resources/commons/samples"/>
+    <map path="/apps/tamboti" theme="tamboti" root="/resources/commons/Cluster Publications"/>
+    <map path="/apps/wsc" theme="wsc" root="/resources/commons/Wissenschaftssprache Chinesisch"/>
+    <map path="/apps/dungan" theme="dungan" root="/resources/commons/Dungan Archive"/>
+    <map path="/apps/ppcoll" theme="ppcoll" root="/resources/commons/ppcoll"/>
 </themes><!--
-    Dynamically resolve all resources depending on the current theme.
-    A theme is selected by looking at @id="default-theme" in themes/configuration.xml.
-    To add a theme, just add it here as the examples above, and add to it the @id with value of "default-value" and @name the same as the name of the theme.
+    Dynamically resolve all resources depending on the current theme. 
+    A theme is selected by looking at the URL prefix (as defined in controller-config.xml) and themes/configuration.xml. 
+    To add a theme, just map an arbitrary prefix in controller-config.xml 
+    to xmldb:exist:///db/apps/tamboti and change themes/configuration.xml 
+    to map the prefix to a theme name. 
     Create a collection with the same name below themes/.
+    For the above, controller-config.xml reads:
+    
+<root pattern="/apps/library" path="xmldb:exist:///db/apps/tamboti"/>
+  <root pattern="/apps/tamboti" path="xmldb:exist:///db/apps/tamboti"/>
+    
+  before
+  
+  <root pattern="/apps" path="xmldb:exist:///db/apps"/>
 -->

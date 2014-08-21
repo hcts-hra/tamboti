@@ -1,11 +1,11 @@
-xquery version "3.0";
+xquery version "1.0";
 
 (: XQuery script to save a new MODS record from an incoming HTTP POST :)
 
-import module namespace request = "http://exist-db.org/xquery/request";
-import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (: TODO move security module up one level :)
+import module namespace uu = "http://exist-db.org/mods/uri-util" at "../search/uri-util.xqm";
+import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace ext="http://exist-db.org/mods/extension";
@@ -330,7 +330,7 @@ return
         (:Locate the document in temp and and load it in $doc.:)
         let $file-to-update := concat($incoming-id, '.xml')
         (:let $temp-file-path := concat($config:mods-temp-collection, '/', $file-to-update):)
-        let $temp-file-path := concat($config:mods-temp-collection, '/', $file-to-update)
+        let $temp-file-path := concat(xmldb:encode-uri($config:mods-temp-collection), '/', $file-to-update)
         (:let $log := util:log("DEBUG", ("##$temp-file-path): ", $temp-file-path)):)
         (:This is the document in temp to be updated during saves and the document to be saved in the target collection when the user has finished editing.:)
         let $doc := doc($temp-file-path)/mods:mods
@@ -345,7 +345,7 @@ return
                     (:Get the target collection. If it's an edit to an existing document, we can find its location by means of its uuid.
                     If it is a new record, the target collection can be captured as the collection parameter passed in the URL. :)
                     let $target-collection := local:find-live-collection-containing-uuid($incoming-id)
-                    let $new-target-collection := config:process-request-parameter(request:get-parameter("collection", ""))
+                    let $new-target-collection := xmldb:encode-uri(request:get-parameter("collection", ""))
                     let $target-collection :=
                         if ($target-collection)
                         then $target-collection
@@ -357,6 +357,7 @@ return
                         if (security:can-write-collection($target-collection))
                         then $target-collection
                         else security:get-home-collection-uri(security:get-user-credential-from-session()[1])
+                    let $record-path := xs:anyURI(concat($target-collection, '/', $file-to-update))
 
                     return
                     (
@@ -376,29 +377,27 @@ return
                         (:Only attempt to delete the original record if it exists; 
                         if an attempt is made to delete a file which does not exist, the script will terminate. 
                         This means that no attempt is made to delete newly created records.:)                        
-                        if (doc(concat($target-collection, '/', $file-to-update))) 
+                        if (doc($record-path)) 
                         then xmldb:remove($target-collection, $file-to-update) 
                         else ()
                         ,
                         (:Store $doc in the target collection, whether this is where the record originally was located or 
                         the collection chosen to store a new record.:)
-(:                        xmldb:store($target-collection, $file-to-update, $doc):)
-                        if (contains($target-collection, "%40"))
-                            then (
-                                xmldb:store($target-collection, $file-to-update, $doc),
-                                (:Set the same permissions on the moved file that the parent collection has.:)
-                                security:apply-parent-collection-permissions(xs:anyURI(concat($target-collection, "/", $file-to-update)))                                                    )
-                            else 
-                                (
-                                    xmldb:store($target-collection, $file-to-update, $doc),
-                                    (:Set the same permissions on the moved file that the parent collection has.:)
-                                    security:apply-parent-collection-permissions(xs:anyURI(concat($target-collection, "/", $file-to-update)))
-                                )
+                        xmldb:store($target-collection, $file-to-update, $doc)
                         ,
+                        sm:chown($record-path, tamboti-utils:get-username-from-path($target-collection))
+                        ,
+                        sm:chgrp($record-path, $config:biblio-users-group)
+                        ,
+                        sm:chmod($record-path, $config:resource-mode)
+                        ,                        
                         (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc(concat($target-collection, '/', $file-to-update))) 
+                        if (doc($record-path)) 
                         then xmldb:remove($config:mods-temp-collection, $file-to-update) 
                         else ()
+                        ,
+                        (:Set the same permissions on the moved file that the parent collection has.:)
+                        security:apply-parent-collection-permissions($record-path)
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)

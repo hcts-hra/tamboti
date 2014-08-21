@@ -20,8 +20,6 @@ module namespace biblio="http://exist-db.org/xquery/biblio";
     of the query.
 :)
 
-import module namespace sm="http://exist-db.org/xquery/securitymanager";
-
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace session="http://exist-db.org/xquery/session";
 declare namespace util="http://exist-db.org/xquery/util";
@@ -41,6 +39,7 @@ import module namespace templates="http://exist-db.org/xquery/templates" at "../
 import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
+import module namespace uu="http://exist-db.org/mods/uri-util" at "uri-util.xqm";
 
 declare option exist:serialize "method=xhtml media-type=application/xhtml+xml omit-xml-declaration=no enforce-xhtml=yes";
 
@@ -77,7 +76,7 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[ft:query(., '$q', $options)]
             union
-            vra:vra[ft:query(.[vra:work], '$q', $options)]
+            vra:vra[ft:query(., '$q', $options)]
             union
             tei:TEI[ft:query(., '$q', $options)]
             union
@@ -126,7 +125,7 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[ft:query(mods:abstract, '$q', $options)]
             union
-            vra:vra[ft:query(.[vra:work]//vra:descriptionSet, '$q', $options)]
+            vra:vra[ft:query(.//vra:descriptionSet, '$q', $options)]
             )
         </search-expression>
         <targets>
@@ -153,7 +152,7 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[ft:query(.//mods:name, '$q', $options)]
             union
-            vra:vra[ft:query(.[vra:work]//vra:agentSet, '$q', $options)]
+            vra:vra[ft:query(.//vra:agentSet, '$q', $options)]
             union
             tei:TEI//tei:p[ft:query(tei:name, '$q', $options)]
             union
@@ -206,12 +205,12 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[@ID eq '$q']
             union
-            (:vra:vra[vra:collection/@id eq '$q']
-            union:)
+            vra:vra[vra:collection/@id eq '$q']
+            union
             vra:vra[vra:work/@id eq '$q']
             union
-            (:vra:vra[vra:image/@id eq '$q']
-            union:)
+            vra:vra[vra:image/@id eq '$q']
+            union
             atom:entry[atom:id eq '$q']
             )
         </search-expression>
@@ -230,7 +229,7 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[ft:query(mods:subject, '$q', $options)]
             union
-            vra:vra[ft:query(.[vra:work]//vra:subjectSet, '$q', $options)]
+            vra:vra[ft:query(.//vra:subjectSet, '$q', $options)]
             union
             tei:TEI//tei:p[ft:query(.//tei:term, '$q', $options)]
             union
@@ -248,7 +247,7 @@ declare variable $biblio:FIELDS :=
             (
             mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]
             union
-            vra:vra[ft:query(.[vra:work]//vra:titleSet, '$q', $options)]
+            vra:vra[ft:query(.//vra:titleSet, '$q', $options)]
             union
             tei:TEI//tei:p[ft:query(tei:title, '$q', $options)]
             union
@@ -414,7 +413,7 @@ declare function biblio:form-from-query($node as node(), $params as element(para
                         </select>
                     </td>
                     <td class="delete-search-field-button-container">
-                        <input class="delete-search-field-button" title="Delete search field" type="image" name="deleteSearchFieldButton{$pos}" src="theme/images/cross.png" />                        
+                        <input class="delete-search-field-button" title="Delete search field" type="image" name="deleteSearchFieldButton{$pos}" src="theme/images/delete.png" height="22" width="22" />                        
                     </td>                    
                 </tr>
     )
@@ -507,8 +506,8 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                     Therefore a search is made in all other sub-collections of /db/resources.
                     Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
                     if ($query-as-xml/string() eq '/resources')
-                    then ('(collection("/resources/commons","/resources/users", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
-                    else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                    then ('(collection("/resources/commons","/resources/users", "/resources/groups"))//(mods:mods | vra:vra | tei:TEI | atom:entry)')
+                    else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra | tei:TEI | atom:entry)')
                 else ()
             default 
                 return ()
@@ -594,7 +593,8 @@ declare function biblio:process-form-parameters($params as xs:string*) as elemen
     the query. Filter out empty parameters and take care of boolean operators.
 :)
 declare function biblio:process-form() as element(query)? {
-    let $collection := config:process-request-parameter(request:get-parameter("collection", theme:get-root()))
+let $collection := xmldb:encode-uri(request:get-parameter("collection", theme:get-root()))
+(:    let $collection := uu:escape-collection-path(request:get-parameter("collection", theme:get-root())):)
     let $fields :=
         (:  Get a list of all input parameters which are not empty,
             ordered by input name. :)
@@ -691,31 +691,32 @@ declare function biblio:order-by-author($hit as element()) as xs:string?
                             let $vra-sort-string := upper-case($vra-name)
                             return 
                                 $vra-sort-string
-                        else ()        
+                        else ()   
 };
 
 declare function biblio:get-year($hit as element()) as xs:string? {
+(:number() is used to filter out string values like "unknown".:)
 (:NB: year is sorted as string.:)
-(:NB: TEI documents are hard to fit in.:)
-    if ($hit/mods:originInfo[1]/mods:dateIssued[1]) 
+(:NB: TEI documents hard to fit in.:)
+    if ($hit/mods:originInfo[1]/mods:dateIssued[1]/number()) 
     then functx:substring-before-if-contains($hit/mods:originInfo[1]/mods:dateIssued[1],'-') 
     else 
-        if ($hit/mods:originInfo[1]/mods:copyrightDate[1]) 
+        if ($hit/mods:originInfo[1]/mods:copyrightDate[1]/number()) 
         then functx:substring-before-if-contains($hit/mods:originInfo[1]/mods:copyrightDate[1],'-') 
         else
-            if ($hit/mods:originInfo[1]/mods:dateCreated[1]) 
+            if ($hit/mods:originInfo[1]/mods:dateCreated[1]/number()) 
             then functx:substring-before-if-contains($hit/mods:originInfo[1]/mods:dateCreated[1],'-') 
             else
-                if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateIssued[1]) 
+                if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateIssued[1]/number()) 
                 then functx:substring-before-if-contains($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateIssued[1],'-') 
                 else
-                    if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:copyrightDate[1]) 
+                    if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:copyrightDate[1]/number()) 
                     then functx:substring-before-if-contains($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:copyrightDate[1],'-') 
                     else
-                        if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateCreated[1]) 
+                        if ($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateCreated[1]/number()) 
                         then functx:substring-before-if-contains($hit/mods:relatedItem[1]/mods:originInfo[1]/mods:dateCreated[1],'-') 
                         else
-                            if ($hit/mods:relatedItem[1]/mods:part[1]/mods:date[1]) 
+                            if ($hit/mods:relatedItem[1]/mods:part[1]/mods:date[1]/number()) 
                             then functx:substring-before-if-contains($hit/mods:relatedItem[1]/mods:part[1]/mods:date[1],'-') 
                             else ()
 };
@@ -736,7 +737,7 @@ declare function biblio:construct-order-by-expression($sort as xs:string?) as xs
                 then concat("biblio:order-by-author($hit) ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
                 else 
                     if ($sort eq "Title") 
-                    then concat("translate($hit/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')", " ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
+                    then concat("$hit/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title)", " ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
                     else 
                         if ($sort eq "Year") 
                         then concat("biblio:get-year($hit) ", if ($sort-direction) then $sort-direction else 'descending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
@@ -827,7 +828,7 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, '/resources/commons', 'resources'), '/resources/users', 'resources') 
+            then replace(replace(xmldb:decode-uri($search-collection), '/resources/commons', 'resources'), '/resources/users', 'resources') 
             else 'resources' 
         let $search-collection := 
             if (starts-with($search-collection, '/db'))
@@ -873,6 +874,31 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
             else $query
         let $sort := if ($sort) then $sort else session:get-attribute("sort")
         let $results := biblio:evaluate-query($query, $sort)
+        let $results-vra-work := $results[vra:work]
+        let $results-vra-image := 
+            (:treat vra:image records only if there is a search term in the query; 
+            otherwise empty searches will be slowed down by finding all work records for all image records:)
+            (:NB: searches exclusively in extracted text from vra:image records are omitted, since these proceed through "ft:search('page:$q')", i.e. do not contain a "[":)
+            if (contains($query, '['))
+            then $results[vra:image]
+            else ()
+        (:since vra:collection are not captured, these are in effect filtered away:)
+        let $results-vra-image := 
+            if ($results-vra-image)
+            then $results-vra-image/vra:image/vra:relationSet/vra:relation[@type eq "imageOf"]/@relids
+            else ()
+        let $results-vra-image := 
+            if ($results-vra-image)
+            then collection($config:mods-root)//vra:work[@id = $results-vra-image]/..
+            else ()
+        let $results-vra := ($results-vra-work union $results-vra-image)
+        (:we assume that all mods records will have a titleInfo element - otherwise we cannot process them:)
+        let $results-mods := $results[mods:titleInfo]
+        (:we will have tei objects returned that are not whole documents, so this has to be filtered by namespace, but using namespace-uri() is too expensive:)
+        let $results-tei := $results[self::tei:p | self::tei:bibl | self::tei:titleStmt | self::tei:person | self::tei:TEI | self::tei:title | self::tei:name | self::tei:persName | self::tei:term | self::tei:head]
+        (:using "let $results-tei := $results[self::tei:*]" should work, but gives error: context is missing for node 1 !:)
+        let $results-atom := $results[atom:title]
+        let $results := ($results-vra, $results-mods, $results-tei, $results-atom)
         let $processed :=
             for $item in $results
             return
@@ -881,40 +907,6 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
                         return $item/search
                     default 
                         return $item
-        (:~ Take the query results and store them into the HTTP session. :)
-        let $null := session:set-attribute('mods:cached', $processed)
-        let $null := session:set-attribute('query', $query-as-xml)
-        let $null := session:set-attribute('sort', $query-as-xml)
-        let $null := session:set-attribute('collection', $query-as-xml)
-        let $null := biblio:add-to-history($query-as-xml)
-        return
-            count($processed)
-    (:NB: When 0 is returned to a query, it is set here.:)
-    else 0 
-};
-
-declare function biblio:list-collection($query-as-xml as element(query)?, $sort as item()?) as xs:int {
-    if ($query-as-xml) 
-    then
-        let $collection := $query-as-xml/collection
-        let $sort := if ($sort) then $sort else session:get-attribute("sort")
-        let $processed :=
-            if ($sort eq "Author") 
-            then 
-                for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                order by biblio:order-by-author($item)
-                return $item
-            else 
-                if ($sort eq "Year")
-                then 
-                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                    order by biblio:get-year($item)
-                    return $item
-                else
-                    (:when listing collection, the Lucene-based Score has no meaning; therefore default to sorting by Title.:) 
-                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                    order by translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')
-                    return $item
         (:~ Take the query results and store them into the HTTP session. :)
         let $null := session:set-attribute('mods:cached', $processed)
         let $null := session:set-attribute('query', $query-as-xml)
@@ -1048,9 +1040,11 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
 };
 
 declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $collection := functx:replace-first(xmldb:decode(request:get-parameter("collection", theme:get-root())), "/db/", "")    
+    (:let $collection := functx:replace-first(xmldb:encode-uri(request:get-parameter("collection", theme:get-root())), "/db/", ""):)
+    let $collection := functx:replace-first(xmldb:encode-uri(request:get-parameter("collection", theme:get-root())), "/db/", "")    
         return
-            templates:copy-set-attribute($node, "data-collection-path", $collection, $model)
+            (:templates:copy-set-attribute($node, "value", uu:unescape-collection-path($collection), $model):)
+            templates:copy-set-attribute($node, "value", xmldb:decode-uri($collection), $model)
 };
 
 declare function biblio:result-count($node as node(), $params as element(parameters)?, $model as item()*) {
@@ -1174,7 +1168,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
 declare function biblio:optimize-trigger($node as node(), $params as element(parameters)?, $model as item()*) {
     let $user := request:get-attribute("xquery.user")
     return
-        if (sm:is-dba($user))
+        if (xmldb:is-admin-user($user))
         then <a id="optimize-trigger" href="#">Create custom indexes for sorting</a>
         else ()
 };
@@ -1183,7 +1177,7 @@ declare function biblio:form-select-current-user-groups($select-name as xs:strin
     let $user := request:get-attribute("xquery.user") return
         <select name="{$select-name}">
         {
-            for $group in sm:get-user-groups($user) return
+            for $group in xmldb:get-user-groups($user) return
                 <option value="{$group}">{$group}</option>
         }
         </select>
@@ -1283,7 +1277,7 @@ $id
 $operator
 $sort
 query-tabs
-    can have values "simple-search-form-tab", "advanced-search-form", "personal-list" (search-form.html)
+    can have values "simple", "advanced-search-form", "personal-list" (search-form.html)
 
 $param
 :
@@ -1344,9 +1338,7 @@ declare function biblio:get-or-create-cached-results($mylist as xs:string?, $que
             count($items)
     )
     else
-        if ($query-as-xml/field)
-        then biblio:eval-query($query-as-xml, $sort)
-        else biblio:list-collection($query-as-xml, $sort)
+        biblio:eval-query($query-as-xml, $sort)
 };
 
 declare function biblio:get-query-as-regex($query-as-xml) as xs:string { 
@@ -1436,7 +1428,8 @@ declare function biblio:query($node as node(), $params as element(parameters)?, 
     let $reload := request:get-parameter("reload", ())
     let $clear := request:get-parameter("clear", ())
     let $mylist := request:get-parameter("mylist", ()) (:clear, display:)
-    let $collection := config:process-request-parameter(request:get-parameter("collection", $config:mods-root))
+    let $collection := xmldb:encode-uri(request:get-parameter("collection", $config:mods-root))
+(:    let $collection := uu:escape-collection-path(request:get-parameter("collection", $config:mods-root)):)
     let $collection := if (starts-with($collection, "/db")) then $collection else concat("/db", $collection)
     let $id := request:get-parameter("id", ())
     let $sort := request:get-parameter("sort", ())

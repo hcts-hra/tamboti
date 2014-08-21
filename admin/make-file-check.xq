@@ -1,7 +1,4 @@
 xquery version "3.0";
-
-import module namespace security="http://exist-db.org/mods/security" at "../modules/search/security.xqm";
-
 declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace functx = "http://www.functx.com";
 
@@ -44,8 +41,8 @@ let $name := functx:substring-after-last($base-uri, '/')
 let $last-modified := xmldb:last-modified($location, $name)
 let $created := xmldb:created($location, $name)
 let $size := xmldb:size($location, $name)
-let $owner := security:get-owner(concat($location, "/", $name))
-let $group := security:get-group(concat($location, "/", $name))
+let $owner := xmldb:get-owner($location, $name)
+let $group := xmldb:get-group($location, $name)
 return
     
 <record>

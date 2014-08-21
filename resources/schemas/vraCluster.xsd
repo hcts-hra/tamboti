@@ -1,8 +1,5 @@
-<xsd:schema xmlns="http://www.vraweb.org/vracore4.htm" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsl="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://www.vraweb.org/vracore4.htm" version="4.0.42" xml:lang="en"
-    elementFormDefault="qualified" attributeFormDefault="unqualified"
-    xmlns:ext="http://exist-db.org/vra/extension">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.vraweb.org/vracore4.htm" xmlns:xsl="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.vraweb.org/vracore4.htm" version="4.0.42" xml:lang="en" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xsd:annotation>
         <xsd:documentation> This schema is an extension (patched version) of the VRA Core version
             4.0 used at the University of Heidelberg for the implementation of Ziziphus, an
@@ -18,14 +15,12 @@
             https://docs.google.com/document/d/1ZXVCOuZLg6-FlYaQaBTVw2OsKNn4dr1KfqJgw25I0zA/edit#heading=h.vj515vkolvh7
         </xsd:documentation>
     </xsd:annotation>
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
-        schemaLocation="http://www.w3.org/2001/xml.xsd">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd">
         <xsd:annotation>
             <xsd:documentation> Get access to the xml: attribute groups for xml:lang as declared
                 below. </xsd:documentation>
         </xsd:annotation>
     </xsd:import>
-
     <xsd:import namespace="http://exist-db.org/vra/extension" schemaLocation="extension.xsd"/>
 
 
@@ -160,7 +155,6 @@
         </xsd:sequence>
         <xsd:attributeGroup ref="vraAttributes"/>
         <xsd:attribute name="id" type="xsd:ID"/>
-
     </xsd:complexType>
     <xsd:complexType name="setType">
         <xsd:annotation>
@@ -356,7 +350,6 @@
         </xsd:restriction>
     </xsd:simpleType>
     <!-- <<< EXTENSION END <<< -->
-
     <xsd:complexType name="basicString">
         <xsd:annotation>
             <xsd:documentation> Basic datatype for all freetext values. Allows assignment of source,
@@ -381,8 +374,6 @@
         <xsd:attributeGroup ref="vraAttributes"/>
         <xsd:attribute type="xsd:string" name="type"/>
     </xsd:complexType>
-
-
     <xsd:complexType name="authorType">
         <xsd:sequence maxOccurs="unbounded">
             <xsd:element name="name" type="agentNameType" minOccurs="0"/>
@@ -422,16 +413,13 @@
         </xsd:annotation>
         <xsd:sequence minOccurs="1" maxOccurs="1">
             <xsd:element name="date" type="dateWrapperType"/>
-            <xsd:element name="alternativeNotation" type="alternativeNotationDateType" minOccurs="0"
-                maxOccurs="unbounded"/>
+            <xsd:element name="alternativeNotation" type="alternativeNotationDateType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-
     <xsd:simpleType name="uncertainDateType">
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
     <!-- <<< EXTENSION END <<< -->
-
     <xsd:attributeGroup name="vraAttributes">
         <xsd:annotation>
             <xsd:documentation> VRA Core metadata attributes which can be applied to virtually any
@@ -555,8 +543,7 @@
     <xsd:complexType name="alternativeNotationDateType">
         <xsd:simpleContent>
             <xsd:extension base="basicString">
-                <xsd:attribute name="type" use="required"
-                    type="alternativeNotationDateAttributeType"/>
+                <xsd:attribute name="type" use="required" type="alternativeNotationDateAttributeType"/>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>
@@ -905,5 +892,4 @@
     <xsd:simpleType name="titleTypeType">
         <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
-
 </xsd:schema>

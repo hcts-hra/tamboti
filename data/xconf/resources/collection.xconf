@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <collection xmlns="http://exist-db.org/collection-config/1.0">
     <!--from Tamboti-->
-    <index xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:vra="http://www.vraweb.org/vracore4.htm" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mods="http://www.loc.gov/mods/v3">
+    <index xmlns:mods="http://www.loc.gov/mods/v3" xmlns:vra="http://www.vraweb.org/vracore4.htm" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xlink="http://www.w3.org/1999/xlink">
         <fulltext default="none" attributes="false"/>
         <lucene>
             <analyzer class="org.apache.lucene.analysis.standard.StandardAnalyzer">
-                <param name="stopwords" type="org.apache.lucene.analysis.util.CharArraySet"/>
+                <param name="stopwords" type="java.util.Set"/>
             </analyzer>
             
             <!--MODS-->

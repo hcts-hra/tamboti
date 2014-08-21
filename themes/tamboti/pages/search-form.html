@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:jquery="http://exist-db.org/xquery/jquery" id="query-panel">
     <jquery:tabset id="query-tabs" on-select="searchTabSelected">
-        <jquery:tab id="simple-search-form-tab" label="Simple Search">
+        <jquery:tab id="simple" label="Simple Search">
             <form id="simple-search-form" class="search-form" action="?" name="simple-search" method="POST">
                 <table>
                     <tr>
@@ -14,7 +15,7 @@
                     <tr>
                         <td class="label">inside </td>
                         <td id="collection-path">
-                            <input class="biblio:collection-path collection-input" type="text" name="render-collection-path" readonly="true"/>
+                            <input class="biblio:collection-path collection-input" type="text" name="collection" readonly="true"/>
                         </td>
                         <td/>
                     </tr>
@@ -27,25 +28,24 @@
                                 <jquery:option value="Title"/>
                                 <jquery:option value="Year"/>
                             </jquery:select>
-                            <button id="simple-search-form-submit-button" type="button">Search</button>
+                            <button name="action" id="form-submit" type="submit">Search</button>
                             <input type="hidden" name="field1" value="All"/>
                         </td>
                     </tr>
                 </table>
-                <input type="hidden" name="query-tabs" value="simple-search-form-tab"/>
+                <input type="hidden" name="query-tabs" value="simple"/>
                 <input type="hidden" name="collection-tree" value="hidden"/>
-                <input type="hidden" name="collection" value=""/>
             </form>
         </jquery:tab>
         <jquery:tab id="advanced-search-form" label="Advanced Search">
-            <jquery:form-repeat trigger="#add-field" delete="" form="#advanced-search" on-ready="repeatCallback"/>
+            <jquery:form-repeat trigger="#add-field" delete="" form=".search-form" on-ready="repeatCallback"/>
             <form id="advanced-search" class="search-form" action="?" name="advanced-search" method="POST">
                 <table>
                     <tr class="biblio:form-from-query"/>
                     <tr>
                         <td class="label">inside </td>
                         <td colspan="2">
-                            <input class="biblio:collection-path collection-input" type="text" name="render-collection-path" readonly="true"/>
+                            <input class="biblio:collection-path collection-input" type="text" name="collection" readonly="true"/>
                         </td>
                     </tr>
                     <tr>
@@ -72,14 +72,13 @@
                             <button id="clear-search-fields" class="button" name="clear" value="clear" type="button">Clear
                                 Search Terms</button>
                             <div class="advanced-search">
-                                <button id="advanced-search-form-submit-button" type="button">Search</button>
+                                <button class="advanced-search" name="action" id="form-submit" type="submit">Search</button>
                             </div>
                         </td>
                     </tr>
                 </table>
                 <input type="hidden" name="query-tabs" value="advanced-search-form"/>
                 <input type="hidden" name="collection-tree" value="hidden"/>
-                <input type="hidden" name="collection" value=""/>
             </form>
         </jquery:tab>
         <jquery:tab id="query-history" label="Query History">
@@ -100,25 +99,158 @@
             </form>
         </jquery:tab>
         <jquery:tab id="search-help" label="Search Help">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/search-help.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
+            <div xmlns:xi="http://www.w3.org/2001/XInclude">
+                <h4>Search syntax</h4>
+                <p>
+        Tamboti performs a search with the exact term you enter. A search for "Chin" does not retrieve all words beginning with "Chin"
+        ("China", "Chinese" …), but only the word "Chin" itself.</p>
+                <p>
+        You can use <em>wildcards</em> to perform broader searches. "?" can be used as a wildcard for a single
+        character and "*" for zero, one or more characters: "China" is thus found with "Ch?na" and
+        "C*a", and "China" and "Chine" are found with "Chin?", just as "China", "Chine" and
+        "Chinese" are all found with "Chin*". Note that "*" and "?" cannot occur in the
+        beginning of a word.</p>
+                <p>
+                    <em>Fuzzy searches</em> can be performed by putting "~" at the end of a word. To find "Chine", enter "China~". You can quantify the fuzziness, by appending
+        a number between 0.0 and 1.0, "complete fuzziness" (finding everything) being 0.0 and
+        complete identity being "1.0". 
+        If you append a "~" with no number, the default value 0.5 is applied.</p>
+                <p>
+                    <em>Phrases</em> can be searched for by putting them in quotation marks. Use "straight"
+        double quotation marks only.</p>
+                <p>
+        Tamboti searches for the exact word order you enter. If you enter "Reform and Progress", you will
+        only find records in which the three words occur in that exact sequence. Tamboti does not display records containing, for example, "Progress and Reform".</p>
+                <p>
+        Note that Chinese, Japanese and Korean characters are indexed as separate words, so a search
+        for "日本" (without quotation marks) will find records with the two characters in the opposite
+        order, that is, it will find records with "本日" as well. 
+        However, if you enclose "日本" in quotation marks, you
+        only retrieve records with the two characters in that specific sequence.</p>
+                <p>
+        You can use the <em>boolean operators</em> "AND" and "OR". If you search for "China AND
+        Japan", you will find only records containing both terms. If you search for "China OR Japan",
+        you will find records in which either one or both the two terms occur. A search with "AND"
+        normally results in fewer records than a search with "OR". "NOT" can also be used. If you
+        search for "China NOT Japan", you will only find records that have "China" but not "Japan".
+        </p>
+                <p>
+        You can also make boolean searches using Advanced Search.</p>
+                <p>
+        You can use more advanced search functions by using parentheses: "(China OR Japan) NOT
+        Korea" will find records in which the words "China" or "Japan" occur, but only those in
+        which "Korea" does not occur.</p>
+                <p>
+        "AND", "OR" and "NOT" must be written with uppercase letters. Otherwise, searches are made using
+        lower-case letters only, so writing "China" with initial lower-case "C" (as "china") has the exact same
+        effect as using an initial upper-case "C". 
+        This means that there is no way you can search for e.g. "Bush" without finding "bush" as well.
+    </p>
+            </div>
         </jquery:tab>
         <jquery:tab id="about-tamboti" label="About Tamboti">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/about-tamboti.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
+            <div xmlns:xi="http://www.w3.org/2001/XInclude">
+                <p> This is version 1.1.2 of Tamboti, created 2013-11-21.</p>
+                <p> Tamboti is an application for working with metadata based on the <a href="http://www.loc.gov/standards/mods/" target="_blank">MODS</a> standard.</p>
+                <p> MODS is a standard used to catalogue books, articles and other traditional library
+        material, and visual or online material such as images, videos, web sites or other sources.</p>
+                <p> Tamboti is similar to the public interface (OPAC) of the library systems
+        used by national and university libraries. Tamboti can process a large amount of records.</p>
+                <p> In Tamboti, you can annotate records with metadata concerning language, script and
+        transcription. This function is important for records used in multi-lingual contexts.</p>
+                <p> In Tamboti, you can catalogue materials through a form-based interface. </p>
+                <br/>
+                <p> Tamboti is based on the <a href="http://exist-db.org/" target="_blank">eXist Native XML
+            database</a>. As eXist itself, Tamboti is open source and free. Tamboti can be installed
+         on a mobile device. The eXist database system can be
+        installed with a standard application installer.</p>
+                <br/>
+                <p>Tamboti has a number of special features:</p>
+                <ul class="list">
+                    <li> Users can log in using an Active Directory. </li>
+                    <li> Users have control over who can view and edit their records. </li>
+                    <li> Users can collaborate within groups to work on a collection of records. </li>
+                    <li> Users can upload PDFs and other binary records. The text and metadata of these records are
+            extracted and searchable. </li>
+                    <li> Users and user groups are able to easily create a distinctive layout for their own
+            collection, with its own internet address. </li>
+                </ul>
+                <p>Please follow the <a href="../../docs/">Tamboti Walkthrough</a> to get acquainted
+        with functionalities of Tamboti.</p>
+            </div>
         </jquery:tab>
         <jquery:tab class="cluster-collections" id="cluster-collections" label="Tamboti Collections">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/tamboti-collections.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
+            <div xmlns:xi="http://www.w3.org/2001/XInclude">
+                <p> In Tamboti, there are a number of special collections which you can access by
+    clicking on the links below: </p>
+                <ul>
+                    <li>
+                        <a href="index.html?collection=/resources/commons/EAST" target="_blank">EAST
+                (Epistemology and Argumentation in South Asia and Tibet)</a>
+                        <ul>
+                            <li>This growing collection gathers records on Epistemology and
+                    Argumentation in South Asia and Tibet. The collection is integrated into the
+                    comprehensive resource <a href="http://east.uni-hd.de" target="_blank">EAST</a>, created by the team in Buddhist Studies at the Cluster of
+                    Excellence "Asia and Europe in a Global Context" together with
+                    international cooperation partners. </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="index.html?collection=/resources/commons/Cluster%20Publications" target="_blank">Cluster Publications</a>
+                        <ul>
+                            <li>This collection contains a list of publications that have emerged from the Cluster of Excellence "Asia and Europe in a Global Context." For news on Cluster publications, see <a href="http://www.asia-europe.uni-heidelberg.de/en/research/publications.html">http://www.asia-europe.uni-heidelberg.de/en/research/publications.html</a>.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="index.html?collection=/resources/commons/Wissenschaftssprache%20Chinesisch" target="_blank">Wissenschaftssprache Chinesisch</a>
+                        <ul>
+                            <li> This growing database consists of records on the distribution and
+                    transformation of Euro-American knowledge in late imperial China,
+                    gathering bibliographical as well as biographical and terminological
+                    data. The collection was started in 1996 in Göttingen, and is currently
+                    enlarged by the team in Intellectual History at the Cluster of
+                    Excellence "Asia and Europe in a Global Context" together with
+                    international cooperation partners. </li>
+                            <li> The project has its own <a href="/exist/apps/wsc/modules/search/index.html" target="_blank">theme in Tamboti</a> with project information. </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="index.html?collection=/resources/commons/Priya_Paul_Collection" target="_blank">Priya Paul Collection</a>
+                        <ul>
+                            <li>
+                    The Priya Paul Collection of Popular Art contains more than 3,300 illustrations from the late 19th and the 20th century.
+                    It is one of the finest collections of ephemera like old posters, calendars, postcards, commercial advertisements, textile labels and cinema posters in India. 
+                    In a collaborative endeavor with <a href="http://www.tasveergharindia.net/">Tasveerghar</a>, the collection was digitized and is now being annotated by local and international experts. 
+                    For more information about the project please refer to the <a href="http://www.asia-europe.uni-heidelberg.de/en/research/heidelberg-research-architecture/databases/transcultural-image-database/collections/priya-paul-collection.html">project homepage</a>.
+                </li>
+                            <li>
+                    The <a href="http://priyapaulcollection.uni-hd.de/">Priya Paul Collection</a> is the first collection within Tamboti to use the <a href="http://www.loc.gov/standards/vracore/">VRA Core 4</a> XML schema, developed by the <a href="http://www.vraweb.org/">Visual Resources Association</a>. It distinguishes the actual art works from the images that depict them, allowing for more precision in the annotations. For user-friendly editing and annotating image metadata in VRA Core 4 the Heidelberg Research Architecture is developing the <a href="http://ziziphus.uni-hd.de/">Ziziphus editor</a>. 
+                </li>
+                            <li> At an earlier stage the project started developing an <a href="http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/" target="_blank">experimental theme in Tamboti</a> using MODS as record format. 
+                </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>You can also access the above collections by clicking the Folder View icon <img src="theme/images/tree.gif" align="center" valign="middle"/> and double-clicking
+        on the respective folders. </p>
+                <p>Some of our collections on visual material are currently hosted on another server.
+        Please access them through the following links: </p>
+                <ul>
+                    <li>
+                        <a href="http://abou-naddara.uni-hd.de" target="_blank">Abou Naddara Collection</a>
+                        <ul>
+                            <li>
+                    Access to James Sanua’s journal publications and his extensive oeuvre has been difficult. 
+                    The journalistic and artistic material of the Paris-exiled Egyptian nationalist has therefore hardly received the degree of scholarly attention it actually deserves. 
+                    Yet, during the research-work for her Ph.D. dissertation “The Construction of a National-Self through the Definition of its Enemy in James Sanua’s Early Satirical Writings” 
+                    Eliane Ursula Ettmueller was able to collect James Sanua’s complete works and - even more importantly – the majority of the originals of his magazines. 
+                    Mrs Eva Milhaud kindly gave her permission to have Sanua’s legacy digitized and to make it available to interested readers and researchers all over the world.
+                </li>
+                            <li> The project has its own <a href="http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/naddara/" target="_blank">theme in Tamboti</a> with project information. </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </jquery:tab>
     </jquery:tabset>
 </div>

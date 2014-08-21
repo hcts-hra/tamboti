@@ -8,6 +8,7 @@ declare namespace ext="http://exist-db.org/mods/extension";
 declare namespace html="http://www.w3.org/1999/xhtml";
 
 import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace uu="http://exist-db.org/mods/uri-util" at "../../../modules/search/uri-util.xqm";
 import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
 
@@ -80,21 +81,28 @@ declare function functx:capitalize-first($arg as xs:string?) as xs:string? {
 declare function retrieve-mods:format-detail-view($position as xs:string, $entry as element(mods:mods), $collection-short as xs:string) as element(table) {
     let $ID := $entry/@ID/string()
     (:let $log := util:log("DEBUG", ("##$ID): ", $ID)):)
-    let $entry := mods-common:remove-parent-with-missing-required-node($entry)
-    let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
-    let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
-    let $result :=
+	let $entry := mods-common:remove-parent-with-missing-required-node($entry)
+	let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
+	let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
+	let $result :=
     <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
     {
     <tr>
         <td class="collection-label">Record Location</td>
-        <td><div class="collection" >{replace(replace(xmldb:decode($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')}</div></td>
-        <div id="file-location-folder" style="display: none;">{$collection-short}</div>
+        <td>
+            <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
+            <div class="collection" >
+                {replace(replace(uu:unescape-collection-path($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')}
+            </div>
+        </td>
     </tr>
     ,
     <tr>
         <td class="collection-label">Record Format</td>
-        <td>MODS</td>
+        <td>
+            <div id="record-format" style="display:none;">MODS</div>
+            <div>MODS</div>
+        </td>
     </tr>
     ,
     (: names :)
@@ -122,24 +130,24 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
         (: If a transliterated publisher name exists, this probably means that several publisher names are simply different script forms of the same publisher name. Place the transliterated name first, then the original script name. :)
         if ($entry/mods:originInfo[1]/mods:publisher[@transliteration])
         then
-            mods-common:simple-row(
-                string-join(
-                    for $publisher in $entry/mods:originInfo[1]/mods:publisher
-                    let $order := 
-                        if ($publisher[@transliteration]) 
-                        then 0 
-                        else 1
-                    order by $order
-                    return mods-common:get-publisher($publisher)
-                , ' ')
-            ,
-            'Publisher')
-        else
-        (: Otherwise we have a number of different publishers.:)
-            for $publisher in $entry/mods:originInfo[1]/mods:publisher
-            return mods-common:simple-row(mods-common:get-publisher($publisher), 'Publisher')
-    ,
-    
+	        mods-common:simple-row(
+	            string-join(
+		            for $publisher in $entry/mods:originInfo[1]/mods:publisher
+		            let $order := 
+			            if ($publisher[@transliteration]) 
+			            then 0 
+			            else 1
+		        	order by $order
+		        	return mods-common:get-publisher($publisher)
+	        	, ' ')
+	        ,
+			'Publisher')
+		else
+		(: Otherwise we have a number of different publishers.:)
+			for $publisher in $entry/mods:originInfo[1]/mods:publisher
+	        return mods-common:simple-row(mods-common:get-publisher($publisher), 'Publisher')
+	,
+	
     (: dates :)
     (:If a related item has a date, use it instead of a date in originInfo:)   
     if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateCreated) 
@@ -319,10 +327,13 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
                 else
                     if (string($table-of-contents/@xlink:href))
                     then
-                        let $url := $table-of-contents/@xlink:href
-                        let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;'))
-                        return
-                            <a href="{string($url)}" target="_blank">{$url-for-display}</a>
+                        <a href="{string($table-of-contents/@xlink:href)}" target="_blank">
+                        {
+                            if ((string-length(string($table-of-contents/@xlink:href)) le 70)) 
+                            then string($table-of-contents/@xlink:href)
+                            (:avoid too long urls that do not line-wrap:)
+                            else (substring(string($table-of-contents/@xlink:href), 1, 70), '...')}
+                        </a>
                     else ()
                 }
                 </td>
@@ -376,20 +387,15 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
     (: typeOfResource :)
     mods-common:simple-row(string($entry/mods:typeOfResource[1]), 'Type of Resource')
     ,
-    
     (: internetMediaType :)
-    let $internetMediaTypes := $entry/mods:physicalDescription/mods:internetMediaType
-    return
-        for $internetMediaType in $internetMediaTypes
-        return
-            mods-common:simple-row(
-            (
-                let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type-codes.xml'))/*:code-table/*:items/*:item[*:value eq $internetMediaType]/*:label
-                return
-                    if ($label) 
-                    then $label
-                    else $internetMediaType)
-            , 'Internet Media Type')
+    mods-common:simple-row(
+    (
+	    let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type-codes.xml'))/*:code-table/*:items/*:item[*:value eq $entry/mods:physicalDescription[1]/mods:internetMediaType]/*:label
+	    return
+	        if ($label) 
+	        then $label
+	        else $entry/mods:physicalDescription[1]/mods:internetMediaType)
+    , 'Internet Media Type')
     ,
     
     (: genre :)
@@ -400,9 +406,9 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
             if ($authority eq 'local')
                 then doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
                 else
-                    if ($authority eq 'marcgt')
-                    then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
-                    else string($genre)
+                	if ($authority eq 'marcgt')
+                	then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
+					else string($genre)
                 , 
                 concat(
                     'Genre'
@@ -436,19 +442,19 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
         for $text in $text
             return        
                 mods-common:simple-row($text
-                , 
-                concat('Note', 
-                    concat(
-                    if ($displayLabel)
-                    then concat(' (', $displayLabel, ')')            
-                    else ()
-                    ,
-                    if ($type)
-                    then concat(' (', $type, ')')            
-                    else ()
-                    )
-                    )
-                )
+        	    , 
+        	    concat('Note', 
+        	        concat(
+        	        if ($displayLabel)
+        	        then concat(' (', $displayLabel, ')')            
+        	        else ()
+        	        ,
+        	        if ($type)
+        	        then concat(' (', $type, ')')            
+        	        else ()
+        	        )
+        	        )
+        	    )
     ,
 
     (: language of resource :)
@@ -491,31 +497,41 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
             else ()
     ,
     (: language of cataloging :)
-    (:Since there can only be one (default) language of cataloging, the assumption must be that multiple language terms refer to the same language, so just take the first one. 
-    Language and script of resource can be multiple.:) 
-    let $language-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm[1]
-    let $language-label := 
-        if ($language-label)
-        then mods-common:get-language-label($language-label)
-        else ()
-    return
-        if ($language-label)
-        then mods-common:simple-row($language-label, 'Language of Cataloging')
-        else ()
+    let $distinct-language-labels := distinct-values(
+        for $language in $entry/mods:recordInfo/mods:languageOfCataloging
+        return mods-common:get-language-label($language/mods:languageTerm)
+        )
+    let $distinct-language-labels-count := count($distinct-language-labels)
+        return
+            if ($distinct-language-labels-count gt 0)
+            then
+                mods-common:simple-row(
+                    mods-common:serialize-list($distinct-language-labels, $distinct-language-labels-count)
+                ,
+                if ($distinct-language-labels-count gt 1) 
+                then 'Languages of Cataloging' 
+                else 'Language of Cataloging'
+                    )
+            else ()
     ,
     
     (: script of cataloging :)
-    (:Since there can only be one (default) script of cataloging, the assumption must be that multiple script terms refer to the same script, so just take the first one. 
-    Language and script of resource can be multiple.:)
-    let $script-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm[1]
-    let $script-label := 
-        if ($script-label)
-        then mods-common:get-script-label($script-label)
-        else ()
-    return
-        if ($script-label)
-        then mods-common:simple-row($script-label, 'Script of Cataloging')
-        else ()
+    let $distinct-script-labels := distinct-values(
+        for $language in $entry/mods:recordInfo/mods:languageOfCataloging
+        return mods-common:get-script-label($language/mods:scriptTerm)
+        )
+    let $distinct-script-labels-count := count($distinct-script-labels)
+        return
+            if ($distinct-script-labels-count gt 0)
+            then
+                mods-common:simple-row(
+                    mods-common:serialize-list($distinct-script-labels, $distinct-script-labels-count)
+                ,
+                if ($distinct-script-labels-count gt 1) 
+                then 'Scripts of Cataloging' 
+                else 'Script of Cataloging'
+                    )
+            else ()
     ,
 
     (: identifier :)
@@ -606,11 +622,11 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
 : @return an XHTML span.
 :)
 declare function retrieve-mods:format-list-view($position as xs:string, $entry as element(mods:mods), $collection-short as xs:string) as element(span) {
-    let $entry := mods-common:remove-parent-with-missing-required-node($entry)
-    (:let $log := util:log("DEBUG", ("##$ID): ", $entry/@ID/string())):)
-    let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
-    let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
-    return
+	let $entry := mods-common:remove-parent-with-missing-required-node($entry)
+	(:let $log := util:log("DEBUG", ("##$ID): ", $entry/@ID/string())):)
+	let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
+	let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
+	return
     let $result :=
         (
         (: The author, etc. of the primary publication. These occur in front, with no role labels.:)
@@ -623,10 +639,10 @@ declare function retrieve-mods:format-list-view($position as xs:string, $entry a
                     [(mods:role/mods:roleTerm[lower-case(.) = $retrieve-mods:primary-roles]) or empty(mods:role/mods:roleTerm)]
             }</primary-names>
             return
-                if (string($names-primary))
-                then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language)
-                , '. ')
-                else ()
+    	        if (string($names-primary))
+    	        then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language)
+    	        , '. ')
+    	        else ()
         ,
         (: The title of the primary publication. :)
         mods-common:get-short-title($entry)
@@ -676,16 +692,16 @@ declare function retrieve-mods:format-list-view($position as xs:string, $entry a
         then <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>
         else 
         (: The url of the primary publication. :)
-            if (contains($collection-short, 'Priya')) then () else
-            if ($entry/mods:location/mods:url/text())
-            then
-                for $url in $entry/mods:location/mods:url
-                    return
-                        let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;')) 
-                        return
-                            (: NB: The link is not clickable. :)
-                            concat(' <', $url-for-display, '>', '.')
-            else '.'
+        	if (contains($collection-short, 'Priya')) then () else
+        	if ($entry/mods:location/mods:url/text())
+        	then
+            	for $url in $entry/mods:location/mods:url
+	                return
+                    (: NB: Too long URLs do not line-wrap, forcing the display of results down below the folder view, so do not display too long URLs. The link is anyway not clickable. :)
+	                if (string-length($url) le 80)
+	                then concat(' <', $url, '>', '.')
+    	            else ""
+        	else '.'
         )
     
     let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}</span>

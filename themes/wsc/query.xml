@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:jquery="http://exist-db.org/xquery/jquery" id="query-panel">
     <jquery:tabset id="query-tabs" on-select="searchTabSelected">
-        <jquery:tab id="simple-search-form-tab" label="Simple Search">
+        <jquery:tab id="simple" label="Simple Search">
             <form id="simple-search-form" class="search-form" action="databases.html" name="simple-search" method="POST">
                 <table>
                     <tr>
@@ -28,12 +28,12 @@
                                 <jquery:option value="Title"/>
                                 <jquery:option value="Date Issued"/>
                             </jquery:select>
-                            <button id="simple-search-form-submit-button" type="button">Search</button>
+                            <button name="action" id="form-submit" type="submit">Search</button>
                             <input type="hidden" name="field1" value="All"/>
                         </td>
                     </tr>
                 </table>
-                <input type="hidden" name="query-tabs" value="simple-search-form-tab"/>
+                <input type="hidden" name="query-tabs" value="simple"/>
                 <input type="hidden" name="collection-tree" value="hidden"/>
             </form>
         </jquery:tab>
@@ -80,7 +80,7 @@
                         <td colspan="2">
                             <button class="button" name="clear" value="clear" type="submit">Clear All</button>
                             <div class="advanced-search">
-                                <button id="advanced-search-form-submit-button" type="button">Search</button>
+                                <button class="advanced-search" name="action" id="form-submit" type="submit">Search</button>
                             </div>
                         </td>
                         <td/>

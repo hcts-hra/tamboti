@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:jquery="http://exist-db.org/xquery/jquery">
     <jquery:dialog id="login-dialog" modal="true" title="Login" trigger="#login-link" width="450">
         <jquery:button label="Login" function="login"/>
@@ -9,13 +10,13 @@
                 <tr>
                     <td>Username:</td>
                     <td>
-                        <input name="user" type="text" required="required"/>
+                        <input name="user" type="text"/>
                     </td>
                 </tr>
                 <tr>
                     <td>Password:</td>
                     <td>
-                        <input name="password" type="password" required="required"/>
+                        <input name="password" type="password"/>
                     </td>
                 </tr>
             </table>
@@ -30,13 +31,12 @@
                 <br/>
             </div>
             <div>
-                <input id="new-collection-name" type="text" required="required"/>
+                <input name="name" type="text"/>
             </div>
         </form>
     </jquery:dialog>
-    <jquery:dialog id="upload-file-dialog" class="upload-file-style" modal="true" title="File attachments" trigger="#upload-file-to-resource" width="900" onOpen="updateAttachmentDialog">
-        <script type="text/javascript">// 
-            
+    <jquery:dialog id="upload-file-dialog" class="upload-file-style" modal="true" title="File attachments" trigger="#upload-file-to-resource" width="900" onOpen="updateAttachmentDialog" onClose="alert('onClose!');">
+        <script type="text/javascript">//
 angular.module('app', [], function() {})
 FileUploadCtrl.$inject = ['$scope']
 function FileUploadCtrl(scope) {
@@ -89,16 +89,15 @@ function FileUploadCtrl(scope) {
     //============== DRAG &amp; DROP =============
     
     scope.setFiles = function(element) {
-    scope.$apply(function(scope) {
-      //console.log('files:', element.files);
-      // Turn the FileList object into an Array
-        scope.files = []
-        for (var i = 0; i &lt; element.files.length; i++) {
-        
-          scope.files.push(element.files[i])
-        }
-      scope.progressVisible = true
-      });
+	    scope.$apply(function(scope) {
+	      //console.log('files:', element.files);
+	      // Turn the FileList object into an Array
+	        scope.files = []
+	        for (var i = 0; i &lt; element.files.length; i++) {	        
+	          scope.files.push(element.files[i])
+	        }
+	      scope.progressVisible = true
+	      });
     };
     
     scope.uploadFile = function() {
@@ -112,28 +111,28 @@ function FileUploadCtrl(scope) {
         xhr.addEventListener("error", uploadFailed, false)
         xhr.addEventListener("abort", uploadCanceled, false)
         
-        xhr.open("POST", "upload.xql")
-        scope.progressVisible = false
-         
+        xhr.open("POST", "../upload/upload.xq")
+        scope.progressVisible = false        
         
-        
-        if (document.getElementById('upload-resource-id')!=null)
-        {
+        if (document.getElementById('upload-resource-id')!=null) {
             var parent_record = document.getElementById('upload-resource-id').innerHTML
             xhr.setRequestHeader("X-File-Parent", parent_record)
         }
                 
         //for folder uploads
-	    if (document.getElementById('file-upload-folder')!=null){
-		  var upload_folder =  document.getElementById('file-upload-folder').innerHTML
+	    if ($('#file-upload-folder') != null) {
+		  var upload_folder = encodeURIComponent($('#file-upload-folder').html());
 		  xhr.setRequestHeader("X-File-Folder", upload_folder)
-		}
-        
-       
+		}       
         
         xhr.send(fd)
         scope.files = []
     }
+    
+    scope.hideUploadDialog = function() {
+        scope.files = [];
+        $("#upload-file-dialog").dialog("close");
+    }     
     
     function uploadProgress(evt) {
         scope.$apply(function(){
@@ -163,8 +162,6 @@ function FileUploadCtrl(scope) {
         alert("The upload has been canceled by the user or the browser dropped the connection.")
     }
 }
-
-
 //</script>
         <div class="row"/>
         <div class="dropbox-wrapper">
@@ -200,6 +197,7 @@ function FileUploadCtrl(scope) {
                 </td>
             </tr>
         </table>
+        <input type="button" ng-click="hideUploadDialog()" value="Cancel" style="float: right;"/>
     </jquery:dialog>
     <jquery:dialog id="rename-collection-dialog" modal="true" title="Rename Folder" trigger="#collection-rename-folder" width="450">
         <jquery:button label="Rename" function="renameCollection"/>
@@ -211,7 +209,7 @@ function FileUploadCtrl(scope) {
                 <br/>
             </div>
             <div>
-                <input id="rename-new-name" name="name" type="text" required="required"/>
+                <input id="rename-new-name" name="name" type="text"/>
             </div>
         </form>
     </jquery:dialog>
@@ -241,7 +239,7 @@ function FileUploadCtrl(scope) {
             <div>NB: If you remove the folder, the folder and its contents will be deleted and cannot be restored.</div>
         </form>
     </jquery:dialog>
-    <jquery:dialog id="sharing-collection-dialog" modal="true" title="Folder Sharing" trigger="#collection-sharing" width="625" onOpen="updateSharingDialog">
+    <jquery:dialog id="sharing-collection-dialog" modal="true" title="Folder Sharing" trigger="#collection-sharing" width="700" onOpen="updateSharingDialog">
         <jquery:button id="cancel" label="Close"/>
         <div>Folder <strong>
                 <span id="sharing-collection-path_"/>
@@ -250,7 +248,8 @@ function FileUploadCtrl(scope) {
             <thead>
                 <tr>
                     <th>Type</th>
-                    <th>Name</th>
+                    <th>Full Name</th>
+                    <th>UserID</th>
                     <th>Reading</th>
                     <th>Writing Allowed?</th>
                     <th>Remove</th>
@@ -314,6 +313,7 @@ function FileUploadCtrl(scope) {
     <div id="lightbox" class="lightbox" style="display: none">
         <div class="view">
             <div class="image">
+                <img class="content" src="dummy"/>
                 <a href="" class="next">
                     <img src="theme/images/nextlabel.gif"/>
                 </a>

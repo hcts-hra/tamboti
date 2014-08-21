@@ -33,30 +33,25 @@
                     three-character code according to ISO 639-2b (e.g. eng, ger, chi, hin)
                 </xsd:documentation>
             </xsd:annotation>
-
             <xsd:restriction base="langType">
                 <xsd:pattern value="[a-z][a-z][a-z]"/>
             </xsd:restriction>
         </xsd:simpleType>
-
         <xsd:simpleType name="scriptType">
             <xsd:annotation>
                 <xsd:documentation>
                     four-character code according to ISO 15924 (e.g. Latn, Arab, Hans, Deva)
                 </xsd:documentation>
             </xsd:annotation>
-
             <xsd:restriction base="scriptType">
                 <xsd:pattern value="[A-Z][a-z][a-z][a-z]"/>
             </xsd:restriction>
         </xsd:simpleType>
-
         <xsd:simpleType name="transliterationType">
             <xsd:restriction base="transliterationType">
                 <xsd:pattern value="[a-z]{4}"/>
             </xsd:restriction>
         </xsd:simpleType>
-
         <xsd:simpleType name="uncertainDateType">
             <xsd:restriction base="uncertainDateType">
                 <xsd:enumeration value="about"/>
@@ -65,7 +60,6 @@
                 <xsd:enumeration value="active"/>
             </xsd:restriction>
         </xsd:simpleType>
-
         <xsd:simpleType name="shapeType">
             <xsd:restriction base="shapeType">
                 <xsd:enumeration value="oval"/>

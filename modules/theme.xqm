@@ -24,7 +24,7 @@ declare function theme:resolve-uri($prefix as xs:string?, $root as xs:string, $r
             "/", $theme, "/",
             $resource
         )
-let $log := util:log("INFO", ("resolved theme path: ", $path))
+    (:let $log := util:log("DEBUG", ("resolved theme path: ", $path)):)
     return
         $path
 };
@@ -49,8 +49,8 @@ declare function theme:resolve($prefix as xs:string?, $root as xs:string, $resou
             "/", $theme, "/",
             $resource
         )
-    let $log := util:log("INFO", ("resolved theme path: ", $path, " prefix: ", $prefix, " root: ", $root,
-        " $config:themes: ", $config:themes))
+    (:let $log := util:log("DEBUG", ("resolved theme path: ", $path, " prefix: ", $prefix, " root: ", $root,
+        " $config:themes: ", $config:themes)):)
     return
         $path
 };
@@ -79,7 +79,7 @@ declare function theme:resolve-by-id($root as xs:string, $id as xs:string) {
                 concat(
                     $config:themes, "/", $theme
                 )
-let $log := util:log("INFO", ("resolved theme path: ", $path))
+            (:let $log := util:log("DEBUG", ("resolved theme path: ", $path)):)
             return
                 collection($path)//*[@id = $id]
 };
@@ -99,7 +99,7 @@ declare function theme:theme-for-prefix($prefix as xs:string?) {
         "default"
     else
         let $theme :=
-            doc($config:theme-config)//theme[@id = 'default-theme']/@name/string()
+            doc($config:theme-config)//map[@path = $prefix]/@theme/string()
         return
             if ($theme) then
                 $theme
@@ -122,7 +122,7 @@ declare function theme:get-root($prefix as xs:string?) as xs:string {
         if ($theme eq "default") then
             $config:mods-commons
         else
-            doc($config:theme-config)//theme[@id = 'default-theme']/@root/string()
+            doc($config:theme-config)//map[@theme = $theme]/@root/string()
 };
 
 (:~

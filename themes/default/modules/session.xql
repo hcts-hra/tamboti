@@ -41,10 +41,6 @@ declare variable $bs:THUMB_SIZE_FOR_GRID := 64;
 declare variable $bs:THUMB_SIZE_FOR_GALLERY := 128;
 declare variable $bs:THUMB_SIZE_FOR_DETAIL_VIEW := 256;
 
-declare variable $session:error-message-before-link := "An error occurred when displaying this record. In order to have this error fixed, please send us an email identifying the record by clicking on the following link: ";
-declare variable $session:error-message-after-link := " Clicking on the link will open your default email client.";
-declare variable $session:error-message-href := " mailto:petersen@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
-declare variable $session:error-message-link-text := "Send email.";
 
 declare function functx:substring-before-last 
   ( $arg as xs:string? ,
@@ -110,52 +106,16 @@ declare function bs:view-gallery-item($mode as xs:string, $item as element(), $c
         else $bs:THUMB_SIZE_FOR_GRID
     let $list-view := 
         if (namespace-uri($item) eq 'http://www.loc.gov/mods/v3')
-        then 
-            try {
-                retrieve-mods:format-list-view('', $item, '')
-            } catch * {
-            <td class="error" colspan="2">
-            {$session:error-message-before-link} 
-            <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-            {$session:error-message-after-link}
-            </td>
-            }    
+        then retrieve-mods:format-list-view('', $item, '')
         else
             if (namespace-uri($item) eq 'http://www.vraweb.org/vracore4.htm')
-            then 
-                try {
-                    retrieve-vra:format-list-view('', $item, '')
-                } catch * {
-                <td class="error" colspan="2">
-                {$session:error-message-before-link} 
-                <a href="{$session:error-message-href}{$item/*/@id/string()}.">{$session:error-message-link-text}</a>
-                {$session:error-message-after-link}
-                </td>
-                }    
+            then retrieve-vra:format-list-view('', $item, '')
             else
                 if (namespace-uri($item) eq 'http://www.tei-c.org/ns/1.0')
-                then 
-                    try {
-                        retrieve-tei:format-list-view('', $item, '', '', '')
-                    } catch * {
-                    <td class="error" colspan="2">
-                    {$session:error-message-before-link} 
-                    <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                    {$session:error-message-after-link}
-                    </td>
-                    }    
+                then retrieve-tei:format-list-view('', $item, '', '', '')
                 else
                     if (namespace-uri($item) eq 'http://www.w3.org/2005/Atom')
-                    then 
-                        try {
-                            retrieve-wiki:format-list-view('', $item, '', '', '')
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
+                    then retrieve-wiki:format-list-view('', $item, '', '', '')
                     else ()
                 
         return
@@ -258,19 +218,10 @@ declare function bs:mods-detail-view-table($item as element(mods:mods), $current
                 <abbr class="unapi-id" title="{bs:get-item-uri($item/@ID)}"></abbr>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
-                            retrieve-mods:format-detail-view(string($currentPos), $clean, $collection)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
-                
+                        retrieve-mods:format-detail-view(string($currentPos), $clean, $collection)
                         (: What is $currentPos used for? :)
                 }
             </td>
@@ -289,21 +240,37 @@ declare function local:basic-get-http($uri,$username,$password) {
 
 declare function local:return-thumbnail-detail-view($image){
     let $image-url := 
-        if ($bs:USER eq "guest")
-        then <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/>
-        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/></a> 
+        if ($bs:USER eq "guest") then 
+            <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage picture"/>
+        else 
+            <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank">
+                <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage picture zoom"/>
+                
+            </a> 
     
         return $image-url
 };
 
+(:declare function local:return-thumbnail-detail-view($image){:)
+(:    let $image-url := <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="" class="relatedImage"/>:)
+(:        return $image-url:)
+(:};:)
+
 declare function local:return-thumbnail-list-view($image){
     let $image-url := 
-        if ($bs:USER eq "guest")
-        then <img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/>
-        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/></a> 
-    
-        return $image-url
+        if ($bs:USER eq "guest") then
+            <img src="{concat($config:image-service-url, $image/@id)}?width=60&amp;height=60" alt="image" class="relatedImage picture"/>
+        else 
+            <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank">
+                <img src="{concat($config:image-service-url, $image/@id)}?width=60&amp;height=60" alt="image" class="relatedImage picture zoom"/>   
+            </a> 
+    return $image-url
 };
+
+(:declare function local:return-thumbnail-list-view($image){:)
+(:    let $image-url := <img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/>:)
+(:        return $image-url:)
+(:};:)
 
 declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos as xs:int) {
     let $isWritable := bs:collection-is-writable(util:collection-name($item))
@@ -320,8 +287,6 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
             else '/vra:image/@id'
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
-    let $vra-work :=  collection($config:mods-root)//vra:work[@id=$id]/vra:relationSet/vra:relation
-    
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
             <td class="pagination-number">{$currentPos}</td>
@@ -334,15 +299,21 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                    if ($vra-work)
-                    then
-                        for $entry in $vra-work
-                        (:return <img src="{$entry/@relids}"/>:)
-                        let $image := collection($config:mods-root)//vra:image[@id=$entry/@relids]
-                            return
-                                <p>{local:return-thumbnail-detail-view($image)}</p>
-                    else 
-                        let $image := collection($config:mods-root)//vra:image[@id=$id]
+                    let $log := util:log("INFO", "VRA WORK")
+                       (: relids/refid workaround :)
+                        for $rel in $item//vra:relationSet/vra:relation[@type = "imageIs"]
+                            let $log := util:log("INFO", $rel)
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@relids), "i_")) then
+                                    data($rel/@relids)
+                                else 
+                                    if(starts-with(data($rel/@refid), "i_")) then
+                                        data($rel/@refid)
+                                    else
+                                        ()
+                            let $image := collection($config:mods-root)//vra:image[@id=$image-uuid]
+(:                            let $log := util:log("INFO", $image-uuid):)
+
                             return
                                 <p>{local:return-thumbnail-detail-view($image)}</p>
                      (: 
@@ -356,18 +327,10 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
                 <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
-                            retrieve-vra:format-detail-view(string($currentPos), $clean, $collection, $type, $id)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/*/@id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }                        
+                        retrieve-vra:format-detail-view(string($currentPos), $clean, $collection, $type, $id)
                 }
             </td>
         </tr>
@@ -388,7 +351,7 @@ declare function bs:wiki-detail-view-table($item as element(), $currentPos as xs
             else '/vra:image/@id'
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
-    let $vra-work :=  collection($config:mods-root)//vra:work[@id=$id]/vra:relationSet/vra:relation
+    let $vra-work :=  collection($config:mods-root)//vra:work[@id=$id]
     
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
@@ -404,12 +367,16 @@ declare function bs:wiki-detail-view-table($item as element(), $currentPos as xs
                 { 
                     if ($vra-work)
                     then
-                        for $entry in $vra-work
-                        (:return <img src="{$entry/@relids}"/>:)
-                        let $image := collection($config:mods-root)//vra:image[@id=$entry/@relids]
+                        (: relids/refid workaround :)
+                        for $rel in $vra-work/vra:relationSet/vra:relation
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@refid), "i_")) then
+                                    data($rel/@refid)
+                                else 
+                                    data($rel/@relids)
+                            let $image := collection($config:mods-root)//vra:image[@id=$image-uuid]
                             return
-                                <p>{local:return-thumbnail-detail-view($image)}</p>
-                    else 
+                                <p>{local:return-thumbnail-detail-view($image)}</p>                    else 
                         let $image := collection($config:mods-root)//vra:image[@id=$id]
                             return
                                 <p>{local:return-thumbnail-detail-view($image)}</p>
@@ -425,15 +392,7 @@ declare function bs:wiki-detail-view-table($item as element(), $currentPos as xs
                 {
                     let $collection := util:collection-name($item)
                     return
-                        try {
-                            retrieve-wiki:format-detail-view(string($currentPos), $item, $collection, $type, $id)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
+                        retrieve-wiki:format-detail-view(string($currentPos), $item, $collection, $type, $id)
                 }
             </td>
         </tr>
@@ -464,18 +423,10 @@ declare function bs:tei-detail-view-table($item as element(), $currentPos as xs:
                 <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
-                            retrieve-tei:format-detail-view(string($currentPos), $clean, $collection, $document-uri, $node-id)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
+                        retrieve-tei:format-detail-view(string($currentPos), $clean, $collection, $document-uri, $node-id)
                 }
             </td>
         </tr>
@@ -487,7 +438,6 @@ declare function bs:mods-list-view-table($item as node(), $currentPos as xs:int)
     let $saved := exists($stored//*[@id = $id])
     return
         <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
-            <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{document-uri(root($item))}"/></td>
             <td class="pagination-number">{$currentPos}</td>
             {
             <td class="actions-cell">
@@ -506,18 +456,10 @@ declare function bs:mods-list-view-table($item as node(), $currentPos as xs:int)
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
-                            retrieve-mods:format-list-view(string($currentPos), $clean, $collection)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }                        
+                        retrieve-mods:format-list-view(string($currentPos), $clean, $collection)
                         (: Originally $item was passed to retrieve-mods:format-list-view() - was there a reason for that? Performance? :)
                 }
                 </a>
@@ -542,7 +484,6 @@ declare function bs:vra-list-view-table($item as node(), $currentPos as xs:int) 
     let $saved := exists($stored//*[@id eq $id])
         return
             <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
-                <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{document-uri(root($item))}"/></td>            
                 <td class="pagination-number" style="vertical-align:middle">{$currentPos}</td>
                 {
                 <td class="actions-cell" style="vertical-align:middle">
@@ -553,32 +494,33 @@ declare function bs:vra-list-view-table($item as node(), $currentPos as xs:int) 
                 }
                 <td class="list-type" style="vertical-align:middle"><img src="theme/images/image.png" title="Still Image"/></td>
                 { 
-                let $relids := $item//vra:relation/@relids
-                (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
-                For now, we disregard this; otherwise we have to check after retrieving the image records.:)
-                let $relids := tokenize($relids, ' ')[1]
-                let $image := collection($config:mods-root)//vra:image[@id = $relids]
-                    return
-                        <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
-    }
+                    (: relids/refid workaround :)
+                    let $relations := $item//vra:relation
+                    let $relids :=
+                        for $rel in $relations
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@refid), "i_")) then
+                                    data($rel/@refid)
+                                    else 
+                                        data($rel/@relids)
+                                return $image-uuid 
+                    (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
+                    For now, we disregard this; otherwise we have to check after retrieving the image records.:)
+                    let $relids := tokenize($relids, ' ')[1]
+                    let $image := collection($config:mods-root)//vra:image[@id = $relids]
+                        return
+                            <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
+                }
                 {
                 <td class="pagination-toggle" style="vertical-align:middle">
                     <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                     <a>
                     {
                         let $collection := util:collection-name($item)
-                        let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                        let $collection := functx:replace-first($collection, '/db/', '')
                         let $clean := clean:cleanup($item)
                         return
-                        try {
                             retrieve-vra:format-list-view(string($currentPos), $clean, $collection)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/*/@id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
                     }
                     </a>
                 </td>
@@ -597,7 +539,6 @@ declare function bs:tei-list-view-table($item as node(), $currentPos as xs:int) 
     let $saved := exists($stored//*[@id = $id])
     return
         <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
-            <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{document-uri(root($item))}"/></td>        
             <td class="pagination-number">{$currentPos}</td>
             {
             <td class="actions-cell">
@@ -616,18 +557,10 @@ declare function bs:tei-list-view-table($item as node(), $currentPos as xs:int) 
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     (:let $clean := clean:cleanup($item):)
                     return
-                        try {
-                            retrieve-tei:format-list-view(string($currentPos), $item, $collection, $document-uri, $node-id)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
+                        retrieve-tei:format-list-view(string($currentPos), $item, $collection, $document-uri, $node-id)
                 }
                 </a>
             </td>
@@ -664,18 +597,10 @@ declare function bs:wiki-list-view-table($item as node(), $currentPos as xs:int)
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     (:let $clean := clean:cleanup($item):)
                     return
-                        try {
-                            retrieve-wiki:format-list-view(string($currentPos), $item, $collection, $document-uri, $node-id)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
+                        retrieve-wiki:format-list-view(string($currentPos), $item, $collection, $document-uri, $node-id)
                 }
                 </a>
             </td>
@@ -713,18 +638,8 @@ declare function bs:plain-list-view-table($item as node(), $currentPos as xs:int
             </td>
             {
             <td class="pagination-toggle">
-                <span>{
-                        try {
-                            retrieve-mods:format-list-view(string($currentPos), $clean, $collection-short)
-                        } catch * {
-                        <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
-                        </td>
-                        }
-                }</span>
-                <h4>{$title}</h4>
+                <span>{retrieve-mods:format-list-view(string($currentPos), $clean, $collection-short)}</span>
+                <h4>{xmldb:decode-uri($title)}</h4>
                 { $kwic }
             </td>
             }
@@ -768,28 +683,33 @@ declare function bs:toolbar($item as element(), $isWritable as xs:boolean, $id a
 
     let $collection := util:collection-name($item)
     let $id := 
-        if (name($item) eq 'mods') 
-        then $item/@ID 
+        if (name($item) eq 'mods') then
+            $item/@ID 
         else
-            if (exists($item/vra:work))
-            then $item/vra:work/@id
-            else ()
-    let $imageId :=  if (exists($item/vra:work))
-                      then
-                            if (exists($item/vra:work/vra:relationSet/vra:relation/@pref[.='true']))
-                            then $item/vra:work/vra:relationSet/vra:relation[@pref='true']/@relids
-                            else $item/vra:work/vra:relationSet/vra:relation[1]/@relids
-                      else $item/vra:image/@id
-
+            if (exists($item/vra:work)) then
+                $item/vra:work/@id
+            else 
+                ()
+        let $imageId :=  
+            (: relids/refid workaround :)
+            if (exists($item/vra:work)) then
+                let $rel :=
+                    if (exists($item/vra:work/vra:relationSet/vra:relation/@pref[.='true'])) then 
+                        $item/vra:work/vra:relationSet/vra:relation[@pref='true']
+                    else 
+                        $item/vra:work/vra:relationSet/vra:relation[1]
+                return
+                    if(starts-with(data($rel/@refid), "i_")) then
+                        data($rel/@refid)
+                    else 
+                        data($rel/@relids)
+            else $item/vra:image/@id
+            
     let $workdir := if (contains($collection, 'VRA_images')) then (  functx:substring-before-last($collection, "/")) else ($collection)
     let $workdir := if (ends-with($workdir,'/')) then ($workdir) else ($workdir || '/')
-    let $imagepath := $workdir || 'VRA_images/' || $imageId || ".xml"
+    let $imagepath := $workdir || 'VRA_images/' || $imageId[1] || ".xml"
     
      
-     let $upload-button:=  
-        if (not($item/vra:image/@id))
-            then <a class="upload-file-style"  directory="false" href="#{$id}" onclick="updateAttachmentDialog"><img title="Upload Image" src="theme/images/database_add.png" /> </a>
-        else ()
     return
         <div class="actions-toolbar">{
             if (name($item) = ('mods', 'vra'))
@@ -821,9 +741,12 @@ declare function bs:toolbar($item as element(), $isWritable as xs:boolean, $id a
                         ,
                         <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>
                         ,
-                        $upload-button                        
+                        if (not($item/vra:image/@id)) then
+                            <a class="upload-file-style" directory="false" href="#{$id}" onclick="updateAttachmentDialog"><img title="Upload Attachment" src="theme/images/database_add.png" /></a>
+                        else ()
                     )
-                else ()
+                else 
+                    ()
             }
             {
                 (: button to add a related item :)
@@ -870,7 +793,7 @@ declare function bs:get-icon($size as xs:int, $item, $currentPos as xs:int) {
         (: Only run if there actually is a URL:)
         (: NB: It should be checked if the URL leads to an image described in the record:)
         then
-            let $image-path := concat(util:collection-name($item), "/", $image-url)
+            let $image-path := concat(util:collection-name($item), "/", xmldb:encode($image-url))
             return
                 if (collection($image-path)) 
                 then bs:get-icon-from-folder($size, $image-path)

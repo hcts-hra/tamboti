@@ -36,6 +36,8 @@ declare function local:chmod($path) {
 let $path := "/resources/users"
 return 
     (
+        local:chmod($path)
+        
 (:        local:set-user-group-permissions($path),:)
  
 (:        for $user-id in xmldb:get-users("biblio.users"):)
@@ -46,15 +48,15 @@ return
 (:                then (local:set-user-group-permissions($collection-name, $user-id)):)
 (:                else($collection-name || ": " || $collection-exists):)
 
-        for $col in xmldb:get-child-collections($path)
-        let $collection-name := $path || "/" || $col
-        let $user-id := $col
-        let $user-exists := xmldb:exists-user($user-id)
-        return
-            if ($user-exists)
-                then (
-                        xmldb:set-collection-permissions($collection-name, $user-id, $group-id, util:base-to-integer(0755, 8)),
-                        local:set-user-group-permissions($collection-name, $user-id)
-                    )
-                else($col)
+(:        for $col in xmldb:get-child-collections($path):)
+(:        let $collection-name := $path || "/" || $col:)
+(:        let $user-id := replace($col, "%40", "@"):)
+(:        let $user-exists := xmldb:exists-user($user-id):)
+(:        return:)
+(:            if ($user-exists):)
+(:                then (:)
+(:                        xmldb:set-collection-permissions($collection-name, $user-id, $group-id, util:base-to-integer(0755, 8)),:)
+(:                        local:set-user-group-permissions($collection-name, $user-id):)
+(:                    ):)
+(:                else($col):)
     )

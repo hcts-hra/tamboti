@@ -32,19 +32,29 @@ declare function retrieve-tei:format-detail-view($position as xs:string, $entry 
     let $result :=
     <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
     {
-    let $collection := replace(replace($collection-short, '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')
+    let $collection := replace(replace(xmldb:decode-uri($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')
     (:let $log := util:log("DEBUG", ("##$collection): ", $collection)):)
     return
     <tr>
         <td class="collection-label">Record Location</td>
-        <td><div class="collection">{xmldb:decode($collection)}</div></td>
+        <td>
+                <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
+            <div class="collection">{$collection}</div>
+        </td>
     </tr>
     ,
     let $format := 'TEI Record'
     return
         <tr>
-            <td class="collection-label">Record Format</td>
-            <td>{$format}</td>
+            <td class="collection-label">
+                Record Format
+            </td>
+            <td>
+                <div id="record-format" style="display:none;">TEI</div>
+                <div>
+                    {$format}
+                </div>
+            </td>
         </tr>
     ,
     let $title := doc($document-uri)/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1]

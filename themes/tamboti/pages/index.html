@@ -1,33 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <div id="content1col" class="templates:surround?with=pages/page.html&amp;at=content1col">
     <div class="biblio:login"/>
     <div class="biblio:query">
         <div class="templates:include?path=pages/search-form.html"/>
         <div class="templates:include?path=pages/collection-tree.html"/>
         <div id="main-content">
-            <div id="results-toolbar">
-                <div id="ddlcb" class="ddlcb-checkboxContainer">
-                    <div class="ddlcb-left">
-                        <div class="ddlcb-checkboxCase"/>
-                    </div>
-                    <div class="ddlcb-right"/>
-                    <span id="ddlcb-status-message"/>
-                    <ul>
-                        <li id="ddlcb-select-all">Select all</li>
-                        <li id="ddlcb-select-page">Select page</li>
-                    </ul>
-                </div>
-                <select id="search-list-action">
-                    <option value="actions" disabled="disabled" selected="selected" style="display:none;">Actions</option>
-                    <option value="edit">Edit</option>
-                    <option value="delete">Delete</option>
-                    <option value="move">Move</option>
-                    <option value="save">Save</option>
-                    <option value="export">Export</option>
-                </select>
-            </div>
-            <form id="edit-action-form" action="/exist/apps/ziziphus/GroupEditor.xql" method="POST" target="_blank">
-                <input type="hidden"/>
-            </form>
             <div id="results-head">
                 <span class="navbar">
                     <span class="records-shown">
@@ -38,7 +15,7 @@
                         <span class="pagination-last">&gt;|</span>
                     </span> of 
                     <span class="biblio:result-count result-count"/>
-                    <span id="last-collection-queried"/>
+                    <span class="biblio:last-collection-queried last-collection-queried"/>
                     <a class="pagination-toggle" href="#">List view</a>
                     <!--<span class="pagination-mode">
                         View as: 

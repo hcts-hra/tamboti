@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "1.0";
 
 import module namespace request="http://exist-db.org/xquery/request";
 import module namespace xdb = "http://exist-db.org/xquery/xmldb";
@@ -42,7 +42,7 @@ return
             else 
                 if (starts-with($exist:path, "/theme")) 
                 then
-                    let $path := theme:resolve($exist:prefix || "/" || $config:app-id, $exist:root, substring-after($exist:path, "/theme"))
+                    let $path := theme:resolve($exist:prefix, $exist:root, substring-after($exist:path, "/theme"))
                     let $themePath := replace($path, "^(.*)/[^/]+$", "$1")
                     return
                         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

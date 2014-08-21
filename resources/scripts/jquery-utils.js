@@ -42,7 +42,6 @@
                     if (base.options.totalItems == 1)
                         base.options.itemsPerPage = 1;
                     base.element = $(base);
-
                     helpers.initNavbar(base);
                     if (base.options.totalItems > 0)
                         helpers.retrievePage(base, 1);
@@ -96,7 +95,7 @@
             },
     
             initNavbar: function(base) {
-                if (!base.options.params.initialiseNavbar) {
+                if (!base.options.navContainer) {
                     return;
                 }
                 var div = $(base.options.navContainer);
@@ -115,7 +114,7 @@
                             helpers.retrievePage(base, 1);
                     return false;
                 });
-                $(".pagination-next", div).click(function (ev) {
+                $(".pagination-next", div).click(function () {
                     if (base.options.totalItems - (base.currentItem + base.options.itemsPerPage) >= 0)
                     helpers.retrievePage(base, base.currentItem + base.options.itemsPerPage);
                     return false;
@@ -214,7 +213,7 @@
                     url: base.options.url,
                     data: params,
                     dataType: "html",
-                    success: function(data) {
+                    success: function(data) { 
                         base.currentItem = start;
                         helpers.displayPage(base, data); 
                     },
@@ -278,7 +277,7 @@
                             var code = e.keyCode || e.which; 
                             if (code  == 13) {
                               e.preventDefault();                  
-                              tamboti.apis.advancedSearch();
+                              $('#advanced-search').submit();
                       	    return false;
                       	  }
                         });                        

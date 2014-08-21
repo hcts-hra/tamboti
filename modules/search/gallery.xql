@@ -7,7 +7,6 @@ import module namespace session = "http://exist-db.org/xquery/session";
 import module namespace util = "http://exist-db.org/xquery/util";
 
 import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
-import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 
@@ -40,7 +39,7 @@ declare function local:get-collection-image-count() as xs:integer {
 };
 
 declare function local:_get-collection-resources() as xs:string* {
-    let $collection := config:process-request-parameter(request:get-parameter("collection",()))
+    let $collection := request:get-parameter("collection",())
     for $resource in xmldb:get-child-resources($collection)[fn:lower-case(fn:replace(. , ".*\.", "")) = $local:image-exts]
     order by number(replace($resource, "^\d+_0*(\d+)_.*$", "$1")) ascending
     return
@@ -53,7 +52,7 @@ declare function local:get-cache-image-count() as xs:integer {
 };
 
 declare function local:get-image-collection-for-collection($image as xs:string) as xs:string {
-    config:process-request-parameter(request:get-parameter("collection",()))
+    request:get-parameter("collection",())
 };
 
 declare function local:get-image-collection-for-cached($image as element(mods:url)) as xs:string {
