@@ -326,7 +326,7 @@ declare function sharing:get-shared-with($collection-path as xs:string) as xs:st
 
 declare function sharing:is-valid-user-for-share($username as xs:string) as xs:boolean
 {
-    $username ne security:get-user-credential-from-session()[1] and (fn:contains($username, "@") or security:is-biblio-user($username))
+    $username ne security:get-user-credential-from-session()[1] and (fn:contains($username, "@") or sm:user-exists($username) or security:is-biblio-user($username))
 };
 
 declare function sharing:is-valid-group-for-share($groupname as xs:string) as xs:boolean
