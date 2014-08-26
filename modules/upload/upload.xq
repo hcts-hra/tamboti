@@ -124,11 +124,11 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
                 (
                     xmldb:create-collection($upload-collection-path, $image-collection-name),
                     sm:chown(xs:anyURI($image-collection-path), $collection-owner-username),
-                    sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group),
-                    security:duplicate-acl($upload-collection-path, $image-collection-path)
+                    sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group)
                 )
             else ()
             ,
+            security:duplicate-acl($upload-collection-path, $image-collection-path),
             upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord-uuid), $image-uuid),
                 
             xmldb:store($image-collection-path, $image-record-filename, $image-record),

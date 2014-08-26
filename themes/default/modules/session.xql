@@ -22,8 +22,6 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "../../../
 import module namespace clean="http://exist-db.org/xquery/mods/cleanup" at "../../../modules/search/cleanup.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "mods-common.xql";
-import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xql";
-
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
@@ -195,19 +193,19 @@ declare function bs:view-gallery-item($mode as xs:string, $item as element(), $c
                 else 
                     if (namespace-uri($item) eq 'http://www.tei-c.org/ns/1.0')
                     then
-                        <li class="pagination-item {$mode}" xmlns="http://www.w3.org/1999/xhtml">
-                          <span class="pagination-number">{ $currentPos }</span>
-                          <div class="icon pagination-toggle" title="{$list-view}">
+                            <li class="pagination-item {$mode}" xmlns="http://www.w3.org/1999/xhtml">
+                        <span class="pagination-number">{ $currentPos }</span>
+                        <div class="icon pagination-toggle" title="{$list-view}">
                             <img class="magnify icon-magnifier" src="theme/images/search.png" title="Click to view full screen image"/>
                             { bs:get-icon($thumbSize, $item, $currentPos) }            
-                          </div>
+                    </div>
                         {
                             if ($mode eq "gallery") then
                                 <span class="tei-gallery">{ $list-view }</span>
                             else
                                 ()
                         }
-                        </li>
+                    </li>
                     else ()
 
 };
@@ -290,31 +288,21 @@ declare function local:basic-get-http($uri,$username,$password) {
 };
 
 declare function local:return-thumbnail-detail-view($image){
-    let $image-uuid := $image/@id
-    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
-    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
-    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")
-
     let $image-url := 
         if ($bs:USER eq "guest")
-        then <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
-        else <a href="{$image-size1000-href}" target="_blank"><img src="{$image-size150-href}" alt="image" class="relatedImage"/></a> 
+        then <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/>
+        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/></a> 
     
         return $image-url
 };
 
 declare function local:return-thumbnail-list-view($image){
-    let $image-uuid := $image/@id 
-
-    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
-    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
-
     let $image-url := 
-        if ($bs:USER eq "guest") then
-            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
-        else 
-            <a href="{$image-size1000-href}" target="_blank"><img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/></a> 
-    return $image-url
+        if ($bs:USER eq "guest")
+        then <img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/>
+        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/></a> 
+    
+        return $image-url
 };
 
 declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos as xs:int) {

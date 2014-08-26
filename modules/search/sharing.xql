@@ -2,52 +2,51 @@ xquery version "3.0";
 
 import module namespace json="http://www.json.org";
 import module namespace request = "http://exist-db.org/xquery/request";
+import module namespace session = "http://exist-db.org/xquery/session";
 import module namespace util="http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 import module namespace file="http://exist-db.org/xquery/file";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
-import module namespace uu="http://exist-db.org/mods/uri-util" at "uri-util.xqm";
+import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
+declare namespace group = "http://commons/sharing/group";
 
 declare option exist:serialize "method=json media-type=text/javascript";
 
 declare function local:get-sharing($collection-path as xs:string) as element(aaData) {
 
     system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        let $acl := sm:get-permissions($collection-path)/sm:permission/sm:acl
-        
-        return
-            if (xs:integer($acl/@entries) eq 0)
-            then local:empty()
-            else
-                <aaData>{
-                    for $ace at $index in $acl/sm:ace
-                        let $target := $ace/@target
-                        let $username := $ace/@who/string()
-                        let $who :=
-                            if ($target = 'USER') then
-                                (system:as-user($config:dba-credentials[1],$config:dba-credentials[2], security:get-human-name-for-user($username)))
-                            else 
-                                ($ace/@who)
-                        order by $username
-                        return
-                            element json:value {
-                                if(xs:integer($acl/@entries) eq 1) then
-                                    attribute json:array { true() }
-                                else(),
-                                <json:value>{text{$ace/@target}}</json:value>,
-                                <json:value>{text{$who}}</json:value>,
-                                <json:value>{text{$username}}</json:value>,
-                                <json:value>{text{$ace/@access_type}}</json:value>,
-                                <json:value>{text{$ace/@mode}}</json:value>,
-                                <json:value>{$index - 1}</json:value>
-                            }
-                }</aaData>
+    
+    let $acl := sm:get-permissions($collection-path)/sm:permission/sm:acl
+    
+    return
+        if (xs:integer($acl/@entries) eq 0)
+        then local:empty()
+        else
+            <aaData>{
+                for $ace at $index in $acl/sm:ace
+                let $target := $ace/@target
+                let $who :=
+                    if ($target = 'USER')
+                    then (security:get-human-name-for-user($ace/@who/string()))
+                    else ($ace/@who)
+                return
+                    element json:value {
+                        if(xs:integer($acl/@entries) eq 1) then
+                            attribute json:array { true() }
+                        else(),
+                        <json:value>{text{$ace/@target}}</json:value>,
+                        <json:value>{text{$who}}</json:value>,
+                        <json:value>{text{$ace/@access_type}}</json:value>,
+                        <json:value>{text{$ace/@mode}}</json:value>,
+                        <json:value>{$index - 1}</json:value>
+                    }
+            }</aaData>
     )
 };
 
@@ -58,7 +57,6 @@ let $json-true := attribute json:array { true() }
         {system:as-user($config:dba-credentials[1],$config:dba-credentials[2],file:directory-list($upload-folder,'*.xml'))}
        </aaData>    
 };
-
 
 declare function local:list-collection-contents($collection as xs:string, $user as xs:string) {
     let $subcollections := 
@@ -76,9 +74,6 @@ declare function local:list-collection-contents($collection as xs:string, $user 
     return
         $resource
 };
-
-
-
 
 declare function local:resources($collection as xs:string, $user as xs:string) {
     let $start := number(request:get-parameter("start", 0)) + 1
@@ -107,19 +102,19 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
                 return
                     let $permissions := 
                         if ($isCollection) then
-                            xmldb:permissions-to-string(xmldb:get-permissions($path))
+                            security:get-resource-permissions($path)
                         else
-                            xmldb:permissions-to-string(xmldb:get-permissions($collection, $resource))
+                            security:get-resource-permissions(concat($collection, "/", $resource))
                     let $owner := 
                         if ($isCollection) then
-                            xmldb:get-owner($path)
+                            security:get-owner($path)
                         else
-                            xmldb:get-owner($collection, $resource)
+                            security:get-owner(concat($collection, "/", $resource))
                     let $group :=
                         if ($isCollection) then
-                            xmldb:get-group($path)
+                            security:get-group($path)
                         else
-                            xmldb:get-group($collection, $resource)
+                            security:get-group(concat($collection, "/", $resource))
                     let $lastMod := 
                         let $date :=
                             if ($isCollection) then
@@ -170,8 +165,6 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
         </aaData>
 };
 
-
-
 declare function local:get-attached-files ($file as xs:string ) {
  let $json :=attribute json:array { true() }       
 let $mods-results :=  collection($config:mods-root)//mods:mods[@ID=$file]//mods:relatedItem
@@ -189,7 +182,7 @@ let $mods-entry :=
                  <json:value json:array="true">     
                 <!--collection>{concat('../../../../rest',util:collection-name($image_vra),'/', $image_vra/@href)}</collection-->
                 <collection>{$image_vra/@href}</collection>
-                <name>{xmldb:decode(($image_vra//vra:title/text()))}</name>
+                <name>{($image_vra//vra:title/text())}</name>
                 <lastmodified>{
                 if (xs:date($modified) = current-date()) then
                     format-dateTime($modified, "Today [H00]:[m00]:[s00]")
@@ -216,7 +209,7 @@ let $mods-entry :=
                 <json:value json:array="true">     
                 <!--collection>{concat('../../../../rest',util:collection-name($image_vra),'/', $image_vra/@href)}</collection-->
                   <collection>{$image_vra/@href}</collection>
-                <name>{xmldb:decode(($image_vra//vra:title/text()))}</name>
+                <name>{($image_vra//vra:title/text())}</name>
                 <lastmodified>{
                 if (xs:date($modified) = current-date()) then
                     format-dateTime($modified, "Today [H00]:[m00]:[s00]")
@@ -240,25 +233,22 @@ let $mods-entry :=
              
 };
 
-
 declare function local:empty() {
     <aaData json:array="true"/>
 };
-
  
 <json:value>
     {
     if(request:get-parameter("collection",())) then (
-        local:get-sharing(uu:unescape-collection-path(request:get-parameter("collection",())))
+        local:get-sharing(config:process-request-parameter(request:get-parameter("collection",())))
     )
     else if(request:get-parameter("file",())) then (
         local:get-attached-files(request:get-parameter("file",()))
         )
     else if(request:get-parameter("upload-folder",())) then (
-        local:resources(request:get-parameter("upload-folder",()),xmldb:get-current-user())
+        local:resources(request:get-parameter("upload-folder",()),security:get-user-credential-from-session()[1])
         )
     else
         local:empty()
     }
 </json:value>
-
