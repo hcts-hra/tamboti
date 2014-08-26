@@ -291,131 +291,41 @@ declare function security:get-resource-permissions($resource-path as xs:string) 
 };
 
 declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:int, $is-writeable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $permissions := sm:get-permissions($resource),
-            $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id] return
-                if (empty($ace)) then
-                    false()
-                else (
-                    
-                    let $regexp-replacement := if ($is-writeable) then
-                        "w"    
-                    else
-                        "-"
-                    ,
-                    $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                    $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
-                    return
-                        true()
-                    
-                )
-    )
+    let $permissions := sm:get-permissions($resource),
+        $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id] return
+            if (empty($ace)) then
+                false()
+            else (
+                
+                let $regexp-replacement := if ($is-writeable) then
+                    "w"    
+                else
+                    "-"
+                ,
+                $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
+                $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                return
+                    true()
+                
+            )
 };
-
-(:~
-: toggles the ace-writable flag by name
-: 
-: @param resource The resource or collection
-: @param target USER or GROUP
-: @param name The user- or groupname
-: @param is-writable writeable or not
-:)
-
-declare function security:set-ace-writeable-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $is-writeable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
-        let $permissions := sm:get-permissions($resource)
-        let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
-        let $id := $ace/@index
-            return
-                if (empty($ace)) then
-                    false()
-                else (
-                    
-                    let $regexp-replacement := if ($is-writeable) then
-                        "w"    
-                    else
-                        "-"
-                    ,
-                    $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                    $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
-                    return
-                        true()
-                    
-                )
-    )
-};
-
 
 (:~
 : @return a sequence if the removal succeeded, otherwise the empty sequence
 :   The sequence contains USER or GROUP as the first item, and then the who as the second item
 :)
 declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as xs:string* {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $permissions := sm:get-permissions($resource)
-        let $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id]
-        
-        return
-            if (exists($ace))
-            then
-                (
-                    let $null := sm:remove-ace($resource, $id)
-                    return ($ace/@target, $ace/@who)
-                )
-            else (())
-    )
-};
-
-(:~
-: removes the user-ace by user name
-: 
-: @param user The username
-: @param collection The path of the collection
-:)
-
-declare function security:remove-user-ace($resource as xs:anyURI, $user as xs:string) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $permissions := sm:get-permissions($resource)
-        let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target="USER" and @who=$user][1]
-        let $id := $ace/@index
-        return
-            if (exists($ace)) then
-                (
-                    let $null := sm:remove-ace($resource, $id)
-                    return 
-                        ($ace/@target, $ace/@who)
-                )
+    let $permissions := sm:get-permissions($resource)
+    let $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id]
     
-            else
-                (())
-    )
-};
-
-(:~
-: removes the user-ace by target (USER/GROUP) and name
-: 
-: @param resource The resource or collection
-: @param target USER or GROUP
-: @param name The user- or groupname
-:)
-
-declare function security:remove-ace-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],(
-        let $permissions := sm:get-permissions($resource)
-        let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
-        let $id := $ace/@index
-        return
-            if (exists($ace)) then
-                (
-                    let $null := sm:remove-ace($resource, $id)
-                    return 
-                        ($ace/@target, $ace/@who)
-                )
-    
-            else
-                (())
-        )
-    )
+    return
+        if (exists($ace))
+        then
+            (
+                let $null := sm:remove-ace($resource, $id)
+                return ($ace/@target, $ace/@who)
+            )
+        else (())
 };
 
 (: adds a group ace and returns its index:)
@@ -429,16 +339,15 @@ declare function security:add-group-ace($resource as xs:anyURI, $groupname as xs
 };
 
 declare function security:insert-group-ace($resource as xs:anyURI, $id as xs:int, $groupname as xs:string, $mode as xs:string) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-        (: if the ace index is one past the end of the acl, then we actually want an append :)
-        if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
-            fn:not(fn:empty(security:add-group-ace($resource, $groupname, $mode)))
-        else (
-            sm:insert-group-ace($resource, $id, $groupname, true(), $mode)
-            ,
-            true()
-            )
-    )
+    
+    (: if the ace index is one past the end of the acl, then we actually want an append :)
+    if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
+        fn:not(fn:empty(security:add-group-ace($resource, $groupname, $mode)))
+    else (
+        sm:insert-group-ace($resource, $id, $groupname, true(), $mode)
+        ,
+        true()
+        )
 };
 
 (: adds a user ace and returns its index:)
@@ -452,16 +361,15 @@ declare function security:add-user-ace($resource as xs:anyURI, $username as xs:s
 };
 
 declare function security:insert-user-ace($resource as xs:anyURI, $id as xs:int, $username as xs:string, $mode as xs:string) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        (: if the ace index is one past the end of the acl, then we actually want an append:)
-        if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
-            fn:not(fn:empty(security:add-user-ace($resource, $username, $mode)))
-        else (
-            sm:insert-user-ace($resource, $id, $username, true(), $mode)
-            ,
-            true()
-            )
-    )
+    
+    (: if the ace index is one past the end of the acl, then we actually want an append:)
+    if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
+        fn:not(fn:empty(security:add-user-ace($resource, $username, $mode)))
+    else (
+        sm:insert-user-ace($resource, $id, $username, true(), $mode)
+        ,
+        true()
+        )
 };
 
 (:~
@@ -498,22 +406,22 @@ declare function security:apply-parent-collection-permissions($resource as xs:an
                     if ($ace/@target eq "GROUP")
                     then sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
                     else ()
-            ,
+			,
             if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner)
             then
                 let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1")
                 return sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
             else ()
-            ,
+    		,
             if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group)
             then
                 let $group-mode := fn:replace($parent-permissions/sm:permission/@mode, "...(...)...", "$1") 
                 return sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
             else ()
-            ,
-            (: clear any prev entries :)
-            for $i in 0 to $this-last-acl-index
-            return sm:remove-ace($resource, $i)
+			,
+			(: clear any prev entries :)
+			for $i in 0 to $this-last-acl-index
+			return sm:remove-ace($resource, $i)
         )
 };
 
@@ -523,13 +431,13 @@ declare function security:is-biblio-user($username as xs:string) as xs:boolean {
 
 declare function security:get-owner($path as xs:string) as xs:string
 {
-    let $response := data(sm:get-permissions(xs:anyURI($path))/sm:permission/@owner)
-    return $response
+	let $response := data(sm:get-permissions(xs:anyURI($path))/sm:permission/@owner)
+	return $response
 };
 
 declare function security:get-group($path as xs:string) as xs:string
 {
-    data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
+	data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
 };
 
 declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
@@ -818,14 +726,14 @@ declare function security:get-groups($user as xs:string) as xs:string*
 (:
 declare function security:find-collections-with-group($collection-path as xs:string, $group as xs:string) as xs:string*
 {
-    for $child-collection in xmldb:get-child-collections($collection-path)
-    let $child-collection-path := fn:concat($collection-path, "/", $child-collection) return
-        (
-            if (security:get-group($child-collection-path) eq $group) then (
-                $child-collection-path
-            ) else (),
-            security:find-collections-with-group($child-collection-path, $group)
-        )
+	for $child-collection in xmldb:get-child-collections($collection-path)
+	let $child-collection-path := fn:concat($collection-path, "/", $child-collection) return
+		(
+			if (security:get-group($child-collection-path) eq $group) then (
+				$child-collection-path
+			) else (),
+			security:find-collections-with-group($child-collection-path, $group)
+		)
 };
 :)
 
