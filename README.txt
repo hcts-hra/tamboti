@@ -20,3 +20,8 @@ Note that in $EXIST_HOME/webapp/WEB-INF/controller-config.xml, the following map
 before
   
   <root pattern="/apps" path="xmldb:exist:///db"/>
+
+dependencies:
+
+ - eXist ImageMagick Plugin by ZwoBit https://github.com/zwobit/imagemagick.xq
+ - build eXist with modules "image" and "contentextraction" and enable them in $EXIST_HOME/conf.xml
