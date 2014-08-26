@@ -8,6 +8,8 @@ declare namespace functx = "http://www.functx.com";
 import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
 import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
+
 
 (:The $retrieve-vra:primary-roles values are lower-cased when compared.:)
 declare variable $retrieve-vra:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
@@ -298,13 +300,16 @@ declare function retrieve-vra:format-detail-view($position as xs:string, $entry 
                 </td>
             </tr>
 
+    let $title := $entry//vra:titleSet/vra:title[1]/text()
     let $image-id := $entry//vra:relationSet/vra:relation[1]/@relids/string()
+    let $image-href := image-link-generator:generate-href($image-id, "tamboti-size150")
+
     let $image-embedding-node := 
             <tr>
                 <td class="collection-label">Code to embed image</td>
                 <td>
                     <code>
-                        &lt;figure>&lt;img src="{concat($config:image-service-url, $image-id)}?width=150" alt="{replace(replace($main-title, '"', ''), "'", "")}"/>&lt;figcaption>{$main-title}&lt;/figcaption>&lt;/figure>
+                        &lt;figure>&lt;img src="{$image-href}" alt="{replace(replace($title, '"', ''), "'", "")}"/>&lt;figcaption>{$title}&lt;/figcaption>&lt;/figure>
                     </code>    
                 </td>
             </tr>

@@ -22,6 +22,7 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "../../../
 import module namespace clean="http://exist-db.org/xquery/mods/cleanup" at "../../../modules/search/cleanup.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "mods-common.xql";
+import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
@@ -239,16 +240,21 @@ declare function local:basic-get-http($uri,$username,$password) {
 };
 
 declare function local:return-thumbnail-detail-view($image){
+    let $image-uuid := $image/@id
+    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
+    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
+    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")
+    
     let $image-url := 
         if ($bs:USER eq "guest") then 
-            <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage picture"/>
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
         else 
-            <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank">
-                <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage picture zoom"/>
-                
+            <a href="{$image-size1000-href}" target="_blank">
+                <img src="{$image-size150-href}" alt="image" class="relatedImage"/>
             </a> 
     
         return $image-url
+
 };
 
 (:declare function local:return-thumbnail-detail-view($image){:)
@@ -257,12 +263,17 @@ declare function local:return-thumbnail-detail-view($image){
 (:};:)
 
 declare function local:return-thumbnail-list-view($image){
+    let $image-uuid := $image/@id
+
+    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
+    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
+
     let $image-url := 
         if ($bs:USER eq "guest") then
-            <img src="{concat($config:image-service-url, $image/@id)}?width=60&amp;height=60" alt="image" class="relatedImage picture"/>
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
         else 
-            <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank">
-                <img src="{concat($config:image-service-url, $image/@id)}?width=60&amp;height=60" alt="image" class="relatedImage picture zoom"/>   
+            <a href="{$image-size1000-href}" target="_blank">
+                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
             </a> 
     return $image-url
 };

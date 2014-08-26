@@ -342,6 +342,7 @@ function updateCollectionPaths(title, key) {
     //dialog collection paths
     $('span[id $= collection-path_]').text(title);
     $('input[id $= collection-path_]').val(key);
+
     
     // $('#collection-create-resource').attr("href", "../edit/edit.xq?type=book-chapter&collection=" + key);
 };
@@ -762,6 +763,7 @@ function saveToPersonalList(anchor){
 }
 
 function resultsLoaded(options) {
+
     if (options.itemsPerPage > 1) {
         $('tbody > tr:even > td', this).addClass('even');
         $(".pagination-mode", $(options.navContainer)).show();
@@ -1063,7 +1065,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
 //sets an ACE on a share to writeable or not
 function setAceWriteable(checkbox, collection, aceId, isWriteable) {
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "operations.xql",
         data: "action=set-ace-writeable&collection=" + escape(collection) + "&id=" + aceId + "&is-writeable=" + isWriteable,
         success: function(data, status, xhr) {
@@ -1078,10 +1080,10 @@ function setAceWriteable(checkbox, collection, aceId, isWriteable) {
 
 //sets an ACE by type/name on a share to writeable or not
 function setAceWriteableByName(checkbox, collection, target, name, isWriteable) {
-    console.debug(collection + " " + target + " " + name);
+    // console.debug(collection + " " + target + " " + name);
 
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "operations.xql",
         data: "action=set-ace-writeable-by-name&collection=" + escape(collection) + "&target=" + target + "&name=" + name + "&is-writeable=" + isWriteable,
         success: function(data, status, xhr) {
@@ -1099,7 +1101,7 @@ function setAceWriteableByName(checkbox, collection, target, name, isWriteable) 
 function removeAce(collection, aceId) {
     if(confirm("Are you sure you wish to remove this entry?")){
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "operations.xql",
             data: "action=remove-ace&collection=" + escape(collection) + "&id=" + aceId,
             success: function(data, status, xhr) {
@@ -1118,7 +1120,7 @@ function removeAce(collection, aceId) {
 function removeAceByName(collection, target, name) {
     if(confirm("Are you sure you wish to remove this entry?")){
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "operations.xql",
             data: "action=remove-ace-by-name&collection=" + escape(collection) + "&target=" + target + "&name=" + name,
             success: function(data, status, xhr) {
@@ -1146,7 +1148,7 @@ function addUserToShare() {
         username = input_value;
     
     $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "operations.xql",
             data: "action=is-valid-user-for-share&username=" + escape(username),
             success: function(data, status, xhr) {
@@ -1179,7 +1181,7 @@ function addUserToShare() {
 function addProjectToShare() {
     //1) check this is a valid group otherwise show error
     $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "operations.xql",
             data: "action=is-valid-group-for-share&groupname=" + escape($('#project-auto-list').val()),
             success: function(data, status, xhr) {

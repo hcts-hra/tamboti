@@ -36,7 +36,7 @@ declare variable $config:search-app-root := concat($config:app-root, "/modules/s
 declare variable $config:edit-app-root := concat($config:app-root, "/modules/edit");
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
-declare variable $config:enforced-realm-id := "ad.uni-heidelberg.de";
+declare variable $config:enforced-realm-id := ""; (: ldap directory realm :)
 
 declare variable $config:users-collection := fn:concat($config:mods-root, "/users");
 declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
@@ -49,7 +49,6 @@ declare variable $config:theme-config := concat($config:themes, "/configuration.
 
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, "/resources/images");
-declare variable $config:image-service-url := "/path/to/image/service";
 
 (: If the user has not specified a query, should he see the entire collection contents?
  : Set to true() if a query must be specified, false() to list the entire collection.
@@ -63,7 +62,7 @@ declare variable $config:smtp-server := "smtp.yourdomain.com";
 declare variable $config:smtp-from-address := "exist@yourdomain.com";
 
 (:~ Credentials for the dba admin user :)
-declare variable $config:dba-credentials := ("admin","");
+declare variable $config:dba-credentials := ("admin",""); (: add admin password :)
 
 declare variable $config:allow-origin := "";
 

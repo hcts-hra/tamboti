@@ -14,7 +14,7 @@
         var defaults = {
             url: null,
             totalItems: 0,
-            itemsPerPage: 10,
+            itemsPerPage: 20,
             singleItemView: ".pagination-toggle",
             startParam: "start",
             countParam: "count",
@@ -87,7 +87,7 @@
                         base.options.itemsPerPage = 1;
                         nr = parseInt(nr.text());
                         $.log("[pagination] Showing single entry: %d", nr);
-                        helpers.retrievePage(base, nr)
+                        helpers.retrievePage(base, nr);
                     });
                 }
                 if (base.options.readyCallback)
@@ -130,11 +130,12 @@
                 if (base.options.singleItemView) {
                     $(base.options.singleItemView, div).hide().click(function (ev) {
                         ev.preventDefault();
-                        base.options.itemsPerPage = 10;
+                        base.options.itemsPerPage = 20;
                         var currentPage = Math.floor(base.currentItem / base.options.itemsPerPage);
                         var item = currentPage * base.options.itemsPerPage;
-                        if (item == 0)
-                            item = 1;
+                        // if (item == 0)
+                        //     item = 1;
+                        item +=1;
                         helpers.retrievePage(base, item);
                     });
                 }
@@ -208,6 +209,7 @@
                 }
                 $.log("[pagination] Retrieving page: %d from %s", start, base.options.url);
                 base.element.empty();
+                console.debug(base.options.url);
                 $.ajax({
                     type: "GET",
                     url: base.options.url,
