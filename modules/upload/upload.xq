@@ -161,8 +161,13 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
             let $add :=
                 if ($parent_type eq 'vra')
                 then
-                    let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" refid=""  pref="true">general view</vra:relation>
                     let $relationTag := $parentdoc/vra:vra/vra:work/vra:relationSet
+                    let $pref := 
+                        if (exists($relationTag//vra:relation[@type="imageIs" and @pref="true"])) then
+                            "false"
+                        else
+                            "true"
+                    let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" pref="{$pref}">general view</vra:relation>
                         return
                             let $vra-insert := $parentdoc
                             let $insert_or_update := 

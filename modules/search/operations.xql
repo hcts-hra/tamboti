@@ -79,7 +79,7 @@ declare function op:create-collection($parent as xs:string, $name as xs:string) 
         )
     return
 (:<status id="created">{uu:unescape-collection-path($collection)}</status>:)
-		<status id="created">{xmldb:decode-uri(xs:anyURI($parent || "/" || $name))}</status>
+        <status id="created">{xmldb:decode-uri(xs:anyURI($parent || "/" || $name))}</status>
 
 };
 
@@ -147,7 +147,7 @@ declare function op:remove-collection($collection as xs:anyURI) as element(statu
          if ($xlinked-rec-ids)
          then ()
          (:else xmldb:remove($collection):)
-         else system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove(xmldb:decode-uri($collection))) 
+         else system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove($collection)) 
              return
                 (:<status id="removed">{uu:unescape-collection-path($collection)}</status>:)
                 <status id="removed">{xmldb:decode-uri($collection)}</status>
@@ -158,76 +158,86 @@ declare function op:remove-collection($collection as xs:anyURI) as element(statu
 : @resource-id is the uuid of the MODS or VRA record
 :)
 declare function op:remove-resource($resource-id as xs:string) as element(status)* {
-    let $mods-doc := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
-    let $xlink := concat('#', $resource-id)
-    (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
-    let $mods-xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
-    (:let $base-uri := concat(util:collection-name($doc), '/', util:document-name($doc)):)
-    (:NB: we assume that @relids (plural) can hold several values:)
-    
-    let $vra-work := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
-    let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
-    (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
-    let $vra-image-collection := util:collection-name($vra-images[1])
-    let $vra-binary-names := $vra-images/vra:image/@href    
-    let $vra-docs := ($vra-work, $vra-images)
-    
-    let $docs := if ($mods-doc) then $mods-doc else $vra-docs 
-    
-    for $doc in $docs return
-(:    
-    let $location := util:collection-name($doc)
-    let $name := util:document-name($doc)
-    let $last-modified := xmldb:last-modified($location, $name)
-    let $created := xmldb:created($location, $name)
-    let $size := xmldb:size($location, $name)
-    let $owner := xmldb:get-owner($location, $name)
-    let $group := xmldb:get-group($location, $name)
-    let $time := current-dateTime()
-    let $user := request:get-parameter("username",())
-    let $record :=
-    <record>
-        <name>{$name}</name>
-        <location>{$location}</location>
-        <created>{$created}</created>
-        <last-modified>{$last-modified}</last-modified>
-        <size>{$size}</size>
-        <owner>{$owner}</owner>
-        <group>{$group}</group>
-        <deletion-time>{$time}</deletion-time>
-        <deleting-user>{$user}</deleting-user>
-    </record>
-
-    return
-:) 
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
     (
-        (:do not remove records which erroneously have the same ID:)
-        (:NB: inform user that this is the case:)
-        if (count($doc) eq 1)
-        then
-            (:do not remove records which are linked to from other records:)
+
+        let $mods-doc := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
+        let $xlink := concat('#', $resource-id)
+        (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
+        let $mods-xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
+        (:let $base-uri := concat(util:collection-name($doc), '/', util:document-name($doc)):)
+        (:NB: we assume that @relids (plural) can hold several values:)
+        
+        let $vra-work := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
+        let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
+        (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
+        let $vra-image-collection := util:collection-name($vra-images[1])
+        let $vra-binary-names := $vra-images/vra:image/@href    
+        let $vra-docs := ($vra-work, $vra-images)
+        
+        let $docs := if ($mods-doc) then $mods-doc else $vra-docs 
+    
+        let $log := util:log("INFO", $docs)
+    
+        
+        for $doc in $docs return
+    (:    
+        let $location := util:collection-name($doc)
+        let $name := util:document-name($doc)
+        let $last-modified := xmldb:last-modified($location, $name)
+        let $created := xmldb:created($location, $name)
+        let $size := xmldb:size($location, $name)
+        let $owner := xmldb:get-owner($location, $name)
+        let $group := xmldb:get-group($location, $name)
+        let $time := current-dateTime()
+        let $user := request:get-parameter("username",())
+        let $record :=
+        <record>
+            <name>{$name}</name>
+            <location>{$location}</location>
+            <created>{$created}</created>
+            <last-modified>{$last-modified}</last-modified>
+            <size>{$size}</size>
+            <owner>{$owner}</owner>
+            <group>{$group}</group>
+            <deletion-time>{$time}</deletion-time>
+            <deleting-user>{$user}</deleting-user>
+        </record>
+    
+        return
+    :) 
+        (
+            (:do not remove records which erroneously have the same ID:)
             (:NB: inform user that this is the case:)
-            if (count($mods-xlink-recs/..) eq 0) 
+            if (count($doc) eq 1)
             then
-                    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove(util:collection-name($doc), util:document-name($doc)))
-            else ()
-        else()
-        (:
-        ,
-        update insert $record into doc('/db/resources/temp/deletions.xml')/records
-        :)
-        ,
-        if (count($vra-binary-names) gt 0) then
-            for $vra-binary-name in $vra-binary-names
-                return
-                    (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
-                    (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
-                    if (util:binary-doc-available(concat($vra-image-collection, '/', $vra-binary-name))) then
-                    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove($vra-image-collection, $vra-binary-name))
-                    else ()
-        else ()
-        ,
-        <status id="removed">{$resource-id}</status>
+                (:do not remove records which are linked to from other records:)
+                (:NB: inform user that this is the case:)
+                if (count($mods-xlink-recs/..) eq 0) 
+                then
+                    (
+                        xmldb:remove(util:collection-name($doc), util:document-name($doc))
+                        ,
+                        if (count($vra-binary-names) gt 0) then
+                            for $vra-binary-name in $vra-binary-names
+                                return
+                                    (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
+                                    (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
+                                    if (util:binary-doc-available(concat($vra-image-collection, '/', $vra-binary-name))) then
+                                        xmldb:remove($vra-image-collection, $vra-binary-name)
+                                    else ()
+                        else ()
+                    )
+                else ()
+            else()
+            (:
+            ,
+            update insert $record into doc('/db/resources/temp/deletions.xml')/records
+            :)
+            ,
+            <status id="removed">{$resource-id}</status>
+        )
+    )
     )
 };
 
@@ -427,8 +437,7 @@ declare function op:add-user-ace($collection as xs:anyURI, $username as xs:strin
 };
 
 declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:string) as element(status) {
-    
-    let $ace-id := sharing:add-collection-group-ace($collection, $groupname)    
+    let $ace-id := sharing:add-collection-group-ace(xs:anyURI($collection), $groupname)    
     let $vra-images-result := 
         if(xmldb:collection-available(xs:anyURI($collection || "/VRA_images"))) then
             sharing:add-collection-group-ace(xs:anyURI($collection || "/VRA_images"), $groupname)
@@ -542,51 +551,92 @@ declare function op:upload-file($name, $data ,$collection) {
 
 (:let $action := request:get-parameter("action", ()), $collection := uu:escape-collection-path(request:get-parameter("collection", ())):)
 let $action := request:get-parameter("action", ())
-let $collection := xmldb:encode-uri(config:process-request-parameter(request:get-parameter("collection", ())))
+(:let $collection := xmldb:encode-uri(config:process-request-parameter(request:get-parameter("collection", ()))):)
 
 return
     if($action eq "create-collection") then
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
         let $name := xmldb:encode-uri(request:get-parameter("name", ""))
         return
             op:create-collection($collection, $name)
+            
     else if($action eq "move-collection")then
-        op:move-collection($collection, xmldb:encode-uri(request:get-parameter("path",())), false())
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:move-collection($collection, xmldb:encode-uri(request:get-parameter("path",())), false())
+            
     else if($action eq "rename-collection")then
-        op:rename-collection($collection, xmldb:encode-uri(request:get-parameter("name",())))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:rename-collection($collection, xmldb:encode-uri(request:get-parameter("name",())))
+            
     else if($action eq "remove-collection")then
-        op:remove-collection($collection)
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:remove-collection($collection)
+            
     else if($action eq "remove-resource")then
         op:remove-resource(request:get-parameter("resource",()))
+        
     else if($action eq "move-resource")then
         let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
         let $log := util:log("INFO", request:get-parameter("resource_type",()))
         return 
             op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()), request:get-parameter("resource_type",()) )
+            
     else if($action eq "set-ace-writeable")then
-        op:set-ace-writeable($collection, xs:int(request:get-parameter("id",())), xs:boolean(request:get-parameter("is-writeable", false())))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:set-ace-writeable($collection, xs:int(request:get-parameter("id",())), xs:boolean(request:get-parameter("is-writeable", false())))
+            
     else if($action eq "set-ace-writeable-by-name")then
-        op:set-ace-writeable-by-name($collection, xs:string(request:get-parameter("target",())), xs:string(request:get-parameter("name",())), xs:boolean(request:get-parameter("is-writeable", false())))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:set-ace-writeable-by-name($collection, xs:string(request:get-parameter("target",())), xs:string(request:get-parameter("name",())), xs:boolean(request:get-parameter("is-writeable", false())))
+            
     else if($action eq "remove-ace")then
-        op:remove-ace($collection, xs:int(request:get-parameter("id",())))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:remove-ace($collection, xs:int(request:get-parameter("id",())))
+            
     else if($action eq "remove-ace-by-name")then
-        op:remove-ace-by-name($collection, xs:string(request:get-parameter("target", ())) , xs:string(request:get-parameter("name", ())))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:remove-ace-by-name($collection, xs:string(request:get-parameter("target", ())) , xs:string(request:get-parameter("name", ())))
+            
     else if($action eq "add-user-ace") then
-        op:add-user-ace($collection, request:get-parameter("username",()))
+        let $log := util:log("INFO", "col:" ||request:get-parameter("collection", ()))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:add-user-ace($collection, request:get-parameter("username",()))
+            
     else if($action eq "is-valid-user-for-share")then
         op:is-valid-user-for-share(request:get-parameter("username",()))
+        
     else if($action eq "add-group-ace")then
-        op:add-group-ace($collection, request:get-parameter("groupname",()))
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:add-group-ace($collection, request:get-parameter("groupname",()))
+            
     else if($action eq "is-valid-group-for-share")then
         op:is-valid-group-for-share(request:get-parameter("groupname",()))
+        
     else if($action eq "get-move-folder-list")then
-        op:get-move-folder-list($collection)
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:get-move-folder-list($collection)
+            
      else if($action eq "get-move-resource-list")then
-        op:get-move-resource-list($collection)
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
+        return
+            op:get-move-resource-list($collection)
+            
      else if($action eq "upload-file") then
+        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
         let $name := request:get-uploaded-file-name('files[]')
         let $data := request:get-uploaded-file-data('files[]')
         return
-         op:upload-file($name,$data,$collection)
+            op:upload-file($name,$data,$collection)
         
      else
         op:unknown-action($action)
