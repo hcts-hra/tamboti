@@ -646,15 +646,27 @@ function moveCollection(dialog) {
  */
 function removeCollection(dialog) {
     var collection = getCurrentCollection();
-    var params = { action: 'remove-collection', collection: collection };
-    $.get("operations.xql", params, function (data) {
-        
-        //reload the parent tree node
-        refreshParentTreeNode();
-       
-        //close the dialog
-        dialog.dialog("close");
+            
+    $.ajax({
+        url: "operations.xql",
+        data:{ 
+            action: 'remove-collection', 
+            collection: collection 
+        },
+        type: 'POST',
+        success:
+            function(data, message) { 
+                //reload the parent tree node
+                refreshParentTreeNode();
+               
+                //close the dialog
+                dialog.dialog("close");
+            },
+        error: 
+            function (response, message) { 
+            }
     });
+
 }
 
 /**
@@ -1085,7 +1097,13 @@ function setAceWriteableByName(checkbox, collection, target, name, isWriteable) 
     $.ajax({
         type: 'POST',
         url: "operations.xql",
-        data: "action=set-ace-writeable-by-name&collection=" + escape(collection) + "&target=" + target + "&name=" + name + "&is-writeable=" + isWriteable,
+        data: { 
+            action: "set-ace-writeable-by-name",
+            collection: collection,
+            target: target,
+            name:  name,
+            'is-writeable': isWriteable
+        },
         success: function(data, status, xhr) {
             //do nothing
         },
@@ -1118,11 +1136,17 @@ function removeAce(collection, aceId) {
 
 //removes an ACE by user-/group name from a share
 function removeAceByName(collection, target, name) {
+    console.debug(collection);
     if(confirm("Are you sure you wish to remove this entry?")){
         $.ajax({
             type: 'POST',
             url: "operations.xql",
-            data: "action=remove-ace-by-name&collection=" + escape(collection) + "&target=" + target + "&name=" + name,
+            data: { 
+                action: "remove-ace-by-name",
+                collection: collection,
+                target: target,
+                name:  name
+            },
             success: function(data, status, xhr) {
                 //reload dataTable
                 $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
@@ -1150,14 +1174,23 @@ function addUserToShare() {
     $.ajax({
             type: 'POST',
             url: "operations.xql",
-            data: "action=is-valid-user-for-share&username=" + escape(username),
+            data: { 
+                action: "is-valid-user-for-share",
+                username: escape(username)
+            },
             success: function(data, status, xhr) {
             
                 //2) create the ace on the server
                 $.ajax({
-                    type: 'GET',
+                    type: 'POST',
                     url: "operations.xql",
-                    data: "action=add-user-ace&collection=" + escape(getCurrentCollection()) + "&username=" + escape(username),
+                    data: { 
+                        action: "add-user-ace",
+                        collection: getCurrentCollection(),
+                        username: escape(username)
+                    },
+
+                    
                     success: function(data, status, xhr) {
                         //3) reload dataTable
                         $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
@@ -1190,7 +1223,12 @@ function addProjectToShare() {
                 $.ajax({
                     type: 'GET',
                     url: "operations.xql",
-                    data: "action=add-group-ace&collection=" + escape(getCurrentCollection()) + "&groupname=" + escape($('#project-auto-list').val()),
+                    data: { 
+                        action: "add-group-ace",
+                        collection: getCurrentCollection(),
+                        groupname: escape($('#project-auto-list').val())
+                    },
+
                     success: function(data, status, xhr) {
                         //3) reload dataTable
                         $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
