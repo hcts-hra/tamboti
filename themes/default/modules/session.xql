@@ -517,10 +517,14 @@ declare function bs:vra-list-view-table($item as node(), $currentPos as xs:int) 
                                 return $image-uuid 
                     (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
                     For now, we disregard this; otherwise we have to check after retrieving the image records.:)
-                    let $relids := tokenize($relids, ' ')[1]
-                    let $image := collection($config:mods-root)//vra:image[@id = $relids]
-                        return
-                            <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
+                    let $relids := tokenize($relids, ' ')
+                    return
+                        if (count($relids) > 0) then 
+                            let $image := collection($config:mods-root)//vra:image[@id = $relids[1]]
+                                return
+                                    <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
+                        else
+                            <td class="list-image">[missing image]</td>
                 }
                 {
                 <td class="pagination-toggle" style="vertical-align:middle">
