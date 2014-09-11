@@ -101,4 +101,4 @@ declare function config:process-request-parameter($key as xs:string?) as xs:stri
     xmldb:encode(replace(replace($key, "%2C", ","), "%2F", "/"))
 };
 
-declare variable $config:max-inactive-interval-in-minutes := 8 * 60; (: 16 hours * 30 minutes :)
+declare variable $config:max-inactive-interval-in-minutes := 480;
