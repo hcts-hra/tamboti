@@ -17,7 +17,7 @@ declare namespace ext="http://exist-db.org/mods/extension";
 declare namespace mads="http://www.loc.gov/mads/";
 declare namespace functx="http://www.functx.com";
 
-(:The following variables are used for a kind of dynamic theming in local:assemble-form().:)
+(:The following variables are used for a kind of dynamic theming.:)
 declare variable $theme := substring-before(substring-after(request:get-url(), "/apps/"), "/modules/edit/edit.xq");
 declare variable $header-title := if ($theme eq "tamboti") then "Tamboti Metadata Framework - MODS Editor" else "eXist Bibliographical Demo - MODS Editor";
 declare variable $tamboti-css := if ($theme eq "tamboti") then "tamboti.css" else ();
@@ -205,54 +205,6 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 instance="save-results">
            </xf:submission>
         </xf:model>
-};
-
-declare function local:assemble-form($dummy-attributes as attribute()*, $style as node()*, $model as node(), $content as node()+, $debug as xs:boolean) as node()+ 
-{
-    (:Set serialization options.:)
-    util:declare-option('exist:serialize', 'method=xhtml media-type=text/xml indent=yes process-xsl-pi=no')
-    ,
-    (:Reference the stylesheet.:)
-    processing-instruction xml-stylesheet {concat('type="text/xsl" href="', '/exist/rest/db/apps/xsltforms/xsltforms.xsl"')}
-    ,
-    if ($debug) then 
-        processing-instruction xsltforms-options {'debug="yes"'}
-    else ()
-    ,
-    (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">{$dummy-attributes}
-        <head>
-            <title>
-                {$header-title}
-            </title>
-            <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
-            {$style}
-            {$model}
-        </head>
-        <body>
-    <div id="page-head">
-        <div id="page-head-left">
-            <a href="../.." style="text-decoration: none">
-                <img src="{$img-left-src}" title="{$img-left-title}" alt="{$img-left-title}" style="border-style: none;" width="250px"/>
-            </a>
-            <div class="documentation-link"><a href="../../docs/" style="text-decoration: none" target="_blank">Help</a></div>
-        </div>
-        <div id="page-head-right">
-            <a href="{$img-right-href}" target="_blank">
-                <img src="{$img-right-src}" title="{$img-right-title}" alt="{$img-right-title}" width="{$img-right-width}" style="border-style: none"/>
-            </a>
-        </div>
-    </div>
-            <div>
-            <div class="container">
-                <div>
-                    {$content}
-                </div>
-            </div>
-            </div>
-        </body>
-    </html>
 };
 
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
@@ -644,5 +596,3 @@ return
             </div>
         </body>
     </html>  )  
-    
-(:    local:assemble-form(attribute {'mods:dummy'} {'dummy'}, $style, $model, $content, false()):)
