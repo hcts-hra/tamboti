@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-module namespace config="http://exist-db.org/mods/config";
+module namespace config = "http://exist-db.org/mods/config";
 
 (: 
     Determine the application root collection from the current module load path.
@@ -100,3 +100,5 @@ declare function config:rewrite-username($username as xs:string) as xs:string {
 declare function config:process-request-parameter($key as xs:string?) as xs:string {
     xmldb:encode(replace(replace($key, "%2C", ","), "%2F", "/"))
 };
+
+declare variable $config:max-inactive-interval-in-minutes := 8 * 60; (: 16 hours * 30 minutes :)
