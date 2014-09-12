@@ -16,7 +16,7 @@ declare option exist:serialize "method=text media-type=application/javascript";
 if (security:get-user-credential-from-session()[1] ne $security:GUEST_CREDENTIALS[1]) then
     text {
         (
-            fn:concat('var sessionTimeout = ', $config:max-inactive-interval-in-minutes * 1000, ';'),
+            fn:concat('var sessionTimeout = ', $config:max-inactive-interval-in-minutes * 60 * 1000, ';'),
         
             "
             var beforeTimeout = 1000 * 60 * 5; //5 mins before the session timeout
