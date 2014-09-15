@@ -18,7 +18,7 @@ $(function() {
             dataType: 'text',
             data: xml,
             error: function() {
-                alert("Could not send recordids to ziziphus.")
+                alert("Could not send record ids to ziziphus.")
             },
             success: function(data) {
                 if (data != null) {
