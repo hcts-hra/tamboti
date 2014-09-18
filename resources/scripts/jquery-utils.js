@@ -56,7 +56,7 @@
              */
             option: function (key, value) {
                 var base = this.data("pagination");
-                $.log("[pagination] Setting option %s = %s", key, value);
+                console.log("[pagination] Setting option %s = %s", key, value);
                 if (value) {
                     base.options[key] = value;
                 } else {
@@ -87,7 +87,7 @@
                             return;
                         base.options.itemsPerPage = 1;
                         nr = parseInt(nr.text());
-                        $.log("[pagination] Showing single entry: %d", nr);
+                        console.log("[pagination] Showing single entry: %d", nr);
                         helpers.retrievePage(base, nr)
                     });
                 }
@@ -207,7 +207,7 @@
                         params[option] = base.options.params[option];
                     }
                 }
-                $.log("[pagination] Retrieving page: %d from %s", start, base.options.url);
+                console.log("[pagination] Retrieving page: %d from %s", start, base.options.url);
                 base.element.empty();
                 $.ajax({
                     type: "GET",
@@ -417,22 +417,3 @@
                .apply(console, arguments);
     };
 })(jQuery);
-
-
-/* Debug and logging functions */
-/*
-(function($) {
-    $.log = function() {
-//      if (typeof console == "undefined" || typeof console.log == "undefined") {
-//          console.log( Array.prototype.slice.call(arguments) );
-        if(window.console && window.console.log) {
-            console.log.apply(window.console,arguments)
-        }
-    };
-    $.fn.log = function() {
-        $.log(this);
-        return this;
-    }
-  
-})(jQuery);
-  */

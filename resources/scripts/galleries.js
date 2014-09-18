@@ -176,7 +176,7 @@ tamboti.galleries.FilmStrip = (function () {
             function scroll(target) {
                 var offset = target.offset().left;
                 var scroll = $this.container.scrollLeft();
-                $.log("offset = %d scroll = %d", offset, scroll);
+                console.log("offset = %d scroll = %d", offset, scroll);
                 if (offset > $this.container.width())
                     $this.container.scrollLeft(offset);
             }
@@ -184,7 +184,7 @@ tamboti.galleries.FilmStrip = (function () {
             for (var i = 0; i < this.images.length; i++) {
                 if (this.images[i].item === item) {
                     this.current = i;
-                    $.log("current = %d internal = %i", item, i);
+                    console.log("current = %d internal = %i", item, i);
                     this.container.find("li.highlighted").removeClass("highlighted");
                     var target = this.container.find("li:eq(" + i + ")").addClass("highlighted");
                     scroll(target);
@@ -287,7 +287,7 @@ tamboti.galleries.Viewer = (function () {
         
         show: function (num, collection) {
             var $this = this;
-            $.log("[tamboti.galleries.Viewer] Loading item %d from collection ", num, collection);
+            console.log("[tamboti.galleries.Viewer] Loading item %d from collection ", num, collection);
             
             var params = { item: num };
             if (collection) {
@@ -366,7 +366,7 @@ tamboti.galleries.Viewer = (function () {
                     h = maxHeight * aspectRatio;
                 }
             }
-            $.log("window=(" + $(window).width() + "," + $(window).height() + ") max=(" + 
+            console.log("window=(" + $(window).width() + "," + $(window).height() + ") max=(" + 
                 maxWidth + "," + maxHeight +") new=(" + w + "," + h + ")");
             
             this.$setPosition(h + extraHeight + 32, w + 32);
