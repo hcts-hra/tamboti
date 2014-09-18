@@ -27,10 +27,10 @@ let $items-with-different-owner :=
         then
             let $raw-username := substring-after($item/@path, $config:users-collection || "/")
             return if (contains($raw-username, "/")) then (substring-before($raw-username, "/")) else ($raw-username)
-        else "editor"
+        else $reports:users-for-public-resources
         
     return
-        if ($item/sm:permission[@owner != $username])
+        if ($item/sm:permission[not(contains($username, @owner))])
         then $item
         else ()
         
