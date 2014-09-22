@@ -78,3 +78,6 @@ declare variable $reports:items-with-encoded-at-sign :=
         then $item
         else ()
 ;
+
+declare variable $reports:users-for-public-resources := ("editor", "frames-editor", "moving-editor", "bernd.kirchner@ad.uni-heidelberg.de");
+
