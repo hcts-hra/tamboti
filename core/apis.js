@@ -79,7 +79,7 @@ $(function() {
             $("#results").pagination({
                 url: "retrieve",
                 totalItems: $("#results-head .hit-count").text(),
-                itemsPerPage: 10,
+                itemsPerPage: 20,
                 navContainer: navContainer,
                 readyCallback: resultsLoaded,
                 params: { "mode": "list", "initialiseNavbar": initialiseNavbar }

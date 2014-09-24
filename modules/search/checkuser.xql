@@ -93,14 +93,15 @@ then
 (
     let $action := request:get-parameter("action", ()) 
     return
-        if ($action eq "is-collection-owner") 
-        then
-            security:is-collection-owner(
-                security:get-user-credential-from-session()[1], config:process-request-parameter(request:get-parameter("collection", "")))
-        else 
-            if ($action eq "collection-relationship") 
-            then local:collection-relationship(config:process-request-parameter(request:get-parameter("collection",())))
-            else
+        if ($action eq "is-collection-owner") then
+            let $collection := xmldb:encode(request:get-parameter("collection",()))
+            return 
+                local:user-is-collection-owner(security:get-user-credential-from-session()[1], $collection)
+        else if ($action eq "collection-relationship") then
+            let $collection := xmldb:encode(request:get-parameter("collection",()))
+            return 
+                local:collection-relationship($collection)
+        else
             (
                 response:set-status-code(403),
                 <unknown action="{$action}"/>

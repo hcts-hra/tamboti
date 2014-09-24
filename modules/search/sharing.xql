@@ -1,10 +1,7 @@
 xquery version "3.0";
 
 import module namespace json="http://www.json.org";
-import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace session = "http://exist-db.org/xquery/session";
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 import module namespace file="http://exist-db.org/xquery/file";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
@@ -18,7 +15,7 @@ declare namespace group = "http://commons/sharing/group";
 
 declare option exist:serialize "method=json media-type=text/javascript";
 
-declare function local:get-sharing($collection-path as xs:string) as element(aaData) {
+declare function local:get-sharing($collection-path as xs:anyURI) as element(aaData) {
 
     system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
     
@@ -30,22 +27,26 @@ declare function local:get-sharing($collection-path as xs:string) as element(aaD
         else
             <aaData>{
                 for $ace at $index in $acl/sm:ace
-                let $target := $ace/@target
-                let $who :=
-                    if ($target = 'USER')
-                    then (security:get-human-name-for-user($ace/@who/string()))
-                    else ($ace/@who)
-                return
-                    element json:value {
-                        if(xs:integer($acl/@entries) eq 1) then
-                            attribute json:array { true() }
-                        else(),
-                        <json:value>{text{$ace/@target}}</json:value>,
-                        <json:value>{text{$who}}</json:value>,
-                        <json:value>{text{$ace/@access_type}}</json:value>,
-                        <json:value>{text{$ace/@mode}}</json:value>,
-                        <json:value>{$index - 1}</json:value>
-                    }
+                    let $target := $ace/@target
+                    let $username := $ace/@who/string()
+                    let $who :=
+                        if ($target = 'USER') then
+                            (system:as-user($config:dba-credentials[1],$config:dba-credentials[2], security:get-human-name-for-user($username)))
+                        else 
+                            ($ace/@who)
+                    order by $username
+                    return
+                        element json:value {
+                            if(xs:integer($acl/@entries) eq 1) then
+                                attribute json:array { true() }
+                            else(),
+                            <json:value>{text{$ace/@target}}</json:value>,
+                            <json:value>{text{$who}}</json:value>,
+                            <json:value>{text{$username}}</json:value>,
+                            <json:value>{text{$ace/@access_type}}</json:value>,
+                            <json:value>{text{$ace/@mode}}</json:value>,
+                            <json:value>{$index - 1}</json:value>
+                        }
             }</aaData>
     )
 };
@@ -239,16 +240,13 @@ declare function local:empty() {
  
 <json:value>
     {
-    if(request:get-parameter("collection",())) then (
-        local:get-sharing(config:process-request-parameter(request:get-parameter("collection",())))
-    )
-    else if(request:get-parameter("file",())) then (
-        local:get-attached-files(request:get-parameter("file",()))
-        )
-    else if(request:get-parameter("upload-folder",())) then (
-        local:resources(request:get-parameter("upload-folder",()),security:get-user-credential-from-session()[1])
-        )
-    else
-        local:empty()
+        if(request:get-parameter("collection",())) then
+            local:get-sharing(xmldb:encode-uri(request:get-parameter("collection",())))
+        else if(request:get-parameter("file",())) then
+            local:get-attached-files(request:get-parameter("file",()))
+        else if(request:get-parameter("upload-folder",())) then
+            local:resources(request:get-parameter("upload-folder",()),security:get-user-credential-from-session()[1])
+        else
+            local:empty()
     }
 </json:value>

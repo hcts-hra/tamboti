@@ -115,14 +115,14 @@ function FileUploadCtrl(scope) {
         xhr.open("POST", "../upload/upload.xq")
         scope.progressVisible = false        
         
-        if (document.getElementById('upload-resource-id')!=null) {
+        if (document.getElementById('upload-resource-id') != null) {
             var parent_record = document.getElementById('upload-resource-id').innerHTML
             xhr.setRequestHeader("X-File-Parent", parent_record)
         }
                 
         //for folder uploads
-	    if (document.getElementById('file-upload-folder')!=null) {
-		  var upload_folder =  document.getElementById('file-upload-folder').innerHTML
+	    if ($('#file-upload-folder') != null) {
+		  var upload_folder = encodeURIComponent($('#file-upload-folder').html());
 		  xhr.setRequestHeader("X-File-Folder", upload_folder)
 		}       
         
@@ -249,7 +249,7 @@ function FileUploadCtrl(scope) {
 		</form>
 	</jquery:dialog>
 	<jquery:dialog id="sharing-collection-dialog" modal="true"
-		title="Folder Sharing" trigger="#collection-sharing" width="625"
+		title="Folder Sharing" trigger="#collection-sharing" width="700"
 		onOpen="updateSharingDialog">
 		<jquery:button id="cancel" label="Close" />
 		<div>
@@ -260,7 +260,8 @@ function FileUploadCtrl(scope) {
 			<thead>
 				<tr>
 					<th>Type</th>
-					<th>Name</th>
+                    <th>Full Name</th>
+                    <th>UserID</th>
 					<th>Reading</th>
 					<th>Writing Allowed?</th>
 					<th>Remove</th>

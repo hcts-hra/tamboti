@@ -8,7 +8,7 @@ declare function local:set-owner($path) {
     (
     let $owner :=
         if (contains($path, $config:users-collection))
-        then tamboti-utils:get-username-from-path($path) 
+        then xmldb:get-owner($path) 
         else "editor"    
     return
         (

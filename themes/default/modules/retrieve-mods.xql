@@ -88,13 +88,18 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
     {
     <tr>
         <td class="collection-label">Record Location</td>
-        <td><div class="collection" >{replace(replace(xmldb:decode($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')}</div></td>
-        <div id="file-location-folder" style="display: none;">{$collection-short}</div>
+        <td>
+            <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
+            <div class="collection" >{replace(replace(xmldb:decode($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')}</div>
+         </td>
     </tr>
     ,
     <tr>
         <td class="collection-label">Record Format</td>
-        <td>MODS</td>
+        <td>
+            <div id="record-format" style="display:none;">MODS</div>
+            <div>MODS</div>
+        </td>
     </tr>
     ,
     (: names :)
