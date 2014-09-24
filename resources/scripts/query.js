@@ -58,7 +58,7 @@ $(function() {
     $(".pagination-mode-gallery").click(function(ev) {
         ev.preventDefault();
         $("#results").pagination("option", "params", {mode: "gallery"});
-        $("#results").pagination("option", "itemsPerPage", 10);
+        $("#results").pagination("option", "itemsPerPage", 20);
         $("#results").pagination("refresh");
     });
     $(".pagination-mode-grid").click(function(ev) {
@@ -70,7 +70,7 @@ $(function() {
     $(".pagination-mode-list").click(function(ev) {
         ev.preventDefault();
         $("#results").pagination("option", "params", {mode: "list"});
-        $("#results").pagination("option", "itemsPerPage", 10);
+        $("#results").pagination("option", "itemsPerPage", 20);
         $("#results").pagination("refresh");
     });
     $("#simple-search-form-submit-button").click(function() {
@@ -421,7 +421,7 @@ function initCollectionTree() {
             return false;
         }
     });
-    toggleCollectionTree($('#collection-tree').hasClass('show'));
+    toggleCollectionTree(true);
     $('#toggle-collection-tree').click(function() {
         if (treeDiv.css('display') == 'none') {
             toggleCollectionTree(true);
@@ -580,7 +580,10 @@ function showHideCollectionControls() {
  */
 function removeResource(dialog) {
     var resource = $('#remove-resource-form input[name = resource]').val();
-    var params = {action: 'remove-resource', resource: resource};
+    var params = { action: 'remove-resource', 
+            resource: resource,
+            uuid : $('#remove-resource').attr('id')
+    };
     $.get("operations.xql", params, function(data) {
         dialog.dialog("close");
         $(location).attr('href', 'index.html?reload=true&collection=' + getCurrentCollection());
@@ -589,14 +592,19 @@ function removeResource(dialog) {
 
 function refreshResourceMoveList() {
 
-    var collection = getCurrentCollection();
+//  var collection = getCurrentCollection();
+    var collection = "/" + $('#file-location-folder').html();
+    // console.debug($('#file-location-folder').html());
 
     //set the current collection on the form
     $("#move-resource-collection-path-label").html(collection);
     $("#move-resource-collection").val(collection);
 
     //get the destination collection options
-    var params = {action: 'get-move-resource-list', collection: collection};
+    var params = {
+    			action: 'get-move-resource-list',
+    			collection: collection
+    };
     $.get("operations.xql", params, function(data) {
 
         //clear the list
@@ -619,14 +627,21 @@ function emptyFileList() {
 }
 
 /*
- Called when the user clicks on the "move" button in the remove resource dialog
+ Called when the user clicks on the "move" button in the move resource dialog
  */
 function moveResource(dialog) {
     var path = $('#move-resource-form select[name = path]').val();
     var resource = $('#move-resource-form input[name = resource]').val();
-    var params = {action: 'move-resource', path: path, resource: resource};
+    var resource_type = $('#record-format').html();
+    var source_collection = "/" + $('#file-location-folder').html();
+    var params = {
+    		action: 'move-resource',
+    		path: path,
+    		resource: resource,
+    		source_collection: source_collection,
+    		resource_type:resource_type
+    };
     $.get("operations.xql", params, function(data) {
-
         dialog.dialog("close");
     });
 }
@@ -733,7 +748,7 @@ function renameCollection(dialog) {
 
 function refreshCollectionMoveList() {
     var node = $("#collection-tree-tree").dynatree("getActiveNode");
-    if (node != null) {
+    if (node !== null) {
         var selectedCollection = node.data.key;
 
         var params = {action: 'get-move-folder-list', collection: selectedCollection};
@@ -763,15 +778,16 @@ function moveCollection(dialog) {
         var currentKey = currentNode.data.key;
 
         //new key
-        var newKey = path + currentKey.replace(/(.*)\//, "/");
+        var newKey = $("#collection-tree-tree").dynatree("getActiveNode").parent.data.key;
+        // var newKey = path + currentKey.replace(/(.*)\//, "/");
 
         //reload the parent tree node
         refreshParentTreeNodeAndFocusOnChild(newKey);
 
         //make sure the old node is removed from the tree
-        if (currentNode != null) {
-            currentNode.remove();
-        }
+        // if(currentNode !== null) {
+        //     currentNode.remove();
+        // }
 
         //close the dialog
         dialog.dialog("close");
@@ -783,14 +799,24 @@ function moveCollection(dialog) {
  */
 function removeCollection(dialog) {
     var collection = getCurrentCollection();
-    var params = {action: 'remove-collection', collection: collection};
-    $.get("operations.xql", params, function(data) {
-
-        //reload the parent tree node
-        refreshParentTreeNode();
-
-        //close the dialog
-        dialog.dialog("close");
+    $.ajax({
+        url: "operations.xql",
+        data:{ 
+            action: 'remove-collection', 
+            collection: collection 
+        },
+        type: 'POST',
+        success:
+            function(data, message) { 
+                //reload the parent tree node
+                refreshParentTreeNode();
+               
+                //close the dialog
+                dialog.dialog("close");
+            },
+        error: 
+            function (response, message) { 
+            }
     });
 }
 
@@ -951,6 +977,8 @@ function resultsLoaded(options) {
     /** add move resource action */
     $('.actions-toolbar .move-resource', this).click(function() {
         $('#move-resource-id').val($(this).attr('href').substr(1));
+        var collection = getCurrentCollection();
+        $("#move-resource-collection-path").val(collection);        
         refreshResourceMoveList();
         $('#move-resource-dialog').dialog('open');
         return false;
@@ -1184,15 +1212,15 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
         $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
     }
 
-    //determine writeable for fourth column
-    var isWriteable = aData[3].indexOf("w") > -1;
+    //determine writeable for fifth column
+    var isWriteable = aData[4].indexOf("w") > -1;
     //add the checkbox, with action to perform an update on the server
     var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
-    $('td:eq(3)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteable(this,\'' + getCurrentCollection() + '\',' + aData[4] + ', this.checked);"/>');
+    $('td:eq(4)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteableByName(this,\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\', this.checked);"/>');    
 
     //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    $('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + aData[4] + ');"/>');
+    $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
     //add jQuery cick action to image to perform an update on the server
 
     return nRow;
@@ -1201,9 +1229,31 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
 //sets an ACE on a share to writeable or not
 function setAceWriteable(checkbox, collection, aceId, isWriteable) {
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "operations.xql",
         data: "action=set-ace-writeable&collection=" + escape(collection) + "&id=" + aceId + "&is-writeable=" + isWriteable,
+        success: function(data, status, xhr) {
+            //do nothing
+        },
+        error: function(xhr, status, error) {
+            alert("Could not modify entry");
+            checkbox.checked = !isWriteable;
+        }
+    });
+}
+
+//sets an ACE by type/name on a share to writeable or not
+function setAceWriteableByName(checkbox, collection, target, name, isWriteable) {
+    $.ajax({
+        type: 'POST',
+        url: "operations.xql",
+        data: { 
+            action: "set-ace-writeable-by-name",
+            collection: collection,
+            target: target,
+            name:  name,
+            'is-writeable': isWriteable
+        },
         success: function(data, status, xhr) {
             //do nothing
         },
@@ -1218,7 +1268,7 @@ function setAceWriteable(checkbox, collection, aceId, isWriteable) {
 function removeAce(collection, aceId) {
     if (confirm("Are you sure you wish to remove this entry?")) {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: "operations.xql",
             data: "action=remove-ace&collection=" + escape(collection) + "&id=" + aceId,
             success: function(data, status, xhr) {
@@ -1233,39 +1283,73 @@ function removeAce(collection, aceId) {
     }
 }
 
+//removes an ACE by user-/group name from a share
+function removeAceByName(collection, target, name) {
+    console.debug(collection);
+    if(confirm("Are you sure you wish to remove this entry?")){
+        $.ajax({
+            type: 'POST',
+            url: "operations.xql",
+            data: { 
+                action: "remove-ace-by-name",
+                collection: collection,
+                target: target,
+                name:  name
+            },
+            success: function(data, status, xhr) {
+                //reload dataTable
+                $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+            },
+            error: function(xhr, status, error) {
+                alert("Could not remove entry");
+                checkbox.checked = !isWriteable;
+            }
+        });
+    }
+}
+
 //adds a user to a share
 function addUserToShare() {
     //check if this is a duplicate user
-    if (tamboti.checkDuplicateSharingEntry($("#user-auto-list").val(), "USER")) {
+    var input_value = $('#user-auto-list').val();
+    var username_no_parenthesis = $('#user-auto-list').val().match( /\(.*\)/ );
+    var username = "";
+    if (username_no_parenthesis !== null)
+        username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
+    else
+        username = input_value;
+    
+    if (tamboti.checkDuplicateSharingEntry(username, "USER")) {
         return;
     }
-    //1) check this is a valid user otherwise show error
+    //check this is a valid user otherwise show error
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "operations.xql",
-        data: "action=is-valid-user-for-share&username=" + escape($('#user-auto-list').val()),
+        data: { 
+            action: "is-valid-user-for-share",
+            username: escape(username)
+        },
         success: function(data, status, xhr) {
 
             //2) create the ace on the server
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: "operations.xql",
-                data: "action=add-user-ace&collection=" + escape(getCurrentCollection()) + "&username=" + escape($('#user-auto-list').val()),
+                data: { 
+                    action: "add-user-ace",
+                    collection: getCurrentCollection(),
+                    username: escape(username)
+                },
                 success: function(data, status, xhr) {
-
-                    //3) add the row to the dataTable
-                    $('#collectionSharingDetails').dataTable().fnAddData([
-                        "USER",
-                        $('#user-auto-list').val(),
-                        "ALLOWED",
-                        "r--",
-                        $(data).find("status").attr("ace-id")
-                    ]);
+                    //3) reload dataTable
+//                    $('#collectionSharingDetails').dataTable().fnAddData(["USER", $('#user-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);                	
+                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
 
                     //4) close the dialog
                     $('#add-user-to-share-dialog').dialog('close');
                     //(5) go to the last page
-                    $('#collectionSharingDetails').dataTable().fnPageChange("last");
+                    //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
                     alert("Could not create entry");
@@ -1276,6 +1360,7 @@ function addUserToShare() {
             alert("The user '" + $('#user-auto-list').val() + "' does not exist!");
         }
     });
+    $('#user-auto-list').val('');    
 }
 
 //adds a group to a share
@@ -1286,31 +1371,32 @@ function addProjectToShare() {
     }
     //1) check this is a valid group otherwise show error
     $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "operations.xql",
-        data: "action=is-valid-group-for-share&groupname=" + escape($('#project-auto-list').val()),
+        data: { 
+            action: "is-valid-group-for-share",
+            groupname: escape($('#project-auto-list').val())
+        },        
         success: function(data, status, xhr) {
 
             //2) create the ace on the server
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 url: "operations.xql",
-                data: "action=add-group-ace&collection=" + escape(getCurrentCollection()) + "&groupname=" + escape($('#project-auto-list').val()),
+                data: { 
+                    action: "add-group-ace",
+                    collection: getCurrentCollection(),
+                    groupname: escape($('#project-auto-list').val())
+                },
                 success: function(data, status, xhr) {
-
-                    //3) add the row to the dataTable
-                    $('#collectionSharingDetails').dataTable().fnAddData([
-                        "GROUP",
-                        $('#project-auto-list').val(),
-                        "ALLOWED",
-                        "r--",
-                        $(data).find("status").attr("ace-id")
-                    ]);
+                    //3) reload dataTable
+//                    $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);                	
+                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
 
                     //4) close the dialog
                     $('#add-project-to-share-dialog').dialog('close');
                     //(5) go to the last page
-                    $('#collectionSharingDetails').dataTable().fnPageChange("last");
+                    //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
                     alert("Could not create entry");

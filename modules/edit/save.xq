@@ -344,7 +344,7 @@ return
                     (:Get the target collection. If it's an edit to an existing document, we can find its location by means of its uuid.
                     If it is a new record, the target collection can be captured as the collection parameter passed in the URL. :)
                     let $target-collection := local:find-live-collection-containing-uuid($incoming-id)
-                    let $new-target-collection := config:process-request-parameter(request:get-parameter("collection", ""))
+                    let $new-target-collection := xmldb:encode-uri(request:get-parameter("collection", ""))
                     let $target-collection :=
                         if ($target-collection)
                         then $target-collection
@@ -356,7 +356,7 @@ return
                         if (security:can-write-collection($target-collection))
                         then $target-collection
                         else security:get-home-collection-uri(security:get-user-credential-from-session()[1])
-                    let $record-path := xs:anyURI(concat($target-collection, '/', $file-to-update))                        
+                    let $record-path := xs:anyURI(concat($target-collection, '/', $file-to-update))
 
                     return
                     (
@@ -383,19 +383,11 @@ return
                         (:Store $doc in the target collection, whether this is where the record originally was located or 
                         the collection chosen to store a new record.:)
 (:                        xmldb:store($target-collection, $file-to-update, $doc):)
-                        if (contains($target-collection, "%40"))
-                            then (
-                                xmldb:store($target-collection, $file-to-update, $doc),
-                                (:Set the same permissions on the moved file that the parent collection has.:)
-                                security:apply-parent-collection-permissions($record-path)                                                    )
-                            else 
-                                (
-                                    xmldb:store($target-collection, $file-to-update, $doc),
-                                    (:Set the same permissions on the moved file that the parent collection has.:)
-                                    security:apply-parent-collection-permissions($record-path)
-                                )
+                        xmldb:store($target-collection, $file-to-update, $doc)
                         ,
-                        sm:chown($record-path, tamboti-utils:get-username-from-path($target-collection))
+                        security:apply-parent-collection-permissions($record-path)
+                        ,
+                        sm:chown($record-path, xmldb:get-owner($target-collection))
                         ,
                         sm:chgrp($record-path, $config:biblio-users-group)
                         ,

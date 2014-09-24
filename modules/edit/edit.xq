@@ -65,7 +65,10 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     let $doc-name := concat($id, '.xml')
     let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
     (:Make the record accessible to the user alone in the temp collection.:)
-    let $null := sm:chmod(xs:anyURI($stored), "rwx------")
+    let $permissions := 
+        (
+            sm:chmod(xs:anyURI($stored), "rwx------")
+        )
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, "/commons/")) 
@@ -418,8 +421,7 @@ let $tab-id :=
 let $tab-id := request:get-parameter('tab-id', $tab-id)
 
 (:Get the chosen location for the record.:)
-(:let $target-collection := request:get-parameter("collection", ''):)
-let $target-collection := config:process-request-parameter(request:get-parameter("collection", ''))
+let $target-collection := xmldb:encode-uri(request:get-parameter("collection", ''))
 
 (:Get the id of the record, if it has one; otherwise mark it "new" in order to give it one.:)
 let $id-param := request:get-parameter('id', 'new')

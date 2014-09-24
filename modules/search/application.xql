@@ -594,7 +594,7 @@ declare function biblio:process-form-parameters($params as xs:string*) as elemen
     the query. Filter out empty parameters and take care of boolean operators.
 :)
 declare function biblio:process-form() as element(query)? {
-    let $collection := config:process-request-parameter(request:get-parameter("collection", theme:get-root()))
+    let $collection := xmldb:encode-uri(request:get-parameter("collection", theme:get-root()))
     let $fields :=
         (:  Get a list of all input parameters which are not empty,
             ordered by input name. :)
@@ -1048,7 +1048,7 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
 };
 
 declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $collection := functx:replace-first(xmldb:decode(request:get-parameter("collection", theme:get-root())), "/db/", "")    
+    let $collection := functx:replace-first(xmldb:encode-uri(request:get-parameter("collection", theme:get-root())), "/db/", "")
         return
             templates:copy-set-attribute($node, "data-collection-path", $collection, $model)
 };
@@ -1436,7 +1436,7 @@ declare function biblio:query($node as node(), $params as element(parameters)?, 
     let $reload := request:get-parameter("reload", ())
     let $clear := request:get-parameter("clear", ())
     let $mylist := request:get-parameter("mylist", ()) (:clear, display:)
-    let $collection := config:process-request-parameter(request:get-parameter("collection", $config:mods-root))
+    let $collection := xmldb:encode-uri(request:get-parameter("collection", $config:mods-root))
     let $collection := if (starts-with($collection, "/db")) then $collection else concat("/db", $collection)
     let $id := request:get-parameter("id", ())
     let $sort := request:get-parameter("sort", ())

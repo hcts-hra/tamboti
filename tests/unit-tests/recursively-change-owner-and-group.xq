@@ -1,8 +1,14 @@
 xquery version "3.0";
 
 declare function local:setPerm($path, $user-id, $group-id, $collection-mode, $resource-mode) {
-        (: Change permissions for resources in parent collection :)
+
         (
+            sm:chown(xs:anyURI($path), $user-id),
+            sm:chgrp(xs:anyURI($path), $group-id),
+            sm:chmod(xs:anyURI($path), $collection-mode),
+            (: recursive call for subcollections:)
+
+            (: Change permissions for resources in parent collection :)
             for $res in xmldb:get-child-resources($path)
                 return
                     (
@@ -24,9 +30,9 @@ declare function local:setPerm($path, $user-id, $group-id, $collection-mode, $re
         )
 };
 
-let $path := "/resources/users/freizo-editor" 
+let $path := "/resources/commons/Cluster%20Publications" 
 
-let $user-id := "freizo-editor" 
+let $user-id := "editor" 
 let $group-id := "biblio.users" 
 let $collection-mode := "rwxr-xr-x"
 let $resource-mode := "rw-------"

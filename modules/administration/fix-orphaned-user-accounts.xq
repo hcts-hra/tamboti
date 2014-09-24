@@ -17,7 +17,7 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
                     attribute path {$item-path},
                     for $ace in $actual-item//sm:ace[@who = $orphaned-username]
                     let $index := $ace/@index
-                    let $who := tamboti-utils:get-username-from-path($item-path)
+                    let $who := xmldb:get-owner($item-path)
                     let $access_type := if ($ace/@access_type = 'ALLOWED') then true() else false()
                     let $mode := $ace/@mode
                     return

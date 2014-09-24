@@ -22,6 +22,7 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "../../../
 import module namespace clean="http://exist-db.org/xquery/mods/cleanup" at "../../../modules/search/cleanup.xql";
 import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "mods-common.xql";
+import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
@@ -258,7 +259,7 @@ declare function bs:mods-detail-view-table($item as element(mods:mods), $current
                 <abbr class="unapi-id" title="{bs:get-item-uri($item/@ID)}"></abbr>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
                         try {
@@ -288,21 +289,34 @@ declare function local:basic-get-http($uri,$username,$password) {
 };
 
 declare function local:return-thumbnail-detail-view($image){
+    let $image-uuid := $image/@id
+    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
+    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
+    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")    
     let $image-url := 
-        if ($bs:USER eq "guest")
-        then <img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/>
-        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url, $image/@id)}?width=150" alt="image" class="relatedImage"/></a> 
-    
-        return $image-url
+        if ($bs:USER eq "guest") then 
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+        else 
+            <a href="{$image-size1000-href}" target="_blank">
+                <img src="{$image-size150-href}" alt="image" class="relatedImage"/>
+            </a>
+
+    return $image-url
 };
 
 declare function local:return-thumbnail-list-view($image){
+    let $image-uuid := $image/@id
+    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
+    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
     let $image-url := 
-        if ($bs:USER eq "guest")
-        then <img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/>
-        else <a href="{concat($config:image-service-url, $image/@id)}?width=1000" target="_blank"><img src="{concat($config:image-service-url,$image/@id)}?width=40&amp;height=40&amp;crop_type=middle" alt="" class="relatedImage"/></a> 
-    
-        return $image-url
+        if ($bs:USER eq "guest") then
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+        else 
+            <a href="{$image-size1000-href}" target="_blank">
+                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+            </a>
+
+    return $image-url
 };
 
 declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos as xs:int) {
@@ -320,7 +334,6 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
             else '/vra:image/@id'
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
-    let $vra-work :=  collection($config:mods-root)//vra:work[@id=$id]/vra:relationSet/vra:relation
     
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
@@ -334,16 +347,20 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                    if ($vra-work)
-                    then
-                        for $entry in $vra-work
-                        (:return <img src="{$entry/@relids}"/>:)
-                        let $image := collection($config:mods-root)//vra:image[@id=$entry/@relids]
-                            return
-                                <p>{local:return-thumbnail-detail-view($image)}</p>
-                    else 
-                        let $image := collection($config:mods-root)//vra:image[@id=$id]
-                            return
+                    let $log := util:log("INFO", "VRA WORK")
+                    (: relids/refid workaround :)
+                    for $rel in $item//vra:relationSet/vra:relation[@type = "imageIs"]
+                        let $log := util:log("INFO", $rel)
+                        let $image-uuid :=
+                          if (starts-with(data($rel/@relids), "i_")) then 
+                            data($rel/@relids)
+                          else
+                            if(starts-with(data($rel/@refid), "i_")) then
+                                data($rel/@refid)
+                            else ()
+                        let $image := collection($config:mods-root)//vra:image[@id=$image-uuid]
+                
+                        return
                                 <p>{local:return-thumbnail-detail-view($image)}</p>
                      (: 
                      return <img src="{concat(request:get-scheme(),'://',request:get-server-name(),':',request:get-server-port(),request:get-context-path(),'/rest', util:collection-name($image),"/" ,$image-name)}"  width="200px"/>
@@ -356,7 +373,7 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
                 <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
                         try {
@@ -404,15 +421,20 @@ declare function bs:wiki-detail-view-table($item as element(), $currentPos as xs
                 { 
                     if ($vra-work)
                     then
-                        for $entry in $vra-work
-                        (:return <img src="{$entry/@relids}"/>:)
-                        let $image := collection($config:mods-root)//vra:image[@id=$entry/@relids]
+                        (: relids/refid workaround :)
+                        for $rel in $vra-work/vra:relationSet/vra:relation
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@refid), "i_")) then
+                                    data($rel/@refid)
+                                else 
+                                    data($rel/@relids)
+                            let $image := collection($config:mods-root)//vra:image[@id=$image-uuid]
                             return
                                 <p>{local:return-thumbnail-detail-view($image)}</p>
                     else 
                         let $image := collection($config:mods-root)//vra:image[@id=$id]
-                            return
-                                <p>{local:return-thumbnail-detail-view($image)}</p>
+                        return
+                            <p>{local:return-thumbnail-detail-view($image)}</p>
                      (: 
                      return <img src="{concat(request:get-scheme(),'://',request:get-server-name(),':',request:get-server-port(),request:get-context-path(),'/rest', util:collection-name($image),"/" ,$image-name)}"  width="200px"/>
                      :)               
@@ -464,7 +486,7 @@ declare function bs:tei-detail-view-table($item as element(), $currentPos as xs:
                 <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
                         try {
@@ -506,7 +528,7 @@ declare function bs:mods-list-view-table($item as node(), $currentPos as xs:int)
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
                         try {
@@ -553,21 +575,34 @@ declare function bs:vra-list-view-table($item as node(), $currentPos as xs:int) 
                 }
                 <td class="list-type" style="vertical-align:middle"><img src="theme/images/image.png" title="Still Image"/></td>
                 { 
-                let $relids := $item//vra:relation/@relids
-                (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
-                For now, we disregard this; otherwise we have to check after retrieving the image records.:)
-                let $relids := tokenize($relids, ' ')[1]
-                let $image := collection($config:mods-root)//vra:image[@id = $relids]
+                    (: relids/refid workaround :)
+                    let $relations := $item//vra:relation
+                    let $relids :=
+                        for $rel in $relations
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@refid), "i_")) then
+                                    data($rel/@refid)
+                                    else 
+                                        data($rel/@relids)
+                                return $image-uuid 
+                    (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
+                    For now, we disregard this; otherwise we have to check after retrieving the image records.:)
+                    let $relids := tokenize($relids, ' ')
                     return
-                        <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
-    }
+                        if (count($relids) > 0) then 
+                            let $image := collection($config:mods-root)//vra:image[@id = $relids[1]]
+                                return
+                                    <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
+                        else
+                            <td class="list-image">[missing image]</td>             
+                }
                 {
                 <td class="pagination-toggle" style="vertical-align:middle">
                     <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                     <a>
                     {
                         let $collection := util:collection-name($item)
-                        let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                        let $collection := functx:replace-first($collection, '/db/', '')
                         let $clean := clean:cleanup($item)
                         return
                         try {
@@ -616,7 +651,7 @@ declare function bs:tei-list-view-table($item as node(), $currentPos as xs:int) 
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     (:let $clean := clean:cleanup($item):)
                     return
                         try {
@@ -664,7 +699,7 @@ declare function bs:wiki-list-view-table($item as node(), $currentPos as xs:int)
                 <a>
                 {
                     let $collection := util:collection-name($item)
-                    let $collection := translate(functx:replace-first($collection, '/db/', ''), '_', ' ')
+                    let $collection := functx:replace-first($collection, '/db/', '')
                     (:let $clean := clean:cleanup($item):)
                     return
                         try {
@@ -774,22 +809,25 @@ declare function bs:toolbar($item as element(), $isWritable as xs:boolean, $id a
             if (exists($item/vra:work))
             then $item/vra:work/@id
             else ()
-    let $imageId :=  if (exists($item/vra:work))
-                      then
-                            if (exists($item/vra:work/vra:relationSet/vra:relation/@pref[.='true']))
-                            then $item/vra:work/vra:relationSet/vra:relation[@pref='true']/@relids
-                            else $item/vra:work/vra:relationSet/vra:relation[1]/@relids
-                      else $item/vra:image/@id
+    let $imageId :=  
+        (: relids/refid workaround :)
+        if (exists($item/vra:work)) then
+            let $rel :=
+                if (exists($item/vra:work/vra:relationSet/vra:relation/@pref[.='true'])) then 
+                    $item/vra:work/vra:relationSet/vra:relation[@pref='true']
+                else 
+                    $item/vra:work/vra:relationSet/vra:relation[1]
+            return
+                if(starts-with(data($rel/@refid), "i_")) then
+                    data($rel/@refid)
+                else 
+                    data($rel/@relids)
+        else $item/vra:image/@id
 
     let $workdir := if (contains($collection, 'VRA_images')) then (  functx:substring-before-last($collection, "/")) else ($collection)
     let $workdir := if (ends-with($workdir,'/')) then ($workdir) else ($workdir || '/')
     let $imagepath := $workdir || 'VRA_images/' || $imageId || ".xml"
     
-     
-     let $upload-button:=  
-        if (not($item/vra:image/@id))
-            then <a class="upload-file-style"  directory="false" href="#{$id}" onclick="updateAttachmentDialog"><img title="Upload Image" src="theme/images/database_add.png" /> </a>
-        else ()
     return
         <div class="actions-toolbar">{
             if (name($item) = ('mods', 'vra'))
@@ -821,9 +859,14 @@ declare function bs:toolbar($item as element(), $isWritable as xs:boolean, $id a
                         ,
                         <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>
                         ,
-                        $upload-button                        
+                        if (not($item/vra:image/@id)) then
+                            <a class="upload-file-style" directory="false" href="#{$id}" onclick="updateAttachmentDialog">
+                                <img title="Upload Attachment" src="theme/images/database_add.png" />
+                            </a>
+                        else ()                       
                     )
-                else ()
+                else
+                    ()
             }
             {
                 (: button to add a related item :)

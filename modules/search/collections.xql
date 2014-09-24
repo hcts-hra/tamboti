@@ -115,8 +115,7 @@ declare function col:create-tree-node($title as xs:string, $collection-path as x
 : @param root-collection-path
 :   Path to the root collection in the database
 :)
-declare function col:get-root-collection($root-collection-path as xs:string) as element(node) {
-
+declare function col:get-root-collection($root-collection-path as xs:anyURI) as element(node) {
     let $user := security:get-user-credential-from-session()[1] return
 
         if(security:can-read-collection($root-collection-path)) then
@@ -164,7 +163,7 @@ declare function col:get-root-collection($root-collection-path as xs:string) as 
 : @param collection-path
 :   The parent collection path
 :)
-declare function col:get-child-collections($collection-path as xs:string) as element(json:value)? {
+declare function col:get-child-collections($collection-path as xs:anyURI) as element(json:value)? {
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
     
     if(security:can-read-collection($collection-path)) then
@@ -378,7 +377,8 @@ declare function col:get-from-root-for-prev-state($root-collection-path as xs:st
 : If there is no key we deliver the tree root
 :)
 if(request:get-parameter("key",()))then
-    let $collection-path := config:process-request-parameter(request:get-parameter("key",())) return
+    let $collection-path := xmldb:encode(config:process-request-parameter(request:get-parameter("key",())))
+    return
         if($collection-path eq $config:groups-collection)
             then
                 (: start of groups collection - the groups collection is virtual and so receives special treatment :)
@@ -388,19 +388,19 @@ if(request:get-parameter("key",()))then
                 col:get-child-collections($collection-path)
 
 (: Its a clean request for the tree, but we need to show the previous state of the tree :)
-else if(request:get-parameter("activeKey",()))then
+else if(request:get-parameter("activeKey",())) then
     
     let $expanded-collections :=
         if(request:get-parameter("expandedKeyList", ()))then
             let $processedExpandedKeyList := config:process-request-parameter(request:get-parameter("expandedKeyList", ()))
             return
-                for $expanded-key in fn:tokenize($processedExpandedKeyList, ",") return
-                    $expanded-key
+                for $expanded-key in fn:tokenize($processedExpandedKeyList, ",")
+                return
+                    xmldb:encode(config:process-request-parameter($expanded-key))
         else()
     return
-(:        xmldb:get-child-collections(xmldb:encode(security:get-home-collection-uri(security:get-user-credential-from-session()[1]))):)
-        col:get-from-root-for-prev-state($config:mods-root, config:process-request-parameter(request:get-parameter("activeKey",())), config:process-request-parameter(request:get-parameter("focusedKey",())), $expanded-collections)
+        col:get-from-root-for-prev-state($config:mods-root, xmldb:encode(config:process-request-parameter(request:get-parameter("activeKey",()))), xmldb:encode(config:process-request-parameter(request:get-parameter("focusedKey",()))), $expanded-collections)        
 
 else
     (: no key, so its the root that we want :)
-    col:get-root-collection($config:mods-root)
+    col:get-root-collection(xmldb:encode-uri($config:mods-root))

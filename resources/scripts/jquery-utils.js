@@ -14,7 +14,7 @@
         var defaults = {
             url: null,
             totalItems: 0,
-            itemsPerPage: 10,
+            itemsPerPage: 20,
             singleItemView: ".pagination-toggle",
             startParam: "start",
             countParam: "count",
@@ -131,11 +131,10 @@
                 if (base.options.singleItemView) {
                     $(base.options.singleItemView, div).hide().click(function (ev) {
                         ev.preventDefault();
-                        base.options.itemsPerPage = 10;
+                        base.options.itemsPerPage = 20;
                         var currentPage = Math.floor(base.currentItem / base.options.itemsPerPage);
                         var item = currentPage * base.options.itemsPerPage;
-                        if (item == 0)
-                            item = 1;
+                        item += 1;
                         helpers.retrievePage(base, item);
                     });
                 }

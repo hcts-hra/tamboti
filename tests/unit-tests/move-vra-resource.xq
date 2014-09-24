@@ -9,8 +9,8 @@ declare namespace rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 declare variable $config:mods-root-minus-temp := "/apps/" || $config:actual-app-id || "/tests/resources";
 
-declare function local:run-unit-test($resource-id as xs:string, $destination-collection as xs:string) {
-    let $run-tamboti-function := vra-hra-framework:move-resource($resource-id, $destination-collection)
+declare function local:run-unit-test($resource-id as xs:string, $target-collection as xs:string) {
+    let $run-tamboti-function := vra-hra-framework:move-resource($config:mods-root-minus-temp || "/temp", $target-collection, $resource-id)
     
     return
         <earl:TestResult rdf:about="#result">

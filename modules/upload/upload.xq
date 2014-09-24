@@ -113,22 +113,21 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
     let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord-uuid)
     let $image-record-filename := concat($image-uuid, '.xml')
     let $image-record-file-path := xs:anyURI(concat($image-collection-path, '/', $image-record-filename))
-    let $collection-owner-username := if ($collection-owner-username = '') then tamboti-utils:get-username-from-path($upload-collection-path) else $collection-owner-username
+    let $collection-owner-username := xmldb:get-owner($upload-collection-path)
 
     let $upload :=  
         (
             security:duplicate-acl($upload-collection-path, $workrecord-file-path),
-            util:log('DEBUG', $upload-collection-path),
             if (not(xmldb:collection-available($image-collection-path)))
             then
                 (
                     xmldb:create-collection($upload-collection-path, $image-collection-name),
                     sm:chown(xs:anyURI($image-collection-path), $collection-owner-username),
-                    sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group)
+                    sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group),
+                    security:duplicate-acl($upload-collection-path, $image-collection-path)
                 )
             else ()
             ,
-            security:duplicate-acl($upload-collection-path, $image-collection-path),
             upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord-uuid), $image-uuid),
                 
             xmldb:store($image-collection-path, $image-record-filename, $image-record),
@@ -155,16 +154,18 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
         let $add :=
             if ($parent_type eq 'vra')
             then
-                let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" refid=""  pref="true">general view</vra:relation>
                 let $relationTag := $parentdoc/vra:vra/vra:work/vra:relationSet
+                let $pref := 
+                    if (exists($relationTag//vra:relation[@type="imageIs" and @pref="true"])) then
+                        "false"
+                    else
+                        "true"
+                let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" pref="{$pref}">general view</vra:relation>
                     return
                         let $vra-insert := $parentdoc
                         let $insert_or_update := 
-                            if (not($relationTag))
-                            then update insert <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work 
-(:                                    if (security:can-write-collection($parentdoc_path)) :)
-(:                                    then update insert  <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work:)
-(:                                    else util:log('error', 'no write access') :)
+                            if (not($relationTag)) then 
+                                update insert <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work
                             else ()
                         let $vra-update := update insert $vra_insert into $parentdoc/vra:vra/vra:work/vra:relationSet
                         return $vra-update
@@ -180,9 +181,6 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
                         </mods:relatedItem>
                     let $mods-insert-tag := $parentdoc
                     let $mods-update := update insert  $mods-insert into $mods-insert-tag/mods:mods
-(:                            if (security:can-write-collection($parentdoc_path)) :)
-(:                            then update insert  $mods-insert into $mods-insert-tag/mods:mods:)
-(:                            else util:log('error', 'no write access') :)
                     return  $mods-update 
                 else  ()
                
@@ -228,8 +226,8 @@ let $result := for $x in (1 to count($data))
                     then upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id, '')
                     else
                         (:record for the collection:)
-                        let $collection-folder := xmldb:decode(request:get-header('X-File-Folder'))
-                        let $collection-owner-username := tamboti-utils:get-username-from-path($collection-folder)
+                        let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
+                        let $collection-owner-username := xmldb:get-owner($collection-folder)
                         (: if the collection file exists in the file folder:)
                         (:read the collection uuid:)
                         let $collection_vra := collection($config:mods-root)//vra:collection

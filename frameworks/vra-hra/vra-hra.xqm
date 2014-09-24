@@ -29,35 +29,62 @@ declare function vra-hra-framework:get-vra-image-records-list($work-record as el
             )
 };
 
-declare function vra-hra-framework:move-resource($resource-id as xs:string, $destination-collection as xs:string) as element(status)+ {
-    
-    let $resource := collection($config:mods-root-minus-temp)//vra:vra[vra:work[@id eq $resource-id]][1]
-    let $resource-name := $resource-id || ".xml"    
-    let $resource-collection := substring-before(base-uri($resource), $resource-name)
-    let $move-record :=
-        for $list-item in vra-hra-framework:get-vra-work-record-list($resource)
-            let $resource-relative-path := substring-after($list-item, $resource-collection)
-            
-            return 
-                (
-                    if (starts-with($resource-relative-path, 'VRA_images'))
-                    then (
-                    	let $image-collection := xs:anyURI($destination-collection || "/VRA_images")
-                    	return
-                    		(
-                    		    xmldb:create-collection($destination-collection, "VRA_images"),
-                        	    sm:chgrp($image-collection, $config:biblio-users-group),
-                        	    security:apply-parent-collection-permissions($image-collection),
-                        	    xmldb:move($resource-collection || "/VRA_images/", $destination-collection || "/VRA_images", substring-after($resource-relative-path, 'VRA_images/')),
-                        	    security:apply-parent-collection-permissions(xs:anyURI($destination-collection || "/VRA_images/" || substring-after($resource-relative-path, 'VRA_images/')))
-                    		)
-                    )
-                    else (
-                        xmldb:move($resource-collection, $destination-collection, $resource-relative-path),
-                        security:apply-parent-collection-permissions(xs:anyURI($destination-collection || "/" || $resource-relative-path))
-                    )
-                )
-                
-    return <status moved="{$resource-name}" from="{$resource-collection}" to="{$destination-collection}" />
-    
+declare function vra-hra-framework:move-resource($source-collection as xs:anyURI, $target-collection as xs:anyURI, $resource-id as xs:string) as element(status) {
+	let $resource-name := util:document-name(collection($source-collection)//vra:work[@id = $resource-id][1])
+	let $result :=
+        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+            try {
+                tamboti-utils:create-vra-image-collection($target-collection),
+                let $relations := collection($source-collection)//vra:work[@id = $resource-id][1]/vra:relationSet//vra:relation[@type="imageIs"]
+                let $vra-images-target-collection := $target-collection || "/VRA_images"
+                (: create VRA_images collection, if needed :)
+                (: move each image record :)
+                for $relation in $relations
+                    let $image-uuid := data($relation/@relids)
+                    let $image-vra := collection($source-collection)//vra:image[@id = $image-uuid]
+                    let $image-resource-name := util:document-name($image-vra)
+                    let $binary-name := data($image-vra/@href)
+                    let $vra-images-source-collection := util:collection-name($image-vra)
+                    return
+                        (
+                            (: if binary available, move it as well :)
+                            if(util:binary-doc-available($vra-images-source-collection || "/" || $binary-name)) then
+                                (
+                                    xmldb:move($vra-images-source-collection, $vra-images-target-collection, $binary-name),
+                                    (: clear ACL and copy ACL and POSIX-rights from parent collection :)
+                                    sm:clear-acl(xs:anyURI($vra-images-target-collection || "/" || $binary-name)),
+                                    security:duplicate-acl($vra-images-target-collection, $vra-images-target-collection || "/" || $binary-name),
+                                    security:copy-owner-and-group(xs:anyURI($vra-images-target-collection), xs:anyURI($vra-images-target-collection || "/" || $binary-name))
+                                )
+                            else
+                                util:log("INFO", "not available: " || $vra-images-source-collection || "/" || $binary-name)
+                            ,
+                            (: move image record :)
+                            xmldb:move($vra-images-source-collection, $vra-images-target-collection, $image-resource-name),
+                            (: clear ACL and copy ACL and POSIX-rights from parent collection :)
+                            sm:clear-acl(xs:anyURI($vra-images-target-collection || "/" || $image-resource-name)),
+                            security:duplicate-acl($vra-images-target-collection, $vra-images-target-collection || "/" || $image-resource-name),
+                            security:copy-owner-and-group(xs:anyURI($vra-images-target-collection), xs:anyURI($vra-images-target-collection || "/" || $image-resource-name))
+
+                        )
+            } catch * {
+                util:log("INFO", "Error: move resource failed: " ||  $err:code || ": " || $err:description),
+                false()
+            }
+            ,
+            xmldb:move($source-collection, $target-collection, $resource-name)
+            ,
+            (: clear ACL and copy ACL and POSIX-rights from parent collection :)
+            sm:clear-acl(xs:anyURI($target-collection || "/" || $resource-name))
+            ,
+            security:duplicate-acl($target-collection, $target-collection || "/" || $resource-name)
+            ,
+            security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource-name))
+        )
+
+    return
+        if($result) then
+            <status moved="{$resource-name}" from="{$source-collection}" to="{$target-collection}">{$target-collection}</status>
+        else
+            <status id="error">Error trying to move</status>
 };

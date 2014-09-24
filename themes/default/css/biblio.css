@@ -29,7 +29,12 @@ code {
   font-weight: 700;
 }
 .list-image {
-  margin-right: 1em;
+   margin-right: 1em;
+   padding-left: 0.2em;
+   padding-right: 0.2em;
+   text-align: center;
+   vertical-align: middle;
+   width: 65px;
 }
 * {
   margin: 0;
@@ -110,6 +115,16 @@ a:visited {
 }
 img {
   border: 0;
+}
+img.picture {
+  border: 0;
+  box-shadow: 3px 3px 3px grey;
+}
+
+img.zoom {
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
+  /*cursor: zoom-in;*/
 }
 /*page-head div begins*/
 #page-head {
@@ -426,7 +441,11 @@ span.readable .dynatree-title {
   padding-top: .45em;
 }
 .actions-cell {
-  padding-top: .25em;
+	width: 30px;
+  	padding-top: .25em;
+}
+.list-type {
+  width: 30px;
 }
 .actions-cell a img {
   width: 22px;
@@ -558,8 +577,9 @@ table .biblio-full {
 table .pagination-toggle {
   cursor: pointer;
   text-decoration: none;
-  line-height: 1.8em;
-  padding-top: 1px;
+  /*line-height: 1.8em;*/
+  padding-top: .5em;
+  padding-bottom: .5em;
   padding-left: .5em;
   padding-right: .5em;
   border-top-right-radius: 5px;
@@ -571,6 +591,7 @@ table .even {
 table .pagination-number {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  max-width: 50px;
 }
 table .biblio-full .collection {
   width: 20em;
@@ -580,6 +601,7 @@ table .biblio-full .collection {
 table .biblio-full .collection-label {
   background-color: #fff;
   text-align: right;
+  vertical-align: top;
   padding-right: 1em;
 }
 table .biblio-full .label {
@@ -588,7 +610,6 @@ table .biblio-full .label {
   vertical-align: middle;
   width: 90em;
   /*to set a minimum width that keeps the table biblio-full from collapsing*/
-
 }
 table .biblio-full .record {
   font-weight: 400;
@@ -635,9 +656,25 @@ table .biblio-full .related td {
   border-top: 1px solid #bbbbbb;
 }
 /*main structures for display of search results ends*/
-/*results-view styling begins*/
-td .title {
+/*results-view (list) styling begins*/
+.title {
+  font-style:italic;
+}
+.vra-title {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+.vra-date {
+  font-size: 0.9em;
+}
+.vra-agent {
+  font-size: 0.9em;
+}
+.vra-role{
   font-style: italic;
+}
+.vra-location{
+  font-size: 0.9em;
 }
 /*results-view styling ends*/
 .actions-toolbar {
