@@ -394,9 +394,10 @@ return
                         sm:chmod($record-path, $config:resource-mode)
                         ,
                         (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc($record-path)) 
-                        then xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else ()
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
