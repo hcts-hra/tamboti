@@ -392,11 +392,28 @@ return
                         sm:chgrp($record-path, $config:biblio-users-group)
                         ,
                         sm:chmod($record-path, $config:resource-mode)
-                        ,
+                        ,                        
                         (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc($record-path)) 
-                        then xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else ()
+<<<<<<< HEAD
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
+                        ,
+                        (:Set the same permissions on the moved file that the parent collection has.:)
+                        security:apply-parent-collection-permissions($record-path)
+=======
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
+>>>>>>> refs/remotes/origin/master
+
+                        (:Remove the $doc record from temp if store in target was successful.:)
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
