@@ -329,7 +329,7 @@ return
         (:Locate the document in temp and and load it in $doc.:)
         let $file-to-update := concat($incoming-id, '.xml')
         (:let $temp-file-path := concat($config:mods-temp-collection, '/', $file-to-update):)
-        let $temp-file-path := concat(xmldb:encode-uri($config:mods-temp-collection), '/', $file-to-update)
+        let $temp-file-path := concat($config:mods-temp-collection, '/', $file-to-update)
         (:let $log := util:log("DEBUG", ("##$temp-file-path): ", $temp-file-path)):)
         (:This is the document in temp to be updated during saves and the document to be saved in the target collection when the user has finished editing.:)
         let $doc := doc($temp-file-path)/mods:mods
@@ -343,13 +343,12 @@ return
                 then
                     (:Get the target collection. If it's an edit to an existing document, we can find its location by means of its uuid.
                     If it is a new record, the target collection can be captured as the collection parameter passed in the URL. :)
-                    let $target-collection := xmldb:encode-uri(request:get-parameter("collection", ""))
-(:                    let $new-target-collection := uu:escape-collection-path(request:get-parameter("collection", "")):)
-                    let $log := util:log("INFO", "request:get-parameter 'collection': " || request:get-parameter("collection", ""))
-(:                    let $target-collection :=:)
-(:                        if ($target-collection):)
-(:                        then $target-collection:)
-(:                        else $new-target-collection:)
+                    let $target-collection := local:find-live-collection-containing-uuid($incoming-id)
+                    let $new-target-collection := xmldb:encode-uri(request:get-parameter("collection", ""))
+                    let $target-collection :=
+                        if ($target-collection)
+                        then $target-collection
+                        else $new-target-collection
                     (:If the user has created a related record with a record as host in a collection to which the user does not have write access,
                     save the record in the user's home folder. The user can then move it elsewhere.
                     If the user does have write access, save it in the collection that the host occurs in.:)
@@ -383,7 +382,10 @@ return
                         ,
                         (:Store $doc in the target collection, whether this is where the record originally was located or 
                         the collection chosen to store a new record.:)
+(:                        xmldb:store($target-collection, $file-to-update, $doc):)
                         xmldb:store($target-collection, $file-to-update, $doc)
+                        ,
+                        security:apply-parent-collection-permissions($record-path)
                         ,
                         sm:chown($record-path, xmldb:get-owner($target-collection))
                         ,
@@ -392,12 +394,26 @@ return
                         sm:chmod($record-path, $config:resource-mode)
                         ,                        
                         (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc($record-path)) 
-                        then xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else ()
+<<<<<<< HEAD
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
                         ,
                         (:Set the same permissions on the moved file that the parent collection has.:)
                         security:apply-parent-collection-permissions($record-path)
+=======
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
+>>>>>>> refs/remotes/origin/master
+
+                        (:Remove the $doc record from temp if store in target was successful.:)
+                        if (doc($record-path)) then
+                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else 
+                            ()
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
