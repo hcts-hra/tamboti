@@ -24,7 +24,6 @@ declare function theme:resolve-uri($prefix as xs:string?, $root as xs:string, $r
             "/", $theme, "/",
             $resource
         )
-let $log := util:log("INFO", ("resolved theme path: ", $path))
     return
         $path
 };
@@ -77,7 +76,6 @@ declare function theme:resolve-by-id($root as xs:string, $id as xs:string) {
                 concat(
                     $config:themes, "/", $theme
                 )
-let $log := util:log("INFO", ("resolved theme path: ", $path))
             return
                 collection($path)//*[@id = $id]
 };
