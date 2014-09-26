@@ -74,7 +74,7 @@ declare variable $reports:items-with-encoded-at-sign :=
     for $item in $reports:permission-elements
     let $item-path := $item/@path/string()
     return
-        if (contains($item-path, '%40'))
+        if (contains($item-path, '@'))
         then $item
         else ()
 ;
