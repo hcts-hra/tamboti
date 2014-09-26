@@ -9,8 +9,8 @@ import module namespace functx = "http://www.functx.com";
         let $item-path := xs:anyURI($item/@path)
         return
             (
-                if (matches($item-path, "(%40)[^/]$"))
-                then xmldb:rename($item-path, replace(functx:substring-after-last($item-path, '/'), "%40", "@"))
+                if (matches($item-path, "(@)[^/]$"))
+                then xmldb:rename($item-path, replace(functx:substring-after-last($item-path, '/'), "@", "%40"))
                 else ()
             )
     }
