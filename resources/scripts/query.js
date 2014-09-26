@@ -650,17 +650,35 @@ function moveResource(dialog) {
  Called when the user clicks on the "create" button in the create collection dialog.
  */
 function createCollection(dialog) {
-    var name = encodeURI($("#new-collection-name").val());
+    var name = $("#new-collection-name").val();
     var collection = getCurrentCollection();
-    var params = {action: 'create-collection', name: name, collection: collection};
-    $.get("operations.xql", params, function(data) {
-
-        //reload the tree node
-        refreshCurrentTreeNode();
-
-        //close the dialog
-        dialog.dialog("close");
+    var params = {
+        action: 'create-collection', 
+        name: name, 
+        collection: collection
+    };
+    
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'create-collection', 
+            name: name, 
+            collection: collection
+        },
+        type: 'POST',
+        success:
+                function(data, message) {
+                    //reload the tree node
+                    refreshCurrentTreeNode();
+                },
+        error: function(response, message) {
+            //ToDo: Popup when creating Collection failed
+            // $('#message').html('Creating collection failed: ' + response.responseText);
+        }
     });
+
+    //close the dialog
+    dialog.dialog("close");
 }
 
 //refreshes the tree node
@@ -722,28 +740,36 @@ function updateFileList() {
 /*
  Called when the user clicks on the "rename" button in the rename collection dialog.
  */
-
-
-
-
 function renameCollection(dialog) {
     var name = $('#rename-collection-form input[name = name]').val();
     var collection = getCurrentCollection();
-    var params = {action: 'rename-collection', name: name, collection: collection};
-    $.get("operations.xql", params, function(data) {
-        alert($("#collection-tree-tree").dynatree("getActiveNode").data.key);
-        //current key
-        var currentKey = $("#collection-tree-tree").dynatree("getActiveNode").data.key;
 
-        //new key
-        var newKey = currentKey.replace(/(.*)\/.*/, "$1/" + name);
-
-        //reload the parent tree node
-        refreshParentTreeNodeAndFocusOnChild(newKey);
-
-        //close the dialog
-        dialog.dialog("close");
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'rename-collection',
+            name: name, 
+            collection: collection
+        },
+        type: 'POST',
+        success:
+                function(data, message) {
+                    //current key
+                    var currentKey = $("#collection-tree-tree").dynatree("getActiveNode").data.key;
+                    //new key
+                    var newKey = currentKey.replace(/(.*)\/.*/, "$1/" + name);
+            
+                    //reload the parent tree node
+                    refreshParentTreeNodeAndFocusOnChild(newKey);
+                },
+        error: function(response, message) {
+            //ToDo: Popup when renaming collection failed
+            // $('#message').html('Creating collection failed: ' + response.responseText);
+        }
     });
+
+    //close the dialog
+    dialog.dialog("close");
 }
 
 function refreshCollectionMoveList() {
