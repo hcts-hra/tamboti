@@ -100,51 +100,57 @@ declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string
 declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord-uuid, $collection-owner-username as xs:string) {
     let $image-uuid := concat('i_', util:uuid())
     let $upload-collection-path :=
-        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord-uuid]/@id))
-        then util:collection-name(collection($config:mods-root)//vra:work[@id = $workrecord-uuid]/@id)
+        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord-uuid])) then 
+            let $resource := collection($config:mods-root)//vra:work[@id = $workrecord-uuid]
+            return
+                util:collection-name($resource)
         else 
-            if (exists(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID))
-            then util:collection-name(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID)
-            else ()
+            if (exists(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid])) then
+                util:collection-name(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID)
+            else 
+                ()
+
     let $workrecord-file-path := concat($upload-collection-path, '/', $workrecord-uuid, '.xml')
     let $image-collection-path := concat($upload-collection-path, '/', $image-collection-name)
     let $image-filename := concat($image-uuid, '.', functx:substring-after-last($filename, '.'))
     let $image-file-path := xs:anyURI(concat($image-collection-path, '/', $image-filename))
     let $image-record := local:generate-image-record($image-uuid, $image-filename, $filename, $workrecord-uuid)
+
     let $image-record-filename := concat($image-uuid, '.xml')
-    let $image-record-file-path := xs:anyURI(concat($image-collection-path, '/', $image-record-filename))
-    let $collection-owner-username := xmldb:get-owner($upload-collection-path)
+    let $image-record-file-path := xs:anyURI($image-collection-path || '/' || $image-record-filename)
 
     let $upload :=  
-        (
-            security:duplicate-acl($upload-collection-path, $workrecord-file-path),
-            if (not(xmldb:collection-available($image-collection-path)))
-            then
-                (
-                    xmldb:create-collection($upload-collection-path, $image-collection-name),
-                    sm:chown(xs:anyURI($image-collection-path), $collection-owner-username),
-                    sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group),
-                    security:duplicate-acl($upload-collection-path, $image-collection-path)
-                )
-            else ()
-            ,
-            upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord-uuid), $image-uuid),
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2] ,
+            (
                 
-            xmldb:store($image-collection-path, $image-record-filename, $image-record),
-            sm:chown($image-record-file-path, $collection-owner-username),
-            sm:chmod($image-record-file-path, $config:resource-mode),
-            sm:chgrp($image-record-file-path, $config:biblio-users-group),
-            security:duplicate-acl($upload-collection-path, $image-record-file-path),
-                
-            xmldb:store($image-collection-path, $image-filename, $data),
-            sm:chown($image-file-path, $collection-owner-username),
-            sm:chmod($image-file-path, $config:resource-mode),
-            sm:chgrp($image-file-path, $config:biblio-users-group),
-            security:duplicate-acl($upload-collection-path, $image-file-path),                
-                
-            concat($filename, ' ' ,$message)
+                security:duplicate-acl($upload-collection-path, $workrecord-file-path)
+                ,
+                if (not(xmldb:collection-available($image-collection-path))) then
+                    (
+                        xmldb:create-collection($upload-collection-path, $image-collection-name),
+                        sm:chown(xs:anyURI($image-collection-path), $collection-owner-username),
+                        sm:chgrp(xs:anyURI($image-collection-path), $config:biblio-users-group),
+                        security:duplicate-acl($upload-collection-path, $image-collection-path)
+                    )
+                else ()
+                ,
+                upload:add-tag-to-parent-doc($workrecord-file-path, upload:determine-type($workrecord-uuid), $image-uuid),
+                    
+                xmldb:store($image-collection-path, $image-record-filename, $image-record),
+                sm:chown($image-record-file-path, $collection-owner-username),
+                sm:chmod($image-record-file-path, $config:resource-mode),
+                sm:chgrp($image-record-file-path, $config:biblio-users-group),
+                security:duplicate-acl($upload-collection-path, $image-record-file-path),
+                    
+                xmldb:store($image-collection-path, $image-filename, $data),
+                sm:chown($image-file-path, $collection-owner-username),
+                sm:chmod($image-file-path, $config:resource-mode),
+                sm:chgrp($image-file-path, $config:biblio-users-group),
+                security:duplicate-acl($upload-collection-path, $image-file-path),                
+                    
+                concat($filename, ' ' ,$message)
+            )
         )
-        
     return $upload
 };
  
@@ -215,15 +221,16 @@ let $result := for $x in (1 to count($data))
         then 'image'
         else ''
         return
-            if ($doc-type eq 'image')
-            then
+            if ($doc-type eq 'image') then
                 let $upload-resource-id :=
-                    if (string-length(request:get-header('X-File-Parent')) > 0)
-                    then config:process-request-parameter(request:get-header('X-File-Parent'))
-                    else ()
+                    if (string-length(request:get-header('X-File-Parent')) > 0) then 
+                        config:process-request-parameter(request:get-header('X-File-Parent'))
+                    else 
+                        ()
+
                 let $upload := 
-                    if (exists($upload-resource-id))
-                    then upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id, '')
+                    if (not(empty($upload-resource-id))) then
+                        upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id, '')
                     else
                         (:record for the collection:)
                         let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
@@ -238,22 +245,29 @@ let $result := for $x in (1 to count($data))
 
                         (:generate the  work record, if collection xml exists:)
                         let $work-xml-generate :=
-                            if (exists($collection-uuid))
+                            if 
+                                (exists($collection-uuid))
                             then
                                 let $workrecord-uuid := concat('w_', util:uuid())
                                 let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x])
                                 let $create-workrecord :=
                                     (
-                                        xmldb:store($collection-folder, concat($workrecord-uuid, '.xml'), $vra-work-xml),
-                                        sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
-                                        sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
-                                        sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group)
+                                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                                            (
+                                                xmldb:store($collection-folder, concat($workrecord-uuid, '.xml'), $vra-work-xml),
+                                                sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
+                                                sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
+                                                sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group),
+                                                upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid, $collection-owner-username)
+                                            )
+                                        )
                                     )
-                                let $store := upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid, $collection-owner-username)
-                                
+
                                 return $message
-                            else ()
-                                return concat($filename[$x], ' ', $message)
+                            else
+                                ()
+                            return 
+                                concat($filename[$x], ' ', $message)
                     return $upload
         else 
             let $upload := 'unsupported file format'
