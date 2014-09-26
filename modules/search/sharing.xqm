@@ -297,27 +297,32 @@ declare function sharing:recursively-get-shared-subcollections($collection as xs
 };
 
 declare function sharing:get-shared-with($collection-path as xs:string) as xs:string* {
-    let $permissions := sm:get-permissions(xs:anyURI($collection-path))/sm:permission,
-    $mode := $permissions/@mode return
-    fn:string-join(
-        (
-        if(fn:matches($mode, "...r....."))then
-            "Biblio users"
-        else(),
-        if(fn:matches($mode, "......r.."))then
-            "Anyone"
-        else()
-        ,
-        for $ace in $permissions/sm:acl/sm:ace[@access_type eq "ALLOWED"] 
-        return 
-            system:as-user(
-                $config:dba-credentials[1], 
-                $config:dba-credentials[2], 
-                sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
-                )
-        ),
-        ", "
-    )
+    let $permissions := sm:get-permissions(xs:anyURI($collection-path))/sm:permission
+    let $mode := $permissions/@mode 
+    return
+        fn:string-join(
+            (
+                if(fn:matches($mode, "...r....."))then
+                    "Biblio users"
+                else
+                    ()
+                ,
+                if(fn:matches($mode, "......r.."))then
+                    "Anyone"
+                else
+                    ()
+                ,
+                for $ace in $permissions/sm:acl/sm:ace[@access_type eq "ALLOWED"] 
+                return 
+                    system:as-user(
+                        $config:dba-credentials[1], 
+                        $config:dba-credentials[2], 
+                        sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
+                    )
+            )
+            ,
+            ", "
+        )
 };
 
 declare function sharing:is-valid-user-for-share($username as xs:string) as xs:boolean

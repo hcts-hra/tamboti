@@ -96,7 +96,7 @@ then
         if ($action eq "is-collection-owner") then
             let $collection := xmldb:encode(request:get-parameter("collection",()))
             return 
-                local:user-is-collection-owner(security:get-user-credential-from-session()[1], $collection)
+                security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
         else if ($action eq "collection-relationship") then
             let $collection := xmldb:encode(request:get-parameter("collection",()))
             return 

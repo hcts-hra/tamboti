@@ -295,10 +295,10 @@ declare function local:return-thumbnail-detail-view($image){
     let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")    
     let $image-url := 
         if ($bs:USER eq "guest") then 
-            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>
         else 
             <a href="{$image-size1000-href}" target="_blank">
-                <img src="{$image-size150-href}" alt="image" class="relatedImage"/>
+                <img src="{$image-size150-href}" alt="image" class="relatedImage picture zoom"/>
             </a>
 
     return $image-url
@@ -310,10 +310,10 @@ declare function local:return-thumbnail-list-view($image){
     let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
     let $image-url := 
         if ($bs:USER eq "guest") then
-            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>
         else 
             <a href="{$image-size1000-href}" target="_blank">
-                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage"/>
+                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture zoom"/>
             </a>
 
     return $image-url

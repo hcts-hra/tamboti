@@ -14,7 +14,7 @@ declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 
-declare variable $HTTP-FORBIDDEN := 403;
+declare variable $op:HTTP-FORBIDDEN := 403;
  
 (:TODO: if collection names use higher Unicode characters, 
 the buttons do not show up (except Delete Folder).:)
@@ -269,7 +269,7 @@ declare function op:set-ace-writeable($collection as xs:anyURI, $id as xs:int, $
     if(exists(sharing:set-collection-ace-writeable($collection, $id, $is-writeable)))then  
         <status id="ace">updated</status>
     else(
-        response:set-status-code($HTTP-FORBIDDEN),
+        response:set-status-code($op:HTTP-FORBIDDEN),
         <status id="ace">Permission Denied</status>
     )
 };
@@ -396,6 +396,43 @@ declare function op:get-child-collection-paths($start-collection as xs:anyURI) {
 so it is necessary to check against the path of the collection that is to be moved.
 A file cannot, by stipulation, be moved into the top level of the home collection, nor can it be moved to its own parent collection.:)
 (:TODO: capture the collection that the resource to be moved belongs to.:)
+
+
+declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as element(select) {
+    <select>
+        {
+            (:the user can move records to their home folder and to folders that are shared with the user:)
+            let $available-collection-paths := (security:get-home-collection-uri(security:get-user-credential-from-session()[1]))
+            let $move-folder-list :=
+                for $available-collection-path in $available-collection-paths 
+                    return 
+                    (
+                        security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
+                        op:get-child-collection-paths($available-collection-path),
+                        sharing:recursively-get-shared-subcollections(xs:anyURI($config:mods-root), true())
+                    )
+            for $path in distinct-values($move-folder-list)
+                (:let $log := util:log("DEBUG", ("##$path): ", $path)):)
+                (:let $log := util:log("DEBUG", ("##$chosen-collection): ", $chosen-collection)):)
+                (:let $log := util:log("DEBUG", ("##$starts-with): ", starts-with($path, $chosen-collection))):)
+                (:let $log := util:log("DEBUG", ("##$home): ", security:get-home-collection-uri(security:get-user-credential-from-session()[1]))):)
+                (:let $log := util:log("DEBUG", ("##$shared): ", sharing:get-shared-collection-roots(true()))):)
+                let $display-path := substring-after($path, '/db/')
+                let $user := xmldb:get-current-user()
+                let $display-path := replace($path, concat('users/', $user), 'Home')
+                order by $display-path
+                return
+                (:leave out the folder that the user has marked, since you cannot move something to itself:)
+                (:leave out descendant folders, since you cannot move a folders into a descendant:)
+                (:if (contains($path, $chosen-collection) or contains($chosen-collection, $path)):)
+                    if ($path eq $chosen-collection or functx:substring-after-last($path, "/") = "VRA_images") then
+                        () 
+                    else
+                        <option value="{xmldb:decode-uri($path)}">{xmldb:decode-uri($display-path)}</option>
+        }
+    </select>
+};
+ 
 declare function op:get-move-list($chosen-collection as xs:anyURI, $type as xs:string) as element(select) {
     <select>
         {
@@ -425,6 +462,10 @@ declare function op:get-move-list($chosen-collection as xs:anyURI, $type as xs:s
     </select>
 };
 
+declare function op:get-move-resource-list($collection as xs:anyURI) as element(select) {
+    op:get-move-folder-list($collection)
+};
+
 declare function op:is-valid-group-for-share($groupname as xs:string) as element(status) {
     if(sharing:is-valid-group-for-share($groupname))then
         <status id="group">valid</status>
@@ -438,6 +479,28 @@ declare function op:unknown-action($action as xs:string) {
         response:set-status-code($op:HTTP-FORBIDDEN),
         <p>Unknown action: {$action}.</p>
 };
+
+declare function op:upload($collection, $path, $data) {
+    let $upload := 
+        (: authenticate as the user account set in the app's repo.xml, since we need write permissions to
+         : upload the file.  then set the uploaded file's permissions to allow guest/world to delete the file 
+         : for the purposes of the demo :)
+        system:as-user('admin', '', 
+            (
+            let $mkdir := if (xmldb:collection-available($collection)) then() else ()
+            let $upload := xmldb:store($collection, $path, $data)
+            let $chmod := sm:chmod(xs:anyURI($upload), 'o+rw')
+            return ()
+            )
+        )
+    return ()
+ };
+ 
+ 
+declare function op:upload-file($name, $data ,$collection) {
+    op:upload(xmldb:encode-uri($collection), xmldb:encode-uri($name), $data)
+};
+
 
 let $action := request:get-parameter("action", ())
 
@@ -470,7 +533,7 @@ return
         let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
         let $log := util:log("INFO", request:get-parameter("resource_type",()))
         return 
-            op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()), request:get-parameter("resource_type",()) )
+            op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()))
             
     else if($action eq "set-ace-writeable")then
         let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
@@ -493,7 +556,6 @@ return
             op:remove-ace-by-name($collection, xs:string(request:get-parameter("target", ())) , xs:string(request:get-parameter("name", ())))
             
     else if($action eq "add-user-ace") then
-        let $log := util:log("INFO", "col:" ||request:get-parameter("collection", ()))
         let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
         return
             op:add-user-ace($collection, request:get-parameter("username",()))
