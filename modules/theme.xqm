@@ -49,8 +49,6 @@ declare function theme:resolve($prefix as xs:string?, $root as xs:string, $resou
             "/", $theme, "/",
             $resource
         )
-    let $log := util:log("INFO", ("resolved theme path: ", $path, " prefix: ", $prefix, " root: ", $root,
-        " $config:themes: ", $config:themes))
     return
         $path
 };
