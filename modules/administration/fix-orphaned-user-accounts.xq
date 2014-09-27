@@ -1,7 +1,6 @@
 xquery version "3.0";
 
 import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "../../reports/reports.xqm";
-import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
 <result>
     {
@@ -17,7 +16,7 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
                     attribute path {$item-path},
                     for $ace in $actual-item//sm:ace[@who = $orphaned-username]
                     let $index := $ace/@index
-                    let $who := xmldb:get-owner($item-path)
+                    let $who := sm:get-permissions(xs:anyURI($item-path))/*/@owner
                     let $access_type := if ($ace/@access_type = 'ALLOWED') then true() else false()
                     let $mode := $ace/@mode
                     return

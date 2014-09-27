@@ -1,6 +1,5 @@
 xquery version "3.0";
 
-import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "../../reports/reports.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
@@ -8,7 +7,7 @@ declare function local:set-owner($path) {
     (
     let $owner :=
         if (contains($path, $config:users-collection))
-        then xmldb:get-owner($path) 
+        then sm:get-permissions(xs:anyURI($path))/*/@owner
         else "editor"    
     return
         (
