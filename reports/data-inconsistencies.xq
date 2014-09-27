@@ -25,8 +25,9 @@ let $items-with-different-owner :=
     let $username :=
         if (contains($item-path, $config:users-collection))
         then
-            let $raw-username := substring-after($item/@path, $config:users-collection || "/")
-            return if (contains($raw-username, "/")) then (substring-before($raw-username, "/")) else ($raw-username)
+            let $raw-username1 := substring-after($item/@path, $config:users-collection || "/")
+            let $raw-username2 := if (contains($raw-username1, "/")) then (substring-before($raw-username1, "/")) else ($raw-username1)
+            return xmldb:decode($raw-username2)
         else $reports:users-for-public-resources
         
     return
