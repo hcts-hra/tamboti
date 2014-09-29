@@ -509,6 +509,7 @@ return
         
     else if($action eq "move-resource")then
         let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
+        let $log := util:log("INFO", request:get-parameter("resource_type",()))
         return 
             op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()))
             
