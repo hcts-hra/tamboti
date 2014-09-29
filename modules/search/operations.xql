@@ -480,28 +480,6 @@ declare function op:unknown-action($action as xs:string) {
         <p>Unknown action: {$action}.</p>
 };
 
-declare function op:upload($collection, $path, $data) {
-    let $upload := 
-        (: authenticate as the user account set in the app's repo.xml, since we need write permissions to
-         : upload the file.  then set the uploaded file's permissions to allow guest/world to delete the file 
-         : for the purposes of the demo :)
-        system:as-user('admin', '', 
-            (
-            let $mkdir := if (xmldb:collection-available($collection)) then() else ()
-            let $upload := xmldb:store($collection, $path, $data)
-            let $chmod := sm:chmod(xs:anyURI($upload), 'o+rw')
-            return ()
-            )
-        )
-    return ()
- };
- 
- 
-declare function op:upload-file($name, $data ,$collection) {
-    op:upload(xmldb:encode-uri($collection), xmldb:encode-uri($name), $data)
-};
-
-
 let $action := request:get-parameter("action", ())
 
 return
@@ -531,7 +509,6 @@ return
         
     else if($action eq "move-resource")then
         let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
-        let $log := util:log("INFO", request:get-parameter("resource_type",()))
         return 
             op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()))
             
@@ -581,12 +558,5 @@ return
         return
             op:get-move-resource-list($collection)
             
-     else if($action eq "upload-file") then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        let $name := request:get-uploaded-file-name('files[]')
-        let $data := request:get-uploaded-file-data('files[]')
-        return
-            op:upload-file($name,$data,$collection)
-        
      else
         op:unknown-action($action)
