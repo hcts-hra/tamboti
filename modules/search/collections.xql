@@ -9,6 +9,7 @@ import module namespace session = "http://exist-db.org/xquery/session";
 import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace util="http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
+import module namespace functx = "http://www.functx.com";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
 declare namespace group = "http://commons/sharing/group";
@@ -69,7 +70,7 @@ declare variable $collections-to-skip-for-guest := ('HERA_Single', 'Ethnografisc
 :)
 declare function col:create-tree-node($title as xs:string, $collection-path as xs:string, $is-folder as xs:boolean, $icon-path as xs:string?, $tooltip as xs:string?, $writeable as xs:boolean, $additional-classes as xs:string*, $expand as xs:boolean, $has-lazy-children as xs:boolean, $explicit-children as element(node)*) as element(node) {
     <node>
-        <title>{translate(xmldb:decode-uri($title), '_', ' ')}</title>
+        <title>{xmldb:decode-uri($title)}</title>
         <key>{xmldb:decode-uri($collection-path)}</key>
         <isFolder>{$is-folder}</isFolder>
         <writeable>{$writeable}</writeable>
@@ -252,11 +253,10 @@ declare function col:get-collection($collection-path as xs:string, $explicit-chi
 
 (: gets all the shared collection roots, less the roots shared by us :)
 declare function col:_get-shared-collection-roots-by-others() as xs:string* {
-    
     let $my-home := security:get-home-collection-uri(security:get-user-credential-from-session()[1]) return
-    
-    for $root in sharing:get-shared-collection-roots(false()) return
-        if(fn:starts-with($root, $my-home) eq false())then
+    for $root in sharing:get-shared-collection-roots(false()) 
+    return
+        if(fn:starts-with($root, $my-home) eq false() and not(fn:ends-with($root, "VRA_images"))) then
             $root
         else()
 };
@@ -265,15 +265,17 @@ declare function col:_get-shared-collection-roots-by-others() as xs:string* {
 : Gets the virtual "Groups" root, i.e. returns all groups that are accessible to a user
 :)
 declare function col:get-groups-virtual-root() as element(json:value) {
-    
     let $shared-roots := col:_get-shared-collection-roots-by-others() return
         if(count($shared-roots) gt 1)then
             <json:value>
             {
-                for $shared-root in $shared-roots return
+                for $shared-root in $shared-roots
+(: ToDo: when switching to display full tree view for shared folders, remove "substring-after-last":)
+                    order by upper-case(functx:substring-after-last($shared-root, "/"))
+                return
                     <json:value>
                     {
-                        col:create-tree-node(fn:replace($shared-root, ".*/", ""), $shared-root, true(), (), (), security:can-write-collection($shared-root), (), false(), true(), ())/child::node()
+                        col:create-tree-node(fn:replace($shared-root, ".*/", ""), $shared-root, true(), (), xmldb:decode($shared-root), security:can-write-collection($shared-root), (), false(), true(), ())/child::node()
                     }
                     </json:value>
             }
@@ -281,7 +283,7 @@ declare function col:get-groups-virtual-root() as element(json:value) {
         else if(count($shared-roots) eq 1) then
             <json:value>
             {
-                col:create-tree-node(fn:replace($shared-roots[1], ".*/", ""), $shared-roots[1], true(), (), (), security:can-write-collection($shared-roots[1]), (), false(), true(), ())/child::node()
+                col:create-tree-node(fn:replace($shared-roots[1], ".*/", ""), $shared-roots[1], true(), (), xmldb:decode($shared-roots[1]), security:can-write-collection($shared-roots[1]), (), false(), true(), ())/child::node()            
             }
             </json:value>
         else

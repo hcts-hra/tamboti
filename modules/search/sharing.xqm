@@ -248,21 +248,21 @@ declare function sharing:get-shared-collection-roots($write-required as xs:boole
     return
     if (fn:not(($user-id eq 'guest'))) then
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        for $child-collection in xmldb:get-child-collections($config:users-collection)
-        let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) return
-            for $user-subcollection in xmldb:get-child-collections($child-collection-path)
-            let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) return
-                let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode)
+            for $child-collection in xmldb:get-child-collections($config:users-collection)
+                let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) 
                 return
-                    if($write-required)
-                        then
-                            if (contains($ace-mode, 'w'))
-                                then $user-subcollection-path
-                                else ()                            
-                        else
-                            if (contains($ace-mode, 'r'))
-                                then $user-subcollection-path
-                                else ()
+                    for $user-subcollection in xmldb:get-child-collections($child-collection-path)
+                        let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) 
+        (:            let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode):)
+                        return
+                            if($write-required) then
+                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "rw-"))
+                                        then $user-subcollection-path
+                                        else ()                            
+                                else
+                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "r--"))
+                                        then $user-subcollection-path
+                                        else ()
         )
     else()
 };
@@ -302,23 +302,18 @@ declare function sharing:get-shared-with($collection-path as xs:string) as xs:st
     return
         fn:string-join(
             (
-                if(fn:matches($mode, "...r....."))then
-                    "Biblio users"
-                else
-                    ()
-                ,
-                if(fn:matches($mode, "......r.."))then
-                    "Anyone"
-                else
-                    ()
-                ,
-                for $ace in $permissions/sm:acl/sm:ace[@access_type eq "ALLOWED"] 
+(:                if(fn:matches($mode, "...r....."))then:)
+(:                    "Biblio users":)
+(:                else(),:)
+(:                if(fn:matches($mode, "......r.."))then:)
+(:                    "Anyone":)
+(:                else():)
+(:                ,:)
+                for $ace in $permissions/sm:acl/sm:ace[@target = "USER" and @access_type = "ALLOWED"] 
                 return 
-                    system:as-user(
-                        $config:dba-credentials[1], 
-                        $config:dba-credentials[2], 
-                        sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
-                    )
+                    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                            sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
+                        )
             )
             ,
             ", "
