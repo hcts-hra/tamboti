@@ -252,11 +252,10 @@ declare function col:get-collection($collection-path as xs:string, $explicit-chi
 
 (: gets all the shared collection roots, less the roots shared by us :)
 declare function col:_get-shared-collection-roots-by-others() as xs:string* {
-    
     let $my-home := security:get-home-collection-uri(security:get-user-credential-from-session()[1]) return
-    
-    for $root in sharing:get-shared-collection-roots(false()) return
-        if(fn:starts-with($root, $my-home) eq false())then
+    for $root in sharing:get-shared-collection-roots(false()) 
+    return
+        if(fn:starts-with($root, $my-home) eq false() and not(fn:ends-with($root, "VRA_images"))) then
             $root
         else()
 };
