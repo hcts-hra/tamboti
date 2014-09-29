@@ -283,7 +283,7 @@ declare function col:get-groups-virtual-root() as element(json:value) {
         else if(count($shared-roots) eq 1) then
             <json:value>
             {
-                col:create-tree-node(fn:replace($shared-roots[1], ".*/", ""), $shared-roots[1], true(), (), (), security:can-write-collection($shared-roots[1]), (), false(), true(), ())/child::node()
+                col:create-tree-node(fn:replace($shared-roots[1], ".*/", ""), $shared-roots[1], true(), (), xmldb:decode($shared-roots[1]), security:can-write-collection($shared-roots[1]), (), false(), true(), ())/child::node()            
             }
             </json:value>
         else
