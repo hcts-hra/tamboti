@@ -249,27 +249,23 @@ declare function sharing:get-shared-collection-roots($write-required as xs:boole
     let $user-id := security:get-user-credential-from-session()[1]
     
     return
-        if (fn:not(($user-id eq 'guest')))
-        then
-            system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-                for $child-collection in xmldb:get-child-collections($config:users-collection)
-                let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection)
-                
+    if (fn:not(($user-id eq 'guest'))) then
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+            for $child-collection in xmldb:get-child-collections($config:users-collection)
+                let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) 
                 return
                     for $user-subcollection in xmldb:get-child-collections($child-collection-path)
-                    let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection)
-                    let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode)
-                    
-                    return
-                        if ($write-required)
-                        then
-                            if (contains($ace-mode, 'w'))
-                                then $user-subcollection-path
-                                else ()                            
-                        else
-                            if (contains($ace-mode, 'r'))
-                                then $user-subcollection-path
-                                else ()
+                        let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) 
+        (:            let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode):)
+                        return
+                            if($write-required) then
+                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "rw-"))
+                                        then $user-subcollection-path
+                                        else ()                            
+                                else
+                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "r--"))
+                                        then $user-subcollection-path
+                                        else ()
         )
     else()
 };
