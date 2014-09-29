@@ -10,6 +10,7 @@ import module namespace session = "http://exist-db.org/xquery/session";
 import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace util="http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
+import module namespace functx = "http://www.functx.com";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
 declare namespace group = "http://commons/sharing/group";
@@ -257,11 +258,10 @@ declare function col:get-collection($collection-path as xs:string, $explicit-chi
 
 (: gets all the shared collection roots, less the roots shared by us :)
 declare function col:_get-shared-collection-roots-by-others() as xs:string* {
-    
     let $my-home := security:get-home-collection-uri(security:get-user-credential-from-session()[1]) return
-    
-    for $root in sharing:get-shared-collection-roots(false()) return
-        if(fn:starts-with($root, $my-home) eq false())then
+    for $root in sharing:get-shared-collection-roots(false()) 
+    return
+        if(fn:starts-with($root, $my-home) eq false() and not(fn:ends-with($root, "VRA_images"))) then
             $root
         else()
 };
@@ -275,7 +275,10 @@ declare function col:get-groups-virtual-root() as element(json:value) {
         if(count($shared-roots) gt 1)then
             <json:value>
             {
-                for $shared-root in $shared-roots[not(ends-with(., 'VRA_images'))] return
+                for $shared-root in $shared-roots[not(ends-with(., 'VRA_images'))]
+                    order by upper-case(functx:substring-after-last($shared-root, "/"))
+                 
+                return
                     <json:value>
                     {
                         col:create-tree-node(fn:replace($shared-root, ".*/", ""), $shared-root, true(), (), (), security:can-write-collection($shared-root), (), false(), true(), ())/child::node()
@@ -398,13 +401,16 @@ if(request:get-parameter("key",()))then
 else if(request:get-parameter("activeKey",()))then
     
     let $expanded-collections :=
-        if(request:get-parameter("expandedKeyList", ()))then
-            for $expanded-key in fn:tokenize(request:get-parameter("expandedKeyList", ()), ",") return
-                xmldb:encode(config:process-request-parameter($expanded-key))
+        if(request:get-parameter("expandedKeyList", ())) then
+            let $processedExpandedKeyList := request:get-parameter("expandedKeyList", ())
+            return
+                for $expanded-key in fn:tokenize($processedExpandedKeyList, ",")
+                return
+                    xmldb:encode($expanded-key)
         else()
     return
         col:get-from-root-for-prev-state($config:mods-root, xmldb:encode(config:process-request-parameter(request:get-parameter("activeKey",()))), 
-        xmldb:encode(config:process-request-parameter(request:get-parameter("focusedKey",()))), $expanded-collections)
+        xmldb:encode(request:get-parameter("focusedKey",())), $expanded-collections)
 
 else
     (: no key, so its the root that we want :)
