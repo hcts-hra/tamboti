@@ -302,23 +302,18 @@ declare function sharing:get-shared-with($collection-path as xs:string) as xs:st
     return
         fn:string-join(
             (
-                if(fn:matches($mode, "...r....."))then
-                    "Biblio users"
-                else
-                    ()
-                ,
-                if(fn:matches($mode, "......r.."))then
-                    "Anyone"
-                else
-                    ()
-                ,
-                for $ace in $permissions/sm:acl/sm:ace[@access_type eq "ALLOWED"] 
+(:                if(fn:matches($mode, "...r....."))then:)
+(:                    "Biblio users":)
+(:                else(),:)
+(:                if(fn:matches($mode, "......r.."))then:)
+(:                    "Anyone":)
+(:                else():)
+(:                ,:)
+                for $ace in $permissions/sm:acl/sm:ace[@target = "USER" and @access_type = "ALLOWED"] 
                 return 
-                    system:as-user(
-                        $config:dba-credentials[1], 
-                        $config:dba-credentials[2], 
-                        sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
-                    )
+                    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                            sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
+                        )
             )
             ,
             ", "
