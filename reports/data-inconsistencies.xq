@@ -186,7 +186,7 @@ return
                                 $item-type,
                                 " '",
                                 <span class="item-name">{$item/@path/string()}</span>,
-                                "' is having encoded at sign in name.",
+                                "' is having not encoded at sign in name.",
                                 <br />
                             )                            
                     )
