@@ -9,6 +9,7 @@ import module namespace session = "http://exist-db.org/xquery/session";
 import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace util="http://exist-db.org/xquery/util";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
+import module namespace functx = "http://www.functx.com";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
 declare namespace group = "http://commons/sharing/group";
@@ -264,15 +265,17 @@ declare function col:_get-shared-collection-roots-by-others() as xs:string* {
 : Gets the virtual "Groups" root, i.e. returns all groups that are accessible to a user
 :)
 declare function col:get-groups-virtual-root() as element(json:value) {
-    
     let $shared-roots := col:_get-shared-collection-roots-by-others() return
         if(count($shared-roots) gt 1)then
             <json:value>
             {
-                for $shared-root in $shared-roots return
+                for $shared-root in $shared-roots
+(: ToDo: when switching to display full tree view for shared folders, remove "substring-after-last":)
+                    order by upper-case(functx:substring-after-last($shared-root, "/"))
+                return
                     <json:value>
                     {
-                        col:create-tree-node(fn:replace($shared-root, ".*/", ""), $shared-root, true(), (), (), security:can-write-collection($shared-root), (), false(), true(), ())/child::node()
+                        col:create-tree-node(fn:replace($shared-root, ".*/", ""), $shared-root, true(), (), xmldb:decode($shared-root), security:can-write-collection($shared-root), (), false(), true(), ())/child::node()
                     }
                     </json:value>
             }
