@@ -96,8 +96,4 @@ declare function config:rewrite-username($username as xs:string) as xs:string {
             fn:concat($username, "@", $config:enforced-realm-id)
 };
 
-declare function config:process-request-parameter($key as xs:string?) as xs:string {
-    xmldb:encode(replace(replace($key, "%2C", ","), "%2F", "/"))
-};
-
 declare variable $config:max-inactive-interval-in-minutes := 480;
