@@ -108,4 +108,4 @@ then
             )
 )
 else
-    local:authenticate(request:get-parameter("user", ()), request:get-parameter("password", ()))
+    local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))
