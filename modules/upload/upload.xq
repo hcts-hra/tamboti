@@ -97,7 +97,7 @@ declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string
     </vra>    
 };
 
-declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord-uuid, $collection-owner-username as xs:string) {
+declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord-uuid) {
     let $image-uuid := concat('i_', util:uuid())
     let $upload-collection-path :=
         if (exists(collection($config:mods-root)//vra:work[@id = $workrecord-uuid])) then 
@@ -118,6 +118,9 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
 
     let $image-record-filename := concat($image-uuid, '.xml')
     let $image-record-file-path := xs:anyURI($image-collection-path || '/' || $image-record-filename)
+
+    let $collection-owner-username := xmldb:get-owner($upload-collection-path)
+
 
     let $upload :=  
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2] ,
@@ -224,13 +227,15 @@ let $result := for $x in (1 to count($data))
             if ($doc-type eq 'image') then
                 let $upload-resource-id :=
                     if (string-length(request:get-header('X-File-Parent')) > 0) then 
-                        config:process-request-parameter(request:get-header('X-File-Parent'))
+                        xmldb:decode(request:get-header('X-File-Parent'))
                     else 
                         ()
 
                 let $upload := 
                     if (not(empty($upload-resource-id))) then
-                        upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id, '')
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+                            upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $upload-resource-id)
+                        )
                     else
                         (:record for the collection:)
                         let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
@@ -258,7 +263,7 @@ let $result := for $x in (1 to count($data))
                                                 sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
                                                 sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
                                                 sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group),
-                                                upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid, $collection-owner-username)
+                                                upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid)
                                             )
                                         )
                                     )
