@@ -503,18 +503,22 @@ function showHideCollectionControls() {
          data looks like this -
          
          <relationship user="" collection="">
-         <home/>
-         <owner/>
-         <read/>
-         <write/>
-         <read-parent/>
-         <write-parent/>
-         <execute-parent/>
+	         <home/>
+	         <owner/>
+	         <read/>
+	         <write/>
+	         <execute/>
+	         <read-parent/>
+	         <write-parent/>
+	         <execute-parent/>
          </relationship>
-         */
+     */
 
         var write = $(data).find('write');
         var isWriteable = (write != null && write.text() == 'true');
+
+        var execute = $(data).find('execute');
+        var isExecutable = (execute != null && execute.text() == 'true');
 
         var home = $(data).find('home');
         var isUsersHome = (home != null && home.text() == 'true');
@@ -528,6 +532,7 @@ function showHideCollectionControls() {
         var parentExecute = $(data).find('execute-parent');
         var isParentExecutable = (parentExecute != null && parentExecute.text() == 'true');
 
+        
         //collection is writeable
         if (isWriteable) {
             $('#collection-create-folder').show();
@@ -545,16 +550,14 @@ function showHideCollectionControls() {
         }
 
         //collection is not current users home and is owned by current user
-        if (!isUsersHome && isOwner) {
+        if (!isUsersHome && isExecutable && isWriteable) {
             $('#collection-sharing').show();
-
         } else {
             $('#collection-sharing').hide();
-
         }
 
-        //collection is writeable and not the current users home and the current user is the owner
-        if (isWriteable && !isUsersHome && isOwner) {
+        // moving and renaming needs parentCollection to be writeable and executable
+        if (isParentWriteable && isParentExecutable && !isUsersHome) {
             $('#collection-rename-folder').show();
             $('#collection-move-folder').show();
             //$('#upload-file-to-resource').show();
