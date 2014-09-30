@@ -121,7 +121,7 @@ function FileUploadCtrl(scope) {
                 
         //for folder uploads
 	    if ($('#file-upload-folder') != null) {
-		  var upload_folder = $('#file-upload-folder').html();
+		  var upload_folder = encodeURIComponent($('#file-upload-folder').html());
 		  xhr.setRequestHeader("X-File-Folder", upload_folder)
 		}       
         
