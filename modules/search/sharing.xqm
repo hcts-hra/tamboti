@@ -116,14 +116,14 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                 if (count($user-ace) > 0) then 
                     fn:error(xs:QName("sharing:add-collection-user-ace"), "ACE for user already exists")
                 else
-                    let $id := security:add-user-ace($collection, $username, "r-x")
+                    let $id := security:add-user-ace($collection, $username, "r--")
                         return
                             if (fn:not(fn:empty($id)))
                                 then
                                     (
                                         for $resource in xmldb:get-child-resources($collection)
                                             let $resource-path := fn:concat($collection, "/", $resource) return
-                                                if (not(empty(security:add-user-ace($resource-path, $username, "r-x")))) then
+                                                if (not(empty(security:add-user-ace($resource-path, $username, "r--")))) then
                                                     ()
                                                 else
                                                     fn:error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not add ace for '", $username , "' for '", $resource-path, "'"))
@@ -140,7 +140,6 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                                 else -1
     )
 };
-
 
 (: adds a group ace on a collection, and also to all the documents in that collection (at the same acl index) :)
 declare function sharing:add-collection-group-ace($collection as xs:anyURI, $groupname as xs:string) as xs:int {
@@ -255,14 +254,18 @@ declare function sharing:get-shared-collection-roots($write-required as xs:boole
                         let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) 
         (:            let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode):)
                         return
-                            if($write-required) then
-                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "rw-"))
-                                        then $user-subcollection-path
-                                        else ()                            
-                                else
-                                    if (sm:has-access(xs:anyURI($user-subcollection-path), "r--"))
-                                        then $user-subcollection-path
-                                        else ()
+                                system:as-user($user-id, security:get-user-credential-from-session()[2],
+                                    (
+                                        if($write-required) then
+                                                if (sm:has-access(xs:anyURI($user-subcollection-path), "rw-"))
+                                                    then $user-subcollection-path
+                                                    else ()                            
+                                            else
+                                                if (sm:has-access(xs:anyURI($user-subcollection-path), "r--"))
+                                                    then $user-subcollection-path
+                                                    else ()
+                                    )
+                                )
         )
     else()
 };

@@ -292,24 +292,31 @@ declare function col:get-groups-virtual-root() as element(json:value) {
 
 declare function col:get-child-tree-nodes-recursive($base-collection as xs:string, $collections as xs:string*, $expanded-collections as xs:string*) as element(node)* {
     
-    let $sub-collection-names := fn:distinct-values(
-        for $collection in $collections[. ne $base-collection]
-        let $sub-collection-path := fn:replace($collection, fn:concat($base-collection, "/"), "") return
-            if(fn:contains($sub-collection-path, "/"))then
-                fn:substring-before($sub-collection-path, "/")
-            else
-                $sub-collection-path
-    ) return
+    let $sub-collection-names := 
+        fn:distinct-values(
+            for $collection in $collections[. ne $base-collection]
+            let $sub-collection-path := fn:replace($collection, fn:concat($base-collection, "/"), "") return
+                if(fn:contains($sub-collection-path, "/"))then
+                    fn:substring-before($sub-collection-path, "/")
+                else
+                    $sub-collection-path
+        ) 
+    return
         for $sub-collection-name in $sub-collection-names
-        let $sub-collection-path := fn:concat($base-collection, "/", $sub-collection-name) return
-          if(security:can-read-collection($sub-collection-path))then
-              let $our-explicit-children := col:get-child-tree-nodes-recursive($sub-collection-path, $collections[. ne $sub-collection-path][fn:starts-with(., $sub-collection-path)], $expanded-collections) return
-                  <node>{col:get-collection($sub-collection-path, $our-explicit-children, fn:contains($expanded-collections, $sub-collection-path))/child::node()}</node>
-          else()
+        let $sub-collection-path := fn:concat($base-collection, "/", $sub-collection-name) 
+        return
+            if(security:can-read-collection($sub-collection-path))then
+                let $our-explicit-children := col:get-child-tree-nodes-recursive($sub-collection-path, $collections[. ne $sub-collection-path][fn:starts-with(., $sub-collection-path)], $expanded-collections) 
+                return
+                <node>
+                    {
+                        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+                            col:get-collection($sub-collection-path, $our-explicit-children, fn:contains($expanded-collections, $sub-collection-path))/child::node()
+                        )
+                    }
+                </node>
+            else()
 };
-
-
-
 
 declare function col:get-child-tree-nodes-recursive-for-group($collections as xs:string*, $expanded-collections as xs:string*) as element(node)* { 
     for $collection in $collections
