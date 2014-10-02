@@ -18,7 +18,7 @@ $(function() {
             dataType: 'text',
             data: xml,
             error: function() {
-                alert("Could not send record ids to ziziphus.")
+                alert("Could not send record ids to ziziphus.");
             },
             success: function(data) {
                 if (data != null) {
@@ -373,13 +373,18 @@ function initCollectionTree() {
     var dynaTree = $('#collection-tree-tree');
     var treeDiv = $('#collection-tree-main').css('display', 'none');
     dynaTree.dynatree({
+//        debugLevel: 2,
         minExpandLevel: 2,
-        fx: {height: "toggle", duration: 200},
+        fx: {
+            height: "toggle", 
+            duration: 200
+        },
         persist: true,
         initAjax: {
             url: "collections.xql",
             data: {
             },
+            type: "POST",
             addActiveKey: true, // add &activeKey= parameter to URL
             addFocusedKey: true, // add &focusedKey= parameter to URL
             addExpandedKeyList: true // add &expandedKeyList= parameter to URL
@@ -400,7 +405,8 @@ function initCollectionTree() {
                 data: {
                     "key": node.data.key,
                     "mode": "all"
-                }
+                },
+                type: "POST"
             });
         },
         onPostInit: function() {
@@ -503,18 +509,22 @@ function showHideCollectionControls() {
          data looks like this -
          
          <relationship user="" collection="">
-         <home/>
-         <owner/>
-         <read/>
-         <write/>
-         <read-parent/>
-         <write-parent/>
-         <execute-parent/>
+ 	         <home/>
+	         <owner/>
+	         <read/>
+	         <write/>
+	         <execute/>
+	         <read-parent/>
+	         <write-parent/>
+	         <execute-parent/>
          </relationship>
          */
 
         var write = $(data).find('write');
         var isWriteable = (write != null && write.text() == 'true');
+
+        var execute = $(data).find('execute');
+        var isExecutable = (execute != null && execute.text() == 'true');
 
         var home = $(data).find('home');
         var isUsersHome = (home != null && home.text() == 'true');
@@ -545,16 +555,14 @@ function showHideCollectionControls() {
         }
 
         //collection is not current users home and is owned by current user
-        if (!isUsersHome && isOwner) {
+        if (!isUsersHome && isExecutable && isWriteable) {
             $('#collection-sharing').show();
-
         } else {
             $('#collection-sharing').hide();
-
         }
 
-        //collection is writeable and not the current users home and the current user is the owner
-        if (isWriteable && !isUsersHome && isOwner) {
+        // moving and renaming needs parentCollection to be writeable and executable
+        if (isParentWriteable && isParentExecutable && !isUsersHome) {
             $('#collection-rename-folder').show();
             $('#collection-move-folder').show();
             //$('#upload-file-to-resource').show();
@@ -652,6 +660,7 @@ function moveResource(dialog) {
 function createCollection(dialog) {
     var name = $("#new-collection-name").val();
     var collection = getCurrentCollection();
+//    console.log(collection);
     var params = {
         action: 'create-collection', 
         name: name, 
@@ -857,7 +866,10 @@ function login() {
     $('#login-message').text('Checking ...');
     $.ajax({
         url: "checkuser.xql",
-        data: "user=" + user.val() + "&password=" + escape(password.val()),
+        data: {
+            user: user.val(),
+            password: escape(password.val())
+        },
         type: 'POST',
         success:
                 function(data, message) {
