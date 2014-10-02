@@ -116,7 +116,7 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                 if (count($user-ace) > 0) then 
                     fn:error(xs:QName("sharing:add-collection-user-ace"), "ACE for user already exists")
                 else
-                    let $id := security:add-user-ace($collection, $username, "r--")
+                    let $id := security:add-user-ace($collection, $username, "r-x")
                         return
                             if (fn:not(fn:empty($id)))
                                 then
@@ -150,7 +150,7 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
                 if (count($group-ace) > 0) then 
                     fn:error(xs:QName("sharing:add-collection-group-ace"), "ACE for group already exists")
                 else
-                    let $id := security:add-group-ace($collection, $groupname, "r--")
+                    let $id := security:add-group-ace($collection, $groupname, "r-x")
                         return
                             if (fn:not(fn:empty($id)))
                                 then
