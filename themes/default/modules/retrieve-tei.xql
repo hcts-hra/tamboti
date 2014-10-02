@@ -1,16 +1,17 @@
-module namespace retrieve-tei="http://exist-db.org/tei/retrieve";
+xquery version "3.0";
 
-declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace mads="http://www.loc.gov/mads/v2";
-declare namespace xlink="http://www.w3.org/1999/xlink";
-declare namespace functx = "http://www.functx.com";
-declare namespace ext="http://exist-db.org/mods/extension";
-declare namespace hra="http://cluster-schemas.uni-hd.de";
+module namespace retrieve-tei = "http://exist-db.org/tei/retrieve";
 
-import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
-import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
-import module namespace tei-common="http://exist-db.org/tei/common" at "../../../modules/tei-common.xql";
-import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
+import module namespace tei-common = "http://exist-db.org/tei/common" at "../../../modules/tei-common.xql";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace mads = "http://www.loc.gov/mads/v2";
+declare namespace xlink = "http://www.w3.org/1999/xlink";
+declare namespace ext = "http://exist-db.org/mods/extension";
+declare namespace hra = "http://cluster-schemas.uni-hd.de";
 
 (:The $retrieve-tei:primary-roles values are lower-cased when compared.:)
 declare variable $retrieve-tei:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');

@@ -1,12 +1,10 @@
 xquery version "3.0";
 
-declare namespace util="http://exist-db.org/xquery/util";
-declare namespace xmldb="http://exist-db.org/xquery/xmldb";
-declare namespace functx = "http:/www.functx.com";
+import module namespace functx = "http://www.functx.com";
+
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace ext="http://exist-db.org/mods/extension";
 declare namespace xlink="http://www.w3.org/1999/xlink";
-
 
 declare option exist:serialize "method=xml media-type=text/xml omit-xml-declaration=yes indent=yes";
 
@@ -37,7 +35,7 @@ declare function local:add-ns-node(
 };
 
 
-declare function functx:add-attribute ($element as element(), $name as xs:string, $value as xs:string?) as element() {
+declare function local:add-attribute ($element as element(), $name as xs:string, $value as xs:string?) as element() {
 element { node-name($element)}
 { attribute {$name} {$value},
 $element/@*,
@@ -166,9 +164,9 @@ for $mods-record in $input/mods:modsCollection/*
                             <ext:catalogingStage/>
                         </extension>
     let $mods-record := local:insert-element($mods-record, $template, 'mods', 'last-child')
-        let $mods-record := functx:add-attribute($mods-record, "ID", $myuid)
-    let $mods-record := functx:add-attribute($mods-record, "version", "3.5")
-    (:local:add-ns-node() maintains both namespaces and attributes, therefore it must come last. functx:add-attribute() maintains attributes, but not namespaces, so it cannot come last.:)
+        let $mods-record := local:add-attribute($mods-record, "ID", $myuid)
+    let $mods-record := local:add-attribute($mods-record, "version", "3.5")
+    (:local:add-ns-node() maintains both namespaces and attributes, therefore it must come last. local:add-attribute() maintains attributes, but not namespaces, so it cannot come last.:)
     let $mods-record := local:add-ns-node($mods-record, "xlink", "http://www.w3.org/1999/xlink")
     let $mods-record := local:add-ns-node($mods-record, "ext", "http://exist-db.org/mods/extension")
     let $mods-record := local:add-ns-node($mods-record, "xsi", "http://www.w3.org/2001/XMLSchema-instance")

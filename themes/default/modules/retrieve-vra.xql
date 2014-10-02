@@ -1,63 +1,19 @@
 xquery version "3.0";
 
-module namespace retrieve-vra="http://exist-db.org/vra/retrieve";
+module namespace retrieve-vra = "http://exist-db.org/vra/retrieve";
 
-declare namespace vra="http://www.vraweb.org/vracore4.htm";
-declare namespace functx = "http://www.functx.com";
+import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
+import module namespace functx = "http://www.functx.com";
 
-import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
-import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
-import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
-import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
-
-(:The $retrieve-vra:primary-roles values are lower-cased when compared.:)
-declare variable $retrieve-vra:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
+declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
 declare option exist:serialize "media-type=text/xml";
 
-(:~
-: The functx:substring-before-last-match function returns the part of $arg that appears before the last match of $regex. 
-: If $arg does not match $regex, the entire $arg is returned. 
-: If $arg is the empty sequence, the empty sequence is returned.
-: @author Jenny Tennison
-: @param $arg the string to substring
-: @param $regex the regular expression (string)
-: @return xs:string?
-: @see http://www.xqueryfunctions.com/xq/functx_substring-before-last-match.html 
-:)
-declare function functx:substring-before-last-match($arg as xs:string, $regex as xs:string) as xs:string? {       
-   replace($arg,concat('^(.*)',$regex,'.*'),'$1')
-} ;
- 
-(:~
-: The functx:camel-case-to-words function turns a camel-case string 
-: (one that uses upper-case letters to start new words, as in "thisIsACamelCaseTerm"), 
-: and turns them into a string of words using a space or other delimiter.
-: Used to transform the camel-case names of VRA elements into space-separated words.
-: @author Jenny Tennison
-: @param $arg the string to modify
-: @param $delim the delimiter for the words (e.g. a space)
-: @return xs:string
-: @see http://www.xqueryfunctions.com/xq/functx_camel-case-to-words.html
-:)
-declare function functx:camel-case-to-words($arg as xs:string?, $delim as xs:string ) as xs:string {
-   concat(substring($arg,1,1), replace(substring($arg,2),'(\p{Lu})', concat($delim, '$1')))
-};
-
-(:~
-: The functx:capitalize-first function capitalizes the first character of $arg. 
-: If the first character is not a lowercase letter, $arg is left unchanged. 
-: It capitalizes only the first character of the entire string, not the first letter of every word.
-: @author Jenny Tennison
-: @param $arg the word or phrase to capitalize
-: @return xs:string?
-: @see http://www.xqueryfunctions.com/xq/functx_capitalize-first.html
-:)
-declare function functx:capitalize-first($arg as xs:string?) as xs:string? {       
-   concat(upper-case(substring($arg,1,1)),
-             substring($arg,2))
-};
- 
+(:The $retrieve-vra:primary-roles values are lower-cased when compared.:)
+declare variable $retrieve-vra:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
 
 (:~
 : The <b>retrieve-vra:format-detail-view</b> function returns the detail view of a VRA record.
