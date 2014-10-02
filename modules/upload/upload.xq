@@ -230,41 +230,44 @@ let $result := for $x in (1 to count($data))
                         )
                     else
                         (:record for the collection:)
-                        let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
-                        let $collection-owner-username := xmldb:get-owner($collection-folder)
-                        (: if the collection file exists in the file folder:)
-                        (:read the collection uuid:)
-                        let $collection_vra := collection($config:mods-root)//vra:collection
-                        let $collection-uuid :=  
-                            if (exists($collection_vra))
-                            then $collection_vra/@id
-                            else concat('c_', util:uuid())
-
-                        (:generate the  work record, if collection xml exists:)
-                        let $work-xml-generate :=
-                            if 
-                                (exists($collection-uuid))
-                            then
-                                let $workrecord-uuid := concat('w_', util:uuid())
-                                let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x])
-                                let $create-workrecord :=
-                                    (
-                                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                                            (
-                                                xmldb:store($collection-folder, concat($workrecord-uuid, '.xml'), $vra-work-xml),
-                                                sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
-                                                sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
-                                                sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group),
-                                                upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid)
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],(
+                            let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
+                            let $collection-owner-username := xmldb:get-owner($collection-folder)
+                            (: if the collection file exists in the file folder:)
+                            (:read the collection uuid:)
+                            let $collection_vra := collection($config:mods-root)//vra:collection
+                            let $collection-uuid :=  
+                                if (exists($collection_vra))
+                                then $collection_vra/@id
+                                else concat('c_', util:uuid())
+    
+                            (:generate the  work record, if collection xml exists:)
+                            let $work-xml-generate :=
+                                if 
+                                    (exists($collection-uuid))
+                                then
+                                    let $workrecord-uuid := concat('w_', util:uuid())
+                                    let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x])
+                                    let $create-workrecord :=
+                                        (
+                                            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                                                (
+                                                    xmldb:store($collection-folder, concat($workrecord-uuid, '.xml'), $vra-work-xml),
+                                                    sm:chown(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $collection-owner-username),
+                                                    sm:chmod(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:resource-mode),
+                                                    sm:chgrp(xs:anyURI(concat($collection-folder, '/', $workrecord-uuid, '.xml')), $config:biblio-users-group),
+                                                    upload:upload($filetype, $filesize[$x], $filename[$x], $data[$x], $doc-type, $workrecord-uuid)
+                                                )
                                             )
                                         )
-                                    )
-
-                                return $message
-                            else
-                                ()
-                            return 
-                                concat($filename[$x], ' ', $message)
+    
+                                    return $message
+                                else
+                                    ()
+                                return 
+                                    concat($filename[$x], ' ', $message)
+                        )
+                    )
                     return $upload
         else 
             let $upload := 'unsupported file format'

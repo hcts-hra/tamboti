@@ -8,7 +8,12 @@ declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare variable $image-link-generator:services := doc("../config/services.xml");
 
 declare function image-link-generator:generate-href($image-uuid, $uri-name) {
-    let $vra-image := collection($config:mods-root)//vra:image[@id=$image-uuid][1]
+    (: ToDo: check if user is allowed to access image-record (and image-binary) :)
+    let $vra-image := 
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+            collection($config:mods-root)//vra:image[@id=$image-uuid][1]
+        )
+    let $log := util:log("INFO", "image-uuid: " || $image-uuid)
     let $image-href := data($vra-image/@href)
     
     (: get image-service :)
@@ -31,8 +36,10 @@ declare function image-link-generator:generate-href($image-uuid, $uri-name) {
                     let $query-string := "$vra-image/" || $variable/text()
                     let $value := xs:string(data(util:eval($query-string)))
                     return
-    (:                    $value:)
-                        replace($image-service-uri/url/text(), "\[" || $pos ||"\]" , $value)
+                        if($value) then
+                            replace($image-service-uri/url/text(), "\[" || $pos ||"\]" , $value)
+                        else 
+                            ()
             return
                 $image-url
 };
