@@ -31,8 +31,10 @@ declare function image-link-generator:generate-href($image-uuid, $uri-name) {
                     let $query-string := "$vra-image/" || $variable/text()
                     let $value := xs:string(data(util:eval($query-string)))
                     return
-    (:                    $value:)
-                        replace($image-service-uri/url/text(), "\[" || $pos ||"\]" , $value)
+                        if($value) then
+                            replace($image-service-uri/url/text(), "\[" || $pos ||"\]" , $value)
+                        else 
+                            ()
             return
                 $image-url
 };
