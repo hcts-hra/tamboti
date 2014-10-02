@@ -1,5 +1,6 @@
+xquery version "3.0";
+
 declare namespace mods="http://www.loc.gov/mods/v3";
-declare namespace functx = "http:/www.functx.com";
 
 declare variable $username as xs:string := "admin";
 declare variable $password as xs:string := "test";

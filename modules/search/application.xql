@@ -19,48 +19,22 @@ module namespace biblio="http://exist-db.org/xquery/biblio";
     To apply a filter to an existing query, we just extend the XML representation
     of the query.
 :)
-
-import module namespace sm="http://exist-db.org/xquery/securitymanager";
-
-declare namespace request="http://exist-db.org/xquery/request";
-declare namespace session="http://exist-db.org/xquery/session";
-declare namespace util="http://exist-db.org/xquery/util";
-declare namespace xmldb="http://exist-db.org/xquery/xmldb";
-declare namespace functx="http://www.functx.com";
-declare namespace xlink="http://www.w3.org/1999/xlink";
-
-declare namespace mods="http://www.loc.gov/mods/v3";
-declare namespace vra = "http://www.vraweb.org/vracore4.htm";
-declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace atom="http://www.w3.org/2005/Atom";
-declare namespace html="http://www.w3.org/1999/xhtml";
-
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates" at "../templates.xql";
 import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
+import module namespace functx = "http://www.functx.com";
+
+declare namespace xlink="http://www.w3.org/1999/xlink";
+declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace atom="http://www.w3.org/2005/Atom";
+declare namespace html="http://www.w3.org/1999/xhtml";
 
 declare option exist:serialize "method=xhtml media-type=application/xhtml+xml omit-xml-declaration=no enforce-xhtml=yes";
-
-declare function functx:number-of-matches 
-  ( $arg as xs:string? ,
-    $pattern as xs:string )  as xs:integer {
-       
-   count(tokenize($arg,$pattern)) - 1
- } ;
-
-declare function functx:substring-before-if-contains($arg as xs:string?, $delim as xs:string)  as xs:string? {       
-   if (contains($arg,$delim))
-   then substring-before($arg,$delim)
-   else $arg
- } ;
- 
-declare function functx:replace-first($arg as xs:string?, $pattern as xs:string, $replacement as xs:string ) as xs:string {       
-   replace($arg, concat('(^.*?)', $pattern),
-             concat('$1',$replacement))
-};
 
 (:~
     Mapping field names to XPath expressions.

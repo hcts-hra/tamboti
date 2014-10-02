@@ -11,27 +11,26 @@ xquery version "3.0";
     4) the data to display.
 :)
 
-import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
-import module namespace retrieve-mods="http://exist-db.org/mods/retrieve" at "retrieve-mods.xql";
-import module namespace retrieve-vra="http://exist-db.org/vra/retrieve" at "retrieve-vra.xql";
-import module namespace retrieve-tei="http://exist-db.org/tei/retrieve" at "retrieve-tei.xql";
-import module namespace retrieve-wiki="http://exist-db.org/wiki/retrieve" at "retrieve-wiki.xql";
-import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
-import module namespace security="http://exist-db.org/mods/security" at "../../../modules/search/security.xqm";
-import module namespace sharing="http://exist-db.org/mods/sharing" at "../../../modules/search/sharing.xqm";
-import module namespace clean="http://exist-db.org/xquery/mods/cleanup" at "../../../modules/search/cleanup.xql";
-import module namespace kwic="http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
-import module namespace mods-common="http://exist-db.org/mods/common" at "mods-common.xql";
-import module namespace image-link-generator="http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace retrieve-mods = "http://exist-db.org/mods/retrieve" at "retrieve-mods.xql";
+import module namespace retrieve-vra = "http://exist-db.org/vra/retrieve" at "retrieve-vra.xql";
+import module namespace retrieve-tei = "http://exist-db.org/tei/retrieve" at "retrieve-tei.xql";
+import module namespace retrieve-wiki = "http://exist-db.org/wiki/retrieve" at "retrieve-wiki.xql";
+import module namespace jquery = "http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
+import module namespace security = "http://exist-db.org/mods/security" at "../../../modules/search/security.xqm";
+import module namespace sharing = "http://exist-db.org/mods/sharing" at "../../../modules/search/sharing.xqm";
+import module namespace clean = "http://exist-db.org/xquery/mods/cleanup" at "../../../modules/search/cleanup.xql";
+import module namespace kwic = "http://exist-db.org/xquery/kwic" at "resource:org/exist/xquery/lib/kwic.xql";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "mods-common.xql";
+import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../../modules/display/image-link-generator.xqm";
+import module namespace functx = "http://www.functx.com";
 
-declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
-declare namespace tei="http://www.tei-c.org/ns/1.0";
-declare namespace atom="http://www.w3.org/2005/Atom";
-declare namespace html="http://www.w3.org/1999/xhtml";
-
-declare namespace bs="http://exist-db.org/xquery/biblio/session";
-declare namespace functx = "http://www.functx.com";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace atom = "http://www.w3.org/2005/Atom";
+declare namespace html = "http://www.w3.org/1999/xhtml";
+declare namespace bs = "http://exist-db.org/xquery/biblio/session";
 
 declare option exist:serialize "method=xhtml media-type=application/xhtml+xml enforce-xhtml=yes";
 
@@ -46,41 +45,6 @@ declare variable $session:error-message-before-link := "An error occurred when d
 declare variable $session:error-message-after-link := " Clicking on the link will open your default email client.";
 declare variable $session:error-message-href := " mailto:petersen@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
 declare variable $session:error-message-link-text := "Send email.";
-
-declare function functx:substring-before-last 
-  ( $arg as xs:string? ,
-    $delim as xs:string )  as xs:string {
-       
-   if (matches($arg, functx:escape-for-regex($delim)))
-   then replace($arg,
-            concat('^(.*)', functx:escape-for-regex($delim),'.*'),
-            '$1')
-   else ''
- };
- 
- declare function functx:escape-for-regex 
-  ( $arg as xs:string? )  as xs:string {
-       
-   replace($arg,
-           '(\.|\[|\]|\\|\||\-|\^|\$|\?|\*|\+|\{|\}|\(|\))','\\$1')
- } ;
- 
- declare function functx:substring-after-last 
-  ( $arg as xs:string? ,
-    $delim as xs:string )  as xs:string {
-       
-   replace ($arg,concat('^.*',functx:escape-for-regex($delim)),'')
- } ;
- 
- declare function functx:capitalize-first($arg as xs:string?) as xs:string? {       
-   concat(upper-case(substring($arg,1,1)),
-             substring($arg,2))
-};
-
-declare function functx:replace-first( $arg as xs:string?, $pattern as xs:string, $replacement as xs:string )  as xs:string {       
-   replace($arg, concat('(^.*?)', $pattern),
-             concat('$1',$replacement))
- } ;
 
 declare function bs:collection-is-writable($collection as xs:string) {
     if ($collection eq $config:groups-collection) then
