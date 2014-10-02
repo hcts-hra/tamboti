@@ -5,7 +5,7 @@ import module namespace config="http://exist-db.org/mods/config" at "modules/con
 declare variable $home external;
 declare variable $target external;
 
-declare function local:set-special-permissions($path as xs:string) {
+declare function local:set-special-permissions($path as xs:anyURI) {
     (
         sm:chown($path, "admin")
         ,
