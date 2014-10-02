@@ -140,7 +140,7 @@ declare function security:get-home-collection-uri($user as xs:string) as xs:stri
 :)
 declare function security:create-home-collection($user as xs:string) as xs:string? {
     let $username := if ($config:force-lower-case-usernames) then 
-	       fn:lower-case($user)
+           fn:lower-case($user)
         else 
             $user
     return
@@ -152,7 +152,7 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
                         TODO do we need the group 'read' to allow sub-collections to be enumerated?
                             NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
                         :)
-                        let $null := sm:chmod($collection-uri, "rwxr-xr-x")
+                        let $null := sm:chmod($collection-uri, "rwx------")
                         (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
                         let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
                         let $null := security:create-user-metadata($collection-uri, $username) 

@@ -21,7 +21,7 @@ return
         let $parentCollection := functx:substring-before-last(base-uri($image-VRA), '/')
         let $image-filename := data($image-VRA/@href)
         let $image-binary-uri := $parentCollection || "/" || $image-filename
-        let $image-binary-data := xs:base64Binary(util:binary-doc($image-binary-uri))
+(:        let $image-binary-data := xs:base64Binary(util:binary-doc($image-binary-uri)) :)
         let $image-metadata := contentextraction:get-metadata(util:binary-doc($image-binary-uri))
         let $image-binary-mime := xmldb:get-mime-type(xs:anyURI($image-binary-uri))
 (:        let $image-dimensions := map {  "height" := image:get-height($image-binary-data),:)
@@ -45,7 +45,7 @@ return
         return 
         (:let $setContent-disposition := response:set-header("content-disposition", concat("attachment; filename=", $image-filename)):)
             if(not($width = "")) then
-                let $bin := xs:base64Binary(image:scale($image-binary-data, (xs:integer($image-dimensions("height")), xs:integer($width)), $mime-type))
+                let $bin := xs:base64Binary(im4xquery:scale($image-binary-data, (xs:integer($image-dimensions("height")), xs:integer($width)), $mime-type))
                 return 
                     response:stream-binary($bin, $mime-type, $image-filename)
             else

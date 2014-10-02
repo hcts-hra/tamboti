@@ -143,13 +143,19 @@ declare function col:get-root-collection($root-collection-path as xs:anyURI) as 
                 let $collection-path := fn:concat($config:mods-commons, "/", $child)
                
                 order by upper-case($child)
-               return 
-                     if (exists(col:get-collection($collection-path)/child::node()))
-                    then  let $child :=  <node>{col:get-collection($collection-path)/child::node()
-                    }</node>
-                    return $child
-                    else ()
-               
+                return
+                    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+                        if (exists(col:get-collection($collection-path)/child::node())) then
+                            let $child :=  
+                                <node>
+                                    {
+                                        col:get-collection($collection-path)/child::node()
+                                    }
+                                </node>
+                            return 
+                                $child
+                        else ()
+                    )               
                return
             
                 (: root collection, containing home and group collection as children :)
