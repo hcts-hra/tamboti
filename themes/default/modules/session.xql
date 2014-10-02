@@ -334,7 +334,6 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
             else '/vra:image/@id'
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
-    
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
             <td class="pagination-number">{$currentPos}</td>
@@ -357,7 +356,12 @@ declare function bs:vra-detail-view-table($item as element(vra:vra), $currentPos
                                     data($rel/@refid)
                                 else
                                     ()
-                        let $image := collection($config:mods-root)//vra:image[@id=$image-uuid]
+                        (: Elevate rights because user is not able to search whole $config:mods-root   :)
+                        (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
+                        let $image := 
+                            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                                collection($config:mods-root)//vra:image[@id=$image-uuid]
+                            )
                         return
                             <p>{local:return-thumbnail-detail-view($image)}</p>
                 }
@@ -588,9 +592,15 @@ declare function bs:vra-list-view-table($item as node(), $currentPos as xs:int) 
                     For now, we disregard this; otherwise we have to check after retrieving the image records.:)
                     let $relids := tokenize($relids, ' ')
 
-                    let $image := collection($config:mods-root)//vra:image[@id = $relids]
-                        return
-                            <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
+                    (: Elevate rights because user is not able to search whole $config:mods-root   :)
+                    (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
+                    let $image := 
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                            collection($config:mods-root)//vra:image[@id = $relids]
+                        )
+
+                    return
+                        <td class="list-image">{local:return-thumbnail-list-view($image)}</td>               
                 }
                 {
                 <td class="pagination-toggle" style="vertical-align:middle">

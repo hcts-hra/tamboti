@@ -205,7 +205,12 @@ declare function retrieve-vra:format-detail-view($position as xs:string, $entry 
                         'Work Record'
                     default return
                         'Collection Record'
-            let $list-view := collection($config:mods-root)//vra:image[@id = $relids]/..
+            (: Elevate rights because user is not able to search whole $config:mods-root   :)
+            (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
+            let $list-view := 
+                system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                    collection($config:mods-root)//vra:image[@id = $relids]/..
+                )
             let $list-view := retrieve-vra:format-list-view('', $list-view, '')
             return
                 <tr>
