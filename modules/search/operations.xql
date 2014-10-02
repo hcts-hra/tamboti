@@ -30,30 +30,26 @@ the buttons do not show up (except Delete Folder).:)
 (:NB: creation does not take place if the new name is already taken.:)
 (:TODO: notify user if the new name is already taken.:)
 declare function op:create-collection($parent as xs:string, $name as xs:string) as element(status) {
-    let $parent-collection-owner := xmldb:get-owner($parent)
-    let $parent-collection-group := xmldb:get-group($parent)
 
     let $create-collection :=
         system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-    
+                let $parent-collection-owner := xmldb:get-owner($parent)
+                let $parent-collection-group := xmldb:get-group($parent)
                 let $collection := xmldb:create-collection($parent, $name)
                 
                 (: inherit ACE from parent collection to new collection:)
                 let $inherit-ACE := security:duplicate-acl($parent, $parent || "/" || $name)
         
                 (: just the owner has full access - to start with :)
-                let $null := sm:chmod(xs:anyURI($collection), "rwxr-xr-x")
+                let $null := sm:chmod(xs:anyURI($collection), "rwx------")
     
                 (: to be sure that the collection owner's group is the intended one :)
                 let $change-group := sm:chgrp(xs:anyURI($collection), $parent-collection-group)
-                return ()
+                let $change-owner := sm:chown(xs:anyURI($parent || "/" || $name), $parent-collection-owner)
+                return 
+                    ()
         )
-    let $change-owner :=
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                (: set parent collection owner as owner for new collection :)
-                sm:chown(xs:anyURI($parent || "/" || $name), $parent-collection-owner)
-        )
-        
+
     return
         <status id="created">{xmldb:decode-uri(xs:anyURI($parent || "/" || $name))}</status>
 

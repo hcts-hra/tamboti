@@ -18,7 +18,7 @@ $(function() {
             dataType: 'text',
             data: xml,
             error: function() {
-                alert("Could not send record ids to ziziphus.")
+                alert("Could not send record ids to ziziphus.");
             },
             success: function(data) {
                 if (data != null) {
@@ -373,13 +373,18 @@ function initCollectionTree() {
     var dynaTree = $('#collection-tree-tree');
     var treeDiv = $('#collection-tree-main').css('display', 'none');
     dynaTree.dynatree({
+//        debugLevel: 2,
         minExpandLevel: 2,
-        fx: {height: "toggle", duration: 200},
+        fx: {
+            height: "toggle", 
+            duration: 200
+        },
         persist: true,
         initAjax: {
             url: "collections.xql",
             data: {
             },
+            type: "POST",
             addActiveKey: true, // add &activeKey= parameter to URL
             addFocusedKey: true, // add &focusedKey= parameter to URL
             addExpandedKeyList: true // add &expandedKeyList= parameter to URL
@@ -400,7 +405,8 @@ function initCollectionTree() {
                 data: {
                     "key": node.data.key,
                     "mode": "all"
-                }
+                },
+                type: "POST"
             });
         },
         onPostInit: function() {
@@ -503,7 +509,7 @@ function showHideCollectionControls() {
          data looks like this -
          
          <relationship user="" collection="">
-	         <home/>
+ 	         <home/>
 	         <owner/>
 	         <read/>
 	         <write/>
@@ -512,7 +518,7 @@ function showHideCollectionControls() {
 	         <write-parent/>
 	         <execute-parent/>
          </relationship>
-     */
+         */
 
         var write = $(data).find('write');
         var isWriteable = (write != null && write.text() == 'true');
@@ -532,7 +538,6 @@ function showHideCollectionControls() {
         var parentExecute = $(data).find('execute-parent');
         var isParentExecutable = (parentExecute != null && parentExecute.text() == 'true');
 
-        
         //collection is writeable
         if (isWriteable) {
             $('#collection-create-folder').show();
@@ -655,6 +660,7 @@ function moveResource(dialog) {
 function createCollection(dialog) {
     var name = $("#new-collection-name").val();
     var collection = getCurrentCollection();
+//    console.log(collection);
     var params = {
         action: 'create-collection', 
         name: name, 
@@ -860,7 +866,10 @@ function login() {
     $('#login-message').text('Checking ...');
     $.ajax({
         url: "checkuser.xql",
-        data: "user=" + user.val() + "&password=" + escape(password.val()),
+        data: {
+            user: user.val(),
+            password: escape(password.val())
+        },
         type: 'POST',
         success:
                 function(data, message) {
