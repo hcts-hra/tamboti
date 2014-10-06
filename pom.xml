@@ -290,6 +290,10 @@
 											<token>\$config:dba-credentials := \("admin",""\)</token>
 											<value>\$config:dba-credentials := \("admin","${admin-password}"\)</value>
 										</replacement>
+										<replacement>
+											<token>\$config:special-users := \("admin", $config:biblio-admin-user, "guest"\)</token>
+											<value>\$config:special-users := \("admin", $config:biblio-admin-user, "guest", "testuser1", "testuser2", "testuser3", "heraeditor", "vma-editor", "freizo-editor"\)</value>
+										</replacement>										
 									</replacements>
 								</configuration>
 							</execution>
