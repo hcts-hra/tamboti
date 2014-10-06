@@ -59,7 +59,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, "/commons/")) 
-        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:commons-collections-permissions)
+        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:collection-mode)
         else ():)
     
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
@@ -452,7 +452,7 @@ let $content := local:create-page-content($id, $tab-id, $type-request, $target-c
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, "/commons/")) 
-        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:commons-collections-permissions)
+        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:collection-mode)
         else ():)
     
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
