@@ -30,7 +30,6 @@ declare variable $config:biblio-users-group := "biblio.users";
 declare variable $config:special-users := ("admin", $config:biblio-admin-user, "guest");
 
 (:~ Various permissions :)
-declare variable $config:commons-collections-permissions := "rwxr-xr-x";
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwx------";
 
