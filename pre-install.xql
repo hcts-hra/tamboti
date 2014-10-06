@@ -4,10 +4,9 @@ xquery version "3.0";
     TODO KISS - This file should be removed in favour of a convention based approach + some small metadata for users/groups/permissions (added by AR)
 :)
 
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xdb="http://exist-db.org/xquery/xmldb";
-import module namespace security="http://exist-db.org/mods/security" at "modules/search/security.xqm";
-import module namespace config="http://exist-db.org/mods/config" at "modules/config.xqm";
+import module namespace util = "http://exist-db.org/xquery/util";
+import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
 
 (: The following external variables are set by the repo:deploy function :)
 
@@ -56,7 +55,7 @@ declare function local:mkcol-recursive($collection, $components, $permissions as
     if (exists($components)) then
         let $newColl := concat($collection, "/", $components[1])
         return (
-            xdb:create-collection($collection, $components[1]),
+            xmldb:create-collection($collection, $components[1]),
             local:set-resource-properties(xs:anyURI($newColl), $permissions),
             local:mkcol-recursive($newColl, subsequence($components, 2), $permissions)
         )
@@ -76,7 +75,7 @@ declare function local:set-resource-properties($resource-path as xs:anyURI, $per
 };
 
 declare function local:set-resources-properties($collection-path as xs:anyURI, $permissions as xs:string) {
-    for $resource-name in xdb:get-child-resources($collection-path) return local:set-resource-properties(xs:anyURI(concat($collection-path, '/', $resource-name)), $permissions)
+    for $resource-name in xmldb:get-child-resources($collection-path) return local:set-resource-properties(xs:anyURI(concat($collection-path, '/', $resource-name)), $permissions)
 };
 
 declare function local:strip-prefix($str as xs:string, $prefix as xs:string) as xs:string? {
@@ -90,20 +89,20 @@ util:log($log-level, fn:concat("...Script: using $dir '", $dir, "'")),
 
 (: Create users and groups :)
 util:log($log-level, fn:concat("Security: Creating user '", $config:biblio-admin-user, "' and group '", $config:biblio-users-group, "' ...")),
-    if (xdb:group-exists($config:biblio-users-group)) then ()
-    else xdb:create-group($config:biblio-users-group),
-    if (xdb:exists-user($config:biblio-admin-user)) then ()
-    else xdb:create-user($config:biblio-admin-user, $config:biblio-admin-user, $config:biblio-users-group, ()),
+    if (xmldb:group-exists($config:biblio-users-group)) then ()
+    else xmldb:create-group($config:biblio-users-group),
+    if (xmldb:exists-user($config:biblio-admin-user)) then ()
+    else xmldb:create-user($config:biblio-admin-user, $config:biblio-admin-user, $config:biblio-users-group, ()),
 util:log($log-level, "Security: Done."),
 
 (: Load collection.xconf documents :)
 util:log($log-level, "Config: Loading collection configuration ..."),
     local:mkcol($config-collection, $editor-code-tables-collection, "rwxr-xr-x"),
-    xdb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf"),
+    xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf"),
     local:mkcol($config-collection, $resources-collection, "rwxr-xr-x"),
-    xdb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf"),
+    xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf"),
     (:local:mkcol($config-collection, $mads-collection),:)
-    (:xdb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
+    (:xmldb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
 util:log($log-level, "Config: Done."),
 
 
@@ -116,12 +115,12 @@ util:log($log-level, "Config: Done."),
 util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
     for $col in ($sociology-collection, $exist-db-collection(:, $mads-collection:)) return
     (
-        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), $config:commons-collections-permissions)
+        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), $config:collection-mode)
     ),
     util:log($log-level, "...Config: Uploading samples data..."),
-        xdb:store-files-from-pattern($sociology-collection, $dir, "data/sociology/*.xml"),
+        xmldb:store-files-from-pattern($sociology-collection, $dir, "data/sociology/*.xml"),
         local:set-resources-properties($sociology-collection, $config:resource-mode),
-        xdb:store-files-from-pattern($exist-db-collection, $dir, "data/eXist/*.xml"),
+        xmldb:store-files-from-pattern($exist-db-collection, $dir, "data/eXist/*.xml"),
         local:set-resources-properties($exist-db-collection, $config:resource-mode),
     util:log($log-level, "...Config: Done Uploading samples data."),
 util:log($log-level, "Config: Done."), 

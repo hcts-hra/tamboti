@@ -3,9 +3,9 @@ xquery version "3.0";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
+import module namespace functx = "http://www.functx.com";
 
 declare namespace upload = "http://exist-db.org/eXide/upload";
-declare namespace functx = "http://www.functx.com";
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace mods="http://www.loc.gov/mods/v3";
 
@@ -13,14 +13,6 @@ declare variable $user := $config:dba-credentials[1];
 declare variable $userpass := $config:dba-credentials[2];
 declare variable $message := 'uploaded';
 declare variable $image-collection-name := 'VRA_images';
-
-declare function functx:escape-for-regex($arg as xs:string?) as xs:string {
-     replace($arg, '(\.|\[|\]|\\|\||\-|\^|\$|\?|\*|\+|\{|\}|\(|\))', '\\$1')
- };
- 
-declare function functx:substring-after-last($arg as xs:string?, $delim as xs:string) as xs:string {
-    replace($arg, concat('^.*', functx:escape-for-regex($delim)), '')
-};
 
 declare function local:generate-image-record($uuid, $file-uuid, $title, $workrecord) {
     let $vra-content :=
