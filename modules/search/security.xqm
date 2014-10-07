@@ -565,17 +565,16 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
     (: update ACL for resources in parent collection  :)
     security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
     
-    if (xmldb:collection-available($collection || "/" || VRA_images")) then
+    if (xmldb:collection-available($collection || "/" || $config:images-subcollection)) then
         (
             (: update ACL for VRA_images collection  :)
-            sm:clear-acl(xs:anyURI($collection || "/VRA_images")),
-            security:duplicate-acl($collection, $collection || "/VRA_images"),
+            sm:clear-acl(xs:anyURI($collection || "/" || $config:images-subcollection)),
+            security:duplicate-acl($collection, $collection || "/" || $config:images-subcollection),
             (: update ACL for resources in VRA_images   :)
-            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/VRA_images"))
+            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/" || $config:images-subcollection))
         )
     else
         ()
-
 };
 
 declare function security:recursively-inherit-collection-acl($collection as xs:anyURI) {
@@ -658,13 +657,13 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
     (: update ACL for resources in parent collection  :)
     security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
     
-    if (xmldb:collection-available($collection || "/VRA_images")) then
+    if (xmldb:collection-available($collection || "/" || $config:images-subcollection)) then
         (
             (: update ACL for VRA_images collection  :)
-            sm:clear-acl(xs:anyURI($collection || "/VRA_images")),
-            security:duplicate-acl($collection, $collection || "/VRA_images"),
+            sm:clear-acl(xs:anyURI($collection || "/" || $config:images-subcollection)),
+            security:duplicate-acl($collection, $collection || "/" || $config:images-subcollection),
             (: update ACL for resources in VRA_images   :)
-            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/VRA_images"))
+            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/" || $config:images-subcollection))
         )
     else
         ()
