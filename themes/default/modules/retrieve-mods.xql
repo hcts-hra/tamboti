@@ -1,15 +1,19 @@
-module namespace retrieve-mods="http://exist-db.org/mods/retrieve";
+xquery version "3.0";
 
-declare namespace mods="http://www.loc.gov/mods/v3";
-declare namespace mads="http://www.loc.gov/mads/v2";
-declare namespace xlink="http://www.w3.org/1999/xlink";
-declare namespace functx = "http://www.functx.com";
-declare namespace ext="http://exist-db.org/mods/extension";
-declare namespace html="http://www.w3.org/1999/xhtml";
+module namespace retrieve-mods="http://exist-db.org/mods/retrieve";
 
 import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
 import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace functx = "http://www.functx.com";
+
+declare namespace mods = "http://www.loc.gov/mods/v3";
+declare namespace mads = "http://www.loc.gov/mads/v2";
+declare namespace xlink = "http://www.w3.org/1999/xlink";
+declare namespace ext = "http://exist-db.org/mods/extension";
+declare namespace html = "http://www.w3.org/1999/xhtml";
+
+declare option exist:serialize "media-type=text/xml";
 
 (:The $retrieve-mods:primary-roles values are lower-cased when compared.:)
 declare variable $retrieve-mods:primary-roles := (
@@ -23,52 +27,7 @@ declare variable $retrieve-mods:primary-roles := (
     'reporter', 'rpt')
 ;
 
-declare option exist:serialize "media-type=text/xml";
-
 (: TODO: A lot of restrictions to the first item in a sequence ([1]) have been made; these must all be changed to for-structures or string-joins. :)
-
-(:~
-: The functx:substring-before-last-match function returns the part of $arg that appears before the last match of $regex. 
-: If $arg does not match $regex, the entire $arg is returned. 
-: If $arg is the empty sequence, the empty sequence is returned.
-: @author Jenny Tennison
-: @param $arg the string to substring
-: @param $regex the regular expression (string)
-: @return xs:string?
-: @see http://www.xqueryfunctions.com/xq/functx:substring-before-last-match.html 
-:)
-declare function functx:substring-before-last-match($arg as xs:string, $regex as xs:string) as xs:string? {       
-   replace($arg,concat('^(.*)',$regex,'.*'),'$1')
-} ;
- 
-(:~
-: The functx:camel-case-to-words function turns a camel-case string 
-: (one that uses upper-case letters to start new words, as in "thisIsACamelCaseTerm"), 
-: and turns them into a string of words using a space or other delimiter.
-: Used to transform the camel-case names of MODS elements into space-separated words.
-: @author Jenny Tennison
-: @param $arg the string to modify
-: @param $delim the delimiter for the words (e.g. a space)
-: @return xs:string
-: @see http://www.xqueryfunctions.com/xq/functx_camel-case-to-words.html
-:)
-declare function functx:camel-case-to-words($arg as xs:string?, $delim as xs:string ) as xs:string {
-   concat(substring($arg,1,1), replace(substring($arg,2),'(\p{Lu})', concat($delim, '$1')))
-};
-
-(:~
-: The functx:capitalize-first function capitalizes the first character of $arg. 
-: If the first character is not a lowercase letter, $arg is left unchanged. 
-: It capitalizes only the first character of the entire string, not the first letter of every word.
-: @author Jenny Tennison
-: @param $arg the word or phrase to capitalize
-: @return xs:string?
-: @see http://www.xqueryfunctions.com/xq/functx_capitalize-first.html
-:)
-declare function functx:capitalize-first($arg as xs:string?) as xs:string? {       
-   concat(upper-case(substring($arg,1,1)),
-             substring($arg,2))
-};
 
 (:~
 : The <b>retrieve-mods:format-detail-view</b> function returns the detail view of a MODS record.

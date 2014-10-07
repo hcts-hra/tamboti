@@ -1,11 +1,11 @@
 (:~
     Module to clean up a MODS record. Removes empty elements, empty attributes and elements without required subelements.
 :)
+xquery version "3.0";
 
 module namespace clean="http://exist-db.org/xquery/mods/cleanup";
 
 declare namespace xlink="http://www.w3.org/1999/xlink";
-declare namespace functx = "http://www.functx.com";
 
 (: Removes empty attributes. Attributes are often left empty by the Tamboti editor. :)
 declare function clean:remove-empty-attributes($element as element()) as element() {
