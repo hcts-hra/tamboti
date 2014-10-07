@@ -28,7 +28,6 @@ declare variable $code-tables-collection-name := "code-tables";
 
 declare variable $resources-collection-name := "resources";
 declare variable $users-collection-name := "users";
-declare variable $groups-collection-name := "groups";
 declare variable $temp-collection-name := "temp";
 declare variable $commons-collection-name := "commons";
 declare variable $samples-collection-name := "Samples";
@@ -45,7 +44,6 @@ declare variable $editor-code-tables-collection := fn:concat($editor-collection,
 declare variable $resources-collection := fn:concat($db-root, "/", $resources-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
 declare variable $users-collection := fn:concat($resources-collection, "/", $users-collection-name);
-declare variable $groups-collection := fn:concat($resources-collection, "/", $groups-collection-name);
 declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);
 declare variable $sociology-collection := fn:concat($commons-collection, "/", $samples-collection-name, "/", $sociology-collection-name);
 declare variable $exist-db-collection := fn:concat($commons-collection, "/", $samples-collection-name, "/", $exist-db-collection-name);
@@ -97,9 +95,9 @@ util:log($log-level, "Security: Done."),
 
 (: Load collection.xconf documents :)
 util:log($log-level, "Config: Loading collection configuration ..."),
-    local:mkcol($config-collection, $editor-code-tables-collection, "rwxr-xr-x"),
+    local:mkcol($config-collection, $editor-code-tables-collection, $config:index-collection-mode),
     xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf"),
-    local:mkcol($config-collection, $resources-collection, "rwxr-xr-x"),
+    local:mkcol($config-collection, $resources-collection, $config:index-collection-mode),
     xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf"),
     (:local:mkcol($config-collection, $mads-collection),:)
     (:xmldb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
@@ -108,7 +106,7 @@ util:log($log-level, "Config: Done."),
 
 (: Create temp collection :)
 util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-collection, "'...")),
-    local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), "rwxrws---"),
+    local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode),
 util:log($log-level, "Config: Done."),
 
 (: Create resources/commons :)
@@ -127,12 +125,10 @@ util:log($log-level, "Config: Done."),
 
 
 (: Create users and groups collections :)
-util:log($log-level, fn:concat("Config: Creating users '", $users-collection, "' and groups '", $groups-collection, "' collections")),
-    local:mkcol($db-root, $resources-collection-name, "rwxrwxr-x"),
-    for $col in ($users-collection, $groups-collection) return
-    (
-        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), "rwxrwxr-x")
-    ),
+util:log($log-level, fn:concat("Config: Creating users '", $users-collection, "' collections")),
+    local:mkcol($db-root, $resources-collection-name, $config:data-collection-mode),
+    local:mkcol($db-root, local:strip-prefix($users-collection, fn:concat($db-root, "/")), $config:data-collection-mode)
+    ,
 util:log($log-level, "Config: Done."),
 
 util:log($log-level, "Script: Done.")

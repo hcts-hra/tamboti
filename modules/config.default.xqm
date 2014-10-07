@@ -21,6 +21,7 @@ declare variable $config:app-root :=
 ;
 
 declare variable $config:app-id := "tamboti";
+
 (: this will replace $config:app-id when theming will be solved :)
 declare variable $config:actual-app-id := "tamboti";
 
@@ -32,6 +33,9 @@ declare variable $config:special-users := ("admin", $config:biblio-admin-user, "
 (:~ Various permissions :)
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwx------";
+declare variable $config:temp-collection-mode := "rwxrws---";
+declare variable $config:data-collection-mode := "rwxr-xr-x";
+declare variable $config:index-collection-mode := "rwxr-xr-x";
 
 declare variable $config:mods-root := "/resources";
 declare variable $config:mods-root-minus-temp := ("/resources/commons","/resources/users", "/resources/groups");
