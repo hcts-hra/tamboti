@@ -1,13 +1,7 @@
 xquery version "3.0";
 
-declare namespace functx = "http://www.functx.com"; 
-declare function functx:value-except 
-  ( $arg1 as xs:anyAtomicType* ,
-    $arg2 as xs:anyAtomicType* )  as xs:anyAtomicType* {
-       
-  distinct-values($arg1[not(.=$arg2)])
- } ;
- 
+import module namespace functx = "http://www.functx.com";
+
 declare variable $username as xs:string := "admin";
 declare variable $password as xs:string := "test";
 

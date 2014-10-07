@@ -1,13 +1,15 @@
-module namespace mods-common="http://exist-db.org/mods/common";
+xquery version "3.0";
 
-declare namespace mods="http://www.loc.gov/mods/v3";
-declare namespace mads="http://www.loc.gov/mads/v2";
-declare namespace functx="http://www.functx.com";
-declare namespace xlink="http://www.w3.org/1999/xlink";
-declare namespace ext="http://exist-db.org/mods/extension";
+module namespace mods-common = "http://exist-db.org/mods/common";
 
-import module namespace retrieve-mods="http://exist-db.org/mods/retrieve" at "../themes/default/modules/retrieve-mods.xql";
-import module namespace config="http://exist-db.org/mods/config" at "../themes/default/modules/retrieve-mods.xql";
+import module namespace retrieve-mods = "http://exist-db.org/mods/retrieve" at "../themes/default/modules/retrieve-mods.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../themes/default/modules/retrieve-mods.xql";
+import module namespace functx = "http://www.functx.com";
+
+declare namespace mods = "http://www.loc.gov/mods/v3";
+declare namespace mads = "http://www.loc.gov/mads/v2";
+declare namespace xlink = "http://www.w3.org/1999/xlink";
+declare namespace ext = "http://exist-db.org/mods/extension";
 
 declare variable $mods-common:given-name-last-languages := ('chi', 'jpn', 'kor', 'vie'); 
 declare variable $mods-common:no-word-space-languages := ('chi', 'jpn', 'kor');
@@ -177,50 +179,6 @@ return
 }
 };
 
-
-(:~
-: The functx:capitalize-first function capitalizes the first character of $arg. 
-: If the first character is not a lowercase letter, $arg is left unchanged. 
-: It capitalizes only the first character of the entire string, not the first letter of every word.
-: @author Jenny Tennison
-: @param $arg the word or phrase to capitalize
-: @return xs:string?
-: @see http://www.xqueryfunctions.com/xq/functx_capitalize-first.html
-:)
-declare function functx:capitalize-first($arg as xs:string?) as xs:string {       
-   concat(upper-case(substring($arg,1,1)), substring($arg,2))
-};
-
-(:~
-: The functx:camel-case-to-words function turns a camel-case string 
-: (one that uses upper-case letters to start new words, as in "thisIsACamelCaseTerm"), 
-: and turns them into a string of words using a space or other delimiter.
-: Used to transform the camel-case names of MODS elements into space-separated words.
-: @author Jenny Tennison
-: @param $arg the string to modify
-: @param $delim the delimiter for the words (e.g. a space)
-: @return xs:string
-: @see http://www.xqueryfunctions.com/xq/functx_camel-case-to-words.html
-:)
-declare function functx:camel-case-to-words($arg as xs:string?, $delim as xs:string ) as xs:string {
-   concat(substring($arg,1,1), replace(substring($arg,2),'(\p{Lu})', concat($delim, '$1')))
-};
-
-(:~
-: The functx:trim function removes whitespace at the beginning and end of a string. 
-: Unlike the built-in fn:normalize-space function, it only removes leading and trailing whitespace, 
-: not whitespace in the middle of the value. 
-: Whitespace is defined as it is in XML, namely as space, tab, carriage return and line feed characters. 
-: If $arg is the empty sequence, it returns a zero-length string.
-: @author Jenny Tennison
-: @param $arg the string to trim
-: @return A string
-: @see http://www.xqueryfunctions.com/xq/functx_trim.html
-:)
-declare function functx:trim($arg as xs:string?) as xs:string {       
-   replace(replace($arg,'\s+$',''),'^\s+','')
-};
- 
 (:~
 : The <b>mods-common:title-full</b> function returns 
 : a full title for detail view.

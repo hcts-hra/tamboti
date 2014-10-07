@@ -1,30 +1,9 @@
 xquery version "3.0";
 
 import module namespace security="http://exist-db.org/mods/security" at "../modules/search/security.xqm";
+import module namespace functx = "http://www.functx.com";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
-declare namespace functx = "http://www.functx.com";
-
-declare function functx:substring-before-last-match 
-  ( $arg as xs:string? ,
-    $regex as xs:string )  as xs:string? {
-       
-   replace($arg,concat('^(.*)',$regex,'.*'),'$1')
- } ;
- 
-declare function functx:substring-after-last 
-  ( $arg as xs:string? ,
-    $delim as xs:string )  as xs:string {
-       
-   replace ($arg,concat('^.*',functx:escape-for-regex($delim)),'')
- } ;
- 
-declare function functx:escape-for-regex 
-  ( $arg as xs:string? )  as xs:string {
-       
-   replace($arg,
-           '(\.|\[|\]|\\|\||\-|\^|\$|\?|\*|\+|\{|\}|\(|\))','\\$1')
- } ;
 
 declare variable $username as xs:string := "admin";
 declare variable $password as xs:string := "test";
