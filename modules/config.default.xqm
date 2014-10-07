@@ -61,6 +61,9 @@ declare variable $config:theme-config := concat($config:themes, "/configuration.
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, "/resources/images");
 
+declare variable $config:images-subcollection := ("VRA_images");
+
+
 (: If the user has not specified a query, should he see the entire collection contents?
  : Set to true() if a query must be specified, false() to list the entire collection.
  : On large databases, false() will most likely lead to problems.

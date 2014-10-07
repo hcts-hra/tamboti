@@ -565,7 +565,7 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
     (: update ACL for resources in parent collection  :)
     security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
     
-    if (xmldb:collection-available($collection || "/VRA_images")) then
+    if (xmldb:collection-available($collection || "/" || VRA_images")) then
         (
             (: update ACL for VRA_images collection  :)
             sm:clear-acl(xs:anyURI($collection || "/VRA_images")),
@@ -941,15 +941,42 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
     (: update ACL for resources in parent collection  :)
     security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
     
-    if (xmldb:collection-available($collection || "/VRA_images")) then
+    if (xmldb:collection-available($collection || "/" || $config:images-subcollection)) then
         (
             (: update ACL for VRA_images collection  :)
-            sm:clear-acl(xs:anyURI($collection || "/VRA_images")),
-            security:duplicate-acl($collection, $collection || "/VRA_images"),
+            sm:clear-acl(xs:anyURI($collection || "/" || $config:images-subcollection)),
+            security:duplicate-acl($collection, $collection || "/" || $config:images-subcollection),
             (: update ACL for resources in VRA_images   :)
-            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/VRA_images"))
+            security:copy-collection-acl-to-child-resources(xs:anyURI($collection ||  "/" || $config:images-subcollection))
         )
     else
         ()
 
+};
+
+declare function security:get-searchable-child-collections($collection-uri as xs:anyURI) {
+    (: ToDo: move declaration of $images-collection to config.xqm :)
+
+    (: elevate rights for going into the collection structure :)
+    let $subcollections := 
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+                xmldb:get-child-collections($collection-uri)
+            )
+        )
+    for $subcol in $subcollections[not($config:images-subcollection = .)]
+    order by $subcol 
+    return
+        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+        let $readable := security:can-read-collection($fullpath)
+        let $executeable := security:can-execute-collection($fullpath) 
+        let $readable-children := security:get-searchable-child-collections($fullpath)
+        return
+            (
+                if (($readable and $executeable) or not(empty($readable-children))) then
+                    xs:anyURI($fullpath)
+                else
+                    ()
+            ,
+                security:get-searchable-child-collections($fullpath)
+            )
 };
