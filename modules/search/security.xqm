@@ -12,53 +12,48 @@ declare variable $security:user-metadata-file := "security.metadata.xml";
 (:~
 : Authenticates a user and creates their tamboti home collection if it does not exist
 :
-: @param user The username of the user
+: @param username The username of the user
 : @param password The password of the user
 :)
-declare function security:login($user as xs:string, $password as xs:string?) as xs:boolean {
-    let $username := config:rewrite-username(
-        if ($config:force-lower-case-usernames) then
-            fn:lower-case($user)
-        else
-            $user
-        )
-        return
-            (: authenticate against eXist-db :)
-            if (xmldb:login("/db", $username, $password))
-            then
-                (
-                    security:store-user-credential-in-session($username, $password),
-                    (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
-                    if (security:home-collection-exists($username))
-                    then
-                        (
-                            (: update the last login time:)
-                            security:update-login-time($username),    
-                            true()
-                        )
-                    else
-                        (
-                            let $users-collection-uri := security:create-home-collection($username)
-                            return true()
-                        )
-                )
-            else
-                (: authentication failed:)
-                false()
+declare function security:login($username as xs:string, $password as xs:string?) as xs:boolean {
+    (: if username is blacklisted: deny login :)
+    if ($config:users-login-blacklist = $username) then
+        false()
+    else
+        let $username := config:rewrite-username($username)
+            return
+                (: authenticate against eXist-db :)
+                if (xmldb:login("/db", $username, $password))
+                then
+                    (
+                        security:store-user-credential-in-session($username, $password),
+                        (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
+                        if (security:home-collection-exists($username))
+                        then
+                            (
+                                (: update the last login time:)
+                                security:update-login-time($username),    
+                                true()
+                            )
+                        else
+                            (
+                                let $users-collection-uri := security:create-home-collection($username)
+                                return true()
+                            )
+                    )
+                else
+                    (: authentication failed:)
+                    false()
 };
 
 (:~
 : Stores a user's credentials for the tamboti app into the http session
 :
-: @param user The username
+: @param username The username
 : @param password The password
 :)
-declare function security:store-user-credential-in-session($user as xs:string, $password as xs:string?) as empty() {
-    let $username := config:rewrite-username(
-        if ($config:force-lower-case-usernames) then
-            fn:lower-case($user)
-        else $user
-    ) 
+declare function security:store-user-credential-in-session($username as xs:string, $password as xs:string?) as empty() {
+    let $username := config:rewrite-username($username)
         return
         (
             session:set-attribute($security:SESSION_USER_ATTRIBUTE, $username),
@@ -267,7 +262,7 @@ declare function security:is-collection-owner($user as xs:string, $collection as
         return
             if (xmldb:collection-available($collection)) then
               let $owner := security:get-owner($collection)
-				return
+                return
                     $username eq $owner
             else
                 false()
@@ -485,22 +480,22 @@ declare function security:apply-parent-collection-permissions($resource as xs:an
                     if ($ace/@target eq "GROUP")
                     then sm:add-group-ace($resource, $ace/@who, $ace/@access_type eq "ALLOWED", $ace/@mode)
                     else ()
-			,
+            ,
             if ($this-permissions/sm:permission/@owner ne $parent-permissions/sm:permission/@owner)
             then
                 let $owner-mode := fn:replace($parent-permissions/sm:permission/@mode, "(...).*", "$1")
                 return sm:add-user-ace($resource, $parent-permissions/sm:permission/@owner, true(), $owner-mode)
             else ()
-    		,
+            ,
             if ($this-permissions/sm:permission/@group ne $parent-permissions/sm:permission/@group)
             then
                 let $group-mode := fn:replace($parent-permissions/sm:permission/@mode, "...(...)...", "$1") 
                 return sm:add-group-ace($resource, $parent-permissions/sm:permission/@group, true(), $group-mode)
             else ()
-			,
-			(: clear any prev entries :)
-			for $i in 0 to $this-last-acl-index
-			return sm:remove-ace($resource, $i)
+            ,
+            (: clear any prev entries :)
+            for $i in 0 to $this-last-acl-index
+            return sm:remove-ace($resource, $i)
         )
 };
 
@@ -509,12 +504,12 @@ declare function security:is-biblio-user($username as xs:string) as xs:boolean {
 };
 
 declare function security:get-owner($path as xs:string) as xs:string {
-	let $response := data(sm:get-permissions(xs:anyURI($path))/sm:permission/@owner)
-	return $response
+    let $response := data(sm:get-permissions(xs:anyURI($path))/sm:permission/@owner)
+    return $response
 };
 
 declare function security:get-group($path as xs:string) as xs:string {
-	data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
+    data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
 };
 
 declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
@@ -914,14 +909,14 @@ declare function security:get-groups($user as xs:string) as xs:string*
 (:
 declare function security:find-collections-with-group($collection-path as xs:string, $group as xs:string) as xs:string*
 {
-	for $child-collection in xmldb:get-child-collections($collection-path)
-	let $child-collection-path := fn:concat($collection-path, "/", $child-collection) return
-		(
-			if (security:get-group($child-collection-path) eq $group) then (
-				$child-collection-path
-			) else (),
-			security:find-collections-with-group($child-collection-path, $group)
-		)
+    for $child-collection in xmldb:get-child-collections($collection-path)
+    let $child-collection-path := fn:concat($collection-path, "/", $child-collection) return
+        (
+            if (security:get-group($child-collection-path) eq $group) then (
+                $child-collection-path
+            ) else (),
+            security:find-collections-with-group($child-collection-path, $group)
+        )
 };
 :)
 
