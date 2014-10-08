@@ -13,7 +13,6 @@ declare function image-link-generator:generate-href($image-uuid, $uri-name) {
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
             collection($config:mods-root)//vra:image[@id=$image-uuid][1]
         )
-    let $log := util:log("INFO", "image-uuid: " || $image-uuid)
     let $image-href := data($vra-image/@href)
     
     (: get image-service :)
