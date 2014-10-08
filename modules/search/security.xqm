@@ -16,30 +16,34 @@ declare variable $security:user-metadata-file := "security.metadata.xml";
 : @param password The password of the user
 :)
 declare function security:login($username as xs:string, $password as xs:string?) as xs:boolean {
-    let $username := config:rewrite-username($username)
-        return
-            (: authenticate against eXist-db :)
-            if (xmldb:login("/db", $username, $password))
-            then
-                (
-                    security:store-user-credential-in-session($username, $password),
-                    (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
-                    if (security:home-collection-exists($username))
-                    then
-                        (
-                            (: update the last login time:)
-                            security:update-login-time($username),    
-                            true()
-                        )
-                    else
-                        (
-                            let $users-collection-uri := security:create-home-collection($username)
-                            return true()
-                        )
-                )
-            else
-                (: authentication failed:)
-                false()
+    (: if username is blacklisted: deny login :)
+    if ($config:users-login-blacklist = $username) then
+        false()
+    else
+        let $username := config:rewrite-username($username)
+            return
+                (: authenticate against eXist-db :)
+                if (xmldb:login("/db", $username, $password))
+                then
+                    (
+                        security:store-user-credential-in-session($username, $password),
+                        (: check if the users tamboti home collectin exists, if not create it (this will happen at the first login) :)
+                        if (security:home-collection-exists($username))
+                        then
+                            (
+                                (: update the last login time:)
+                                security:update-login-time($username),    
+                                true()
+                            )
+                        else
+                            (
+                                let $users-collection-uri := security:create-home-collection($username)
+                                return true()
+                            )
+                    )
+                else
+                    (: authentication failed:)
+                    false()
 };
 
 (:~
