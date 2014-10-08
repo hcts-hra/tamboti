@@ -36,8 +36,6 @@
 				<exclude>pom.xml</exclude>
 				<exclude>themes/tamboti/pages/page.html</exclude>
 				<exclude>modules/config.xqm</exclude>
-				<exclude>themes/default/pages/search-form.html</exclude>
-				<exclude>themes/tamboti/pages/search-form.html</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
@@ -52,14 +50,6 @@
 			<outputDirectory>/modules</outputDirectory>
 			<includes>
 				<include>config.xqm</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/maven-replacer-plugin</directory>
-			<outputDirectory>/themes</outputDirectory>
-			<includes>
-				<include>default/pages/search-form.html</include>
-				<include>tamboti/pages/search-form.html</include>
 			</includes>
 		</fileSet>
 	</fileSets>

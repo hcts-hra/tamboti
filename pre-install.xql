@@ -31,9 +31,6 @@ declare variable $users-collection-name := "users";
 declare variable $temp-collection-name := "temp";
 declare variable $commons-collection-name := "commons";
 declare variable $samples-collection-name := "Samples";
-declare variable $sociology-collection-name := "Sociology";
-declare variable $exist-db-collection-name := "eXist-db";
-(:declare variable $mads-collection-name := "mads";:)
 
 (:~ Collection paths :)
 declare variable $app-collection := $target;
@@ -45,9 +42,6 @@ declare variable $resources-collection := fn:concat($db-root, "/", $resources-co
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
 declare variable $users-collection := fn:concat($resources-collection, "/", $users-collection-name);
 declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);
-declare variable $sociology-collection := fn:concat($commons-collection, "/", $samples-collection-name, "/", $sociology-collection-name);
-declare variable $exist-db-collection := fn:concat($commons-collection, "/", $samples-collection-name, "/", $exist-db-collection-name);
-(:declare variable $mads-collection := fn:concat($commons-collection, "/", $mads-collection-name);:)
 
 declare function local:mkcol-recursive($collection, $components, $permissions as xs:string) {
     if (exists($components)) then
@@ -110,23 +104,11 @@ util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-colle
 util:log($log-level, "Config: Done."),
 
 (: Create resources/commons :)
-util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
-    for $col in ($sociology-collection, $exist-db-collection(:, $mads-collection:)) return
-    (
-        local:mkcol($db-root, local:strip-prefix($col, fn:concat($db-root, "/")), $config:collection-mode)
-    ),
-    util:log($log-level, "...Config: Uploading samples data..."),
-        xmldb:store-files-from-pattern($sociology-collection, $dir, "data/sociology/*.xml"),
-        local:set-resources-properties($sociology-collection, $config:resource-mode),
-        xmldb:store-files-from-pattern($exist-db-collection, $dir, "data/eXist/*.xml"),
-        local:set-resources-properties($exist-db-collection, $config:resource-mode),
-    util:log($log-level, "...Config: Done Uploading samples data."),
-util:log($log-level, "Config: Done."), 
-
+util:log($log-level, fn:concat("Config: Creating resource/commons collection '", $commons-collection, "'...")),
+    local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:data-collection-mode),
 
 (: Create users and groups collections :)
 util:log($log-level, fn:concat("Config: Creating users '", $users-collection, "' collections")),
-    local:mkcol($db-root, $resources-collection-name, $config:data-collection-mode),
     local:mkcol($db-root, local:strip-prefix($users-collection, fn:concat($db-root, "/")), $config:data-collection-mode)
     ,
 util:log($log-level, "Config: Done."),
