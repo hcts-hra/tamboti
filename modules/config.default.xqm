@@ -28,7 +28,7 @@ declare variable $config:actual-app-id := "tamboti";
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";
 declare variable $config:biblio-users-group := "biblio.users";
-declare variable $config:special-users := ("admin", $config:biblio-admin-user, "guest");
+declare variable $config:users-login-blacklist := ("admin", "guest", "SYSTEM");
 
 (:~ Various permissions :)
 declare variable $config:resource-mode := "rw-------";
@@ -90,16 +90,17 @@ declare variable $config:allow-origin := "";
 :)
 declare function config:rewrite-username($username as xs:string) as xs:string {
     
-    let $username := if($config:force-lower-case-usernames)then
-        fn:lower-case($username)
-    else
-        $username
-    return
-    
-        if(fn:ends-with(fn:lower-case($username), fn:concat("@", $config:enforced-realm-id)) or fn:lower-case($username) = $config:special-users) then
-            $username
+    let $username := 
+        if ($config:force-lower-case-usernames) then
+            fn:lower-case($username)
         else
-            fn:concat($username, "@", $config:enforced-realm-id)
+            $username
+    return
+        (: if @ad is spared in login formular, check if ad user exists and concat @ with ldap-real, if not use $username without  :)
+        if (not(fn:contains($username, "@")) and xmldb:exists-user($username || "@" || $config:enforced-realm-id)) then
+            $username || "@" || $config:enforced-realm-id
+        else
+            $username
 };
 
 declare variable $config:max-inactive-interval-in-minutes := 480;
