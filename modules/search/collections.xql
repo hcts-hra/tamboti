@@ -159,18 +159,16 @@ if (not($key)) then
 
     return
             <something>
-                <title>resources</title>
-                <key>{$user-home-dir}</key>
-                <isFolder json:literal="true">true</isFolder>
                 {
                     (: no home for guest :)
                     if(not($user-id = "guest")) then
-                        <children json:array="true">
+                        <json:value>
                             <title>Home</title>
                             <key>{xmldb:decode($user-home-dir)}</key>
                             <isFolder json:literal="true">true</isFolder>
                             <writeable json:literal="true">{security:can-write-collection($user-home-dir)}</writeable>
                             <addClass>writeable</addClass>
+                            <expand json:literal="true">true</expand>
                             <isLazy json:literal="true">true</isLazy>
                             {
                                 (: construct the home branch:)
@@ -178,24 +176,25 @@ if (not($key)) then
                                 return
                                     $child-branch
                             }
-                        </children>
+                        </json:value>
                     else
                         ()
                 }
-                <children json:array="true">
+                <json:value>
                     <title>Shared</title>
                     <key>{xmldb:decode($config:users-collection)}</key>
                     <isFolder json:literal="true">true</isFolder>
                     <writeable json:literal="true">false</writeable>
                     <isLazy json:literal="true">true</isLazy>
                     <addClass>readable</addClass>          
-                </children>
-                <children json:array="true">
+                </json:value>
+                <json:value>
                     <title>Commons</title>
                     <key>{xmldb:decode($config:mods-commons)}</key>
                     <writeable json:literal="true">false</writeable>
                     <addClass>readable</addClass>          
                     <isFolder json:literal="true">true</isFolder>
+                    <expand json:literal="true">true</expand>
                     <isLazy json:literal="true">true</isLazy>
                         {
                             (: construct the commons branch:)
@@ -203,7 +202,7 @@ if (not($key)) then
                             return
                                 $child-branch
                         }
-                </children>
+                </json:value>
             </something>
 else
     (: load a defined branch (lazy) :)
