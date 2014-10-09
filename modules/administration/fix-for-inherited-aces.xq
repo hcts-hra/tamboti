@@ -1,5 +1,7 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare function local:copy-user-ace($source, $target) {
     (: first remove ACL on target :)
     sm:clear-acl(xs:anyURI($target)),
@@ -53,7 +55,7 @@ declare function local:inherit-tamboti-collection-user-acl($collection as xs:any
 
 };
     
-let $collection-path := "/resources/commons/"
+let $collection-path := $config:mods-commons
 for $collection-name in xmldb:get-child-collections($collection-path)
 return local:inherit-tamboti-collection-user-acl(xs:anyURI($collection-path || $collection-name || "/"))
 

@@ -1,10 +1,10 @@
 xquery version "3.0";
 
-module namespace retrieve-mods="http://exist-db.org/mods/retrieve";
+module namespace retrieve-mods = "http://exist-db.org/mods/retrieve";
 
-import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
-import module namespace tamboti-common="http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
-import module namespace mods-common="http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
 import module namespace functx = "http://www.functx.com";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
@@ -49,7 +49,7 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
         <td class="collection-label">Record Location</td>
         <td>
             <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
-            <div class="collection" >{replace(replace(xmldb:decode($collection-short), '^resources/commons/', 'resources/'),'^resources/users/', 'resources/')}</div>
+            <div class="collection" >{replace(replace(xmldb:decode($collection-short), '^/' || $config:mods-commons || '/', 'resources/'),'^resources/users/', 'resources/')}</div>
          </td>
     </tr>
     ,
