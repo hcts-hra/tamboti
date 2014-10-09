@@ -29,63 +29,60 @@ declare function local:authenticate($user as xs:string, $password as xs:string?)
 :       <owner>{true or false indicating whether the user owns this collection}</owner>
 :       <read>{true or false indicating whether the user can read the collection}</read>
 :       <write>{true or false indicating whether the user can write the collection}</write>
-        <read-parent>{true or false indicating whether the user can read the collection}</read-parent>
-        <write-parent>{true or false indicating whether the user can write the collection}</write-parent>
-        <execute-parent>{true or false indicating whether the user can access the collection}</execute-parent>
+:       <execute>{true or false indicating whether the user can execute the collection}</execute>
+:       <read-parent>{true or false indicating whether the user can read the collection}</read-parent>
+:       <write-parent>{true or false indicating whether the user can write the collection}</write-parent>
+:       <execute-parent>{true or false indicating whether the user can access the collection}</execute-parent>
 :   </relationship>
 :)
 declare function local:collection-relationship($collection as xs:string) as element(relationship)
 {
     let $collection := $collection
-    let $parent := replace(replace(replace($collection, "(.*)/.*", "$1"), '/resources/commons', '/resources'), '/db', '') 
+    let $parent := replace(replace($collection, "(.*)/.*", "$1"), '/db', '') 
     
     return
-    
-    <relationship user="{security:get-user-credential-from-session()[1]}" collection="{$collection}">
-        <home>
-        {
-            replace($collection, '/db', '') eq security:get-home-collection-uri(security:get-user-credential-from-session()[1])
-        }
-        </home>
-        <owner>
-        {
-            security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
-        }
-        </owner>
-        <read>
-        {
-            security:can-read-collection($collection)
-        }
-        </read>
-        <write>
-        {
-            if (replace($collection, '/db', '') = ($config:groups-collection, $config:users-collection, $config:mods-root)) 
-            then false()
-            else security:can-write-collection($collection)
-        }
-        </write>
-        <read-parent>
-        {
-            if ($parent = ($config:users-collection, $config:groups-collection, '')) 
-            then false()
-            else security:can-read-collection($parent)
-        }
-        </read-parent>
-        <write-parent>
-        {
-            if ($parent = ($config:users-collection, $config:groups-collection, $config:mods-root, '')) 
-            then false()
-            else security:can-write-collection($parent)
-         }
-         </write-parent>
-         <execute-parent>
-         {
-            if ($parent = ($config:users-collection, $config:groups-collection, '')) 
-            then false()
-            else security:can-execute-collection($parent)
-         }
-         </execute-parent>
-    </relationship>
+        <relationship user="{security:get-user-credential-from-session()[1]}" collection="{$collection}">
+            <home>
+            {
+                replace($collection, '/db', '') eq security:get-home-collection-uri(security:get-user-credential-from-session()[1])
+            }
+            </home>
+            <owner>
+            {
+                security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
+            }
+            </owner>
+            <read>
+            {
+                security:can-read-collection($collection)
+            }
+            </read>
+            <write>
+            {
+                security:can-write-collection($collection)
+            }
+            </write>
+            <execute>
+            {
+                security:can-execute-collection($collection)
+            }
+            </execute>
+            <read-parent>
+            {
+                security:can-read-collection($parent)
+            }
+            </read-parent>
+            <write-parent>
+            {
+                security:can-write-collection($parent)
+            }
+            </write-parent>
+            <execute-parent>
+            {
+                security:can-execute-collection($parent)
+            }
+            </execute-parent>
+        </relationship>
 };
 
 if (request:get-parameter("action", ())) 
