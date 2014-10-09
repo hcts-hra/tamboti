@@ -8,7 +8,6 @@ import module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mo
 import module namespace functx = "http://www.functx.com";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
-declare namespace group = "http://commons/sharing/group";
 declare namespace op="http://exist-db.org/xquery/biblio/operations";
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
