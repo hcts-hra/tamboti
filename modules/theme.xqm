@@ -1,6 +1,6 @@
 module namespace theme="http://exist-db.org/xquery/biblio/theme";
 
-import module namespace config="http://exist-db.org/mods/config" at "config.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "config.xqm";
 
 declare variable $theme:error := QName("http://exist-db.org/xquery/tamboti", "error");
 
@@ -118,7 +118,7 @@ declare function theme:get-root($prefix as xs:string?) as xs:string {
         if ($theme eq "default") then
             $config:mods-commons
         else
-            doc($config:theme-config)//theme[@id = 'default-theme']/@root/string()
+            $config:mods-commons || "/" || doc($config:theme-config)//theme[@id = 'default-theme']/@root/string()
 };
 
 (:~
