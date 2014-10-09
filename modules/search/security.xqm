@@ -148,7 +148,7 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
                             TODO do we need the group 'read' to allow sub-collections to be enumerated?
                                 NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
                             :)
-                            let $null := sm:chmod($collection-uri, "rwx------")
+                            let $null := sm:chmod($collection-uri, $config:collection-mode)
                             (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
                             let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
                             let $null := sm:chown($collection-uri, security:get-user-credential-from-session()[1])
@@ -261,14 +261,16 @@ declare function security:can-execute-collection($collection as xs:string) as xs
 :)
 declare function security:is-collection-owner($user as xs:string, $collection as xs:string) as xs:boolean
 {
-    let $username := if ($config:force-lower-case-usernames) then (fn:lower-case($user)) else ($user) 
-        return
-            if (xmldb:collection-available($collection)) then
-              let $owner := security:get-owner($collection)
-                return
-                    $username eq $owner
-            else
-                false()
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        let $username := if ($config:force-lower-case-usernames) then (fn:lower-case($user)) else ($user) 
+            return
+                if (xmldb:collection-available($collection)) then
+                  let $owner := security:get-owner($collection)
+                    return
+                        $username eq $owner
+                else
+                    false()
+    )
 };
 
 (:~
@@ -976,4 +978,12 @@ declare function security:get-searchable-child-collections($collection-uri as xs
             ,
                 security:get-searchable-child-collections($fullpath)
             )
+};
+
+declare function security:get-acl($collection-uri as xs:anyURI) {
+    let $aces := 
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+            sm:get-permissions($collection-uri)//sm:ace
+        )
+    return $aces
 };
