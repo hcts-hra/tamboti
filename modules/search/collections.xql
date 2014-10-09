@@ -47,6 +47,7 @@ declare function col:lazy-read($collection-uri as xs:anyURI) {
         let $executeable := security:can-execute-collection($fullpath) 
         let $writeable := security:can-write-collection($fullpath) 
         let $readable-children := col:has-readable-children($fullpath)
+        let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
         return
             if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
                 <json:value json:array="true">
@@ -55,6 +56,12 @@ declare function col:lazy-read($collection-uri as xs:anyURI) {
                     <isFolder json:literal="true">true</isFolder>
                     <writeable json:literal="true">{$writeable}</writeable>
                     <isLazy json:literal="true">true</isLazy>
+                    {
+                        if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+                            <icon>{$writeable-and-shared-folder-icon}</icon>
+                        else ()
+                    }
+                    ,
                     {
                         $readable-children
                     }
@@ -90,6 +97,7 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
         let $executeable := security:can-execute-collection($fullpath) 
         let $writeable := security:can-write-collection($fullpath) 
         let $readable-children := col:has-readable-children($fullpath)
+        let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
         return
             if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
                 <children json:array="true">
@@ -98,6 +106,12 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
                     <isFolder json:literal="true">true</isFolder>
                     <writeable json:literal="true">{$writeable}</writeable>
                     <isLazy json:literal="true">true</isLazy>
+                    {
+                        if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+                            <icon>{$writeable-and-shared-folder-icon}</icon>
+                        else ()
+                    }
+                    ,
                     {
                         $readable-children
                     }
