@@ -151,6 +151,7 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
                             let $null := sm:chmod($collection-uri, "rwx------")
                             (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
                             let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
+                            let $null := sm:chown($collection-uri, security:get-user-credential-from-session()[1])
                             let $null := security:create-user-metadata($collection-uri, $username) 
                             return
                                 $collection-uri
