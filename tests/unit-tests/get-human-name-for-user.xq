@@ -3,7 +3,7 @@ xquery version "3.0";
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace sharing = "http://exist-db.org/mods/sharing" at "../../modules/search/sharing.xqm";
 
-let $collection-path := xs:anyURI("/resources/commons")
+let $collection-path := xs:anyURI($config:mods-commons)
 let $username := "a9k"
 
 return

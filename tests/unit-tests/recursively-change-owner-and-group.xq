@@ -1,5 +1,7 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare function local:setPerm($path, $user-id, $group-id, $collection-mode, $resource-mode) {
 
         (
@@ -30,7 +32,7 @@ declare function local:setPerm($path, $user-id, $group-id, $collection-mode, $re
         )
 };
 
-let $path := "/resources/commons/Cluster%20Publications" 
+let $path := $config:mods-commons || "/Cluster%20Publications" 
 
 let $user-id := "editor" 
 let $group-id := "biblio.users" 
