@@ -40,7 +40,6 @@ declare variable $config:index-collection-mode := "rwxr-xr-x";
 declare variable $config:mods-root := "/resources";
 declare variable $config:mods-root-minus-temp := ("/resources/commons","/resources/users", "/resources/groups");
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
-declare variable $config:content-root := fn:concat($config:mods-root, "/commons");
 declare variable $config:url-image-size := "256";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
