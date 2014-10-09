@@ -103,8 +103,8 @@ util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-colle
     local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode),
 util:log($log-level, "Config: Done."),
 
-(: Create resources/commons :)
-util:log($log-level, fn:concat("Config: Creating resource/commons collection '", $commons-collection, "'...")),
+(: Create "commons" collections :)
+util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
     local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:data-collection-mode),
 
 (: Create users and groups collections :)

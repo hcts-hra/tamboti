@@ -32,9 +32,6 @@ declare function local:collection-permissions($col-path, $col, $show-res) {
 
 };
 
-(:let $col-name := "/db/resources/commons/JSIT":)
-(:let $col-name := "/db/resources/users/matthias.guth@ad.uni-heidelberg.de/aaatest":)
-
 (:let $col-name := request:get-attribute("col"):)
 (:let $showRes := true():)
 
