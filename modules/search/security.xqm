@@ -140,21 +140,24 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
             $user
     return
         if (xmldb:collection-available($config:users-collection)) then
-            let $collection-uri := xmldb:create-collection($config:users-collection, xmldb:encode-uri($username))
-                return
-                    if ($collection-uri) then
-                        (:
-                        TODO do we need the group 'read' to allow sub-collections to be enumerated?
-                            NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
-                        :)
-                        let $null := sm:chmod($collection-uri, "rwx------")
-                        (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
-                        let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
-                        let $null := security:create-user-metadata($collection-uri, $username) 
-                        return
+            system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+                let $collection-uri := xmldb:create-collection($config:users-collection, xmldb:encode-uri($username))
+                    return
+                        if ($collection-uri) then
+                            (:
+                            TODO do we need the group 'read' to allow sub-collections to be enumerated?
+                                NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
+                            :)
+                            let $null := sm:chmod($collection-uri, "rwx------")
+                            (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
+                            let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
+                            let $null := sm:chown($collection-uri, security:get-user-credential-from-session()[1])
+                            let $null := security:create-user-metadata($collection-uri, $username) 
+                            return
+                                $collection-uri
+                         else 
                             $collection-uri
-                     else 
-                        $collection-uri
+            )
         else 
             ()        
 };
