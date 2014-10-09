@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-module namespace biblio="http://exist-db.org/xquery/biblio";
+module namespace biblio = "http://exist-db.org/xquery/biblio";
 
 (:~
     The core XQuery script for the bibliographic demo. It receives a template XML document
@@ -19,6 +19,7 @@ module namespace biblio="http://exist-db.org/xquery/biblio";
     To apply a filter to an existing query, we just extend the XML representation
     of the query.
 :)
+
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates" at "../templates.xql";
@@ -281,7 +282,7 @@ declare variable $biblio:DEFAULT_QUERY :=
     Regenerate the HTML form to match the query, e.g. after adding more filter clauses.
     $incoming-query returns XML as follows:
     <query>
-        <collection>/resources/commons/Cluster%20Publications</collection>
+        <collection>$config:mods-commons/Cluster%20Publications</collection>
         <not>
             <and>
                 <or>
@@ -398,7 +399,7 @@ declare function biblio:form-from-query($node as node(), $params as element(para
     Generate an XPath query expression from the XML representation of the query, $query-as-xml.
     $query-as-xml has the form:
     <query>
-        <collection>/resources/commons/EAST</collection>
+        <collection>$config:mods-commons/EAST</collection>
         <and>
             <field m="1" name="Name">Kellner</field>
             <field m="2" name="Title">buddhist</field>
@@ -481,7 +482,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                     Therefore a search is made in all other sub-collections of /db/resources.
                     Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
                     if ($query-as-xml/string() eq '/resources')
-                    then ('(collection("/resources/commons","/resources/users", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                    then ('(collection("' || $config:mods-commons || '", "/resources/users", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                     else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
             default 
@@ -725,7 +726,7 @@ declare function biblio:evaluate-query($query-as-string as xs:string, $sort as x
     since it may contain stray files left there if the user is logged out.
     Therefore a search is made in all other sub-collections of /db/resources.
     Both this and the identical replacement in biblio:generate-query() are necessary.:)
-    let $query-as-string := replace($query-as-string, "'/resources'", "'/resources/commons','/resources/users', '/resources/groups'")
+    let $query-as-string := replace($query-as-string, "'/resources'", "'" || $config:mods-commons || "','/resources/users', '/resources/groups'")
     (:NB: The following hack is required because some queries end up with "//" before "order by", raising the error that "by" is an unexpected expression.:)
     let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
     let $order-by-expression := biblio:construct-order-by-expression($sort)
@@ -801,7 +802,7 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, '/resources/commons', 'resources'), '/resources/users', 'resources') 
+            then replace(replace($search-collection, $config:mods-commons, 'resources'), '/resources/users', 'resources') 
             else 'resources' 
         let $search-collection := 
             if (starts-with($search-collection, '/db'))

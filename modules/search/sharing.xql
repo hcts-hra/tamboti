@@ -11,7 +11,6 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.x
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
-declare namespace group = "http://commons/sharing/group";
 
 declare option exist:serialize "method=json media-type=text/javascript";
 
