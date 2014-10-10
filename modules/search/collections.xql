@@ -48,28 +48,33 @@ declare function col:lazy-read($collection-uri as xs:anyURI) {
         let $writeable := security:can-write-collection($fullpath) 
         let $readable-children := col:has-readable-children($fullpath)
         let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
+        let $extra-classes := (
+            if($writeable) then 
+                'fancytree-writeable' 
+            else 
+                'fancytree-readable'
+            ,
+            if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
+                'fancytree-shared'
+            else ()
+        )
         return
             if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
                 <json:value json:array="true">
                     <title>{xmldb:decode($subcol)}</title>
                     <key>{xmldb:decode($fullpath)}</key>
-                    <isFolder json:literal="true">true</isFolder>
+                    <folder json:literal="true">true</folder>
                     <writeable json:literal="true">{$writeable}</writeable>
-                    <isLazy json:literal="true">true</isLazy>
-                    {
-                        if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
-                            <icon>{$writeable-and-shared-folder-icon}</icon>
-                        else ()
-                    }
-                    ,
+                    <lazy json:literal="true">true</lazy>
                     {
                         $readable-children
                     }
-                    <addClass>
-                        {
-                            if($writeable) then 'writable' else 'readable'
-                        }
-                    </addClass>                        
+                    <extraClasses>
+                    {
+                        $extra-classes
+                    }
+                    </extraClasses>
                 </json:value>
             else
                 ()
@@ -98,28 +103,41 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
         let $writeable := security:can-write-collection($fullpath) 
         let $readable-children := col:has-readable-children($fullpath)
         let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
+        let $extra-classes := (
+            if($writeable) then 
+                'fancytree-writeable' 
+            else 
+                'fancytree-readable'
+            ,
+            if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
+                'fancytree-shared'
+            else ()
+        )
+        
         return
             if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
                 <children json:array="true">
                     <title>{xmldb:decode($subcol)}</title>
                     <key>{xmldb:decode($fullpath)}</key>
-                    <isFolder json:literal="true">true</isFolder>
+                    <folder json:literal="true">true</folder>
                     <writeable json:literal="true">{$writeable}</writeable>
-                    <isLazy json:literal="true">true</isLazy>
+                    <lazy json:literal="true">true</lazy>
                     {
                         if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
-                            <icon>{$writeable-and-shared-folder-icon}</icon>
+                            ()
+(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
                         else ()
                     }
                     ,
                     {
                         $readable-children
                     }
-                    <addClass>
+                    <extraClasses>
                         {
-                            if($writeable) then 'writable' else 'readable'
+                            $extra-classes
                         }
-                    </addClass>                        
+                    </extraClasses>                        
                 </children>
             else
                 ()
@@ -136,36 +154,11 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
 
 (: if no key is submitted, take the predefined root collection :)
 let $key := request:get-parameter("key", ())
-let $active-key := request:get-parameter("activeKey",())
-let $expanded-key-list := fn:tokenize(request:get-parameter("expandedKeyList", ()), ",")
-let $focused-key := request:get-parameter("focusedKey",())
+(:let $active-key := request:get-parameter("activeKey",()):)
+(:let $expanded-key-list := fn:tokenize(request:get-parameter("expandedKeyList", ()), ","):)
+(:let $focused-key := request:get-parameter("focusedKey",()):)
 return
-(:    if ($key) then:)
-(:        let $collection-path := xmldb:encode($key):)
-(:        return:)
-(:            if($collection-path eq $config:groups-collection) then:)
-(:                (: start of groups collection - the groups collection is virtual and so receives special treatment :):)
-(:                col:get-groups-virtual-root():)
-(:            else:)
-(:                (: just a child collection :)   :)
-(:                col:get-child-collections($collection-path):)
-(:    :)
-(:    (: Its a clean request for the tree, but we need to show the previous state of the tree :):)
-(:    else:)
-(:        if ($active-key) then:)
-(:            let $expanded-collections :=:)
-(:                if($expanded-key-list) then:)
-(:                    for $expanded-key in fn:tokenize($expanded-key-list, ","):)
-(:                    return:)
-(:                        xmldb:encode($expanded-key):)
-(:                else():)
-(:        return:)
-(:            col:get-from-root-for-prev-state($config:mods-root, xmldb:encode($active-key), xmldb:encode($focused-key), $expanded-collections):)
-(:    :)
-(:        else:)
-(:            (: no key, so its the root that we want :):)
-(:            col:get-root-collection(xs:anyURI($config:mods-root)):)
- 
+
 (: if no key is submitted, build up the full tree :)
 if (not($key)) then
     let $user-id := security:get-user-credential-from-session()[1]
@@ -179,11 +172,11 @@ if (not($key)) then
                         <json:value>
                             <title>Home</title>
                             <key>{xmldb:decode($user-home-dir)}</key>
-                            <isFolder json:literal="true">true</isFolder>
+                            <folder json:literal="true">true</folder>
                             <writeable json:literal="true">{security:can-write-collection($user-home-dir)}</writeable>
-                            <addClass>writeable</addClass>
-                            <expand json:literal="true">true</expand>
-                            <isLazy json:literal="true">true</isLazy>
+                            <extraClasses>fancytree-writeable</extraClasses>
+                            <expanded json:literal="true">true</expanded>
+                            <lazy json:literal="true">true</lazy>
                             {
                                 (: construct the home branch:)
                                 let $child-branch := col:has-readable-children(xs:anyURI($user-home-dir))
@@ -197,19 +190,19 @@ if (not($key)) then
                 <json:value>
                     <title>Shared</title>
                     <key>{xmldb:decode($config:users-collection)}</key>
-                    <isFolder json:literal="true">true</isFolder>
+                    <folder json:literal="true">true</folder>
                     <writeable json:literal="true">false</writeable>
-                    <isLazy json:literal="true">true</isLazy>
-                    <addClass>readable</addClass>          
+                    <lazy json:literal="true">true</lazy>
+                    <extraClasses>fancytree-readable</extraClasses>
                 </json:value>
                 <json:value>
                     <title>Commons</title>
                     <key>{xmldb:decode($config:mods-commons)}</key>
                     <writeable json:literal="true">false</writeable>
-                    <addClass>readable</addClass>          
-                    <isFolder json:literal="true">true</isFolder>
-                    <expand json:literal="true">true</expand>
-                    <isLazy json:literal="true">true</isLazy>
+                    <extraClasses>fancytree-readable</extraClasses>
+                    <folder json:literal="true">true</folder>
+                    <expanded json:literal="true">true</expanded>
+                    <lazy json:literal="true">true</lazy>
                         {
                             (: construct the commons branch:)
                             let $child-branch := col:has-readable-children(xs:anyURI($config:mods-commons))
