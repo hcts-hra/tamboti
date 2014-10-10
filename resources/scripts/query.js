@@ -370,18 +370,18 @@ function showNotices() {
  Initialize the collection tree. Connect toolbar button events.
  */
 function initCollectionTree() {
-    var dynaTree = $('#collection-tree-tree');
+    var fancyTree = $('#collection-tree-tree');
     var treeDiv = $('#collection-tree-main').css('display', 'none');
-    dynaTree.dynatree({
-//        debugLevel: 2,
-        minExpandLevel: 1,
-        rootVisible: false,
+    fancyTree.fancytree({
+        debugLevel: 2,
+        clickFolderMode: 1,
+        autoFocus: false,
         fx: {
             height: "toggle", 
             duration: 200
         },
-        persist: true,
-        initAjax: {
+        // persist: true,
+        source: {
             url: "collections.xql",
             data: {
             },
@@ -390,7 +390,6 @@ function initCollectionTree() {
             addFocusedKey: true, // add &focusedKey= parameter to URL
             addExpandedKeyList: true // add &expandedKeyList= parameter to URL
         },
-        autoFocus: false,
         onActivate: function(dtnode) {
             /**
              Executed when a tree node is clicked
@@ -400,34 +399,41 @@ function initCollectionTree() {
             updateCollectionPaths(title, key);
             showHideCollectionControls();
         },
-        onLazyRead: function(node) {
-            node.appendAjax({
+        lazyLoad: function(event, data) {
+            var node = data.node;
+            
+            data.result = {
                 url: "collections.xql",
                 data: {
-                    "key": node.data.key,
-                    "mode": "all"
+                    "key": node.key,
                 },
                 type: "POST"
-            });
+            };
         },
         onPostInit: function() {
             // when tree is reloaded, reactivate the current node to trigger an onActivate event
             this.reactivate();
         },
-        onClick: function(node, event) {
-            if (node.getEventTargetType(event) == "title") {
-                var title = node.data.title;
-                var key = node.data.key;
-                updateCollectionPaths(title, key);
-                showHideCollectionControls();
-            }
+        click: function(event, data) {
+            console.debug(data.node);
+            var node = data.node;
+            var title = node.title;
+            var key = node.key;
+            updateCollectionPaths(title, key);
+            showHideCollectionControls();
         },
-        clickFolderMode: 1,
-        onDblClick: function(node) {
+        dblclick: function(event, data) {
+            console.debug(data.node);
+            var node = data.node;
+            var title = node.title;
+            var key = node.key;
+            updateCollectionPaths(title, key);
+            showHideCollectionControls();
             tamboti.apis.simpleSearch();
             return false;
         }
     });
+
     toggleCollectionTree(true);
     $('#toggle-collection-tree').click(function() {
         if (treeDiv.css('display') == 'none') {
@@ -437,20 +443,20 @@ function initCollectionTree() {
         }
     });
     $('#collection-expand-all').click(function() {
-        $("#collection-tree-tree").dynatree("getRoot").visit(function(dtnode) {
+        $("#collection-tree-tree").fancytree("getRoot").visit(function(dtnode) {
             dtnode.expand(true);
         });
         return false;
     });
     $('#collection-collapse-all').click(function() {
-        $("#collection-tree-tree").dynatree("getRoot").visit(function(dtnode) {
+        $("#collection-tree-tree").fancytree("getRoot").visit(function(dtnode) {
             dtnode.expand(false);
         });
         return false;
     });
     $('#collection-reload').click(function() {
         //reload the entire tree
-        var tree = $("#collection-tree-tree").dynatree("getTree");
+        var tree = $("#collection-tree-tree").fancytree("getTree");
         if (tree) {
             tree.reload();
         }
