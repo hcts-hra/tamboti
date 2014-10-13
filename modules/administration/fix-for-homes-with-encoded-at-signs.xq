@@ -14,7 +14,7 @@ return
                         let $new-col := xmldb:create-collection(xmldb:encode-uri($col), xmldb:encode-uri($subcol))
                         let $chown := sm:chown($new-col, xmldb:get-owner($col || "/" || $subcol))
                         let $chgrp := sm:chgrp($new-col, xmldb:get-group($col || "/" || $subcol))
-                        let $chmod := sm:chmod($new-col, "rwxr-xr-x")
+                        let $chmod := sm:chmod($new-col, $config:collection-mode)
                         (: copy move all collections in unencoded-@-homefolder to encoded one :)
         (:                xmldb:remove($col || "/" || $subcol):)
                         let $moved-collections :=
