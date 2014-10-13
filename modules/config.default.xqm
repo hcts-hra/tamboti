@@ -24,6 +24,7 @@ declare variable $config:app-id := "tamboti";
 
 (: this will replace $config:app-id when theming will be solved :)
 declare variable $config:actual-app-id := "tamboti";
+declare variable $config:app-version := "";
 
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";

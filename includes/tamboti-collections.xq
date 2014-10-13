@@ -1,10 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<div>
+xquery version "3.0";
+
+import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
+
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "html5";
+declare option output:media-type "text/html";
+ 
+<div xmlns="http://www.w3.org/1999/xhtml">
     <p> In Tamboti, there are a number of special collections which you can access by
     clicking on the links below: </p>
     <ul>
         <li>
-            <a href="index.html?collection=/resources/commons/EAST" target="_blank">EAST
+            <a href="index.html?collection={$config:mods-commons}/EAST" target="_blank">EAST
                 (Epistemology and Argumentation in South Asia and Tibet)</a>
             <ul>
                 <li>This growing collection gathers records on Epistemology and
@@ -15,13 +22,13 @@
             </ul>
         </li>
         <li>
-            <a href="index.html?collection=/resources/commons/Cluster%20Publications" target="_blank">Cluster Publications</a>
+            <a href="index.html?collection={$config:mods-commons}/Cluster%20Publications" target="_blank">Cluster Publications</a>
             <ul>
                 <li>This collection contains a list of publications that have emerged from the Cluster of Excellence "Asia and Europe in a Global Context." For news on Cluster publications, see <a href="http://www.asia-europe.uni-heidelberg.de/en/research/publications.html">http://www.asia-europe.uni-heidelberg.de/en/research/publications.html</a>.</li>
             </ul>
         </li>
         <li>
-            <a href="index.html?collection=/resources/commons/Wissenschaftssprache%20Chinesisch" target="_blank">Wissenschaftssprache Chinesisch</a>
+            <a href="index.html?collection={$config:mods-commons}/Wissenschaftssprache%20Chinesisch" target="_blank">Wissenschaftssprache Chinesisch</a>
             <ul>
                 <li> This growing database consists of records on the distribution and
                     transformation of Euro-American knowledge in late imperial China,
@@ -63,7 +70,7 @@
                 <li> The project has its own <a href="http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/" target="_blank">theme in Tamboti</a> with project information. 
                     On this server, the images are displayed. 
                     You can search for work records from the Priya Paul Collection in Tamboti.
-                    Please access these records by clicking this <a href="index.html?collection=/resources/commons/Priya%20Paul%20Collection" target="_blank">link</a>.</li>
+                    Please access these records by clicking this <a href="index.html?collection={$config:mods-commons}/Priya%20Paul%20Collection" target="_blank">link</a>.</li>
             </ul>
         </li>
     </ul>

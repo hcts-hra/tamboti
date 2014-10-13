@@ -1,3 +1,5 @@
+xquery version "3.0";
+
 module namespace theme="http://exist-db.org/xquery/biblio/theme";
 
 import module namespace config = "http://exist-db.org/mods/config" at "config.xqm";

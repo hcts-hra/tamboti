@@ -1,5 +1,13 @@
+xquery version "3.0";
+
+import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
+
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare option output:method "html5";
+declare option output:media-type "text/html";
+
 <div>
-    <p> This is version 1.1.4 of Tamboti, created 2014-01-24.</p>
+    <p> This is version {$config:app-version} of Tamboti, created 2014-01-24.</p>
     <p> Tamboti is an application for working with metadata based on the <a href="http://www.loc.gov/standards/mods/" target="_blank">MODS</a> standard.</p>
     <p> MODS is a standard used to catalogue books, articles and other traditional library
         material, and visual or online material such as images, videos, web sites or other sources.</p>
