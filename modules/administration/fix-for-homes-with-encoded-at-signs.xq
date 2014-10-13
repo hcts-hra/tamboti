@@ -1,6 +1,8 @@
 xquery version "3.0";
 
-let $col := xs:anyURI("/resources/users")
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
+let $col := xs:anyURI($config:users-collection)
 
 return
 <result>

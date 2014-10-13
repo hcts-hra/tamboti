@@ -30,7 +30,7 @@ declare function retrieve-vra:format-detail-view($position as xs:string, $entry 
             <td class="collection-label">Record Location</td>
             <td>
                 <div class="collection">
-                    {replace(replace(xmldb:decode-uri($collection-short), '^/' || $config:mods-commons || '/', 'resources/'),'^resources/users/', 'resources/')}
+                    {replace(replace(xmldb:decode-uri($collection-short), '^' || $config:mods-commons || '/', '/resources/'),'^' || $config:users-collection || '/', '/resources/')}
                 </div>
                 <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
             </td>

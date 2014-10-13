@@ -1,6 +1,8 @@
 xquery version "3.0";
 
-let $vma-collection := "/resources/users/vma-editor/VMA-Collection"
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
+let $vma-collection := $config:users-collection || "/vma-editor/VMA-Collection"
 let $vma-collection-ace := sm:get-permissions(xs:anyURI($vma-collection))
 let $shared-to-users := $vma-collection-ace//sm:ace/@who
 let $mode := "rwx"
