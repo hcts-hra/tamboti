@@ -1,6 +1,8 @@
 xquery version "3.0";
 
-let $collection := xs:anyURI("/db/resources/users/editor/new")
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
+let $collection := xs:anyURI($config:users-collection || "/editor/new")
 let $set-perms := sm:chmod($collection, "rwx------")
 let $get-perms-1 := sm:get-permissions($collection)
 (:let $set-ace := sm:add-user-ace($collection, "vma-editor", true(), "rwx"):)

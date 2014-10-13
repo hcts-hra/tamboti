@@ -273,7 +273,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     then (' with the title ', <strong>{$publication-title}</strong>) 
                     else ()
                 }, to be saved in <strong> {
-                    let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db/resources/users/', ''), '/db' || $config:mods-commons || '/', '')
+                    let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db' || $config:users-collection || '/', ''), '/db' || $config:mods-commons || '/', '')
                     return
                         if ($target-collection-display eq security:get-user-credential-from-session()[1])
                         then 'resources/Home'

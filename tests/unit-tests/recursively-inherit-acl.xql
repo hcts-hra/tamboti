@@ -1,6 +1,7 @@
 xquery version "3.0";
 
 import module namespace security="http://exist-db.org/mods/security" at "/db/apps/tamboti/modules/search/security.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
 declare function local:recursively-inherit-permissions($collection-uri) {
     (
@@ -14,4 +15,4 @@ declare function local:recursively-inherit-permissions($collection-uri) {
     )
 };
 
-local:recursively-inherit-permissions("/resources/users/dulip.withanage@ad.uni-heidelberg.de/test")
+local:recursively-inherit-permissions($config:users-collection || "/dulip.withanage@ad.uni-heidelberg.de/test")

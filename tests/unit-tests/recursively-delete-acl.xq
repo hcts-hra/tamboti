@@ -1,5 +1,6 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
 declare function local:delete-acl($collection-path as xs:string) {
     (
@@ -13,7 +14,7 @@ declare function local:delete-acl($collection-path as xs:string) {
     )
 };
 
-let $vma-collection-path := xs:anyURI("/resources/users/vma-editor/VMA-Collection")
+let $vma-collection-path := xs:anyURI($config:users-collection || "/vma-editor/VMA-Collection")
 
 return
     for $vma-subcollection-name in xmldb:get-child-collections($vma-collection-path)
