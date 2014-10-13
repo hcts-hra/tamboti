@@ -35,6 +35,7 @@ declare variable $config:users-login-blacklist := ("admin", "guest", "SYSTEM");
 declare variable $config:resource-mode := "rw-------";
 declare variable $config:collection-mode := "rwx------";
 declare variable $config:temp-collection-mode := "rwxrws---";
+declare variable $config:temp-resource-mode := "rwx------";
 declare variable $config:data-collection-mode := "rwxr-xr-x";
 declare variable $config:index-collection-mode := "rwxr-xr-x";
 
