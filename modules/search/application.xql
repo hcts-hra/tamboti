@@ -482,7 +482,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                     Therefore a search is made in all other sub-collections of /db/resources.
                     Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
                     if ($query-as-xml/string() eq '/resources')
-                    then ('(collection("' || $config:mods-commons || '", "/resources/users", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                    then ('(collection("' || $config:mods-commons || '", "' || $config:users-collection || '", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                     else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
             default 
@@ -726,7 +726,7 @@ declare function biblio:evaluate-query($query-as-string as xs:string, $sort as x
     since it may contain stray files left there if the user is logged out.
     Therefore a search is made in all other sub-collections of /db/resources.
     Both this and the identical replacement in biblio:generate-query() are necessary.:)
-    let $query-as-string := replace($query-as-string, "'/resources'", "'" || $config:mods-commons || "','/resources/users', '/resources/groups'")
+    let $query-as-string := replace($query-as-string, "'/resources'", "'" || $config:mods-commons || "', '" || $config:users-collection || "', '/resources/groups'")
     (:NB: The following hack is required because some queries end up with "//" before "order by", raising the error that "by" is an unexpected expression.:)
     let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
     let $order-by-expression := biblio:construct-order-by-expression($sort)
@@ -802,7 +802,7 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, $config:mods-commons, 'resources'), '/resources/users', 'resources') 
+            then replace(replace($search-collection, $config:mods-commons, 'resources'), $config:users-collection, 'resources') 
             else 'resources' 
         let $search-collection := 
             if (starts-with($search-collection, '/db'))

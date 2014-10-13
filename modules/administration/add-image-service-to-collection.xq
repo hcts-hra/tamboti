@@ -1,4 +1,5 @@
 xquery version "3.0";
+
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 
 let $collection := "path/to/collection"
