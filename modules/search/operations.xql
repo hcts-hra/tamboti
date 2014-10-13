@@ -40,7 +40,7 @@ declare function op:create-collection($parent as xs:string, $name as xs:string) 
                 let $inherit-ACE := security:duplicate-acl($parent, $parent || "/" || $name)
         
                 (: just the owner has full access - to start with :)
-                let $null := sm:chmod(xs:anyURI($collection), "rwx------")
+                let $null := sm:chmod(xs:anyURI($collection), $config:collection-mode)
     
                 (: to be sure that the collection owner's group is the intended one :)
                 let $change-group := sm:chgrp(xs:anyURI($collection), $parent-collection-group)
