@@ -54,7 +54,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:Make the record accessible to the user alone in the temp collection.:)
     let $permissions := 
         (
-            sm:chmod(xs:anyURI($stored), "rwx------")
+            sm:chmod(xs:anyURI($stored), $config:temp-resource-mode)
         )
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
@@ -448,7 +448,7 @@ let $content := local:create-page-content($id, $tab-id, $type-request, $target-c
     let $doc-name := concat($id, '.xml')
     let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
     (:Make the record accessible to the user alone in the temp collection.:)
-    let $null := sm:chmod(xs:anyURI($stored), "rwx------")
+    let $null := sm:chmod(xs:anyURI($stored), $config:temp-resource-mode)
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, $config:mods-commons)) 

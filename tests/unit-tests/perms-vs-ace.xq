@@ -3,9 +3,8 @@ xquery version "3.0";
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
 let $collection := xs:anyURI($config:users-collection || "/editor/new")
-let $set-perms := sm:chmod($collection, "rwx------")
+let $set-perms := sm:chmod($collection, $config:collection-mode)
 let $get-perms-1 := sm:get-permissions($collection)
-(:let $set-ace := sm:add-user-ace($collection, "vma-editor", true(), "rwx"):)
 let $get-perms-2 := sm:get-permissions($collection)
 let $list-child-collections := system:as-user("vma-editor", "Edit4VMA!", xmldb:get-child-collections($collection))
 
