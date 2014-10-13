@@ -1,5 +1,7 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare function local:add-user-ace-to-collection($collection  as xs:anyURI, $username as xs:string, $allowed as xs:boolean, $mode as xs:string) {
     (
         for $resource-name in xmldb:get-child-resources($collection)
@@ -14,7 +16,7 @@ declare function local:add-user-ace-to-collection($collection  as xs:anyURI, $us
     )  
 };
 
-let $collection-path := xs:anyURI("/resources/users/vma-editor/VMA-Collection")
+let $collection-path := xs:anyURI($config:users-collection || "/vma-editor/VMA-Collection")
 
 return
     (

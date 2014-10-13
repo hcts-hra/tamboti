@@ -1,14 +1,15 @@
 xquery version "3.0";
 
+import module namespace functx="http://www.functx.com";
+import module namespace security="http://exist-db.org/mods/security" at "../search/security.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare namespace zapi="http://zotero.org/ns/api";
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare default element namespace "http://www.loc.gov/mods/v3";
 
-import module namespace functx="http://www.functx.com";
-import module namespace security="http://exist-db.org/mods/security" at "../search/security.xqm";
-
 (: Where to store the imported MODS files? :)
-let $target-collection := "/resources/users/editor/import-folder"
+let $target-collection := $config:users-collection || "/editor/import-folder"
 
 (: The collection to import (open example: https://api.zotero.org/users/475425/collections/9KH9TNSJ ):)
 let $collections-uri := xs:anyURI("https://api.zotero.org/users/475425/collections/9KH9TNSJ")

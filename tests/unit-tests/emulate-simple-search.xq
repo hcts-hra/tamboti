@@ -1,5 +1,7 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+
 declare function local:get-aces($collection-path as xs:anyURI) as element()* {
     (
         try {
@@ -15,9 +17,9 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
 
 let $start := util:system-time()
 
-let $aces-as-admin := system:as-user("admin", "Wars4Spass2$s", count(local:get-aces(xs:anyURI("/resources/users"))))
+let $aces-as-admin := system:as-user("admin", "Wars4Spass2$s", count(local:get-aces(xs:anyURI($config:users-collection))))
 
-let $aces-as-guest := system:as-user("editor", "***REMOVED***", count(local:get-aces(xs:anyURI("/resources/users"))))
+let $aces-as-guest := system:as-user("editor", "***REMOVED***", count(local:get-aces(xs:anyURI($config:users-collection))))
 
 let $end := util:system-time()
 

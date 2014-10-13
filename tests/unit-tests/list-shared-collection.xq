@@ -29,7 +29,7 @@ declare function local:get-shared-collection-roots($write-required as xs:boolean
     else()
 };
 
-let $collection-path := xs:anyURI("/resources/users/gd079@ad.uni-heidelberg.de/MyFirstWorkingFolder")
+let $collection-path := xs:anyURI($config:users-collection || "/gd079@ad.uni-heidelberg.de/MyFirstWorkingFolder")
 
 let $user := security:get-user-credential-from-session()[1]
 

@@ -40,7 +40,8 @@ declare variable $config:index-collection-mode := "rwxr-xr-x";
 
 declare variable $config:mods-root := "/resources";
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
-declare variable $config:mods-root-minus-temp := ($config:mods-commons, "/resources/users", "/resources/groups");
+declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
+declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection, "/resources/groups");
 declare variable $config:url-image-size := "256";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
@@ -49,7 +50,6 @@ declare variable $config:edit-app-root := concat($config:app-root, "/modules/edi
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
-declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
 declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
 
 declare variable $config:mods-temp-collection := "/resources/temp";
