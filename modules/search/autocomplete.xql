@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
@@ -17,7 +17,7 @@ declare function local:key($key, $options) {
     concat('"', $key, '"')
 };
 
-let $collection := config:process-request-parameter(request:get-parameter("collection", $local:COLLECTION))
+let $collection := xmldb:encode-uri(request:get-parameter("collection", $local:COLLECTION))
 let $term := request:get-parameter("term", ())
 let $field := request:get-parameter("field", "any Field (MODS, TEI, VRA, Wiki)")
 let $qnames :=
