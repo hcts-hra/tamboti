@@ -548,9 +548,9 @@ function showHideCollectionControls() {
         //collection is writeable
         if (isWriteable) {
             $('#collection-create-folder').show();
-            $('#collection-create-resource').show();
             if (!isUsersHome) {
                 $('#upload-file-to-resource').show();
+                $('#collection-create-resource').show();
             }
             else {
                 $('#upload-file-to-resource').hide();
