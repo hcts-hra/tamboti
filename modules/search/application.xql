@@ -282,7 +282,7 @@ declare variable $biblio:DEFAULT_QUERY :=
     Regenerate the HTML form to match the query, e.g. after adding more filter clauses.
     $incoming-query returns XML as follows:
     <query>
-        <collection>$config:mods-commons/Cluster%20Publications</collection>
+        <collection>{$config:mods-commons}/Cluster%20Publications</collection>
         <not>
             <and>
                 <or>
@@ -399,7 +399,7 @@ declare function biblio:form-from-query($node as node(), $params as element(para
     Generate an XPath query expression from the XML representation of the query, $query-as-xml.
     $query-as-xml has the form:
     <query>
-        <collection>$config:mods-commons/EAST</collection>
+        <collection>{$config:mods-commons}/EAST</collection>
         <and>
             <field m="1" name="Name">Kellner</field>
             <field m="2" name="Title">buddhist</field>
