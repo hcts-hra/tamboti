@@ -401,7 +401,7 @@ return
                             ()
                         ,
                         (:Set the same permissions on the moved file that the parent collection has.:)
-                        security:apply-parent-collection-permissions($record-path)
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],security:apply-parent-collection-permissions($record-path))
 =======
                         if (doc($record-path)) then
                             xmldb:remove($config:mods-temp-collection, $file-to-update) 
