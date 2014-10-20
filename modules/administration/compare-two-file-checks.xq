@@ -1,13 +1,14 @@
 xquery version "3.0";
 
 import module namespace functx = "http://www.functx.com";
+import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
 
 declare variable $username as xs:string := "admin";
 declare variable $password as xs:string := "test";
 
 let $date := substring-before(util:system-date() cast as xs:string, '+') 
 
-let $deletions := '/db/resources/temp/deletions.xml'
+let $deletions := $config:mods-root || '/temp/deletions.xml'
 let $file-checks := '/db/apps/tamboti/admin/file-checks/'
 let $login := xmldb:login($file-checks, $username, $password)
 

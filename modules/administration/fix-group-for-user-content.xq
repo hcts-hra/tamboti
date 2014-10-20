@@ -8,16 +8,19 @@ declare function local:set-group($path) {
     let $group-id := $config:biblio-users-group 
     return
         (
-        for $collection in xmldb:get-child-collections($path)
-        return
-            (
-                sm:chgrp(xs:anyURI($path || "/" || $collection), $group-id),
-                local:set-group($path || "/" ||$collection)
+            sm:chgrp(xs:anyURI($path), $group-id)
+            ,
+            for $collection in xmldb:get-child-collections($path)
+            return
+                (
+                    sm:chgrp(xs:anyURI($path || "/" || $collection), $group-id)
+                    ,
+                    local:set-group($path || "/" ||$collection)
+                )
+            ,
+            for $resource in xmldb:get-child-resources($path)
+            return sm:chgrp(xs:anyURI($path || "/" || $resource), $group-id)
             )
-        ,
-        for $resource in xmldb:get-child-resources($path)
-        return sm:chgrp(xs:anyURI($path || "/" || $resource), $group-id)
-        )
     )
 };
 
