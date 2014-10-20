@@ -34,22 +34,20 @@
 				<exclude>build/</exclude>
 				<exclude>target/</exclude>
 				<exclude>pom.xml</exclude>
-				<exclude>themes/tamboti/pages/page.html</exclude>
-				<exclude>modules/config.xqm</exclude>
 			</excludes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/maven-replacer-plugin</directory>
-			<outputDirectory>/themes/tamboti/pages</outputDirectory>
-			<includes>
-				<include>page.html</include>
-			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/maven-replacer-plugin</directory>
 			<outputDirectory>/modules</outputDirectory>
 			<includes>
 				<include>config.xqm</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/maven-replacer-plugin</directory>
+			<outputDirectory>/modules/config</outputDirectory>
+			<includes>
+				<include>services.xml</include>
 			</includes>
 		</fileSet>
 	</fileSets>
