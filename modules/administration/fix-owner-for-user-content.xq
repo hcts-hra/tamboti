@@ -11,6 +11,8 @@ declare function local:set-owner($path) {
         else "editor"    
     return
         (
+        sm:chown(xs:anyURI($path), $owner)
+        ,
         for $collection in xmldb:get-child-collections($path)
         let $collection-path := xs:anyURI($path || "/" || $collection)
         return
@@ -46,7 +48,7 @@ declare function local:set-owner($path) {
     {
         for $collection-path in $reports:collections
         return
-            for $collection-name in xmldb:get-child-collections($collection-path)
+            for $collection-name in xmldb:get-child-collections(xmldb:encode-uri($collection-path))
             return local:set-owner($collection-path || "/" || $collection-name) 
     }
 </result>

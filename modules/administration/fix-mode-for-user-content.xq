@@ -22,5 +22,5 @@ declare function local:set-mode($path) {
 
 for $collection-path in $reports:collections
 return
-    for $collection-name in xmldb:get-child-collections($collection-path)
+    for $collection-name in xmldb:get-child-collections(xs:anyURI($collection-path))
     return local:set-mode($collection-path || "/" || $collection-name)
