@@ -1,6 +1,6 @@
-<package xmlns="http://expath.org/ns/pkg" name="${package-name}-${user.name}" abbrev="${project.artifactId}-${user.name}" version="${project.version}"
-	spec="1.0">
-	<title>${package-title}, ${user.name}</title>
+<package xmlns="http://expath.org/ns/pkg" name="${package-name}-test" abbrev="${project.artifactId}-test"
+	version="${project.version}" spec="1.0">
+	<title>${package-title}, test</title>
 	<dependency package="http://exist-db.org/apps/shared" />
 	<dependency package="http://exist-db.org/apps/xsltforms" />
 	<dependency package="http://xqilla.sourceforge.net/pkg/xqjson" />
@@ -16,7 +16,7 @@
 	<license>GNU-LGPL</license>
 	<copyright>true</copyright>
 	<type>application</type>
-	<target>${project.artifactId}-${user.name}</target>
+	<target>${project.artifactId}</target>
 	<permissions user="editor" password="editor" group="biblio.users" mode="0444" />
 	<status>stable</status>
 	<prepare>pre-install.xql</prepare>
@@ -35,7 +35,6 @@
 				<exclude>target/</exclude>
 				<exclude>pom.xml</exclude>
 				<exclude>themes/tamboti/pages/page.html</exclude>
-				<exclude>modules/config.xqm</exclude>
 				<exclude>themes/default/pages/search-form.html</exclude>
 				<exclude>themes/tamboti/pages/search-form.html</exclude>
 			</excludes>
@@ -56,11 +55,18 @@
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/maven-replacer-plugin</directory>
+			<outputDirectory>/modules/configuration</outputDirectory>
+			<includes>
+				<include>services.xml</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/maven-replacer-plugin</directory>
 			<outputDirectory>/themes</outputDirectory>
 			<includes>
 				<include>default/pages/search-form.html</include>
 				<include>tamboti/pages/search-form.html</include>
 			</includes>
-		</fileSet>		
+		</fileSet>
 	</fileSets>
 </package>
