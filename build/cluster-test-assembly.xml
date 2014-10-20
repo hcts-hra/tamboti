@@ -1,6 +1,6 @@
-<package xmlns="http://expath.org/ns/pkg" name="${package-name}-test" abbrev="${project.artifactId}-test" version="${project.version}"
+<package xmlns="http://expath.org/ns/pkg" name="${package-name}" abbrev="${project.artifactId}" version="${project.version}"
 	spec="1.0">
-	<title>${package-title}, test</title>
+	<title>${package-title}</title>
 	<dependency package="http://exist-db.org/apps/shared" />
 	<dependency package="http://exist-db.org/apps/xsltforms" />
 	<dependency package="http://xqilla.sourceforge.net/pkg/xqjson" />
@@ -34,8 +34,22 @@
 				<exclude>build/</exclude>
 				<exclude>target/</exclude>
 				<exclude>pom.xml</exclude>
-				<exclude>themes/tamboti/pages/page.html</exclude>
+				<exclude>themes/tamboti/pages/page.html</exclude>		
 			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/maven-replacer-plugin</directory>
+			<outputDirectory>/modules</outputDirectory>
+			<includes>
+				<include>config.xqm</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/maven-replacer-plugin</directory>
+			<outputDirectory>/modules/configuration</outputDirectory>
+			<includes>
+				<include>services.xml</include>
+			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/maven-replacer-plugin</directory>
@@ -43,6 +57,6 @@
 			<includes>
 				<include>page.html</include>
 			</includes>
-		</fileSet>		
+		</fileSet>			
 	</fileSets>
 </package>
