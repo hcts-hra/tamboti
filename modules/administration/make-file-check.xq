@@ -2,6 +2,7 @@ xquery version "3.0";
 
 import module namespace security="http://exist-db.org/mods/security" at "../modules/search/security.xqm";
 import module namespace functx = "http://www.functx.com";
+import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
 
@@ -15,7 +16,7 @@ let $login := xmldb:login($out-collection, $username, $password)
 let $records  :=
 <records>
     {
-for $record in collection('/db/resources/')//mods:mods
+for $record in collection($config:mods-root)//mods:mods
 
 let $base-uri := base-uri($record)
 let $location := functx:substring-before-last-match($base-uri, '/')
