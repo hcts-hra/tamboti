@@ -276,8 +276,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db' || $config:users-collection || '/', ''), '/db' || $config:mods-commons || '/', '')
                     return
                         if ($target-collection-display eq security:get-user-credential-from-session()[1])
-                        then 'resources/Home'
-                        else concat('resources/', $target-collection-display)
+                        then $config:data-collection-name || '/Home'
+                        else concat($config:data-collection-name || '/', $target-collection-display)
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
             <!--Here values are passed to the URL.-->
