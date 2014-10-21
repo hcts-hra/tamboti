@@ -26,7 +26,6 @@ declare variable $modules-collection-name := "modules";
 declare variable $editor-collection-name := "edit";
 declare variable $code-tables-collection-name := "code-tables";
 
-declare variable $resources-collection-name := "resources";
 declare variable $users-collection-name := "users";
 declare variable $temp-collection-name := "temp";
 declare variable $commons-collection-name := "commons";
@@ -38,7 +37,7 @@ declare variable $modules-collection := fn:concat($app-collection, "/", $modules
 declare variable $editor-collection := fn:concat($modules-collection, "/", $editor-collection-name);
 declare variable $editor-code-tables-collection := fn:concat($editor-collection, "/", $code-tables-collection-name);
 
-declare variable $resources-collection := fn:concat($db-root, "/", $resources-collection-name);
+declare variable $resources-collection := fn:concat($db-root, "/", $config:data-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
 declare variable $users-collection := fn:concat($resources-collection, "/", $users-collection-name);
 declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);

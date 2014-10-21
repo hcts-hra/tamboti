@@ -13,7 +13,7 @@ import module namespace json="http://www.json.org";
 declare variable $col := $config:mods-root;
 declare variable $user := $config:dba-credentials[1];
 declare variable $userpass := $config:dba-credentials[2];
-declare variable $rootdatacollection:='/db/resources/';
+declare variable $rootdatacollection:='/db' || $config:mods-root || '/';
 
 
 (:
