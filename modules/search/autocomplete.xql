@@ -11,7 +11,7 @@ import module namespace config="http://exist-db.org/mods/config" at "../config.x
 
 declare option exist:serialize "media-type=text/json";
 
-declare variable $local:COLLECTION := '/db/resources';
+declare variable $local:COLLECTION := '/db' || $config:mods-root || '';
 
 declare function local:key($key, $options) {
     concat('"', $key, '"')
