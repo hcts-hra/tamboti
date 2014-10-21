@@ -55,14 +55,14 @@ declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
 declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
 
-declare variable $config:mods-temp-collection := "/resources/temp";
-declare variable $config:mads-collection := "/db/resources/mads";
+declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
+declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
 
 declare variable $config:themes := concat($config:app-root, "/themes");
 declare variable $config:theme-config := concat($config:themes, "/configuration.xml");
 
 declare variable $config:resources := concat($config:app-root, "/resources");
-declare variable $config:images := concat($config:app-root, "/resources/images");
+declare variable $config:images := concat($config:app-root, $config:mods-root ||  "/images");
 
 declare variable $config:images-subcollection := ("VRA_images");
 
