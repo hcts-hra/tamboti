@@ -33,7 +33,7 @@ declare function retrieve-tei:format-detail-view($position as xs:string, $entry 
     let $result :=
     <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
     {
-    let $collection := replace(replace($collection-short, '^' || $config:mods-commons || '/', '/resources/'),'^' || $config:users-collection || '/', '/resources/')
+    let $collection := replace(replace($collection-short, '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')
     (:let $log := util:log("DEBUG", ("##$collection): ", $collection)):)
     return
     <tr>
