@@ -40,7 +40,7 @@ declare option exist:serialize "method=xhtml media-type=application/xhtml+xml om
 (:~
     Mapping field names to XPath expressions.
     NB: Changes in field names should be reflected in autocomplete.xql, biblio:construct-order-by-expression() and biblio:get-year().
-    Fields used should be reflected in the collection.xconf in /db/system/config/db/resources/.
+    Fields used should be reflected in the collection.xconf in /db/system/config/db{$config:mods-root}/.
     'q' is expanded in biblio:generate-query().
     An XLink may be passed through retrieve-mods:format-detail-view() without a hash or or it may be passed with a hash through the search interface; 
     therefore any leading hash is first removed and then added, to prevent double hashes. 
@@ -452,10 +452,10 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
             <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
             The search term, to be substituted for '$q', is held in $query-as-xml. :)
             
-            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
+            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of $config:mods-root. :)
             let $collection-path := 
                 if ($expr/@name = ('the Record ID Field (MODS, VRA)', 'ID', 'the XLink Field (MODS)')) 
-                then '/resources'
+                then $config:mods-root
                 else $query-as-xml/ancestor::query/collection/string()
             let $collection :=
                 if ($collection-path eq $config:groups-collection)
@@ -477,12 +477,12 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
             return
                 if (not($query-as-xml/..//field)(: and not($config:require-query):)) 
                 then 
-                    (:If a search is made in /db/resources, we want /db/resources/temp to be excluded from the search, 
+                    (:If a search is made in $config:mods-root, we want {$config:mods-root}/temp to be excluded from the search, 
                     since it may contain stray files left there if the user is logged out.
-                    Therefore a search is made in all other sub-collections of /db/resources.
+                    Therefore a search is made in all other sub-collections of $config:mods-root.
                     Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
-                    if ($query-as-xml/string() eq '/resources')
-                    then ('(collection("' || $config:mods-commons || '", "' || $config:users-collection || '", "/resources/groups"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                    if ($query-as-xml/string() eq ig:mods-root)
+                    then ('(collection("' || $config:mods-commons || '", "' || $config:users-collection || '"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                     else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
             default 
@@ -722,11 +722,11 @@ declare function biblio:construct-order-by-expression($sort as xs:string?) as xs
     Evaluate the actual XPath query and order the results
 :)
 declare function biblio:evaluate-query($query-as-string as xs:string, $sort as xs:string?) {
-    (:If a search is made in /db/resources, we want /db/resources/temp to be excluded from the search, 
+    (:If a search is made in {config:mods-root}, we want {config:mods-root}/temp to be excluded from the search, 
     since it may contain stray files left there if the user is logged out.
-    Therefore a search is made in all other sub-collections of /db/resources.
+    Therefore a search is made in all other sub-collections of {config:mods-root}.
     Both this and the identical replacement in biblio:generate-query() are necessary.:)
-    let $query-as-string := replace($query-as-string, "'/resources'", "'" || $config:mods-commons || "', '" || $config:users-collection || "', '/resources/groups'")
+    let $query-as-string := replace($query-as-string, "'" || $config:mods-root || "'", "'" || $config:mods-commons || "', '" || $config:users-collection || "'")
     (:NB: The following hack is required because some queries end up with "//" before "order by", raising the error that "by" is an unexpected expression.:)
     let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
     let $order-by-expression := biblio:construct-order-by-expression($sort)
@@ -1179,7 +1179,7 @@ declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
     Perform a search from scratch
 :)
 declare function biblio:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
-    let $collection := if ($collection) then $collection else '/db/resources/'
+    let $collection := if ($collection) then $collection else '/db' || $config:mods-root || '/'
     return
         <query>
             { $collection }

@@ -230,7 +230,7 @@ declare function op:remove-resource($resource-id as xs:string) as element(status
                 else()
                 (:
                 ,
-                update insert $record into doc('/db/resources/temp/deletions.xml')/records
+                update insert $record into doc('/db{$config:mods-commons}/temp/deletions.xml')/records
                 :)
                 ,
                 <status id="removed">{$resource-id}</status>

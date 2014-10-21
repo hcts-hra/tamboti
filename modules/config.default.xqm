@@ -39,10 +39,12 @@ declare variable $config:temp-resource-mode := "rwx------";
 declare variable $config:data-collection-mode := "rwxr-xr-x";
 declare variable $config:index-collection-mode := "rwxr-xr-x";
 
-declare variable $config:mods-root := "/resources";
+declare variable $config:data-collection-name := "resources";
+declare variable $config:mods-root := "/" || $config:data-collection-name;
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
 declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
-declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection, "/resources/groups");
+declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection);
+
 declare variable $config:url-image-size := "256";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
