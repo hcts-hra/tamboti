@@ -1,7 +1,7 @@
-xquery version "1.0";
+xquery version "3.0";
 
-import module namespace request="http://exist-db.org/xquery/request";
-import module namespace response="http://exist-db.org/xquery/response";
+import module namespace request = "http://exist-db.org/xquery/request";
+import module namespace response = "http://exist-db.org/xquery/response";
 
 if(request:get-parameter("action",()))then
     if(request:get-parameter("action", ()) eq "seen-notices")then

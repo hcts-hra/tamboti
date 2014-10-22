@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 module namespace mods = "http://www.loc.gov/mods/v3";
 
