@@ -481,7 +481,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                     since it may contain stray files left there if the user is logged out.
                     Therefore a search is made in all other sub-collections of $config:mods-root.
                     Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
-                    if ($query-as-xml/string() eq ig:mods-root)
+                    if ($query-as-xml/string() eq config:mods-root)
                     then ('(collection("' || $config:mods-commons || '", "' || $config:users-collection || '"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                     else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
