@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 declare namespace mods = "http://www.loc.gov/mods/v3";
