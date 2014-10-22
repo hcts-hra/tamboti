@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 import module namespace content="http://exist-db.org/xquery/contentextraction"
     at "java:org.exist.contentextraction.xquery.ContentExtractionModule";
