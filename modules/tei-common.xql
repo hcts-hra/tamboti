@@ -1,4 +1,4 @@
-xquery version "1.0";
+xquery version "3.0";
 
 (: Adapted from Joe's Punch workshop :)
 (:~ Module: tei-to-html.xqm
