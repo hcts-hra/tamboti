@@ -16,7 +16,7 @@
 	<license>GNU-LGPL</license>
 	<copyright>true</copyright>
 	<type>application</type>
-	<target>${project.artifactId}</target>
+	<target>${project.artifactId}-${user.name}</target>
 	<permissions user="editor" password="editor" group="biblio.users" mode="0444" />
 	<status>stable</status>
 	<prepare>pre-install.xql</prepare>
@@ -35,8 +35,6 @@
 				<exclude>target/</exclude>
 				<exclude>pom.xml</exclude>
 				<exclude>themes/tamboti/pages/page.html</exclude>
-				<exclude>themes/default/pages/search-form.html</exclude>
-				<exclude>themes/tamboti/pages/search-form.html</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
@@ -58,14 +56,6 @@
 			<outputDirectory>/modules/configuration</outputDirectory>
 			<includes>
 				<include>services.xml</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/maven-replacer-plugin</directory>
-			<outputDirectory>/themes</outputDirectory>
-			<includes>
-				<include>default/pages/search-form.html</include>
-				<include>tamboti/pages/search-form.html</include>
 			</includes>
 		</fileSet>
 	</fileSets>
