@@ -104,11 +104,11 @@ util:log($log-level, "Config: Done."),
 
 (: Create "commons" collections :)
 util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
-    local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:data-collection-mode),
+    local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:collection-mode),
 
 (: Create users and groups collections :)
 util:log($log-level, fn:concat("Config: Creating users '", $users-collection, "' collections")),
-    local:mkcol($db-root, local:strip-prefix($users-collection, fn:concat($db-root, "/")), $config:data-collection-mode)
+    local:mkcol($db-root, local:strip-prefix($users-collection, fn:concat($db-root, "/")), $config:collection-mode)
     ,
 util:log($log-level, "Config: Done."),
 
