@@ -171,40 +171,6 @@
 									</replacements>
 								</configuration>
 							</execution>
-							<execution>
-								<id>filter-default-search-form.html</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/themes/default/pages/search-form.html</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/default/pages/search-form.html</outputFile>
-									<replacements>
-										<replacement>
-											<token>/db/apps/tamboti/</token>
-											<value>/db/apps/${project.artifactId}-${user.name}/</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-							<execution>
-								<id>filter-tamboti-search-form.html</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/themes/tamboti/pages/search-form.html</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/tamboti/pages/search-form.html</outputFile>
-									<replacements>
-										<replacement>
-											<token>/db/apps/tamboti/</token>
-											<value>/db/apps/${project.artifactId}-${user.name}/</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
 						</executions>
 					</plugin>
 					<plugin>

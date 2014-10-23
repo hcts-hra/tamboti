@@ -99,19 +99,7 @@
                     <button class="button" id="export" name="export" type="submit" value="export">Export</button> your list items. </p>
             </form>
         </jquery:tab>
-        <jquery:tab id="search-help" label="Search Help">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/search-help.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
-        </jquery:tab>
-        <jquery:tab id="about-tamboti" label="About Tamboti">
-            <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="/db/apps/tamboti/includes/about-tamboti.xml">
-                <xi:fallback>
-                    <p>The included document was not found!</p>
-                </xi:fallback>
-            </xi:include>
-        </jquery:tab>
+        <jquery:tab id="search-help" label="Search Help" href="../../includes/search-help.xq" />
+        <jquery:tab id="about-tamboti" label="About Tamboti" href="../../includes/about-tamboti.xq" />
     </jquery:tabset>
 </div>
