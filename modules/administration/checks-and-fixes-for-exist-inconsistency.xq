@@ -203,6 +203,22 @@ declare function local:recursively-get-all-aces-for-group($group-id, $collection
 )
 };
 
+declare function local:check-for-permission-exception($collection-uri as xs:anyURI) {
+    (
+        try {
+            let $permissions := sm:get-permissions($collection-uri)
+            for $child in xmldb:get-child-collections($collection-uri)
+                return
+                    local:check-for-permission-exception(xs:anyURI($collection-uri || "/" || $child))
+        } catch * {
+            <exception>
+                {
+                    $collection-uri
+                }
+            </exception>
+        }
+    )
+};
 
 <div>
     <div>Checking for duplicate users and groups (names and IDs)</div>
