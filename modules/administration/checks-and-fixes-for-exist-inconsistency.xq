@@ -203,13 +203,13 @@ declare function local:recursively-get-all-aces-for-group($group-id, $collection
 )
 };
 
-declare function local:check-for-permission-exception($collection-uri as xs:anyURI) {
+declare function local:check-for-permission-exception($collection-uri as xs:anyURI, $check-resources as xs:boolean) {
     (
         try {
             let $permissions := sm:get-permissions($collection-uri)
             for $child in xmldb:get-child-collections($collection-uri)
                 return
-                    local:check-for-permission-exception(xs:anyURI($collection-uri || "/" || $child))
+                    local:check-for-permission-exception(xs:anyURI($collection-uri || "/" || $child), $check-resources)
         } catch * {
             <exception>
                 {
@@ -217,27 +217,41 @@ declare function local:check-for-permission-exception($collection-uri as xs:anyU
                 }
             </exception>
         }
+        ,
+        if ($check-resources) then
+            for $res in xmldb:get-child-resources($collection-uri)
+            return
+                try{
+                    let $permissions := sm:get-permissions(xs:anyURI($collection-uri || "/" || $res))
+                    return
+                        ()
+                } catch * {
+                    <res-exception>
+                    {
+                        $collection-uri || "/" || $res
+                    }
+                    </res-exception>
+                }
+        else
+            ()
     )
 };
 
+declare function local:search-duplicate-users-and-groups() {
+    (
+        local:search-duplicate-group-ids(),
+        local:search-duplicate-group-names(),
+        local:search-duplicate-user-ids(),
+        local:search-duplicate-user-names()
+    )
+};
+
+
 <div>
-    <div>Checking for duplicate users and groups (names and IDs)</div>
+    <div>Checking inconsistencies</div>
     <div>
     {
-        local:search-duplicate-user-names(),
-        local:search-duplicate-group-names()
-        ,
-        <div>
-            {
-            local:search-duplicate-group-ids()
-            }
-        </div>
-        ,
-        <div>
-            {
-            local:search-duplicate-user-ids()
-            }
-        </div>
+        local:check-for-permission-exception(xs:anyURI("/db/"), true())
     }
     </div>
 </div>
