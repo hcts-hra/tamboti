@@ -1170,7 +1170,7 @@ declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
     Perform a search from scratch
 :)
 declare function biblio:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
-    let $collection := if ($collection) then $collection else '/db/resources/'
+    let $collection := if ($collection) then $collection else '/db' || $config:mods-root || '/'
     return
         <query>
             { $collection }
