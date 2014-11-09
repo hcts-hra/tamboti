@@ -129,7 +129,6 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
 (:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
                         else ()
                     }
-                    ,
                     {
                         $readable-children
                     }
@@ -215,9 +214,12 @@ else
     (: load a defined branch (lazy) :)
     let $child-branch := col:lazy-read(xmldb:encode-uri($key))
     return 
-        <something>
+        if($child-branch) then
+            <json:value>
             {
                 $child-branch
             }
-        </something>
-    
+            </json:value>
+        else
+            <json:value json:array="true" />
+

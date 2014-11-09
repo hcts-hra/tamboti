@@ -1,10 +1,10 @@
 xquery version "3.0";
 
-import module namespace image-service="http://hra.uni-heidelberg.de/ns/tamboti/image-service" at "image-service.xqm";
 import module namespace functx="http://www.functx.com";
 import module namespace content="http://exist-db.org/xquery/contentextraction" at "java:org.exist.contentextraction.xquery.ContentExtractionModule";
 import module namespace im4xquery="http://expath.org/ns/im4xquery" at "java:org.expath.exist.im4xquery.Im4XQueryModule"; 
-import module namespace config="http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
 
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
@@ -13,10 +13,12 @@ let $imageUUID := request:get-parameter("uuid", "")
 let $width := request:get-parameter("width", "")
 let $mime-to-convert := ("image/tiff","image/jpg")
 
-let $image-VRA := image-service:get-image-vra($imageUUID)
+let $image-VRA := security:get-resource($imageUUID)
 return 
     if (empty($image-VRA)) then
-        $imageUUID || " not found"
+        let $header := response:set-header("content-type", "text/html")
+        return
+            $imageUUID || " not found"
     else
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
             (

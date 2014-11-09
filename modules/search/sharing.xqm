@@ -271,32 +271,32 @@ declare function sharing:get-shared-collection-roots($write-required as xs:boole
 };
 
 declare function sharing:recursively-get-shared-subcollections($collection as xs:anyURI, $write-required as xs:boolean) as xs:string* {
-    let $user-id := security:get-user-credential-from-session()[1]
-    let $ace-mode := data(sm:get-permissions($collection)//sm:ace[@who = $user-id]/@mode)
-
-    return
-            if (fn:not(($user-id eq 'guest'))) then
-                (
-                system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-                        if ($write-required) then
-                            if (contains($ace-mode, 'w')) then 
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+        let $user-id := security:get-user-credential-from-session()[1]
+        let $ace-mode := data(sm:get-permissions($collection)//sm:ace[@who = $user-id]/@mode)
+    
+        return
+                if (fn:not(($user-id eq 'guest'))) then
+                    (
+                            if ($write-required) then
+                                if (contains($ace-mode, 'w')) then 
+                                        $collection
+                                else 
+                                    ()                            
+                            else
+                                if (contains($ace-mode, 'r')) then 
                                     $collection
-                            else 
-                                ()                            
-                        else
-                            if (contains($ace-mode, 'r')) then 
-                                $collection
-                            else 
-                                ()
+                                else 
+                                    ()
+                        ,
+                        (: recursively call function for all subcollections:)
+                        for $child-collection in xmldb:get-child-collections($collection)
+                        order by $child-collection ascending
+                            return sharing:recursively-get-shared-subcollections(xs:anyURI($collection || "/" || $child-collection), $write-required)   
                     )
-                    ,
-                    (: recursively call function for all subcollections:)
-                    for $child-collection in xmldb:get-child-collections($collection)
-                    order by $child-collection ascending
-                        return sharing:recursively-get-shared-subcollections(xs:anyURI($collection || "/" || $child-collection), $write-required)   
-                )
-            else
-                ()
+                else
+                    ()
+    )
 };
 
 declare function sharing:get-shared-with($collection-path as xs:string) as xs:string* {

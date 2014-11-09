@@ -2,6 +2,9 @@ xquery version "3.0";
 
 module namespace security = "http://exist-db.org/mods/security";
 
+declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 
 declare variable $security:GUEST_CREDENTIALS := ("guest", "guest");
@@ -12,7 +15,7 @@ declare variable $security:user-metadata-file := "security.metadata.xml";
 (:~
 : Authenticates a user and creates their tamboti home collection if it does not exist
 :
-: @param username The username of the user
+: @param user The username of the user
 : @param password The password of the user
 :)
 declare function security:login($username as xs:string, $password as xs:string?) as xs:boolean {
@@ -953,9 +956,14 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
 
 };
 
-declare function security:get-searchable-child-collections($collection-uri as xs:anyURI) {
-    (: ToDo: move declaration of $images-collection to config.xqm :)
-
+(:~
+: get searchable children. Recursively goes into collection structure to get collections that are searchable by user but maybe not directly accessible because located in a non-searchable collection
+:
+: @param $collection-uri the base collection to search
+: @param $spare-user-home should users home collection (and its children) be left out
+: @return sequence with full paths to searchable collections
+:)
+declare function security:get-searchable-child-collections($collection-uri as xs:anyURI, $spare-user-home as xs:boolean) {
     (: elevate rights for going into the collection structure :)
     let $subcollections := 
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
@@ -963,20 +971,31 @@ declare function security:get-searchable-child-collections($collection-uri as xs
             )
         )
     for $subcol in $subcollections[not($config:images-subcollection = .)]
-    order by $subcol 
+    let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+    order by $subcol
+    
     return
-        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
-        let $readable := security:can-read-collection($fullpath)
-        let $executeable := security:can-execute-collection($fullpath) 
-        let $readable-children := security:get-searchable-child-collections($fullpath)
-        return
+        if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1]) then
+            ()
+        else
             (
-                if (($readable and $executeable) or not(empty($readable-children))) then
-                    xs:anyURI($fullpath)
-                else
-                    ()
+                system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+                    if (xmldb:collection-available($fullpath)) then
+                        let $readable := security:can-read-collection($fullpath)
+                        let $executeable := security:can-execute-collection($fullpath) 
+                        let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
+                        return
+                            (
+                                if (($readable and $executeable) or not(empty($readable-children))) then
+                                    xs:anyURI($fullpath)
+                                else
+                                    ()
+                            )
+                    else
+                        ()
+                )
             ,
-                security:get-searchable-child-collections($fullpath)
+                security:get-searchable-child-collections($fullpath, $spare-user-home)
             )
 };
 
@@ -987,3 +1006,33 @@ declare function security:get-acl($collection-uri as xs:anyURI) {
         )
     return $aces
 };
+
+(:~
+: Use elevated rights to search resource by id.
+:
+: @param $id the resource id
+: @return the resource as node
+:)
+declare function security:get-resource($id as xs:string) as node()? {
+    (: Do search as dba :)
+    let $resource :=
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+            collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1])
+        )
+    return
+        if ($resource) then
+            let $resource-path := util:collection-name($resource)
+            let $resource-name := util:document-name($resource)
+            
+            (: only return data if user has access to resource   :)
+            return
+                system:as-user(security:get-user-credential-from-session()[1],security:get-user-credential-from-session()[2],
+                    if(sm:has-access(xs:anyURI($resource-path || "/" || $resource-name), "r--")) then
+                        $resource
+                    else
+                        ()
+                )
+    else
+        ()
+};
+

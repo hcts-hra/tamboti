@@ -18,10 +18,10 @@ $(function() {
             dataType: 'text',
             data: xml,
             error: function() {
-                alert("Could not send record ids to ziziphus.");
+                showMessage("Could not send record ids to ziziphus.");
             },
             success: function(data) {
-                if (data != null) {
+                if (data !== null) {
                     var win = window.open('about:blank');
                     with (win.document)
                     {
@@ -45,7 +45,7 @@ $(function() {
         var renderCollectionPath = $("#simple-search-form input[name='render-collection-path']").data("collection-path");
         $("#simple-search-form input[name='render-collection-path']").val(renderCollectionPath);
         $("#simple-search-form input[name='collection']").val(renderCollectionPath);
-        updateCollectionPathOutputs($("#simple-search-form input[name = 'render-collection-path']").val())
+        updateCollectionPathOutputs($("#simple-search-form input[name = 'render-collection-path']").val());
     }
 
     initCollectionTree();
@@ -153,6 +153,13 @@ $(function() {
     });
 
     $("#splash").fadeOut(1000);
+
+    // add event listener for sharing dialog. If closed: update selected node
+    $("#sharing-collection-dialog").on("dialogclose", function( event, ui) {
+        // ToDo: check for Sharing and add/remove class instead of refresh complete tree
+        refreshParentTreeNode();
+    });
+
 });
 
 /* collection action buttons */
@@ -277,7 +284,7 @@ $(document).ready(function() {
             entriesString += entries[i].textContent + " ";
         }
         if (entriesString.indexOf(" " + entryName + " ") != -1) {
-            alert("Duplicate entry!");
+            showMessage("Duplicate entry!");
             return true;
         }
 
@@ -309,9 +316,9 @@ function bindAdditionalDialogTriggers() {
     });
 
     $("#collection-rename-folder").click(function() {
-        var node = $("#collection-tree-tree").dynatree("getActiveNode");
+        var node = $("#collection-tree-tree").fancytree("getActiveNode");
         if (node !== null) {
-            $("#rename-new-name").val(node.data.title);
+            $("#rename-new-name").val(node.title);
         }
     });
 }
@@ -415,7 +422,6 @@ function initCollectionTree() {
             this.reactivate();
         },
         click: function(event, data) {
-            console.debug(data.node);
             var node = data.node;
             var title = node.title;
             var key = node.key;
@@ -423,7 +429,6 @@ function initCollectionTree() {
             showHideCollectionControls();
         },
         dblclick: function(event, data) {
-            console.debug(data.node);
             var node = data.node;
             var title = node.title;
             var key = node.key;
@@ -431,10 +436,17 @@ function initCollectionTree() {
             showHideCollectionControls();
             tamboti.apis.simpleSearch();
             return false;
+        },
+        collapse: function(event, data){
+            data.node.resetLazy();
         }
     });
 
     toggleCollectionTree(true);
+    var fancyTreeInstance = fancyTree.fancytree("getTree");
+
+    
+    // register click handles
     $('#toggle-collection-tree').click(function() {
         if (treeDiv.css('display') == 'none') {
             toggleCollectionTree(true);
@@ -443,22 +455,22 @@ function initCollectionTree() {
         }
     });
     $('#collection-expand-all').click(function() {
-        $("#collection-tree-tree").fancytree("getRoot").visit(function(dtnode) {
-            dtnode.expand(true);
+        // var activeNode = fancyTreeInstance.getActiveNode();
+        fancyTreeInstance.getRootNode().visit(function(node) {
+            node.setExpanded(true);
         });
         return false;
     });
     $('#collection-collapse-all').click(function() {
-        $("#collection-tree-tree").fancytree("getRoot").visit(function(dtnode) {
-            dtnode.expand(false);
+        fancyTreeInstance.getRootNode().visit(function(node) {
+            node.setExpanded(false);
         });
         return false;
     });
     $('#collection-reload').click(function() {
         //reload the entire tree
-        var tree = $("#collection-tree-tree").fancytree("getTree");
-        if (tree) {
-            tree.reload();
+        if (fancyTreeInstance) {
+            fancyTreeInstance.reload();
         }
         return false;
     });
@@ -516,41 +528,40 @@ function showHideCollectionControls() {
          data looks like this -
          
          <relationship user="" collection="">
- 	         <home/>
-	         <owner/>
-	         <read/>
-	         <write/>
-	         <execute/>
-	         <read-parent/>
-	         <write-parent/>
-	         <execute-parent/>
+            <home/>
+            <owner/>
+            <read/>
+            <write/>
+            <execute/>
+            <read-parent/>
+            <write-parent/>
+            <execute-parent/>
          </relationship>
          */
 
         var write = $(data).find('write');
-        var isWriteable = (write != null && write.text() == 'true');
+        var isWriteable = (write !== null && write.text() == 'true');
 
         var execute = $(data).find('execute');
-        var isExecutable = (execute != null && execute.text() == 'true');
+        var isExecutable = (execute !== null && execute.text() == 'true');
 
         var home = $(data).find('home');
-        var isUsersHome = (home != null && home.text() == 'true');
+        var isUsersHome = (home !== null && home.text() == 'true');
 
         var owner = $(data).find('owner');
-        var isOwner = (owner != null && owner.text() == 'true');
+        var isOwner = (owner !== null && owner.text() == 'true');
 
         var parentWrite = $(data).find('write-parent');
-        var isParentWriteable = (parentWrite != null && parentWrite.text() == 'true');
+        var isParentWriteable = (parentWrite !== null && parentWrite.text() == 'true');
 
         var parentExecute = $(data).find('execute-parent');
-        var isParentExecutable = (parentExecute != null && parentExecute.text() == 'true');
-
+        var isParentExecutable = (parentExecute !== null && parentExecute.text() == 'true');
         //collection is writeable
         if (isWriteable) {
             $('#collection-create-folder').show();
+            $('#collection-create-resource').show();
             if (!isUsersHome) {
                 $('#upload-file-to-resource').show();
-                $('#collection-create-resource').show();
             }
             else {
                 $('#upload-file-to-resource').hide();
@@ -617,8 +628,8 @@ function refreshResourceMoveList() {
 
     //get the destination collection options
     var params = {
-    			action: 'get-move-resource-list',
-    			collection: collection
+        action: 'get-move-resource-list',
+        collection: collection
     };
     $.get("operations.xql", params, function(data) {
 
@@ -650,11 +661,11 @@ function moveResource(dialog) {
     var resource_type = $('#record-format').html();
     var source_collection = "/" + $('#file-location-folder').html();
     var params = {
-    		action: 'move-resource',
-    		path: path,
-    		resource: resource,
-    		source_collection: source_collection,
-    		resource_type:resource_type
+            action: 'move-resource',
+            path: path,
+            resource: resource,
+            source_collection: source_collection,
+            resource_type:resource_type
     };
     $.get("operations.xql", params, function(data) {
         dialog.dialog("close");
@@ -686,10 +697,13 @@ function createCollection(dialog) {
                 function(data, message) {
                     //reload the tree node
                     refreshCurrentTreeNode();
+                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
+                    node.setExpanded();
                 },
         error: function(response, message) {
+            // alert("creating collection failed!")
             //ToDo: Popup when creating Collection failed
-            // $('#message').html('Creating collection failed: ' + response.responseText);
+            showMessage('Creating collection failed: ' + response.responseText);
         }
     });
 
@@ -700,9 +714,8 @@ function createCollection(dialog) {
 //refreshes the tree node
 function refreshTreeNode(node) {
     if (node) {
-        node.reloadChildren(function(node, isOk) {
-            // alert("reloaded node" + node);
-        });
+        node.resetLazy();
+        node.setExpanded(true);
     }
 }
 
@@ -710,28 +723,27 @@ function refreshTreeNode(node) {
 //refreshes the tree node
 function refreshTreeNodeAndFocusOnChild(node, focusOnKey) {
     if (node) {
-        node.reloadChildren(function(node, isOk) {
-            $(node.childList).each(function(index, child) {
-                if (child.data.key == focusOnKey) {
-                    child.activate();
-                }
-            });
+        refreshTreeNode(node);
+        $(node.children).each(function() {
+            if (this.key == focusOnKey) {
+                this.activate();
+            }
         });
     }
 }
 
 //refreshes the currently selected tree node
 function refreshCurrentTreeNode() {
-    var node = $("#collection-tree-tree").dynatree("getActiveNode");
+    var node = $("#collection-tree-tree").fancytree("getActiveNode");
     refreshTreeNode(node);
 }
 
 //refreshes the parent of the currently selected tree node
 function refreshParentTreeNode() {
     //reload the parent tree node
-    var parentNode = $("#collection-tree-tree").dynatree("getActiveNode").getParent();
+    var parentNode = $("#collection-tree-tree").fancytree("getActiveNode").getParent();
     refreshTreeNode(parentNode);
-    parentNode.expand(true); //expand the node after reloading the children
+    parentNode.setExpanded(true); //expand the node after reloading the children
 }
 
 function refreshParentTreeNodeAndFocusOnChild(focusOnKey) {
@@ -739,11 +751,11 @@ function refreshParentTreeNodeAndFocusOnChild(focusOnKey) {
 
     //find parent of the key to focus on
     var parentFocusKey = focusOnKey.replace(/(.*)\/.*/, "$1");
-    var tree = $("#collection-tree-tree").dynatree("getTree");
+    var tree = $("#collection-tree-tree").fancytree("getTree");
     var parentNode = tree.getNodeByKey(parentFocusKey);
 
     refreshTreeNodeAndFocusOnChild(parentNode, focusOnKey);
-    parentNode.expand(true); //expand the node after reloading the children
+    parentNode.setExpanded(true); //expand the node after reloading the children
 }
 
 
@@ -769,18 +781,19 @@ function renameCollection(dialog) {
         },
         type: 'POST',
         success:
-                function(data, message) {
-                    //current key
-                    var currentKey = $("#collection-tree-tree").dynatree("getActiveNode").data.key;
-                    //new key
-                    var newKey = currentKey.replace(/(.*)\/.*/, "$1/" + name);
-            
-                    //reload the parent tree node
-                    refreshParentTreeNodeAndFocusOnChild(newKey);
-                },
+            function(data, message) {
+                //current node
+                var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
+                var currentNodeKey = currentNode.key;
+                currentNode.setTitle(name);
+                currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
+                refreshCurrentTreeNode();
+                //If it has children, trigger reload to regenerate keys with new name
+                //ToDo: add recursive change child-keys to avoid reloading
+                
+            },
         error: function(response, message) {
-            //ToDo: Popup when renaming collection failed
-            // $('#message').html('Creating collection failed: ' + response.responseText);
+            showMessage('Creating collection failed: ' + response.responseText);
         }
     });
 
@@ -789,19 +802,25 @@ function renameCollection(dialog) {
 }
 
 function refreshCollectionMoveList() {
-    var node = $("#collection-tree-tree").dynatree("getActiveNode");
+    var node = $("#collection-tree-tree").fancytree("getActiveNode");
     if (node !== null) {
-        var selectedCollection = node.data.key;
-
-        var params = {action: 'get-move-folder-list', collection: selectedCollection};
-        $.get("operations.xql", params, function(data) {
-
-            //clear the list
-            $("#collection-move-destinations").find("option").remove();
-
-            $("option", data).each(function() {
-                $("#collection-move-destinations").append("<option value='" + $.trim($(this).attr("value")) + "'>" + $.trim($(this).text()) + "</option>");
-            });
+        var selectedCollection = node.key;
+        //clear the list
+        $("#collection-move-destinations").find("option").remove();
+        $.ajax({
+            url: "operations.xql",
+            data: {
+                action: 'get-move-folder-list', 
+                collection: selectedCollection
+            },
+            type: 'POST',
+            success: function(data, message) {
+                $("option", data).each(function() {
+                    $("#collection-move-destinations").append("<option value='" + $.trim($(this).attr("value")) + "'>" + $.trim($(this).text()) + "</option>");
+                });
+            },
+            error: function(response, message) {
+            }
         });
     }
 }
@@ -812,28 +831,42 @@ function refreshCollectionMoveList() {
 function moveCollection(dialog) {
     var path = $('#move-collection-form select[name = path]').val();
     var collection = getCurrentCollection();
-    var params = {action: 'move-collection', path: path, collection: collection};
-    $.get("operations.xql", params, function(data) {
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'move-collection', 
+            path: path, 
+            collection: collection
+        },
+        type: 'POST',
+        success: function(data, message) {
+            var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
+            var ft = $("#collection-tree-tree").fancytree("getTree");
+            // var currentKey = currentNode.key;
+    
+            //new key
+            // var newKey = $("#collection-tree-tree").fancytree("getActiveNode").getParent().key;
+            
+            var newCollection = $('#collection-move-destinations option:selected').text();
+            var newNode = ft.getNodeByKey(newCollection);
+            
+            console.debug(newNode);
 
-        //current key
-        var currentNode = $("#collection-tree-tree").dynatree("getActiveNode");
-        var currentKey = currentNode.data.key;
-
-        //new key
-        var newKey = $("#collection-tree-tree").dynatree("getActiveNode").parent.data.key;
-        // var newKey = path + currentKey.replace(/(.*)\//, "/");
-
-        //reload the parent tree node
-        refreshParentTreeNodeAndFocusOnChild(newKey);
-
-        //make sure the old node is removed from the tree
-        // if(currentNode !== null) {
-        //     currentNode.remove();
-        // }
-
-        //close the dialog
-        dialog.dialog("close");
+            //remove the former node
+            currentNode.remove();
+            //reload the destination node
+            newNode.load(true);
+            newNode.setExpanded(true);
+            // refreshTreeNode(newNode);
+            // newNode.setEx
+        },
+        error: function(response, message) {
+            showMessage('Moving collection failed: ' + response.responseText);
+        }
     });
+
+    //close the dialog
+    dialog.dialog("close");
 }
 
 /*
@@ -853,13 +886,14 @@ function removeCollection(dialog) {
                 //reload the parent tree node
                 refreshParentTreeNode();
                
-                //close the dialog
-                dialog.dialog("close");
             },
         error: 
             function (response, message) { 
+                showMessage('Creating collection failed: ' + response.responseText);
             }
     });
+    //close the dialog
+    dialog.dialog("close");
 }
 
 /**
@@ -883,7 +917,7 @@ function login() {
                     $('#login-form').submit();
                 },
         error: function(response, message) {
-            $('#login-message').html('Login failed: ' + response.responseText);
+            showMessage('Login failed: ' + response.responseText);
         }
     });
 }
@@ -941,7 +975,8 @@ function repeatCallback() {
             autocompleteCallback(input, data);
             $.ajax({
                 url: "autocomplete.xql",
-                dataType: "json",
+                dataType: 'json',
+                type : 'POST',
                 data: data,
                 success: function(data) {
                     response(data);
@@ -1150,10 +1185,6 @@ function updateAttachmentDialog() {
 }
 
 
-
-
-
-
 //custom fnReloadAjax for sharing dataTable
 function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw) {
     if (typeof sNewSource != 'undefined' && sNewSource !== null) {
@@ -1221,13 +1252,6 @@ function attachedDataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandin
             }
         }
 
-        /*
-         if (json){
-         for(var i = 0 ; i < json.aaData.length; i++) {
-         that.oApi._fnAddData(oSettings,json.aaData[i]);
-         }
-         }
-         */
         oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
         that.fnDraw();
 
@@ -1281,7 +1305,7 @@ function setAceWriteable(checkbox, collection, aceId, isWriteable) {
             //do nothing
         },
         error: function(xhr, status, error) {
-            alert("Could not modify entry");
+            showMessage("Could not modify entry");
             checkbox.checked = !isWriteable;
         }
     });
@@ -1303,7 +1327,7 @@ function setAceWriteableByName(checkbox, collection, target, name, isWriteable) 
             //do nothing
         },
         error: function(xhr, status, error) {
-            alert("Could not modify entry");
+            showMessage("Could not modify entry");
             checkbox.checked = !isWriteable;
         }
     });
@@ -1321,7 +1345,7 @@ function removeAce(collection, aceId) {
                 $('#collectionSharingDetails').dataTable().fnDeleteRow(aceId);
             },
             error: function(xhr, status, error) {
-                alert("Could not remove entry");
+                showMessage("Could not remove entry");
                 checkbox.checked = !isWriteable;
             }
         });
@@ -1330,7 +1354,6 @@ function removeAce(collection, aceId) {
 
 //removes an ACE by user-/group name from a share
 function removeAceByName(collection, target, name) {
-    console.debug(collection);
     if(confirm("Are you sure you wish to remove this entry?")){
         $.ajax({
             type: 'POST',
@@ -1346,7 +1369,7 @@ function removeAceByName(collection, target, name) {
                 $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
             },
             error: function(xhr, status, error) {
-                alert("Could not remove entry");
+                showMessage("Could not remove entry");
                 checkbox.checked = !isWriteable;
             }
         });
@@ -1388,7 +1411,7 @@ function addUserToShare() {
                 },
                 success: function(data, status, xhr) {
                     //3) reload dataTable
-//                    $('#collectionSharingDetails').dataTable().fnAddData(["USER", $('#user-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);                	
+                    //$('#collectionSharingDetails').dataTable().fnAddData(["USER", $('#user-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
                     $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
 
                     //4) close the dialog
@@ -1397,12 +1420,12 @@ function addUserToShare() {
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
-                    alert("Could not create entry");
+                    showMessage("Could not create entry");
                 }
             });
         },
         error: function(xhr, status, error) {
-            alert("The user '" + $('#user-auto-list').val() + "' does not exist!");
+            showMessage("The user '" + $('#user-auto-list').val() + "' does not exist!");
         }
     });
     $('#user-auto-list').val('');    
@@ -1435,7 +1458,7 @@ function addProjectToShare() {
                 },
                 success: function(data, status, xhr) {
                     //3) reload dataTable
-//                    $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);                	
+//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
                     $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
 
                     //4) close the dialog
@@ -1444,12 +1467,19 @@ function addProjectToShare() {
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
-                    alert("Could not create entry");
+                    showMessage("Could not create entry");
                 }
             });
         },
         error: function(xhr, status, error) {
-            alert("The project '" + $('#project-auto-list').val() + "' does not exist!");
+            showMessage("The project '" + $('#project-auto-list').val() + "' does not exist!");
         }
     });
+}
+
+// Function for show a simple message
+function showMessage(message){
+    // ToDo: use Tamboti internal dialog instead of JS alert 
+    //$('#message').html(message);
+    alert(message);
 }
