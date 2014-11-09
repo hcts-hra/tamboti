@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-module namespace biblio = "http://exist-db.org/xquery/biblio";
+module namespace biblio="http://exist-db.org/xquery/biblio";
 
 (:~
     The core XQuery script for the bibliographic demo. It receives a template XML document
@@ -19,7 +19,6 @@ module namespace biblio = "http://exist-db.org/xquery/biblio";
     To apply a filter to an existing query, we just extend the XML representation
     of the query.
 :)
-
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates" at "../templates.xql";
@@ -40,7 +39,7 @@ declare option exist:serialize "method=xhtml media-type=application/xhtml+xml om
 (:~
     Mapping field names to XPath expressions.
     NB: Changes in field names should be reflected in autocomplete.xql, biblio:construct-order-by-expression() and biblio:get-year().
-    Fields used should be reflected in the collection.xconf in /db/system/config/db{$config:mods-root}/.
+    Fields used should be reflected in the collection.xconf in /db/system/config/db/resources/.
     'q' is expanded in biblio:generate-query().
     An XLink may be passed through retrieve-mods:format-detail-view() without a hash or or it may be passed with a hash through the search interface; 
     therefore any leading hash is first removed and then added, to prevent double hashes. 
@@ -452,38 +451,28 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
             <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
             The search term, to be substituted for '$q', is held in $query-as-xml. :)
             
-            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of $config:mods-root. :)
+            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
             let $collection-path := 
                 if ($expr/@name = ('the Record ID Field (MODS, VRA)', 'ID', 'the XLink Field (MODS)')) 
                 then $config:mods-root
                 else $query-as-xml/ancestor::query/collection/string()
             let $collection :=
-                if ($collection-path eq $config:groups-collection)
-                then
-                (
-                    (: searching the virtual 'groups' collection means searching the users collection. ??? :)
-                    (:NB: Yes, but the user's home collection should perhaps not be included here.:)
-                    concat("collection('", $config:users-collection, "')//")
-                )
-                else
-                (
-                    (: search one of the user's own collections or a commons collection. :)
-                    concat("collection('", $collection-path, "')//")
-                )
+                (: When searching inside whole users, do not show results from own home collection :)
+                let $all-collections :=
+                    if (ends-with($collection-path, $config:users-collection)) then
+                        security:get-searchable-child-collections(xs:anyURI($collection-path), true())
+                    else 
+                        security:get-searchable-child-collections(xs:anyURI($collection-path), false())
+                return
+                    "collection('" || fn:string-join($all-collections, "', '") ||  "')//"
             return
                 (:The search term held in $query-as-xml is substituted for the '$q' held in $expr.:)
                 ($collection, replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string())))
         case element(collection)
             return
-                if (not($query-as-xml/..//field)(: and not($config:require-query):)) 
+                if (not($query-as-xml/..//field)) 
                 then 
-                    (:If a search is made in $config:mods-root, we want {$config:mods-root}/temp to be excluded from the search, 
-                    since it may contain stray files left there if the user is logged out.
-                    Therefore a search is made in all other sub-collections of $config:mods-root.
-                    Both this and the identical replacement in biblio:evaluate-query() are necessary.:)
-                    if ($query-as-xml/string() eq config:mods-root)
-                    then ('(collection("' || $config:mods-commons || '", "' || $config:users-collection || '"))//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
-                    else ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                    ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
             default 
                 return ()
@@ -500,13 +489,13 @@ This means that phrase searches can only be performed with double quotation mark
 (: ":" and "&" are replaced with spaces.:)
 (: In the case of an unequal number of double quotation marks, all double quotation marks are removed.:)
 declare function biblio:normalize-search-string($search-string as xs:string?) as xs:string? {
-	let $search-string := 
-	   if (functx:number-of-matches($search-string, '"') mod 2) 
-	   then replace($search-string, '"', '') 
-	   else $search-string 
-	let $search-string := replace($search-string, "'", "''")
-	let $search-string := translate($search-string, "[:&amp;]", " ")
-    	return $search-string
+    let $search-string := 
+       if (functx:number-of-matches($search-string, '"') mod 2) 
+       then replace($search-string, '"', '') 
+       else $search-string 
+    let $search-string := replace($search-string, "'", "''")
+    let $search-string := translate($search-string, "[:&amp;]", " ")
+        return $search-string
 };
 
 (:~
@@ -722,12 +711,6 @@ declare function biblio:construct-order-by-expression($sort as xs:string?) as xs
     Evaluate the actual XPath query and order the results
 :)
 declare function biblio:evaluate-query($query-as-string as xs:string, $sort as xs:string?) {
-    (:If a search is made in {config:mods-root}, we want {config:mods-root}/temp to be excluded from the search, 
-    since it may contain stray files left there if the user is logged out.
-    Therefore a search is made in all other sub-collections of {config:mods-root}.
-    Both this and the identical replacement in biblio:generate-query() are necessary.:)
-    let $query-as-string := replace($query-as-string, "'" || $config:mods-root || "'", "'" || $config:mods-commons || "', '" || $config:users-collection || "'")
-    (:NB: The following hack is required because some queries end up with "//" before "order by", raising the error that "by" is an unexpected expression.:)
     let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
     let $order-by-expression := biblio:construct-order-by-expression($sort)
     let $query-with-order-by-expression :=
@@ -869,9 +852,17 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
 };
 
 declare function biblio:list-collection($query-as-xml as element(query)?, $sort as item()?) as xs:int {
-    if ($query-as-xml) 
-    then
-        let $collection := $query-as-xml/collection
+    if ($query-as-xml) then
+        let $selected-collection := $query-as-xml/collection
+        let $searchable-subcols :=
+            security:get-searchable-child-collections(xs:anyURI($selected-collection), true())
+        let $collection := 
+            (: Include selected collection as well only if user has permissions to search there :)
+            if (security:can-read-collection($selected-collection) and security:can-execute-collection($selected-collection)) then
+                ($selected-collection, $searchable-subcols)
+            else
+                $searchable-subcols
+
         let $sort := if ($sort) then $sort else session:get-attribute("sort")
         let $processed :=
             if ($sort eq "Author") 
@@ -947,26 +938,26 @@ declare function biblio:notice() as element(div)* {
 : Get the last-modified date of a collection
 :)
 declare function local:get-collection-last-modified($collection-path as xs:string) as xs:dateTime {
-	let $resources-last-modified := 
-		for $resource in xmldb:get-child-resources($collection-path) return
-			xmldb:last-modified($collection-path, $resource)
-	return
-		if (not(empty($resources-last-modified)))
-		then max($resources-last-modified)
-		else xmldb:created($collection-path)
+    let $resources-last-modified := 
+        for $resource in xmldb:get-child-resources($collection-path) return
+            xmldb:last-modified($collection-path, $resource)
+    return
+        if (not(empty($resources-last-modified)))
+        then max($resources-last-modified)
+        else xmldb:created($collection-path)
 };
 
 (:~
 : Find all sub-collections that have a group and are modified after a dateTime
 :)
 declare function local:find-collections-modified-after($collection-paths as xs:string*, $modified-after as xs:dateTime) as xs:string* {
-	
-	for $collection-path in $collection-paths 
-	return
-	(
-	   if ($modified-after lt local:get-collection-last-modified($collection-path)) 
-	   then $collection-path
-	   else (),
+    
+    for $collection-path in $collection-paths 
+    return
+    (
+       if ($modified-after lt local:get-collection-last-modified($collection-path)) 
+       then $collection-path
+       else (),
        local:find-collections-modified-after(xmldb:get-child-collections($collection-path), $modified-after)
    )
 };
@@ -1023,7 +1014,7 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
 };
 
 declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $collection := functx:replace-first(xmldb:encode-uri(request:get-parameter("collection", theme:get-root())), "/db/", "")
+    let $collection := functx:replace-first(request:get-parameter("collection", theme:get-root()), "/db/", "")
         return
             templates:copy-set-attribute($node, "data-collection-path", $collection, $model)
 };
@@ -1166,13 +1157,13 @@ declare function biblio:form-select-current-user-groups($select-name as xs:strin
 
 declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
     
-	for $sub in xmldb:get-child-collections($path)
-	let $col := concat($path, "/", $sub) return
-		(
-			if (security:can-write-collection($col))
-			then $col
-			else (), biblio:get-writeable-subcollection-paths($col)
-		)
+    for $sub in xmldb:get-child-collections($path)
+    let $col := concat($path, "/", $sub) return
+        (
+            if (security:can-write-collection($col))
+            then $col
+            else (), biblio:get-writeable-subcollection-paths($col)
+        )
 };
 
 (:~
