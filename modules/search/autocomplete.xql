@@ -8,10 +8,12 @@ declare namespace html="http://www.w3.org/1999/xhtml";
 
 import module namespace biblio="http://exist-db.org/xquery/biblio" at "application.xql";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
+
 
 declare option exist:serialize "media-type=text/json";
 
-declare variable $local:COLLECTION := '/db' || $config:mods-root || '';
+declare variable $local:COLLECTION := $config:content-root;
 
 declare function local:key($key, $options) {
     concat('"', $key, '"')
