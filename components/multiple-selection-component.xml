@@ -1,0 +1,239 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" id="ddlcb-container">
+    <style type="text/css">
+		/* plugin specific */
+
+		.ddlcb-checkboxContainer {
+    		width: 48px;
+    		background: white;
+    		height: 30px;
+    		border: 1px solid #F8F8F8;
+		}
+
+		.ddlcb-checkboxContainer:hover {
+		    border: 1px solid #EEE;
+		}
+
+		.ddlcb-checkboxContainer ul {
+    		margin-top: 30px !important;
+    		display: none;
+    		background: white;
+    		list-style-type: none;
+    		width: 120px;
+    		margin: 0;
+    		padding: 0;
+    		clear: both;
+    		border: 1px solid #F8F8F8;
+    		cursor: pointer;
+    		position: absolute;
+    		margin-left: -1px;
+		}
+
+		.ddlcb-checkboxContainer li {
+    		padding: 10px;
+    		width: 100px;
+		}
+
+		.ddlcb-checkboxContainer li.ddlcb-option-checked, .ddlcb-checkboxContainer li.ddlcb-option-checked:hover {
+		    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAICAYAAAArzdW1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOEFBQTgxNjUwRDMxMUUxQjlFMEVDQkJDOUZGMDZENyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowOEFBQTgxNzUwRDMxMUUxQjlFMEVDQkJDOUZGMDZENyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjg0RDkxOEVCNTBEMjExRTFCOUUwRUNCQkM5RkYwNkQ3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjg0RDkxOEVDNTBEMjExRTFCOUUwRUNCQkM5RkYwNkQ3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+90vCCwAAAFZJREFUeNpiTE5JY8ADjIFYiYmAgt1ALAhSBDJKCZcCEIcJylgFE0BTcBaIVzOhSbigKXAF4vcgRauB+B4WE8AKYNaBFITBBNAVwBQhS+xBVwACAAEGAKO0FwlXsnJAAAAAAElFTkSuQmCC) center left no-repeat;
+		}
+
+		.ddlcb-checkboxContainer li:hover {
+		    background: #eeeeee;
+		}
+
+		.ddlcb-checkboxContainer div.ddlcb-checkboxCase {
+    		color: #00f;
+    		background: transparent;
+    		height: 15px;
+    		border: 1px solid #CCC;
+    		width: 15px;
+    		display: block;
+    		margin-left: 8px;
+    		margin-top: 7px;
+		}
+
+		.ddlcb-checkboxContainer div.ddlcb-checkboxCase.ddlcb-full-checked {
+		    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAICAYAAAArzdW1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOEFBQTgxNjUwRDMxMUUxQjlFMEVDQkJDOUZGMDZENyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowOEFBQTgxNzUwRDMxMUUxQjlFMEVDQkJDOUZGMDZENyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjg0RDkxOEVCNTBEMjExRTFCOUUwRUNCQkM5RkYwNkQ3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjg0RDkxOEVDNTBEMjExRTFCOUUwRUNCQkM5RkYwNkQ3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+90vCCwAAAFZJREFUeNpiTE5JY8ADjIFYiYmAgt1ALAhSBDJKCZcCEIcJylgFE0BTcBaIVzOhSbigKXAF4vcgRauB+B4WE8AKYNaBFITBBNAVwBQhS+xBVwACAAEGAKO0FwlXsnJAAAAAAElFTkSuQmCC) no-repeat center center;
+		}
+
+		.ddlcb-checkboxContainer div.ddlcb-checkboxCase.ddlcb-partial-checked {
+		    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94CCg4ILXYFn4wAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAALElEQVQ4y2NgoBAw/v///z8lBjBR6oJRAxgYGBkYGIZ4LLBQmI5G0wE1DAAALDsIF7mikecAAAAASUVORK5CYII=) no-repeat center center;
+		}
+
+		.ddlcb-checkboxContainer div.ddlcb-left {
+    		height: 33px;
+    		background: transparent;
+    		float: left;
+		}
+
+		.ddlcb-checkboxContainer div.ddlcb-right {
+    		float: right;
+    		height: 17px;
+    		width: 16px;
+    		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAIAAACgWpLfAAAABmJLR0QA/wD/AP+gvaeTAAAAwElEQVQYlWWNMQqDQBBF112yWwWyptg6QYggQVAsJdhaeQtv4Q28hYWVOYGVBo+wdQQbw1pqJZPCRAx5DAwf/pvRwjCsqurAOfrj1fdRFKGu6wzDOAqBKd2O7Tiu607TRNI0JYQopZ5tu9q6rhOE7kUhhEAAMM+z7/uO5y02Yexq23meAwAAoGVJKS+mueccU3oLgjiO4YsGAMvlJEkeTaOGYYdxXdeMsc/LtTuOo2VZp/NZSgkb0DaUZZllGfzyBjjsgrRBd8ZEAAAAAElFTkSuQmCC) no-repeat center center;
+    		margin-top: 7px;
+    		margin-right: 5px;
+		}
+
+		.ddlcb-checkboxContainer #ddlcb-message-container {
+    		//float: left;
+    		//height: 40px;
+    		width: 700px;
+    		position: relative;
+    		//text-align: left;
+    		top: -4px;
+    		left: 60px;
+		}
+	</style>
+    <div style="display:none">
+        <xf:model id="m-multiple-selection-component-template"/>
+    </div>
+    <div class="ddlcb-checkboxContainer">
+        <div class="ddlcb-left">
+            <div class="ddlcb-checkboxCase"/>
+        </div>
+        <div class="ddlcb-right">
+            <div id="ddlcb-message-container">
+                <xf:group appearance="minimal" model="m-multiple-selection-component">
+                    <xf:output value="concat(instance('i-dynamic-values')/number-of-selected-options, instance('i-ui-text')//*[@tuid = 'message-part-1']/*[@xml:lang = instance('i-dynamic-values')/ui-language], instance('i-dynamic-values')/number-of-all-options, instance('i-ui-text')//*[@tuid = 'message-part-2']/*[@xml:lang = instance('i-dynamic-values')/ui-language])"/>
+                    <xf:select1 ref="instance('i-dynamic-values')/selected-action" appearance="minimal" incremental="true" style="margin-left: 30px;">
+                        <xf:label>
+                            <xf:output value="instance('i-ui-text')//*[@tuid = 'label-for-action-selecting-select1']/*[@xml:lang = instance('i-dynamic-values')/ui-language]"/>
+                        </xf:label>
+                        <xf:itemset ref="instance('i-actions')/action">
+                            <xf:label ref="."/>
+                            <xf:value ref="."/>
+                        </xf:itemset>
+                        <xf:dispatch ev:event="xforms-value-changed" name="multiple-editing" targetid="main-content"/>
+                    </xf:select1>
+                </xf:group>
+            </div>
+        </div>
+        <ul>
+            <li class="ddlcb-all">Select all</li>
+            <li class="ddlcb-partial">Select page</li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        (function($) {
+        	$.fn.dropDownListCheckbox = function(parameters) {
+        		var component = this;
+        		var options = $.extend({}, $.fn.dropDownListCheckbox.defaultOptions, parameters);
+        		var checkboxContainer = $("div.ddlcb-checkboxContainer", component);
+        		var checkboxCase = $(".ddlcb-checkboxCase", component);
+        		var selectAllOption = $("ul li:first-child", checkboxContainer);
+        
+        		component.on("flag-ddlcb-full-checked", function() {
+        		    checkboxCase.removeClass("ddlcb-partial-checked");
+        		    checkboxCase.addClass("ddlcb-full-checked");
+        		    if (!selectAllOption.hasClass("ddlcb-option-checked")) {
+        		        selectAllOption.addClass("ddlcb-option-checked");
+        		    }
+                });
+                
+        		component.on("unflag-ddlcb-full-checked", function() {
+        		    checkboxCase.removeClass("ddlcb-full-checked");
+        		    if (selectAllOption.hasClass("ddlcb-option-checked")) {
+        		        selectAllOption.removeClass("ddlcb-option-checked");
+        		    }        		    
+                });        
+                
+        		component.on("flag-ddlcb-partial-checked", function() {
+        		    checkboxCase.addClass("ddlcb-partial-checked");
+                });
+                
+        		component.on("unflag-ddlcb-partial-checked", function() {
+        		    checkboxCase.removeClass("ddlcb-partial-checked");
+                });        
+        
+        		$("div.ddlcb-checkboxContainer", component).click(function(event) {
+        		    event.stopPropagation();
+        		    var $tgt = $(event.target);
+        		    if ($tgt.hasClass(options.containerCls) || $tgt.hasClass("ddlcb-right")) {
+        		        var menu = $(this).children("ul");
+        		        if (menu.is(':visible')) {
+        		            menu.hide();
+        		            $("html").unbind("click");
+                        } else {
+                            menu.show();
+                            $('html').bind("click", function(event) {
+                                $("div.ddlcb-checkboxContainer", component).children("ul").hide();
+                                $("html").unbind("click");
+                            });
+                        }
+                    }
+                });
+        				
+        		// add behaviour
+        		$("div.ddlcb-checkboxCase", component).click(function() {
+        		    var $this = $(this);
+
+                    $("ul li:first-child", component).toggleClass("ddlcb-option-checked");
+
+        		    if ($this.hasClass("ddlcb-full-checked")) {
+        		        $this.toggleClass("ddlcb-full-checked");
+        		        $("#ddlcb-container").trigger("ddlcb-full-unchecked");
+        		        return;
+        		    }
+        		    if ($this.hasClass("ddlcb-partial-checked")) {
+        		        $this.removeClass("ddlcb-partial-checked");
+        		        $this.toggleClass("ddlcb-full-checked");
+        		        $("ul li:nth-child(2)", $(options.containerCls)).toggleClass("ddlcb-option-checked");
+        		        $("#ddlcb-container").trigger("ddlcb-full-checked");
+        		        return;		        
+        		    }		    
+        		    if ($this.attr("class") == "ddlcb-checkboxCase") {
+        		        $this.toggleClass("ddlcb-full-checked");
+        		        $("#ddlcb-container").trigger("ddlcb-full-checked");
+        		    }
+        		});
+        
+        		$("ul li", component).click(function() {
+        		    var $this = $(this);
+        		    if ($this.is(":first-child")) {
+        		        $(options.checkboxCls).toggleClass("ddlcb-full-checked");
+        		        $(options.checkboxCls).removeClass("ddlcb-partial-checked");
+            		    if ($this.hasClass("ddlcb-option-checked")) {
+            		        $("#ddlcb-container").trigger("ddlcb-full-unchecked");
+                        } else {
+                        	$("#ddlcb-container").trigger("ddlcb-full-checked");
+                        }		        
+        		    } else {
+            		    if ($this.hasClass("ddlcb-option-checked")) {
+        		            $(options.checkboxCls).removeClass("ddlcb-partial-checked");
+        		            $("#ddlcb-container").trigger("ddlcb-partial-unchecked");
+                        } else {
+        		            $(options.checkboxCls).removeClass("ddlcb-full-checked");
+        		            $(options.checkboxCls).addClass("ddlcb-partial-checked");
+        		            $("#ddlcb-container").trigger("ddlcb-partial-checked");
+                        }		        
+                        // unselect shortcut for main option
+                        $(options.checkboxCls).removeClass("ddlcb-option-checked");
+                    }
+        		    $.fn.dropDownListCheckbox._toggleOption($this);
+        		});
+        	};
+        	
+            $.fn.dropDownListCheckbox.defaultOptions = {
+                checkboxCls : ".ddlcb-checkboxCase",
+                mainOption: ".ddlcb-all"
+            };
+        
+            $.fn.dropDownListCheckbox._toggleOption = function(option) {
+                option.parent("ul").hide();
+                $("html").unbind("click");
+                option.siblings().removeClass("ddlcb-option-checked");
+                option.toggleClass("ddlcb-option-checked");
+            };    
+        
+        })(jQuery);
+	</script>
+    <script type="text/javascript">
+		$(document).ready(function() {
+		    var ddlcbElement = $("#ddlcb-container");
+		    ddlcb = ddlcbElement.dropDownListCheckbox({
+		        containerCls: "#ddlcb-container"
+	    	});
+		});
+	</script>
+</div>
