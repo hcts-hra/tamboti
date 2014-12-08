@@ -1420,7 +1420,7 @@ function addUserToShare() {
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
-                    showMessage("Could not create entry");
+                    showMessage("User '" + username + "' already added to this folder!");
                 }
             });
         },
