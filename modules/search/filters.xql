@@ -123,7 +123,13 @@ return
             then
                 <ul>
                 {
-                    let $subjects := distinct-values($cached/(mods:subject | vra:work/vra:subjectSet/vra:subject/vra:term))
+                    let $all-subjects := $cached/(mods:subject | vra:work/vra:subjectSet/vra:subject/vra:term)
+                    let $subjects := distinct-values($all-subjects)
+                    let $subjects-map :=
+                        map:new(
+                            for $subject in distinct-values($all-subjects) return map:entry($subject, count(index-of($all-subjects, $subject))), "?strength=primary"
+                            
+                        )
                     let $subjects-count := count($subjects)
                     return
                         if ($subjects-count gt $local:MAX_RESULTS_SUBJECTS)
@@ -139,7 +145,7 @@ return
                                 order by upper-case($subject) ascending
                                 return
                                     (:LCSH have '--', so they have to be replaced.:)
-                                    <li><a href="?filter=Subject&amp;value={replace($subject, '-', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$subject}</a></li>
+                                    <li><a href="?filter=Subject&amp;value={replace($subject, '-', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{($subject, "[" || $subjects-map($subject) || "]")}</a></li>
                  }
                  </ul>
              else
