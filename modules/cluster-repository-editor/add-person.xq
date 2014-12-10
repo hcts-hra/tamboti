@@ -6,7 +6,9 @@ let $data := request:get-data()
 
 let $uuid := data($data//@xml:id)
 
-let $records := collection("/resources/services/repositories/local/persons")//tei:listPerson
+let $records-collection := xs:anyURI("/resources/services/repositories/local/users/" || xmldb:get-current-user() || "/persons")
+
+let $records := collection($records-collection)//tei:listPerson
 
 let $insert-data := update insert $data into $records 
 
