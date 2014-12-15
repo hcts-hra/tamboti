@@ -1,6 +1,7 @@
 xquery version "3.0";
 
-let $current-user := "http://" || request:get-server-name() || "/" || xmldb:get-current-user()
+let $current-user := xmldb:get-current-user()
+let $author := "http://" || request:get-server-name() || "/" || xmldb:get-current-user()
 
 
 return
@@ -9,12 +10,12 @@ return
             <fileDesc>
                 <titleStmt>
                     <title />
-                    <author ref="{$current-user}" />
+                    <author key="{$current-user}" ref="{$author}" />
                 </titleStmt>
                 <editionStmt>
                     <edition>
                         <date when="{current-dateTime()}" />
-                        <persName ref="{$current-user}" role="creator" />
+                        <persName ref="{$author}" role="creator" />
                     </edition>
                 </editionStmt>            
                 <publicationStmt />
@@ -25,8 +26,8 @@ return
             <body>
                 <listOrg>
                     <org xml:id="uuid-{util:uuid()}">
-                    	<orgName xml:lang="eng" />
-                    	<note type="type">corporateName</note>
+                        <orgName xml:lang="eng" />
+                        <note type="type">corporateName</note>
                     </org>
                 </listOrg>
             </body>
