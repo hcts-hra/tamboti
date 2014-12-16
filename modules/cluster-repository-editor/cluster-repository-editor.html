@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xf="http://www.w3.org/2002/xforms">
     <head>
         <title>Cluster Repository Editor</title>
@@ -28,7 +27,7 @@
                         <state type="existing"/>
                     </person>
                 </xf:instance>
-                <xf:submission id="s-add-person" resource="/exist/rest/db/resources/services/repositories/local/persons/{instance('i-template')//tei:person/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
+                <xf:submission id="s-add-person" resource="/exist/rest/db/resources/services/repositories/local/users/{instance('i-template')//tei:titleStmt/tei:author/@key}/persons/{instance('i-template')//tei:person/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
                     <xf:action ev:event="xforms-submit-error">
                         <xf:message>The record was not saved.</xf:message>
                     </xf:action>
@@ -62,7 +61,7 @@
                         <state type="existing"/>
                     </org>
                 </xf:instance>
-                <xf:submission id="s-add-organisation" resource="/exist/rest/db/resources/services/repositories/local/organisations/{instance('i-template')//tei:org/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
+                <xf:submission id="s-add-organisation" resource="/exist/rest/db/resources/services/repositories/local/users/{instance('i-template')//tei:titleStmt/tei:author/@key}/organisations/{instance('i-template')//tei:org/@xml:id}.xml" method="put" ref="instance('i-template')" replace="none">
                     <xf:action ev:event="xforms-submit-error">
                         <xf:message>The record was not saved.</xf:message>
                     </xf:action>
@@ -77,7 +76,6 @@
                 <xf:submission id="s-load-suggestions" resource="cluster-services.xq?type=local-organisations&amp;query={encode-for-uri(instance('i-template')//tei:orgName)}&amp;page_limit=15&amp;page=1" replace="instance" method="get" instance="i-suggestion"/>
             </xf:model>
         </div>
-        <h1>One has to be logged into tamboti in order to work with this form</h1>
         <xf:group class="record-group" model="m-person">
             <h2>Persons</h2>
             <xf:group class="record-adding-group">
