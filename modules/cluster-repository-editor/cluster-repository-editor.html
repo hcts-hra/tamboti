@@ -5,6 +5,15 @@
     </head>
     <body>
         <div style="display:none">
+            <xf:model id="m-main">
+                <xf:instance id="i-template">
+                    <template xmlns=""/>
+                </xf:instance>
+                <xf:submission id="s-create-user-collections" resource="create-user-collections.xq" replace="none" method="get" instance="i-template"/>
+                <xf:action ev:event="xforms-ready">
+                    <xf:send submission="s-create-user-collections"/>    
+                </xf:action>
+            </xf:model>
             <xf:model id="m-person">
                 <xf:instance xmlns="http://www.tei-c.org/ns/1.0" id="i-template" src="person-template.xq"/>
                 <xf:instance id="i-suggestion">
