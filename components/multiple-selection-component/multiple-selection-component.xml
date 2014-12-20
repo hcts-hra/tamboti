@@ -1,4 +1,4 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" id="ddlcb-container">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" id="ddlcb-container">
     <style type="text/css">
 		/* plugin specific */
 
@@ -86,7 +86,17 @@
 		}
 	</style>
     <div style="display:none">
-        <xf:model id="m-multiple-selection-component-template"/>
+        <xf:model id="m-multiple-selection-component-template">
+            <xf:instance id="i-actions">
+                <actions xmlns="">
+                    <action>edit</action>
+                    <action>delete</action>
+                    <action>move</action>
+                    <action>save</action>
+                    <action>export</action>
+                </actions>
+            </xf:instance>
+        </xf:model>
     </div>
     <div class="ddlcb-checkboxContainer">
         <div class="ddlcb-left">
@@ -95,16 +105,16 @@
         <div class="ddlcb-right">
             <div id="ddlcb-message-container">
                 <xf:group appearance="minimal" model="m-multiple-selection-component">
-                    <xf:output value="concat(instance('i-dynamic-values')/number-of-selected-options, instance('i-ui-text')//*[@tuid = 'message-part-1']/*[@xml:lang = instance('i-dynamic-values')/ui-language], instance('i-dynamic-values')/number-of-all-options, instance('i-ui-text')//*[@tuid = 'message-part-2']/*[@xml:lang = instance('i-dynamic-values')/ui-language])"/>
-                    <xf:select1 ref="instance('i-dynamic-values')/selected-action" appearance="minimal" incremental="true" style="margin-left: 30px;">
+                    <xf:output value="concat(instance('i-variables')/number-of-selected-options, instance('i-ui-text')//*[@tuid = 'message-part-1']/*[@xml:lang = instance('i-variables')/ui-language], instance('i-variables')/number-of-all-options, instance('i-ui-text')//*[@tuid = 'message-part-2']/*[@xml:lang = instance('i-variables')/ui-language])"/>
+                    <xf:select1 ref="instance('i-variables')/selected-action" appearance="minimal" incremental="true" style="margin-left: 30px;">
                         <xf:label>
-                            <xf:output value="instance('i-ui-text')//*[@tuid = 'label-for-action-selecting-select1']/*[@xml:lang = instance('i-dynamic-values')/ui-language]"/>
+                            <xf:output value="instance('i-ui-text')//*[@tuid = 'label-for-action-selecting-select1']/*[@xml:lang = instance('i-variables')/ui-language]"/>
                         </xf:label>
-                        <xf:itemset ref="instance('i-actions')/action">
+                        <xf:itemset ref="instance('i-actions')/action" model="m-multiple-selection-component-template">
                             <xf:label ref="."/>
                             <xf:value ref="."/>
                         </xf:itemset>
-                        <xf:dispatch ev:event="xforms-value-changed" name="multiple-editing" targetid="main-content"/>
+                        <xf:dispatch ev:event="xforms-value-changed" name="selected-action-for-selected-options" targetid="main-content"/>
                     </xf:select1>
                 </xf:group>
             </div>
@@ -122,6 +132,7 @@
         		var checkboxContainer = $("div.ddlcb-checkboxContainer", component);
         		var checkboxCase = $(".ddlcb-checkboxCase", component);
         		var selectAllOption = $("ul li:first-child", checkboxContainer);
+        		var selectPartialOption = $("ul li:nth-child(2)", checkboxContainer);
         
         		component.on("flag-ddlcb-full-checked", function() {
         		    checkboxCase.removeClass("ddlcb-partial-checked");
@@ -140,10 +151,14 @@
                 
         		component.on("flag-ddlcb-partial-checked", function() {
         		    checkboxCase.addClass("ddlcb-partial-checked");
+        		    selectPartialOption.addClass("ddlcb-option-checked");
                 });
                 
         		component.on("unflag-ddlcb-partial-checked", function() {
         		    checkboxCase.removeClass("ddlcb-partial-checked");
+        		    if (selectPartialOption.hasClass("ddlcb-option-checked")) {
+        		        selectPartialOption.removeClass("ddlcb-option-checked");
+        		    }        		    
                 });        
         
         		$("div.ddlcb-checkboxContainer", component).click(function(event) {
@@ -168,23 +183,23 @@
         		$("div.ddlcb-checkboxCase", component).click(function() {
         		    var $this = $(this);
 
-                    $("ul li:first-child", component).toggleClass("ddlcb-option-checked");
+                    selectAllOption.toggleClass("ddlcb-option-checked");
 
         		    if ($this.hasClass("ddlcb-full-checked")) {
         		        $this.toggleClass("ddlcb-full-checked");
-        		        $("#ddlcb-container").trigger("ddlcb-full-unchecked");
+        		        component.trigger("ddlcb-full-unchecked");
         		        return;
         		    }
         		    if ($this.hasClass("ddlcb-partial-checked")) {
         		        $this.removeClass("ddlcb-partial-checked");
         		        $this.toggleClass("ddlcb-full-checked");
-        		        $("ul li:nth-child(2)", $(options.containerCls)).toggleClass("ddlcb-option-checked");
-        		        $("#ddlcb-container").trigger("ddlcb-full-checked");
+        		        selectPartialOption.toggleClass("ddlcb-option-checked");
+        		        component.trigger("ddlcb-full-checked");
         		        return;		        
         		    }		    
         		    if ($this.attr("class") == "ddlcb-checkboxCase") {
         		        $this.toggleClass("ddlcb-full-checked");
-        		        $("#ddlcb-container").trigger("ddlcb-full-checked");
+        		        component.trigger("ddlcb-full-checked");
         		    }
         		});
         
