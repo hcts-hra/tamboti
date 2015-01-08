@@ -18,7 +18,6 @@ color scheme ends*/
 }
 code {
   /*used in url generated for embedding images*/
-
   font-size: 75%;
 }
 .title em {
@@ -29,12 +28,7 @@ code {
   font-weight: 700;
 }
 .list-image {
-   margin-right: 1em;
-   padding-left: 0.2em;
-   padding-right: 0.2em;
-   text-align: center;
-   vertical-align: middle;
-   width: 65px;
+  margin-right: 1em;
 }
 * {
   margin: 0;
@@ -115,16 +109,6 @@ a:visited {
 }
 img {
   border: 0;
-}
-img.picture {
-  border: 0;
-  box-shadow: 3px 3px 3px grey;
-}
-
-img.zoom {
-  cursor: -webkit-zoom-in;
-  cursor: -moz-zoom-in;
-  /*cursor: zoom-in;*/
 }
 /*page-head div begins*/
 #page-head {
@@ -252,7 +236,6 @@ img.zoom {
 #collection-tree .collection-tree-toolbar img {
   border: 0;
   /*margin: -3px 0 0 7px;*/
-
   width: 20px;
 }
 #collection-tree .dynatree-container {
@@ -323,7 +306,6 @@ span.readable .dynatree-title {
 .hi {
   background-color: #5db0e6;
   /*KWIC in text extraction*/
-
 }
 .search-form .search-field {
   padding-left: .75em;
@@ -338,7 +320,6 @@ span.readable .dynatree-title {
 .search-field select option {
   padding-left: .25em;
   /*needed in FF*/
-
 }
 .search-form .search-term {
   width: 10em;
@@ -383,9 +364,17 @@ span.readable .dynatree-title {
 }
 /*facets end*/
 /*pagination begins*/
+#ddlcb-container {
+  height: 30px;
+}
 #results-head {
   border-bottom: 1px solid #bbbbbb;
-  padding: 1em;
+  height: 45px;
+}
+#results-head > div:first-child {
+  margin-left: 9px;
+  height: 30px;
+  padding-top: 10px;
 }
 #results-head .records-found {
   margin-right: 1em;
@@ -441,11 +430,7 @@ span.readable .dynatree-title {
   padding-top: .45em;
 }
 .actions-cell {
-	width: 30px;
-  	padding-top: .25em;
-}
-.list-type {
-  width: 30px;
+  padding-top: .25em;
 }
 .actions-cell a img {
   width: 22px;
@@ -455,7 +440,6 @@ span.readable .dynatree-title {
 .detail-type img {
   width: 20px;
   /*margin-top:-3px;*/
-
 }
 .detail-type {
   margin: 10px 0 0;
@@ -471,29 +455,28 @@ span.readable .dynatree-title {
 #results-toolbar {
   height: 30px;
 }
-
 #results-toolbar > * {
   display: inline-block;
 }
-
 #ddlcb {
   margin-right: 20px;
   margin-left: -4px;
 }
-
 #search-list-action {
   position: relative;
   top: -10px;
   margin-left: 170px;
 }
-
 #results {
   margin-top: .5em;
   overflow: auto;
 }
-
 #results table {
   width: 100%;
+}
+#results table td:first-child {
+  vertical-align: top;
+  padding-top: 8px;
 }
 #results ul {
   list-style: none;
@@ -577,9 +560,8 @@ table .biblio-full {
 table .pagination-toggle {
   cursor: pointer;
   text-decoration: none;
-  /*line-height: 1.8em;*/
-  padding-top: .5em;
-  padding-bottom: .5em;
+  line-height: 1.8em;
+  padding-top: 1px;
   padding-left: .5em;
   padding-right: .5em;
   border-top-right-radius: 5px;
@@ -591,17 +573,14 @@ table .even {
 table .pagination-number {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  max-width: 50px;
 }
 table .biblio-full .collection {
   width: 20em;
   /*to keep the collection path from overlapping the actions toolbar*/
-
 }
 table .biblio-full .collection-label {
   background-color: #fff;
   text-align: right;
-  vertical-align: top;
   padding-right: 1em;
 }
 table .biblio-full .label {
@@ -656,25 +635,9 @@ table .biblio-full .related td {
   border-top: 1px solid #bbbbbb;
 }
 /*main structures for display of search results ends*/
-/*results-view (list) styling begins*/
-.title {
-  font-style:italic;
-}
-.vra-title {
-  font-size: 0.9em;
-  font-weight: bold;
-}
-.vra-date {
-  font-size: 0.9em;
-}
-.vra-agent {
-  font-size: 0.9em;
-}
-.vra-role{
+/*results-view styling begins*/
+td .title {
   font-style: italic;
-}
-.vra-location{
-  font-size: 0.9em;
 }
 /*results-view styling ends*/
 .actions-toolbar {
@@ -698,7 +661,6 @@ table .biblio-full .related td {
 }
 #optimize-trigger {
   /*shown when logged in as admin*/
-
   float: left;
 }
 form ul li {
@@ -744,7 +706,6 @@ form ul li {
   /*Safari shadow version*/
   -moz-box-shadow: 0px 0px 15px #000;
   /* Mozilla shadow version*/
-
 }
 .lightbox .image {
   position: relative;
@@ -755,7 +716,6 @@ form ul li {
 }
 #viewer-image {
   /* scale to parent container */
-
   max-width: 100%;
   max-height: 100%;
 }
@@ -813,7 +773,6 @@ form ul li {
 .filmstrip ul {
   list-style: none;
   /* height:140px; */
-
   margin: 0;
   padding: 0;
   vertical-align: middle;
@@ -934,7 +893,6 @@ form ul li {
   /*Safari shadow version*/
   -moz-box-shadow: 0px 0px 15px #000;
   /* Mozilla shadow version*/
-
 }
 .show-metadata {
   position: fixed;
