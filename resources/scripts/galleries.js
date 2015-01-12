@@ -1,5 +1,3 @@
-var tamboti = tamboti || {};
-
 /**
  * Namespace function. Required by all other classes.
  */
