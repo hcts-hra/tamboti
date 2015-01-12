@@ -1,167 +1,303 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:jquery="http://exist-db.org/xquery/jquery">
-    <jquery:dialog id="login-dialog" modal="true" title="Login" trigger="#login-link" width="450">
-        <jquery:button label="Login" function="login"/>
-        <form id="login-form" action="#" method="POST">
-            <table>
-                <tr>
-                    <td id="login-message" colspan="2"/>
-                </tr>
-                <tr>
-                    <td>Username:</td>
-                    <td>
-                        <input id="loginUsername" name="user" type="text" required="required"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Password:</td>
-                    <td>
-                        <input id="loginPassword" name="password" type="password" required="required"/>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </jquery:dialog>
-    <jquery:dialog id="new-collection-dialog" modal="true" title="Create Folder" trigger="#collection-create-folder" width="450">
-        <jquery:button label="Create" function="createCollection"/>
-        <jquery:button id="cancel" label="Cancel"/>
+<div xmlns="http://www.w3.org/1999/xhtml">
+    <script type="text/javascript">
+        $(function() {
+            $('#login-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Login": function () {
+                        login($(this));
+                    }
+                },
+                title: "Login", width: 450
+            });
+            var trigger = '#login-link';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#login-dialog').dialog('open');
+                    return false;
+                });
+            }
+            
+            $('#new-collection-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Create": function () {
+                        createCollection($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                },
+                title: "Create Folder",
+                width: 450
+            });
+            var trigger = '#collection-create-folder';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#new-collection-dialog').dialog('open');
+                    return false;
+                });                
+            }
+            
+            $('#upload-file-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                open: function(event, ui){
+                    updateAttachmentDialog();
+                },
+                buttons: {},
+                title: "File attachments",
+                width: 900
+            });
+            var trigger = '#upload-file-to-resource';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#upload-file-dialog').dialog('open');
+                    return false;
+                });                 
+            }
+           
+            $('#rename-collection-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Rename": function () {
+                        renameCollection($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                },
+                title: "Rename Folder",
+                width: 450
+            });
+            var trigger = '#collection-rename-folder';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#rename-collection-dialog').dialog('open');
+                    return false;
+                });                
+            }
+            
+            $('#move-collection-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Move": function () {
+                        moveCollection($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                },
+                title: "Move Folder",
+                width: 700
+            });
+            var trigger = '#collection-move-folder';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#move-collection-dialog').dialog('open');
+                    return false;
+                });                 
+            }
+           
+            $('#remove-collection-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Remove": function () {
+                        removeCollection($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                }, 
+                title: "Remove Folder", 
+                width: 450
+            });
+            var trigger = '#collection-remove-folder';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#remove-collection-dialog').dialog('open');
+                    return false;
+                });                  
+            }
+            
+            $('#sharing-collection-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                open: function(event, ui){
+                    updateSharingDialog();
+                },
+                buttons: {
+                    "Close": function() {
+                        $(this).dialog("close");
+                    }
+                },
+                title: "Folder Sharing",
+                width: 700
+            });
+            var trigger = '#collection-sharing';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#sharing-collection-dialog').dialog('open');
+                    return false;
+                });                
+            }
+            
+            $('#user-auto-list').autocomplete({
+                source: function(request, response) {
+                    var data = {
+                        term: request.term
+                    };
+                    $.ajax({
+                        url: "autocomplete-username.xql",
+                        dataType: "json",
+                        data: data,
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                delay: 700
+            });            
+            
+            $('#add-user-to-share-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {},
+                title: "Add a User to Share With",
+                width: 450
+            }); 
+            
+            $('#project-auto-list').autocomplete({
+                source: function(request, response) {
+                    var data = {
+                        term: request.term
+                    };
+                    $.ajax({
+                        url: "autocomplete-groupname.xql",
+                        dataType: "json",
+                        data: data,
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                delay: 700
+            });
+            
+            $('#add-project-to-share-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {},
+                title: "Add a Project to Share With",
+                width: 450
+            });            
+            
+            $('#remove-resource-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Remove": function () {
+                        removeResource($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                }, 
+                title: "Remove Record", 
+                width: 450
+            });
+            $('#move-resource-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Move": function () {
+                        moveResource($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                }, 
+                title: "Move Record",
+                width: 500
+            });
+            $('#new-resource-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Create": function () {
+                        newResource($(this));
+                    },
+                    "Cancel": function() { 
+                        $(this).dialog("close");
+                    }
+                }, 
+                title: "Create Stand-Alone MODS Record", 
+                width: 550
+            });
+            var trigger = '#collection-create-resource';
+            if (trigger != '') {
+                $(trigger).click(function() {
+                    $('#new-resource-dialog').dialog('open');
+                    return false;
+                });                
+            }
+
+            $('#add-related-dialog').dialog({
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Create": function () {
+                        newRelatedResource($(this));
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                },
+                title: "Create Related MODS Record",
+                width: 550
+            });
+          
+          
+        });            
+    </script>
+    <div id="login-dialog">
+        <table>
+            <tr>
+                <td id="login-message" colspan="2"/>
+            </tr>
+            <tr>
+                <td>Username:</td>
+                <td>
+                    <input id="loginUsername" name="user" type="text"/>
+                </td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td>
+                    <input id="loginPassword" name="password" type="password"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="new-collection-dialog">
         <form id="create-collection-form" action="operations.xql">
-            <div>Name of new folder:</div>
+            <div>Name of new folder: </div>
             <div>
                 <br/>
             </div>
             <div>
-                <input id="new-collection-name" type="text" required="required"/>
+                <input id="new-collection-name" type="text"/>
             </div>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="upload-file-dialog" class="upload-file-style" modal="true" title="File attachments" trigger="#upload-file-to-resource" width="900" onOpen="updateAttachmentDialog">
-        <script type="text/javascript">//
-angular.module('app', [], function() {})
-FileUploadCtrl.$inject = ['$scope']
-function FileUploadCtrl(scope) {
-    //============== DRAG &amp; DROP =============
-    // source for drag&amp;drop: http://www.webappers.com/2011/09/28/drag-drop-file-upload-with-html5-javascript/
-    var dropbox = document.getElementById("dropbox")
-    scope.dropText = 'Drop files here...'
-    
-    // init event handlers
-    function dragEnterLeave(evt) {
-        evt.stopPropagation()
-        evt.preventDefault()
-        scope.$apply(function(){
-            scope.dropText = 'Drop files here...'
-            scope.dropClass = ''
-        })
-    }
-    dropbox.addEventListener("dragenter", dragEnterLeave, false)
-    dropbox.addEventListener("dragleave", dragEnterLeave, false)
-    dropbox.addEventListener("dragover", function(evt) {
-        evt.stopPropagation()
-        evt.preventDefault()
-        var clazz = 'not-available'
-        //var ok = evt.dataTransfer &amp;&amp; evt.dataTransfer.types &amp;&amp; evt.dataTransfer.types.indexOf('Files') &gt;= 0
-        scope.$apply(function(){
-          //  scope.dropText = ok ? 'Drop files here...' : 'Only files are allowed!'
-          //  scope.dropClass = ok ? 'over' : 'not-available'
-          scope.dropText  = 'Drop files here...'
-          scope.dropClass = 'over' 
-        })
-    }, false)
-    dropbox.addEventListener("drop", function(evt) {
-        //console.log('drop evt:', JSON.parse(JSON.stringify(evt.dataTransfer)))
-        evt.stopPropagation()
-        evt.preventDefault()
-        scope.$apply(function(){
-            scope.dropText = 'Drop files here...'
-            scope.dropClass = ''
-        })
-        var files = evt.dataTransfer.files
-        if (files.length &gt; 0) {
-            scope.$apply(function(){
-                scope.files = []
-                for (var i = 0; i &lt; files.length; i++) {
-                    scope.files.push(files[i])
-                }
-            })
-        }
-    }, false)
-    //============== DRAG &amp; DROP =============
-    
-    scope.setFiles = function(element) {
-	    scope.$apply(function(scope) {
-	      //console.log('files:', element.files);
-	      // Turn the FileList object into an Array
-	        scope.files = []
-	        for (var i = 0; i &lt; element.files.length; i++) {	        
-	          scope.files.push(element.files[i])
-	        }
-	      scope.progressVisible = true
-	      });
-    };
-    
-    scope.uploadFile = function() {
-        var fd = new FormData()
-        for (var i in scope.files) {
-            fd.append("uploadedFile", scope.files[i])
-        }
-        var xhr = new XMLHttpRequest()
-        xhr.upload.addEventListener("progress", uploadProgress, false)
-        xhr.addEventListener("load", uploadComplete, true)
-        xhr.addEventListener("error", uploadFailed, false)
-        xhr.addEventListener("abort", uploadCanceled, false)
-        
-        xhr.open("POST", "../upload/upload.xq")
-        scope.progressVisible = false        
-        
-        if (document.getElementById('upload-resource-id') != null) {
-            var parent_record = document.getElementById('upload-resource-id').innerHTML
-            xhr.setRequestHeader("X-File-Parent", parent_record)
-        }
-                
-        //for folder uploads
-	    if ($('#file-upload-folder') != null) {
-		  var upload_folder = $('#file-upload-folder').html();
-		  xhr.setRequestHeader("X-File-Folder", upload_folder)
-		}       
-        
-        xhr.send(fd)
-        scope.files = []
-    }
-    
-    scope.hideUploadDialog = function() {
-        scope.files = [];
-        $("#upload-file-dialog").dialog("close");
-    }    
-    
-    function uploadProgress(evt) {
-        scope.$apply(function(){
-            if (evt.lengthComputable) {
-                scope.progress = Math.round(evt.loaded * 100 / evt.total)
-            } else {
-                scope.progress = 'unable to compute'
-            }
-        })
-    }
-    
-    function uploadComplete(evt) {
-        /* This event is raised when the server send back a response */
-        //$('#upload-file-dialog').dialog('close');
-         $('#simple-search-form').submit();
-        //alert(evt.target.responseText)
-    }
-    
-    function uploadFailed(evt) {
-        alert("There was an error attempting to upload the file.")
-    }
-    
-    function uploadCanceled(evt) {
-        scope.$apply(function(){
-            scope.progressVisible = false
-        })
-        alert("The upload has been canceled by the user or the browser dropped the connection.")
-    }
-}
-//</script>
+    </div>
+    <div id="upload-file-dialog" class="upload-file-style">
         <div class="row"/>
         <div class="dropbox-wrapper">
             <div id="dropbox" class="dropbox" ng-class="dropClass">
@@ -174,10 +310,8 @@ function FileUploadCtrl(scope) {
                     <tr>
                         <td colspan="1">{{file.webkitRelativePath || file.name}}</td>
                         <td ng-switch="file.size &gt; 1024*1024" colspan="1">
-                            <span>{{file.size
-								/ 1024 / 1024 | number:2}} MB</span>
-                            <span>{{file.size / 1024 |
-								number:2}} kB</span>
+                            <span>{{file.size / 1024 / 1024 | number:2}} MB</span>
+                            <span>{{file.size / 1024 | number:2}} kB</span>
                         </td>
                     </tr>
                 </table>
@@ -199,29 +333,23 @@ function FileUploadCtrl(scope) {
             </tr>
         </table>
         <input type="button" ng-click="hideUploadDialog()" value="Cancel" style="float: right;"/>
-    </jquery:dialog>
-    <jquery:dialog id="rename-collection-dialog" modal="true" title="Rename Folder" trigger="#collection-rename-folder" width="450">
-        <jquery:button label="Rename" function="renameCollection"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="rename-collection-dialog">
         <form id="rename-collection-form" action="operations.xql">
             <input id="rename-collection-path_" type="hidden" name="collection"/>
-            <div>New folder name:</div>
+            <div>New folder name: </div>
             <div>
                 <br/>
             </div>
             <div>
-                <input id="rename-new-name" name="name" type="text" required="required"/>
+                <input id="rename-new-name" name="name" type="text"/>
             </div>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="move-collection-dialog" modal="true" title="Move Folder" trigger="#collection-move-folder" width="700">
-        <jquery:button label="Move" function="moveCollection"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="move-collection-dialog">
         <form id="move-collection-form" action="operations.xql">
             <input id="move-collection-path_" type="hidden" name="collection"/>
-            <div>
-				Move folder '<span id="move-collection-path_"/>' to
-			</div>
+            <div>Move folder '<span id="move-collection-path_"/>' to </div>
             <div>
                 <br/>
             </div>
@@ -229,29 +357,21 @@ function FileUploadCtrl(scope) {
                 <select id="collection-move-destinations" name="path"/>
             </div>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="remove-collection-dialog" modal="true" title="Remove Folder" trigger="#collection-remove-folder" width="450">
-        <jquery:button label="Remove" function="removeCollection"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="remove-collection-dialog">
         <form id="remove-collection-form" action="operations.xql">
             <input id="remove-collection-path_" type="hidden" name="collection"/>
-            <div>
-				Remove the folder named "<span id="sharing-collection-path_"/>"?
-			</div>
+            <div>Remove the folder named "<span id="sharing-collection-path_"/>"? </div>
             <div>
                 <br/>
             </div>
-            <div>NB: If you remove the folder, the folder and its contents
-				will be deleted and cannot be restored.</div>
+            <div>NB: If you remove the folder, the folder and its contents will be deleted and cannot be restored.</div>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="sharing-collection-dialog" modal="true" title="Folder Sharing" trigger="#collection-sharing" width="700" onOpen="updateSharingDialog">
-        <jquery:button id="cancel" label="Close"/>
-        <div>
-			Folder <strong>
+    </div>
+    <div id="sharing-collection-dialog">
+        <div>Folder <strong>
                 <span id="sharing-collection-path_"/>
-            </strong> is shared with:
-		</div>
+            </strong> is shared with:</div>
         <table id="collectionSharingDetails">
             <thead>
                 <tr>
@@ -264,64 +384,52 @@ function FileUploadCtrl(scope) {
                 </tr>
             </thead>
             <tbody>
-			</tbody>
+            </tbody>
         </table>
         <input id="add-new-user-to-share-button" type="button" value="Add User"/>
         <input id="add-new-project-to-share-button" type="button" value="Add Project"/>
-    </jquery:dialog>
-    <jquery:dialog id="add-user-to-share-dialog" modal="true" title="Add a User to Share With" width="450">
+    </div>
+    <div id="add-user-to-share-dialog">
         <div>Enter the user's name:</div>
         <div>
-            <jquery:input name="user-auto-list" id="user-auto-list">
-                <jquery:autocomplete url="autocomplete-username.xql" width="300" multiple="false" matchContains="false" minLength="2"/>
-            </jquery:input>
+            <input name="user-auto-list" id="user-auto-list"/>
         </div>
         <input id="add-user-to-share-button" type="button" value="Add"/>
-    </jquery:dialog>
-    <jquery:dialog id="add-project-to-share-dialog" modal="true" title="Add a Project to Share With" width="450">
+    </div>
+    <div id="add-project-to-share-dialog">
         <div>
             <span>Enter the project's name:</span>
-            <jquery:input name="project-auto-list" id="project-auto-list">
-                <jquery:autocomplete url="autocomplete-groupname.xql" width="300" multiple="false" matchContains="false" minLength="2"/>
-            </jquery:input>
+            <div name="project-auto-list" id="project-auto-list"/>
         </div>
         <input id="add-project-to-share-button" type="button" value="Add"/>
-    </jquery:dialog>
-    <jquery:dialog id="remove-resource-dialog" modal="true" title="Remove Record" width="450">
-        <jquery:button label="Remove" function="removeResource"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="remove-resource-dialog">
         <form id="remove-resource-form" action="operations.xql">
             <div>Are you sure you wish to remove the current record?</div>
             <input id="remove-resource-id" name="resource" type="hidden" value=""/>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="move-resource-dialog" modal="true" title="Move Record" width="500">
-        <jquery:button label="Move" function="moveResource"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="move-resource-dialog">
         <form id="move-resource-form" action="operations.xql">
-            <div>
-				Move record from '<span id="move-resource-collection-path-label"/>'
-				to
-				<div>
+            <div>Move record from
+                '<span id="move-resource-collection-path-label"/>' to
+                <div>
                     <select id="resource-move-destinations" name="path"/>
                 </div>
             </div>
             <input id="move-resource-id" name="resource" type="hidden" value=""/>
         </form>
-    </jquery:dialog>
-    <jquery:dialog id="new-resource-dialog" modal="true" title="Create Stand-Alone MODS Record" trigger="#collection-create-resource" width="550">
-        <jquery:button id="create" label="Create" function="newResource"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="new-resource-dialog">
         <div class="biblio:resource-types stand-alone"/>
-    </jquery:dialog>
-    <jquery:dialog id="add-related-dialog" modal="true" title="Create Related MODS Record" width="550">
-        <jquery:button id="create" label="Create" function="newRelatedResource"/>
-        <jquery:button id="cancel" label="Cancel"/>
+    </div>
+    <div id="add-related-dialog" modal="true" title="Create Related MODS Record" width="550">
         <div class="biblio:resource-types related-item"/>
-    </jquery:dialog>
+    </div>
     <div id="lightbox" class="lightbox" style="display: none">
         <div class="view">
             <div class="image">
+                <img class="content" src="dummy"/>
                 <a href="" class="next">
                     <img src="theme/images/nextlabel.gif"/>
                 </a>

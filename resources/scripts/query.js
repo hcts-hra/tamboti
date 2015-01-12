@@ -1,3 +1,14 @@
+tamboti = {};
+
+tamboti.selectedSearchResultOptions = {};
+
+tamboti.createGuid = function() {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+		return v.toString(16);
+	});
+} 
+
 $(function() {
     $("#edit-action-form").submit(function() {
         console.log("Submit ................");
@@ -901,7 +912,7 @@ function removeCollection(dialog) {
  * Checks if the supplied credentials are valid. If yes, submit
  * the form to reload the page.
  */
-function login() {
+function login(dialog) {
     var user = $('#login-dialog input[name = user]');
     var password = $('#login-dialog input[name = password]');
     $('#login-message').text('Checking ...');
@@ -914,7 +925,14 @@ function login() {
         type: 'POST',
         success:
                 function(data, message) {
-                    $('#login-form').submit();
+        			$.ajax({
+        				url: "index.html",
+        				data: "user=" + user.val() + "&password=" + escape(password.val()),
+        				type: 'POST',
+        				success: function(data, message) {
+        					location.reload();
+        				}
+        			});
                 },
         error: function(response, message) {
             showMessage('Login failed: ' + response.responseText);
@@ -1420,7 +1438,7 @@ function addUserToShare() {
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
-                    showMessage("Could not create entry");
+                    showMessage("User '" + username + "' already added to this folder!");
                 }
             });
         },
