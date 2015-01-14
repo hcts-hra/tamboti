@@ -1,7 +1,8 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" id="query-panel">
     <script type="text/javascript">
         $(function() {
-            var selectedTabId = $("#query-history ul").data("selected-tab-id");            
+            var selectedTabId = $("#query-history ul").data("selected-tab-id"); 
+            selectedTabId = (selectedTabId != "") ? selectedTabId : "simple-search-tab";
             $( "#query-tabs" ).tabs({
                 select: searchTabSelected,
                 selected: $("#" + selectedTabId).index() - 1
