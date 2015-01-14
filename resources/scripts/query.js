@@ -93,50 +93,6 @@ $(function() {
 
     pingSession();
 
-    // initialize the dropDownListCheckbox
-    tamboti.ddlcb = $("#ddlcb").dropDownListCheckbox({
-        containerCls: "#ddlcb",
-        mainOption: '#ddlcb-select-all',
-        mainComponentOptionSelected: function() {
-            $("#pagination input:checkbox").attr("checked", "checked").each(
-                    function(index) {
-                        tamboti.ddlcb.dropDownListCheckbox.registerExternalOption([$(this).attr("data-tamboti-record-id")]);
-                    }
-            );
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        },
-        mainComponentOptionUnselected: function() {
-            $("#pagination input:checkbox").removeAttr('checked').each(
-                    function(index) {
-                        tamboti.ddlcb.dropDownListCheckbox.unregisterExternalOption([$(this).attr("data-tamboti-record-id")]);
-                    }
-            );
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        },
-        otherComponentOptionSelected: function($option) {
-            $(".search-list-item-checkbox").prop("checked", "checked").each(
-                    function(index) {
-                        tamboti.ddlcb.dropDownListCheckbox.registerExternalOption([$(this).attr("data-tamboti-record-id")]);
-                    }
-            );
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        },
-        otherComponentOptionUnselected: function($option) {
-            $(".search-list-item-checkbox").removeAttr('checked').each(
-                    function(index) {
-                        tamboti.ddlcb.dropDownListCheckbox.unregisterExternalOption([$(this).attr("data-tamboti-record-id")]);
-                    }
-            );
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        },
-        showComponentStatusMessage: true,
-        componentStatusMessage: "$numberOfSelectedOptions of $maxNumberOfOptions record(s) selected"
-    });
-
     // initialize the check boxes of the search list
     $(".search-list-item-checkbox").live("click", function(ev) {
         //ev.preventDefault();
