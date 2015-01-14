@@ -10,43 +10,6 @@ tamboti.createGuid = function() {
 } 
 
 $(function() {
-    $("#edit-action-form").submit(function() {
-        console.log("Submit ................");
-        var $form = $(this);
-        var records = $form.find("input").val().split(',');
-        var url = $form.attr("action");
-        var xml = "<data>";
-
-        for (var i = 0; i < records.length; i++) {
-            xml += "<file>" + records[i] + "</file>";
-        }
-        xml += "</data>";
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/xml",
-            dataType: 'text',
-            data: xml,
-            error: function() {
-                showMessage("Could not send record ids to ziziphus.");
-            },
-            success: function(data) {
-                if (data !== null) {
-                    var win = window.open('about:blank');
-                    with (win.document)
-                    {
-                        open();
-                        write(data);
-                        close();
-                    }
-                }
-            }
-        });
-
-        return false;
-    });
-
     $('#keyword-form').submit(function() {
         loadIndexTerms();
         return false;
@@ -92,32 +55,6 @@ $(function() {
     });
 
     pingSession();
-
-    // initialize the check boxes of the search list
-    $(".search-list-item-checkbox").live("click", function(ev) {
-        //ev.preventDefault();
-        var $this = $(this);
-        if ($this.is(":checked")) {
-
-            tamboti.ddlcb.dropDownListCheckbox.registerExternalOption([$this.attr("data-tamboti-record-id")]);
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        } else {
-            tamboti.ddlcb.dropDownListCheckbox.unregisterExternalOption([$this.attr("data-tamboti-record-id")]);
-            var value = tamboti.ddlcb.dropDownListCheckbox.selectedOptionsIndex;
-            $("#edit-action-form input").val(value.toString());
-        }
-    });
-
-    $("#search-list-action").change(function() {
-        var $this = $(this);
-        if ($this.val() == "edit") {
-            $("#edit-action-form").submit();
-        } else {
-            alert("This action is not yet implemented!");
-        }
-        $this.val("actions");
-    });
 
     $("#splash").fadeOut(1000);
 
