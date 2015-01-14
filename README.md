@@ -19,6 +19,5 @@ N. B.  Maven 3.1.1+ is needed.
 * For Cluster Asia and Europe... test instance of tamboti, use "clean package -Ppatched-cluster-test-build".
 
 ### Dependencies
-* dropDownListCheckbox - https://github.com/claudius108/jquery.dropDownListCheckbox. It has to be build with maven and installed as xar.
 * eXist’s content extraction and image modules.
 * eXist ImageMagick Plugin by ZwoBit https://github.com/zwobit/imagemagick.xq
