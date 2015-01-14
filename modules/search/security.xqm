@@ -355,6 +355,66 @@ declare function security:set-ace-writeable-by-name($resource as xs:anyURI, $tar
 };
 
 (:~
+: toggles the ace-executable flag by name
+: 
+: @param resource The resource or collection
+: @param target USER or GROUP
+: @param name The user- or groupname
+: @param is-executable executable or not
+:)
+
+declare function security:set-ace-executable-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as xs:boolean {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
+        let $permissions := sm:get-permissions($resource)
+        let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
+        let $id := $ace/@index
+            return
+                if (empty($ace)) then
+                    false()
+                else (
+                    
+                    let $regexp-replacement := if ($is-executable) then
+                        "x"    
+                    else
+                        "-"
+                    ,
+                    $new-mode := fn:replace($ace/@mode, "(.)(.)(.)", "$1" || "$2" || $regexp-replacement)
+                    ,
+                    $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                    return
+                        true()
+                    
+                )
+    )
+};
+
+(:~
+: set the mode for an user or group ACE
+: 
+: @param resource The resource or collection
+: @param target USER or GROUP
+: @param name The user- or groupname
+: @param ace-mode the mode for ACE as string (i.e. "rwx" or "r--")
+:)
+
+declare function security:set-ace-mode-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $ace-mode as xs:string) as xs:boolean {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
+        let $permissions := sm:get-permissions($resource)
+        let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
+        let $id := $ace/@index
+            return
+                if (empty($ace)) then
+                    false()
+                else (
+                    let $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $ace-mode))
+                    return
+                        true()
+                )
+    )
+};
+
+
+(:~
 : @return a sequence if the removal succeeded, otherwise the empty sequence
 :   The sequence contains USER or GROUP as the first item, and then the who as the second item
 :)
