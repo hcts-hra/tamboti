@@ -6,7 +6,7 @@ declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "html5";
 declare option output:media-type "text/html";
 
-<div>
+<div xmlns="http://www.w3.org/1999/xhtml">
     <p> This is version {$config:app-version} of Tamboti, created 2014-01-24.</p>
     <p> Tamboti is an application for working with metadata based on the <a href="http://www.loc.gov/standards/mods/" target="_blank">MODS</a> standard.</p>
     <p> MODS is a standard used to catalogue books, articles and other traditional library
