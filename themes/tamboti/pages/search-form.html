@@ -12,7 +12,7 @@
             $("#about-tamboti").load("../../includes/about-tamboti.xq");
             $("#cluster-collections").load("../../includes/tamboti-collections.xq");
             
-            $("#simple-search-form input[name = 'input1'], #advanced-search-form input[name = 'input1']").autocomplete({
+            $("#simple-search-form input[name = 'input1']").autocomplete({
                 source: function(request, response) {
                     var data = { term: request.term };
                     autocompleteCallback($("#simple-search-form input[name = 'input1']"), data);
@@ -27,6 +27,22 @@
                 minLength: 3,
                 delay: 700
             });
+            
+            $("#advanced-search-form input[name = 'input1']").autocomplete({
+                source: function(request, response) {
+                    var data = { term: request.term };
+                    autocompleteCallback($("#advanced-search-form input[name = 'input1']"), data);
+                    $.ajax({
+                        url: "autocomplete.xql",
+                        dataType: "json",
+       					data: data,
+                        success: function(data) {
+                            response(data);
+                        }});
+                },
+                minLength: 3,
+                delay: 700
+            });            
             
             $('.search-form').repeat('#add-field', {
                 deleteTrigger: '',
