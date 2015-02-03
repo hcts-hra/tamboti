@@ -815,7 +815,7 @@ declare function bs:toolbar($item as element(), $isWritable as xs:boolean, $id a
                     (
                         if (xmldb:collection-available("/db/apps/ziziphus/") and name($item) eq 'vra')
                         then
-                            <a target="_new" href="/exist/apps/ziziphus/record.html?id={$id}&amp;workdir={$workdir}&amp;imagepath={$imagepath}">
+                            <a target="_new" href="/exist/apps/ziziphus/record.xql?id={$id}&amp;workdir={$workdir}&amp;imagepath={$imagepath}">
                                 <img title="Edit VRA Record" src="theme/images/page_edit.png"/>
                             </a>
                         else 
