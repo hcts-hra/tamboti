@@ -25,7 +25,7 @@ declare function user:add-to-personal-list() {
 };
 
 declare function user:remove-from-personal-list() {
-    (:Where does "save_" come from?:)
+    (:"save_" comes from session.xql:)
     let $id := substring-after(request:get-parameter("id", ()), "save_")
     let $oldList := session:get-attribute("personal-list")
     let $newList :=
@@ -45,7 +45,6 @@ declare function user:personal-list($list as xs:string) {
 
 declare function user:personal-list-size() {
     let $list := session:get-attribute("personal-list")
-    (:let $log := util:log("DEBUG", ("##$list): ", $list)):)
     return
         if (count($list/listitem) eq 1)
         then <span>{count($list/listitem)} item</span>
@@ -62,14 +61,12 @@ declare function user:export-personal-list() as element(my-list-export) {
         <my-list-export>
         {
             (
-            session:get-attribute("personal-list")/listitem/mods:mods, 
-                            <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-            {
-            $vra-work,
-            $vra-images
-                
-            }
-                </vra>,
+            session:get-attribute("personal-list")/listitem/mods:mods
+            , 
+            <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
+                {$vra-work, $vra-images}
+            </vra>
+            ,
             session:get-attribute("personal-list")/listitem/tei:TEI
             )
         }
@@ -92,7 +89,6 @@ declare function user:get-vra-image-records() as element()* {
 
 let $list := request:get-parameter("list", ())
 let $export := request:get-parameter("export", ())
-let $list-size := user:personal-list-size()
 
 return
     if ($export)
