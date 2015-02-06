@@ -526,7 +526,7 @@ declare function biblio:xml-query-to-string($query-as-xml as element()) as xs:st
                 biblio:xml-query-to-string($query-as-xml/*[2])
             )
         case element(collection) return
-            concat("collection(""", $query-as-xml, """):")
+            concat("collection(""", xmldb:decode-uri($query-as-xml), """):")
         case element(field) return
             concat($query-as-xml/@name, ':', $query-as-xml/string())
         default return
