@@ -1,5 +1,7 @@
 xquery version "3.0";
 
+import module namespace config = "http://exist-db.org/mods/config" at "/db/apps/tamboti/modules/config.xqm";
+
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 
 declare function local:move-uuid($collection-uri as xs:anyURI) {
@@ -18,6 +20,6 @@ declare function local:move-uuid($collection-uri as xs:anyURI) {
             
 };
 
-let $uri := xs:anyURI("/db/resources/commons/Priya_Paul_Collection")
+let $uri := xs:anyURI($config:mods-root || "/commons/Priya_Paul_Collection")
 return 
     local:move-uuid($uri)

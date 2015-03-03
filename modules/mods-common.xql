@@ -665,7 +665,7 @@ declare function mods-common:format-name($name as element()?, $position as xs:in
             if ($name-type = ('corporate', 'family', '')) 
             then
                 let $name-link := string-join($name/mods:namePart, ' ')
-                let $name-link := concat(replace(request:get-url(), '/retrieve', '/index.html') ,"?collection=resources&amp;field1=Name&amp;input1=", $name-link, "&amp;query-tabs=advanced-search-form&amp;default-operator=and")
+                let $name-link := concat(replace(request:get-url(), '/retrieve', '/index.html') ,"?collection=" || $config:data-collection-name || "&amp;field1=Name&amp;input1=", $name-link, "&amp;query-tabs=advanced-search-form&amp;default-operator=and")
                 return
                 <span>
                     <span class="name">{
@@ -839,7 +839,6 @@ declare function mods-common:format-name($name as element()?, $position as xs:in
                     let $name-in-non-latin-script-link := string-join($name-in-non-latin-script/mods:namePart, ' ')
                     let $name-link := concat($name-basic-link, ' ' , $name-in-non-latin-script-link, ' ', $name-in-transliteration-link)  
                     let $name-link := normalize-space($name-link)
-                    let $name-link := concat(replace(request:get-url(), '/retrieve', '/index.html') ,"?collection=resources&amp;field1=Name&amp;input1=", $name-link, "&amp;query-tabs=advanced-search-form&amp;default-operator=and")
                     let $name-link := concat(replace(request:get-url(), '/retrieve', '/index.html') ,"?collection=" || $config:data-collection-name || "&amp;field1=Name&amp;input1=", $name-link, "&amp;query-tabs=advanced-search-form&amp;default-operator=and") 
                     
                     (: We assume that there is only one date name part in $name-basic. 
