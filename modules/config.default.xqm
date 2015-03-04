@@ -66,6 +66,7 @@ declare variable $config:images := concat($config:app-root, $config:mods-root ||
 
 declare variable $config:images-subcollection := ("VRA_images");
 
+declare variable $config:app-http-root := "/exist" || substring-after($config:app-root, "/db");
 
 (: If the user has not specified a query, should he see the entire collection contents?
  : Set to true() if a query must be specified, false() to list the entire collection.
