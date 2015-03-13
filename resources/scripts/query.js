@@ -7,7 +7,7 @@ tamboti.createGuid = function() {
 		var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
 		return v.toString(16);
 	});
-} 
+};
 
 $(function() {
     $('#keyword-form').submit(function() {
@@ -72,19 +72,7 @@ $(function() {
 
 });
 
-/* collection action buttons */
-function hideCollectionActionButtons() {
-    $('#collection-create-folder').hide();
-    $('#collection-rename-folder').hide();
-    $('#collection-move-folder').hide();
-    $('#collection-remove-folder').hide();
-    $('#collection-sharing').hide();
-    $('#collection-create-resource').hide();
-    $('#remove-group-button').hide();
-    $('#upload-file-to-resource').hide();
-}
-
-/* sharing dialog actions */
+/* Initialize JS functionality (i.e. bind click actions) */
 $(document).ready(function() {
 
     bindKeyPressActions();
@@ -153,28 +141,23 @@ $(document).ready(function() {
     //prepareAttachmentSharingDetails();
 
     prepareCollectionSharingDetails();
-    //attachment
 
-
-
+    /********* BIND FANCYTREE TOOLBAR  BUTTONS ***************/
     //add new user to share event
     $('#add-new-user-to-share-button').click(function() {
         //clear the textbox for user name
         $('#user-auto-list').val("");
         $('#add-user-to-share-dialog').dialog('open');
     });
-
     $('#add-user-to-share-button').click(function() {
         addUserToShare();
     });
-
     //add new project to share event
     $('#add-new-project-to-share-button').click(function() {
         //clear the textbox for project name
         $('#project-auto-list').val("");
         $('#add-project-to-share-dialog').dialog('open');
     });
-
     $('#add-project-to-share-button').click(function() {
         addProjectToShare();
     });
@@ -201,7 +184,6 @@ $(document).ready(function() {
         return false;
     };
 });
-
 
 function pingSession() {
     $.getJSON("check-session.xql", function(result) {
@@ -283,9 +265,474 @@ function showNotices() {
     });
 }
 
+function updateCollectionPaths(title, key) {
+    key = key.replace(/^\/db/, "");
+
+    $("#simple-search-form input[name = collection]").val(key);
+    $("#advanced-search-form input[name = collection]").val(key);
+    
+    $("#simple-search-form input[name = 'render-collection-path']").val(key);
+    $("#advanced-search-form input[name = 'render-collection-path']").val(key);
+
+
+    //search forms
+    // updateCollectionPathOutputs(key);
+    //dialog collection paths
+    $('span[id $= collection-path_]').text(title);
+    $('input[id $= collection-path_]').val(key);
+
+    // $('#collection-create-resource').attr("href", "../edit/edit.xq?type=book-chapter&collection=" + key);
+}
+
+function getCurrentCollection() {
+    return "/db" + $("#simple-search-form input[name = collection]").val();
+}
+
+// function updateCollectionPathOutputs(collectionPath) {
+//     collectionPath = collectionPath.replace(/^\//, "").replace(/\/commons\//, "/").replace(/\/users\//, "/");
+//     $("#simple-search-form input[name = 'render-collection-path']").val(collectionPath);
+//     $("#advanced-search-form input[name = 'render-collection-path']").val(collectionPath);
+// }
+
+function showHideCollectionControls() {
+    var collection = getCurrentCollection();
+
+    var params = {action: "collection-relationship", collection: collection};
+    $.post("checkuser.xql", params, function(data) {
+
+        /**
+         data looks like this -
+         
+         <relationship user="" collection="">
+            <home/>
+            <owner/>
+            <read/>
+            <write/>
+            <execute/>
+            <read-parent/>
+            <write-parent/>
+            <execute-parent/>
+         </relationship>
+         */
+
+        var write = $(data).find('write');
+        var isWriteable = (write !== null && write.text() == 'true');
+
+        var execute = $(data).find('execute');
+        var isExecutable = (execute !== null && execute.text() == 'true');
+
+        var home = $(data).find('home');
+        var isUsersHome = (home !== null && home.text() == 'true');
+
+        var owner = $(data).find('owner');
+        var isOwner = (owner !== null && owner.text() == 'true');
+
+        var parentWrite = $(data).find('write-parent');
+        var isParentWriteable = (parentWrite !== null && parentWrite.text() == 'true');
+
+        var parentExecute = $(data).find('execute-parent');
+        var isParentExecutable = (parentExecute !== null && parentExecute.text() == 'true');
+        //collection is writeable
+        if (isWriteable) {
+            $('#collection-create-folder').show();
+            $('#collection-create-resource').show();
+            if (!isUsersHome) {
+                $('#upload-file-to-resource').show();
+            }
+            else {
+                $('#upload-file-to-resource').hide();
+            }
+        } else {
+            $('#collection-create-folder').hide();
+            $('#collection-create-resource').hide();
+            $('#upload-file-to-resource').hide();
+        }
+
+        //collection is not current users home and is owned by current user
+        if (!isUsersHome && isExecutable && isWriteable) {
+            $('#collection-sharing').show();
+        } else {
+            $('#collection-sharing').hide();
+        }
+
+        // moving and renaming needs parentCollection to be writeable and executable
+        if (isParentWriteable && isParentExecutable && !isUsersHome) {
+            $('#collection-rename-folder').show();
+            $('#collection-move-folder').show();
+            //$('#upload-file-to-resource').show();
+        } else {
+            $('#collection-rename-folder').hide();
+            $('#collection-move-folder').hide();
+            //$('#upload-file-to-resource').hide();
+        }
+
+        //parent is writeable and executable and its not the current users home folder
+        if (isParentWriteable && isParentExecutable && !isUsersHome) {
+            $('#collection-remove-folder').show();
+            //$('#upload-file-to-resource').show();
+        } else {
+            $('#collection-remove-folder').hide();
+            //$('#upload-file-to-resource').hide();
+        }
+    });
+}
+
+function refreshResourceMoveList() {
+
+//  var collection = getCurrentCollection();
+    var collection = "/" + $('#file-location-folder').html();
+    // console.debug($('#file-location-folder').html());
+
+    //set the current collection on the form
+    $("#move-resource-collection-path-label").html(collection);
+    $("#move-resource-collection").val(collection);
+
+    //get the destination collection options
+    var params = {
+        action: 'get-move-resource-list',
+        collection: collection
+    };
+    $.get("operations.xql", params, function(data) {
+
+        //clear the list
+        $("#resource-move-destinations").find("option").remove();
+
+        $("option", data).each(function() {
+            $("#resource-move-destinations").append("<option value='" + $.trim($(this).attr("value")) + "'>" + $.trim($(this).text()) + "</option>");
+        });
+    });
+}
+
 /*
- Initialize the collection tree. Connect toolbar button events.
+ * called when the user  clicks the add attachment button
  */
+function emptyFileList() {
+    //  $('#file-list').empty();
+
+}
+
+/**
+ * Called after the user clicked "Login" on the login form.
+ * Checks if the supplied credentials are valid. If yes, submit
+ * the form to reload the page.
+ */
+function login(dialog) {
+    var user = $('#login-dialog input[name = user]');
+    var password = $('#login-dialog input[name = password]');
+    $('#login-message').text('Checking ...');
+    $.ajax({
+        url: "checkuser.xql",
+        data: {
+            user: user.val(),
+            password: escape(password.val())
+        },
+        type: 'POST',
+        success:
+                function(data, message) {
+        			$.ajax({
+        				url: "index.html",
+        				data: "user=" + user.val() + "&password=" + escape(password.val()),
+        				type: 'POST',
+        				success: function(data, message) {
+        					location.reload();
+        				}
+        			});
+                },
+        error: function(response, message) {
+            showMessage('Login failed: ' + response.responseText);
+        }
+    });
+}
+
+/**
+ * Called from the create indexes dialog if the user clicks on "Start".
+ */
+function createIndexes() {
+    var pass = $('#optimize-dialog input[name = password]');
+    $('#optimize-message').text('Running ...');
+    $.get('optimize.xql?pass=' + pass.val(),
+            function(data, status) {
+                if (status != "success")
+                    $('#optimize-message').text('Error during optimize!');
+                else
+                    $('#optimize-dialog').dialog("close");
+            });
+}
+
+function loadIndexTerms() {
+    var input = $('input[name = input-keyword-prefix]');
+    $('#keywords-result').load("filters.xql?type=keywords&prefix=" + input.val(), function() {
+        if ($('#keywords-result ul').hasClass('complete'))
+            $('#keyword-form').css('display', 'none');
+    });
+}
+
+function autocompleteCallback(node, params) {
+    params.collection = getCurrentCollection();
+
+    var name = node.attr('name');
+    var select = node.parent().parent().find('select[name ^= field]');
+    if (select.length == 1) {
+        params.field = select.val();
+    }
+}
+
+function repeatCallback() {
+    var input = $('input[name ^= input]', this);
+    input.autocomplete({
+        source: function(request, response) {
+            var data = {term: request.term};
+            autocompleteCallback(input, data);
+            $.ajax({
+                url: "autocomplete.xql",
+                dataType: 'json',
+                type : 'POST',
+                data: data,
+                success: function(data) {
+                    response(data);
+                }});
+        },
+        minLength: 3
+    });
+
+    $('select[name ^= operator]', this).each(function() {
+        $(this).css('display', '');
+    });
+}
+
+function saveToPersonalList(anchor) {
+    var img = $('img', anchor);
+    var pos = anchor.hash.substring(1);
+    if (img.hasClass('stored')) {
+        var id = anchor.id;
+        img.removeClass('stored');
+        img.attr('src', 'theme/images/disk.gif');
+        $.get('user.xql', {list: 'remove', id: id});
+    } else {
+        img.attr('src', 'theme/images/disk_gew.gif');
+        img.addClass('stored');
+        $.get('user.xql', {list: 'add', pos: pos});
+    }
+    $('#personal-list-size').load('user.xql', {action: 'count'});
+    return false;
+}
+
+function resultsLoaded(options) {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+
+    if (options.itemsPerPage > 1) {
+        $('tbody > tr:even > td', this).addClass('even');
+        $(".pagination-mode", $(options.navContainer)).show();
+    } else {
+        $(".pagination-mode", $(options.navContainer)).hide();
+    }
+    var tallest = 0;
+    $("#results li").each(function() {
+        if ($(this).height() > tallest) {
+            tallest = $(this).height();
+        }
+    });
+    $("#results li").each(function() {
+        $(this).height(tallest);
+    });
+    $('#filters').css('display', 'block');
+    $('#filters .include-target').empty();
+    $('#filters .expand').removeClass('expanded');
+
+    // trigger image viewer when user clicks on thumbnail
+    $("#results .detail-xml .magnify").click(function(ev) {
+        ev.stopPropagation();
+        var num = $(this).closest(".pagination-item").find(".pagination-number").text();
+        if (num) {
+            galleries.open();
+            galleries.show(parseInt(num));
+        }
+    });
+
+    //detail view
+    $('.actions-toolbar .save', this).click(function(ev) {
+        saveToPersonalList(this);
+    });
+
+    //list view
+    $('.actions-cell .save', this).click(function(ev) {
+        saveToPersonalList(this);
+    });
+
+    /** add remove resource action */
+    $('.actions-toolbar .remove-resource', this).click(function(ev) {
+        ev.preventDefault();
+        $('#remove-resource-id').val($(this).attr('href').substr(1));
+        $('#remove-resource-dialog').dialog('open');
+    });
+
+    /** add move resource action */
+    $('.actions-toolbar .move-resource', this).click(function() {
+        var collection = fancyTree.getActiveNode().key;
+        $('#move-resource-id').val($(this).attr('href').substr(1));
+        $("#move-resource-collection-path").val(collection);        
+        refreshResourceMoveList();
+        $('#move-resource-dialog').dialog('open');
+        return false;
+    });
+
+    $('.actions-toolbar .add-related', this).click(function(ev) {
+        ev.preventDefault();
+        var params = this.hash.substring(1).split('#');
+        $('#add-related-form input[name = collection]').val(params[0]);
+        $('#add-related-form input[name = host]').val(params[1]);
+        $('#add-related-dialog').dialog('open');
+
+    });
+
+    /**  add upload action*/
+    $('.actions-toolbar .upload-file-style', this).click(function(ev) {
+        var collection = fancyTree.getActiveNode().key;
+        ev.preventDefault();
+        $('#upload-resource-id').html($(this).attr('href').substr(1));
+        $('#file-upload-folder').empty();
+        $('#upload-resource-folder').html(collection);
+        //clean old  files
+        emptyFileList();
+        $('#upload-file-dialog').dialog('open');
+
+
+    });
+
+    //notify zotero that the dom has changed
+    if (document.createEvent) {
+        var ev = document.createEvent('HTMLEvents');
+        ev.initEvent('ZoteroItemUpdated', true, true);
+        document.dispatchEvent(ev);
+    }
+}
+
+function searchTabSelected(ev, ui) {
+    if (ui.index == 3) {
+        $('#personal-list-size').load('user.xql', {action: 'count'});
+    }
+}
+
+function attachedDetailsRowCallback(nRow, aData, iDisplayIndex) {
+    //determine user or group icon for first column
+    var img_src = aData[0];
+    $('td:eq(0)', nRow).html('<img alt="User Icon" src="' + img_src + '" width="100px"/>');
+
+    /*else if(aData[0] == "GROUP") {
+     $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
+     }
+     */
+
+    //determine writeable for fourth column
+    //var isWriteable = aData[3].indexOf("w") > -1;
+    //add the checkbox, with action to perform an update on the server
+    //var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
+    //$('td:eq(3)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteable(this,\'' + getCurrentCollection() + '\',' + iDisplayIndex + ', this.checked);"/>');
+
+    //add a delete button, with action to perform an update on the server
+    //var imgDeleteId = 'imgDelete_' + iDisplayIndex;
+    //$('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + iDisplayIndex + ');"/>');
+    //add jQuery cick action to image to perform an update on the server
+
+    return nRow;
+}
+
+//custom fnReloadAjax for sharing dataTable
+function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw) {
+    if (typeof sNewSource != 'undefined' && sNewSource !== null) {
+        oSettings.sAjaxSource = sNewSource;
+    }
+    this.oApi._fnProcessingDisplay(oSettings, true);
+    var that = this;
+    var iStart = oSettings._iDisplayStart;
+    oSettings.fnServerData(oSettings.sAjaxSource, [], function(json) {
+
+        /* Clear the old information from the table */
+        that.oApi._fnClearTable(oSettings);
+
+        if (json) {
+            for (var i = 0; i < json.aaData.length; i++) {
+                that.oApi._fnAddData(oSettings, json.aaData[i]);
+            }
+        }
+
+        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+        that.fnDraw();
+
+        if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+            oSettings._iDisplayStart = iStart;
+            that.fnDraw(false);
+        }
+
+        that.oApi._fnProcessingDisplay(oSettings, false);
+
+        /* Callback user function - for event handlers etc */
+        if (typeof fnCallback == 'function' && fnCallback !== null) {
+            fnCallback(oSettings);
+        }
+    }, oSettings);
+}
+
+function attachedDataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw) {
+    if (typeof sNewSource != 'undefined' && sNewSource !== null) {
+        oSettings.sAjaxSource = sNewSource;
+    }
+
+    this.oApi._fnProcessingDisplay(oSettings, true);
+
+    var that = this;
+    var iStart = oSettings._iDisplayStart;
+
+    oSettings.fnServerData(oSettings.sAjaxSource, [], function(json) {
+
+        /* Clear the old information from the table */
+        that.oApi._fnClearTable(oSettings);
+
+        /* Got the data - add it to the table */
+
+        if (json) {
+            for (var i = 0; i < json.aaData.length; i++) {
+                var t = json.aaData[i].items;
+                if (t !== null) {
+                    for (var j = 0; j < t.length; j++) {
+                        //if (t[j].name.indexOf(".xml") == -1){ // check if the file is binary
+                        var values = [t[j].collection, t[j].name, t[j].lastmodified];
+                        that.oApi._fnAddData(oSettings, values);
+
+                    }
+                }
+            }
+        }
+
+        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+        that.fnDraw();
+
+        if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
+            oSettings._iDisplayStart = iStart;
+            that.fnDraw(false);
+        }
+
+        that.oApi._fnProcessingDisplay(oSettings, false);
+
+        /* Callback user function - for event handlers etc */
+        if (typeof fnCallback == 'function' && fnCallback !== null) {
+            fnCallback(oSettings);
+        }
+    }, oSettings);
+}
+
+// Function for show a simple message
+function showMessage(message){
+    // ToDo: use Tamboti internal dialog instead of JS alert 
+    //$('#message').html(message);
+    alert(message);
+}
+
+
+// *****************************************************************************
+// *            FANCY TREE FUNCTIONS
+// *****************************************************************************
+/* Initialize the collection tree. Connect toolbar button events. */
 function initCollectionTree() {
     var fancyTree = $('#collection-tree-tree');
     var treeDiv = $('#collection-tree-main').css('display', 'none');
@@ -386,6 +833,18 @@ function initCollectionTree() {
     });
 }
 
+/* collection action buttons */
+function hideCollectionActionButtons() {
+    $('#collection-create-folder').hide();
+    $('#collection-rename-folder').hide();
+    $('#collection-move-folder').hide();
+    $('#collection-remove-folder').hide();
+    $('#collection-sharing').hide();
+    $('#collection-create-resource').hide();
+    $('#remove-group-button').hide();
+    $('#upload-file-to-resource').hide();
+}
+
 function toggleCollectionTree(show) {
     if (show) {
         $('#collection-tree').css({width: '310px', height: 'auto', 'background-color': 'transparent'});
@@ -402,226 +861,31 @@ function toggleCollectionTree(show) {
     }
 }
 
-function updateCollectionPaths(title, key) {
-    key = key.replace(/^\/db/, "");
+function expandPath(fancyTreeObj, fullPath, actualPath){
+    // get the rest of the path to expand
+    var rest = fullPath.substr(actualPath.length);
+    // cut the leading "/"
+    if (rest.substr(0,1) == "/") rest = rest.substr(1);
+    var next = rest.substr(0, rest.indexOf("/"));
+    // get the node
+    var node = fancyTreeObj.getNodeByKey(actualPath);
 
-    $("#simple-search-form input[name = collection]").val(key);
-    $("#advanced-search-form input[name = collection]").val(key);
-
-    //search forms
-    updateCollectionPathOutputs(key);
-
-    //dialog collection paths
-    $('span[id $= collection-path_]').text(title);
-    $('input[id $= collection-path_]').val(key);
-
-    // $('#collection-create-resource').attr("href", "../edit/edit.xq?type=book-chapter&collection=" + key);
-}
-
-function getCurrentCollection() {
-    return "/db" + $("#simple-search-form input[name = collection]").val();
-}
-
-function updateCollectionPathOutputs(collectionPath) {
-    collectionPath = collectionPath.replace(/^\//, "").replace(/\/commons\//, "/").replace(/\/users\//, "/");
-    $("#simple-search-form input[name = 'render-collection-path']").val(collectionPath);
-    $("#advanced-search-form input[name = 'render-collection-path']").val(collectionPath);
-}
-
-function showHideCollectionControls() {
-    var collection = getCurrentCollection();
-
-    var params = {action: "collection-relationship", collection: collection};
-    $.post("checkuser.xql", params, function(data) {
-
-        /**
-         data looks like this -
-         
-         <relationship user="" collection="">
-            <home/>
-            <owner/>
-            <read/>
-            <write/>
-            <execute/>
-            <read-parent/>
-            <write-parent/>
-            <execute-parent/>
-         </relationship>
-         */
-
-        var write = $(data).find('write');
-        var isWriteable = (write !== null && write.text() == 'true');
-
-        var execute = $(data).find('execute');
-        var isExecutable = (execute !== null && execute.text() == 'true');
-
-        var home = $(data).find('home');
-        var isUsersHome = (home !== null && home.text() == 'true');
-
-        var owner = $(data).find('owner');
-        var isOwner = (owner !== null && owner.text() == 'true');
-
-        var parentWrite = $(data).find('write-parent');
-        var isParentWriteable = (parentWrite !== null && parentWrite.text() == 'true');
-
-        var parentExecute = $(data).find('execute-parent');
-        var isParentExecutable = (parentExecute !== null && parentExecute.text() == 'true');
-        //collection is writeable
-        if (isWriteable) {
-            $('#collection-create-folder').show();
-            $('#collection-create-resource').show();
-            if (!isUsersHome) {
-                $('#upload-file-to-resource').show();
+    // expand the node if not already expanded
+    if (node && !node.isExpanded()){
+        node.setExpanded(true).done(function(){
+            // if any rest, recursively call expandPath
+            if (next.length > 0){
+                expandPath(fancyTreeObj, fullPath, actualPath + "/" + next);
             }
-            else {
-                $('#upload-file-to-resource').hide();
-            }
-        } else {
-            $('#collection-create-folder').hide();
-            $('#collection-create-resource').hide();
-            $('#upload-file-to-resource').hide();
-        }
-
-        //collection is not current users home and is owned by current user
-        if (!isUsersHome && isExecutable && isWriteable) {
-            $('#collection-sharing').show();
-        } else {
-            $('#collection-sharing').hide();
-        }
-
-        // moving and renaming needs parentCollection to be writeable and executable
-        if (isParentWriteable && isParentExecutable && !isUsersHome) {
-            $('#collection-rename-folder').show();
-            $('#collection-move-folder').show();
-            //$('#upload-file-to-resource').show();
-        } else {
-            $('#collection-rename-folder').hide();
-            $('#collection-move-folder').hide();
-            //$('#upload-file-to-resource').hide();
-        }
-
-        //parent is writeable and executable and its not the current users home folder
-        if (isParentWriteable && isParentExecutable && !isUsersHome) {
-            $('#collection-remove-folder').show();
-            //$('#upload-file-to-resource').show();
-        } else {
-            $('#collection-remove-folder').hide();
-            //$('#upload-file-to-resource').hide();
-        }
-    });
-}
-
-/*
- Called when the user clicks on the "remove" button in the remove resource dialog
- */
-function removeResource(dialog) {
-    var resource = $('#remove-resource-form input[name = resource]').val();
-    var params = { action: 'remove-resource', 
-            resource: resource,
-            uuid : $('#remove-resource').attr('id')
-    };
-    $.get("operations.xql", params, function(data) {
-        dialog.dialog("close");
-        $(location).attr('href', 'index.html?reload=true&collection=' + getCurrentCollection());
-    });
-}
-
-function refreshResourceMoveList() {
-
-//  var collection = getCurrentCollection();
-    var collection = "/" + $('#file-location-folder').html();
-    // console.debug($('#file-location-folder').html());
-
-    //set the current collection on the form
-    $("#move-resource-collection-path-label").html(collection);
-    $("#move-resource-collection").val(collection);
-
-    //get the destination collection options
-    var params = {
-        action: 'get-move-resource-list',
-        collection: collection
-    };
-    $.get("operations.xql", params, function(data) {
-
-        //clear the list
-        $("#resource-move-destinations").find("option").remove();
-
-        $("option", data).each(function() {
-            $("#resource-move-destinations").append("<option value='" + $.trim($(this).attr("value")) + "'>" + $.trim($(this).text()) + "</option>");
         });
-    });
+    }
+    //if node is not found at least try to expand the rest
+    else if (next.length > 0){
+        expandPath(fancyTreeObj, fullPath, actualPath + "/" + next);
+    }
 }
 
-
-
-/*
- * called when the user  clicks the add attachment button
- */
-function emptyFileList() {
-    //  $('#file-list').empty();
-
-}
-
-/*
- Called when the user clicks on the "move" button in the move resource dialog
- */
-function moveResource(dialog) {
-    var path = $('#move-resource-form select[name = path]').val();
-    var resource = $('#move-resource-form input[name = resource]').val();
-    var resource_type = $('#record-format').html();
-    var source_collection = "/" + $('#file-location-folder').html();
-    var params = {
-            action: 'move-resource',
-            path: path,
-            resource: resource,
-            source_collection: source_collection,
-            resource_type:resource_type
-    };
-    $.get("operations.xql", params, function(data) {
-        dialog.dialog("close");
-    });
-}
-
-/*
- Called when the user clicks on the "create" button in the create collection dialog.
- */
-function createCollection(dialog) {
-    var name = $("#new-collection-name").val();
-    var collection = getCurrentCollection();
-//    console.log(collection);
-    var params = {
-        action: 'create-collection', 
-        name: name, 
-        collection: collection
-    };
-    
-    $.ajax({
-        url: "operations.xql",
-        data: {
-            action: 'create-collection', 
-            name: name, 
-            collection: collection
-        },
-        type: 'POST',
-        success:
-                function(data, message) {
-                    //reload the tree node
-                    refreshCurrentTreeNode();
-                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
-                    node.setExpanded();
-                },
-        error: function(response, message) {
-            // alert("creating collection failed!")
-            //ToDo: Popup when creating Collection failed
-            showMessage('Creating collection failed: ' + response.responseText);
-        }
-    });
-
-    //close the dialog
-    dialog.dialog("close");
-}
-
-//refreshes the tree node
+/* refreshes the tree node */
 function refreshTreeNode(node) {
     if (node) {
         node.resetLazy();
@@ -629,8 +893,7 @@ function refreshTreeNode(node) {
     }
 }
 
-
-//refreshes the tree node
+/* refreshes the tree node */
 function refreshTreeNodeAndFocusOnChild(node, focusOnKey) {
     if (node) {
         refreshTreeNode(node);
@@ -642,13 +905,13 @@ function refreshTreeNodeAndFocusOnChild(node, focusOnKey) {
     }
 }
 
-//refreshes the currently selected tree node
+/* refreshes the currently selected tree node */
 function refreshCurrentTreeNode() {
     var node = $("#collection-tree-tree").fancytree("getActiveNode");
     refreshTreeNode(node);
 }
 
-//refreshes the parent of the currently selected tree node
+/* refreshes the parent of the currently selected tree node */
 function refreshParentTreeNode() {
     //reload the parent tree node
     var parentNode = $("#collection-tree-tree").fancytree("getActiveNode").getParent();
@@ -668,47 +931,12 @@ function refreshParentTreeNodeAndFocusOnChild(focusOnKey) {
     parentNode.setExpanded(true); //expand the node after reloading the children
 }
 
-
-
+// *****************************************************************************
+// *            DIALOG FUNCTIONS
+// *****************************************************************************
 //called each time the collection/folder sharing dialog is opened
 function updateFileList() {
     $('#uploadFileList').dataTable().fnReloadAjax("filelist.xql?collection=" + escape(getCurrentCollection()));
-}
-
-/*
- Called when the user clicks on the "rename" button in the rename collection dialog.
- */
-function renameCollection(dialog) {
-    var name = $('#rename-collection-form input[name = name]').val();
-    var collection = getCurrentCollection();
-
-    $.ajax({
-        url: "operations.xql",
-        data: {
-            action: 'rename-collection',
-            name: name, 
-            collection: collection
-        },
-        type: 'POST',
-        success:
-            function(data, message) {
-                //current node
-                var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
-                var currentNodeKey = currentNode.key;
-                currentNode.setTitle(name);
-                currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
-                refreshCurrentTreeNode();
-                //If it has children, trigger reload to regenerate keys with new name
-                //ToDo: add recursive change child-keys to avoid reloading
-                
-            },
-        error: function(response, message) {
-            showMessage('Creating collection failed: ' + response.responseText);
-        }
-    });
-
-    //close the dialog
-    dialog.dialog("close");
 }
 
 function refreshCollectionMoveList() {
@@ -735,286 +963,26 @@ function refreshCollectionMoveList() {
     }
 }
 
-/*
- Called when the user clicks on the "move" button in the move collection dialog.
- */
-function moveCollection(dialog) {
-    var path = $('#move-collection-form select[name = path]').val();
-    var collection = getCurrentCollection();
-    $.ajax({
-        url: "operations.xql",
-        data: {
-            action: 'move-collection', 
-            path: path, 
-            collection: collection
-        },
-        type: 'POST',
-        success: function(data, message) {
-            var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
-            var ft = $("#collection-tree-tree").fancytree("getTree");
-            // var currentKey = currentNode.key;
-    
-            //new key
-            // var newKey = $("#collection-tree-tree").fancytree("getActiveNode").getParent().key;
-            
-            var newCollection = $('#collection-move-destinations option:selected').text();
-            var newNode = ft.getNodeByKey(newCollection);
-            
-            console.debug(newNode);
+//called each time the collection/folder sharing dialog is opened
+function updateSharingDialog() {
+    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
 
-            //remove the former node
-            currentNode.remove();
-            //reload the destination node
-            newNode.load(true);
-            newNode.setExpanded(true);
-            // refreshTreeNode(newNode);
-            // newNode.setEx
-        },
-        error: function(response, message) {
-            showMessage('Moving collection failed: ' + response.responseText);
-        }
-    });
-
-    //close the dialog
-    dialog.dialog("close");
 }
 
-/*
- Called when the user clicks on the "remove" button in the remove collection dialog.
- */
-function removeCollection(dialog) {
-    var collection = getCurrentCollection();
-    $.ajax({
-        url: "operations.xql",
-        data:{ 
-            action: 'remove-collection', 
-            collection: collection 
-        },
-        type: 'POST',
-        success:
-            function(data, message) { 
-                //reload the parent tree node
-                refreshParentTreeNode();
-               
-            },
-        error: 
-            function (response, message) { 
-                showMessage('Creating collection failed: ' + response.responseText);
-            }
-    });
-    //close the dialog
-    dialog.dialog("close");
-}
-
-/**
- * Called after the user clicked "Login" on the login form.
- * Checks if the supplied credentials are valid. If yes, submit
- * the form to reload the page.
- */
-function login(dialog) {
-    var user = $('#login-dialog input[name = user]');
-    var password = $('#login-dialog input[name = password]');
-    $('#login-message').text('Checking ...');
-    $.ajax({
-        url: "checkuser.xql",
-        data: {
-            user: user.val(),
-            password: escape(password.val())
-        },
-        type: 'POST',
-        success:
-                function(data, message) {
-        			$.ajax({
-        				url: "index.html",
-        				data: "user=" + user.val() + "&password=" + escape(password.val()),
-        				type: 'POST',
-        				success: function(data, message) {
-        					location.reload();
-        				}
-        			});
-                },
-        error: function(response, message) {
-            showMessage('Login failed: ' + response.responseText);
-        }
-    });
-}
-
-function newResource() {
-    var collection = getCurrentCollection();
-    $("#new-resource-form input[name = collection]").val(collection);
-    $("#new-resource-form").submit();
-}
-
-function newRelatedResource() {
-    var collection = getCurrentCollection();
-    $("#add-related-form input[name = collection]").val(collection);
-    $("#add-related-form").submit();
-}
-
-/**
- * Called from the create indexes dialog if the user clicks on "Start".
- */
-function createIndexes() {
-    var pass = $('#optimize-dialog input[name = password]');
-    $('#optimize-message').text('Running ...');
-    $.get('optimize.xql?pass=' + pass.val(),
-            function(data, status) {
-                if (status != "success")
-                    $('#optimize-message').text('Error during optimize!');
-                else
-                    $('#optimize-dialog').dialog("close");
-            });
-}
-
-function loadIndexTerms() {
-    var input = $('input[name = input-keyword-prefix]');
-    $('#keywords-result').load("filters.xql?type=keywords&prefix=" + input.val(), function() {
-        if ($('#keywords-result ul').hasClass('complete'))
-            $('#keyword-form').css('display', 'none');
-    });
-}
-
-function autocompleteCallback(node, params) {
-    params.collection = getCurrentCollection();
-
-    var name = node.attr('name');
-    var select = node.parent().parent().find('select[name ^= field]');
-    if (select.length == 1) {
-        params.field = select.val();
+function updateAttachmentDialog() {
+    /**
+     var oTable = $('#attachedFilesDetails').dataTable();
+     oTable.fnClearTable();
+     */
+    var uuid = $('#upload-resource-id').html();
+    if (uuid.length > 0) {
+        $('#attachedFilesDetails').dataTable().fnReloadAjax("sharing.xql?file=" + uuid);
     }
-}
-
-function repeatCallback() {
-    var input = $('input[name ^= input]', this);
-    input.autocomplete({
-        source: function(request, response) {
-            var data = {term: request.term};
-            autocompleteCallback(input, data);
-            $.ajax({
-                url: "autocomplete.xql",
-                dataType: 'json',
-                type : 'POST',
-                data: data,
-                success: function(data) {
-                    response(data);
-                }});
-        },
-        minLength: 3
-    });
-
-    $('select[name ^= operator]', this).each(function() {
-        $(this).css('display', '');
-    });
-}
-
-function saveToPersonalList(anchor) {
-    var img = $('img', anchor);
-    var pos = anchor.hash.substring(1);
-    if (img.hasClass('stored')) {
-        var id = anchor.id;
-        img.removeClass('stored');
-        img.attr('src', 'theme/images/disk.gif');
-        $.get('user.xql', {list: 'remove', id: id});
-    } else {
-        img.attr('src', 'theme/images/disk_gew.gif');
-        img.addClass('stored');
-        $.get('user.xql', {list: 'add', pos: pos});
-    }
-    $('#personal-list-size').load('user.xql', {action: 'count'});
-    return false;
-}
-
-function resultsLoaded(options) {
-    if (options.itemsPerPage > 1) {
-        $('tbody > tr:even > td', this).addClass('even');
-        $(".pagination-mode", $(options.navContainer)).show();
-    } else {
-        $(".pagination-mode", $(options.navContainer)).hide();
-    }
-    var tallest = 0;
-    $("#results li").each(function() {
-        if ($(this).height() > tallest) {
-            tallest = $(this).height();
-        }
-    });
-    $("#results li").each(function() {
-        $(this).height(tallest);
-    });
-    $('#filters').css('display', 'block');
-    $('#filters .include-target').empty();
-    $('#filters .expand').removeClass('expanded');
-
-    // trigger image viewer when user clicks on thumbnail
-    $("#results .detail-xml .magnify").click(function(ev) {
-        ev.stopPropagation();
-        var num = $(this).closest(".pagination-item").find(".pagination-number").text();
-        if (num) {
-            galleries.open();
-            galleries.show(parseInt(num));
-        }
-    });
-
-    //detail view
-    $('.actions-toolbar .save', this).click(function(ev) {
-        saveToPersonalList(this);
-    });
-
-    //list view
-    $('.actions-cell .save', this).click(function(ev) {
-        saveToPersonalList(this);
-    });
-
-    /** add remove resource action */
-    $('.actions-toolbar .remove-resource', this).click(function(ev) {
-        ev.preventDefault();
-        $('#remove-resource-id').val($(this).attr('href').substr(1));
-        $('#remove-resource-dialog').dialog('open');
-    });
-
-    /** add move resource action */
-    $('.actions-toolbar .move-resource', this).click(function() {
-        $('#move-resource-id').val($(this).attr('href').substr(1));
-        var collection = getCurrentCollection();
-        $("#move-resource-collection-path").val(collection);        
-        refreshResourceMoveList();
-        $('#move-resource-dialog').dialog('open');
-        return false;
-    });
-
-    $('.actions-toolbar .add-related', this).click(function(ev) {
-        ev.preventDefault();
-        var params = this.hash.substring(1).split('#');
-        $('#add-related-form input[name = collection]').val(params[0]);
-        $('#add-related-form input[name = host]').val(params[1]);
-        $('#add-related-dialog').dialog('open');
-
-    });
-
-    /**  add upload action*/
-    $('.actions-toolbar .upload-file-style', this).click(function(ev) {
-        ev.preventDefault();
-        $('#upload-resource-id').html($(this).attr('href').substr(1));
-        $('#file-upload-folder').empty();
-        var collection = getCurrentCollection();
-        $('#upload-resource-folder').html(collection);
-        //clean old  files
-        emptyFileList();
-        $('#upload-file-dialog').dialog('open');
-
-
-    });
-
-    //notify zotero that the dom has changed
-    if (document.createEvent) {
-        var ev = document.createEvent('HTMLEvents');
-        ev.initEvent('ZoteroItemUpdated', true, true);
-        document.dispatchEvent(ev);
-    }
-}
-
-function searchTabSelected(ev, ui) {
-    if (ui.index == 3) {
-        $('#personal-list-size').load('user.xql', {action: 'count'});
+    else
+    {
+        var collection = encodeURI(getCurrentCollection());
+        $('#file-upload-folder').text(collection);
+        //$('#attachedFilesDetails').dataTable().fnReloadAjax("sharing.xql?upload-folder="+escape(collection));
     }
 }
 
@@ -1052,141 +1020,6 @@ function prepareAttachmentSharingDetails() {
     });
 }
 
-
-function attachedDetailsRowCallback(nRow, aData, iDisplayIndex) {
-    //determine user or group icon for first column
-    var img_src = aData[0];
-    $('td:eq(0)', nRow).html('<img alt="User Icon" src="' + img_src + '" width="100px"/>');
-
-    /*else if(aData[0] == "GROUP") {
-     $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
-     }
-     */
-
-    //determine writeable for fourth column
-    //var isWriteable = aData[3].indexOf("w") > -1;
-    //add the checkbox, with action to perform an update on the server
-    //var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
-    //$('td:eq(3)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteable(this,\'' + getCurrentCollection() + '\',' + iDisplayIndex + ', this.checked);"/>');
-
-    //add a delete button, with action to perform an update on the server
-    //var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    //$('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + iDisplayIndex + ');"/>');
-    //add jQuery cick action to image to perform an update on the server
-
-    return nRow;
-}
-
-//called each time the collection/folder sharing dialog is opened
-function updateSharingDialog() {
-    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
-
-}
-
-
-function updateAttachmentDialog() {
-    /**
-     var oTable = $('#attachedFilesDetails').dataTable();
-     oTable.fnClearTable();
-     */
-    var uuid = $('#upload-resource-id').html();
-    if (uuid.length > 0) {
-        $('#attachedFilesDetails').dataTable().fnReloadAjax("sharing.xql?file=" + uuid);
-    }
-    else
-    {
-        var collection = encodeURI(getCurrentCollection());
-        $('#file-upload-folder').text(collection);
-        //$('#attachedFilesDetails').dataTable().fnReloadAjax("sharing.xql?upload-folder="+escape(collection));
-    }
-}
-
-
-//custom fnReloadAjax for sharing dataTable
-function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw) {
-    if (typeof sNewSource != 'undefined' && sNewSource !== null) {
-        oSettings.sAjaxSource = sNewSource;
-    }
-    this.oApi._fnProcessingDisplay(oSettings, true);
-    var that = this;
-    var iStart = oSettings._iDisplayStart;
-    oSettings.fnServerData(oSettings.sAjaxSource, [], function(json) {
-
-        /* Clear the old information from the table */
-        that.oApi._fnClearTable(oSettings);
-
-        if (json) {
-            for (var i = 0; i < json.aaData.length; i++) {
-                that.oApi._fnAddData(oSettings, json.aaData[i]);
-            }
-        }
-
-        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-        that.fnDraw();
-
-        if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
-            oSettings._iDisplayStart = iStart;
-            that.fnDraw(false);
-        }
-
-        that.oApi._fnProcessingDisplay(oSettings, false);
-
-        /* Callback user function - for event handlers etc */
-        if (typeof fnCallback == 'function' && fnCallback !== null) {
-            fnCallback(oSettings);
-        }
-    }, oSettings);
-}
-
-function attachedDataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw) {
-    if (typeof sNewSource != 'undefined' && sNewSource !== null) {
-        oSettings.sAjaxSource = sNewSource;
-    }
-
-    this.oApi._fnProcessingDisplay(oSettings, true);
-
-    var that = this;
-    var iStart = oSettings._iDisplayStart;
-
-    oSettings.fnServerData(oSettings.sAjaxSource, [], function(json) {
-
-        /* Clear the old information from the table */
-        that.oApi._fnClearTable(oSettings);
-
-        /* Got the data - add it to the table */
-
-        if (json) {
-            for (var i = 0; i < json.aaData.length; i++) {
-                var t = json.aaData[i].items;
-                if (t !== null) {
-                    for (var j = 0; j < t.length; j++) {
-                        //if (t[j].name.indexOf(".xml") == -1){ // check if the file is binary
-                        var values = [t[j].collection, t[j].name, t[j].lastmodified];
-                        that.oApi._fnAddData(oSettings, values);
-
-                    }
-                }
-            }
-        }
-
-        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-        that.fnDraw();
-
-        if (typeof bStandingRedraw != 'undefined' && bStandingRedraw === true) {
-            oSettings._iDisplayStart = iStart;
-            that.fnDraw(false);
-        }
-
-        that.oApi._fnProcessingDisplay(oSettings, false);
-
-        /* Callback user function - for event handlers etc */
-        if (typeof fnCallback == 'function' && fnCallback !== null) {
-            fnCallback(oSettings);
-        }
-    }, oSettings);
-}
-
-
 //custom rendered for each row of the sharing dataTable
 function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     //add attribute defining the entry type
@@ -1212,87 +1045,10 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     return nRow;
 }
 
-//sets an ACE on a share to writeable or not
-function setAceWriteable(checkbox, collection, aceId, isWriteable) {
-    $.ajax({
-        type: 'POST',
-        url: "operations.xql",
-        data: "action=set-ace-writeable&collection=" + escape(collection) + "&id=" + aceId + "&is-writeable=" + isWriteable,
-        success: function(data, status, xhr) {
-            //do nothing
-        },
-        error: function(xhr, status, error) {
-            showMessage("Could not modify entry");
-            checkbox.checked = !isWriteable;
-        }
-    });
-}
 
-//sets an ACE by type/name on a share to writeable or not
-function setAceWriteableByName(checkbox, collection, target, name, isWriteable) {
-    $.ajax({
-        type: 'POST',
-        url: "operations.xql",
-        data: { 
-            action: "set-ace-writeable-by-name",
-            collection: collection,
-            target: target,
-            name:  name,
-            'is-writeable': isWriteable
-        },
-        success: function(data, status, xhr) {
-            //do nothing
-        },
-        error: function(xhr, status, error) {
-            showMessage("Could not modify entry");
-            checkbox.checked = !isWriteable;
-        }
-    });
-}
-
-//removes an ACE from a share
-function removeAce(collection, aceId) {
-    if (confirm("Are you sure you wish to remove this entry?")) {
-        $.ajax({
-            type: 'POST',
-            url: "operations.xql",
-            data: "action=remove-ace&collection=" + escape(collection) + "&id=" + aceId,
-            success: function(data, status, xhr) {
-                //remove from dataTable
-                $('#collectionSharingDetails').dataTable().fnDeleteRow(aceId);
-            },
-            error: function(xhr, status, error) {
-                showMessage("Could not remove entry");
-                checkbox.checked = !isWriteable;
-            }
-        });
-    }
-}
-
-//removes an ACE by user-/group name from a share
-function removeAceByName(collection, target, name) {
-    if(confirm("Are you sure you wish to remove this entry?")){
-        $.ajax({
-            type: 'POST',
-            url: "operations.xql",
-            data: { 
-                action: "remove-ace-by-name",
-                collection: collection,
-                target: target,
-                name:  name
-            },
-            success: function(data, status, xhr) {
-                //reload dataTable
-                $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
-            },
-            error: function(xhr, status, error) {
-                showMessage("Could not remove entry");
-                checkbox.checked = !isWriteable;
-            }
-        });
-    }
-}
-
+// *****************************************************************************
+// *            SHARING ACTIONS
+// *****************************************************************************
 //adds a user to a share
 function addUserToShare() {
     //check if this is a duplicate user
@@ -1394,9 +1150,312 @@ function addProjectToShare() {
     });
 }
 
-// Function for show a simple message
-function showMessage(message){
-    // ToDo: use Tamboti internal dialog instead of JS alert 
-    //$('#message').html(message);
-    alert(message);
+//sets an ACE on a share to writeable or not
+function setAceWriteable(checkbox, collection, aceId, isWriteable) {
+    $.ajax({
+        type: 'POST',
+        url: "operations.xql",
+        data: "action=set-ace-writeable&collection=" + escape(collection) + "&id=" + aceId + "&is-writeable=" + isWriteable,
+        success: function(data, status, xhr) {
+            //do nothing
+        },
+        error: function(xhr, status, error) {
+            showMessage("Could not modify entry");
+            checkbox.checked = !isWriteable;
+        }
+    });
+}
+
+//sets an ACE by type/name on a share to writeable or not
+function setAceWriteableByName(checkbox, collection, target, name, isWriteable) {
+    $.ajax({
+        type: 'POST',
+        url: "operations.xql",
+        data: { 
+            action: "set-ace-writeable-by-name",
+            collection: collection,
+            target: target,
+            name:  name,
+            'is-writeable': isWriteable
+        },
+        success: function(data, status, xhr) {
+            //do nothing
+        },
+        error: function(xhr, status, error) {
+            showMessage("Could not modify entry");
+            checkbox.checked = !isWriteable;
+        }
+    });
+}
+
+//removes an ACE from a share
+function removeAce(collection, aceId) {
+    if (confirm("Are you sure you wish to remove this entry?")) {
+        $.ajax({
+            type: 'POST',
+            url: "operations.xql",
+            data: "action=remove-ace&collection=" + escape(collection) + "&id=" + aceId,
+            success: function(data, status, xhr) {
+                //remove from dataTable
+                $('#collectionSharingDetails').dataTable().fnDeleteRow(aceId);
+            },
+            error: function(xhr, status, error) {
+                showMessage("Could not remove entry");
+                checkbox.checked = !isWriteable;
+            }
+        });
+    }
+}
+
+//removes an ACE by user-/group name from a share
+function removeAceByName(collection, target, name) {
+    if(confirm("Are you sure you wish to remove this entry?")){
+        $.ajax({
+            type: 'POST',
+            url: "operations.xql",
+            data: { 
+                action: "remove-ace-by-name",
+                collection: collection,
+                target: target,
+                name:  name
+            },
+            success: function(data, status, xhr) {
+                //reload dataTable
+                $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+            },
+            error: function(xhr, status, error) {
+                showMessage("Could not remove entry");
+                checkbox.checked = !isWriteable;
+            }
+        });
+    }
+}
+
+// *****************************************************************************
+// *            COLLECTION ACTIONS
+// *****************************************************************************
+
+/*
+ Called when the user clicks on the "create" button in the create collection dialog.
+ */
+function createCollection(dialog) {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var name = $("#new-collection-name").val();
+    var collection = fancyTree.getActiveNode().key;
+    // console.debug("create '" + name + "' in '" + collection + "'");
+    var params = {
+        action: 'create-collection', 
+        name: name, 
+        collection: collection
+    };
+    
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'create-collection', 
+            name: name, 
+            collection: collection
+        },
+        type: 'POST',
+        success:
+                function(data, message) {
+                    //reload the tree node
+                    refreshCurrentTreeNode();
+                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
+                    node.setExpanded();
+                },
+        error: function(response, message) {
+            // alert("creating collection failed!")
+            //ToDo: Popup when creating Collection failed
+            showMessage('Creating collection failed: ' + response.responseText);
+        }
+    });
+
+    //close the dialog
+    dialog.dialog("close");
+}
+
+/*
+ Called when the user clicks on the "rename" button in the rename collection dialog.
+ */
+function renameCollection(dialog) {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var name = $('#rename-collection-form input[name = name]').val();
+    var collection = fancyTree.getActiveNode().key;
+    // console.debug("rename '" + collection + "' to '" + name + "'");
+    
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'rename-collection',
+            name: name, 
+            collection: collection
+        },
+        type: 'POST',
+        success:
+            function(data, message) {
+                //current node
+                var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
+                var currentNodeKey = currentNode.key;
+                currentNode.setTitle(name);
+                currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
+                console.debug(currentNode);
+                refreshCurrentTreeNode();
+                currentNode.parent.sortChildren();
+                //If it has children, trigger reload to regenerate keys with new name
+                //ToDo: add recursive change child-keys to avoid reloading
+                
+            },
+        error: function(response, message) {
+            showMessage('Renaming collection failed: ' + response.responseText);
+        }
+    });
+
+    //close the dialog
+    dialog.dialog("close");
+}
+
+/*
+ Called when the user clicks on the "move" button in the move collection dialog.
+ */
+function moveCollection(dialog) {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var path = $('#move-collection-form select[name = path]').val();
+    var activeNode = fancyTree.getActiveNode();
+    var collection = activeNode.key;
+
+    // console.debug("moveCol '" + collection + "' to '" + path + "'");
+
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'move-collection', 
+            path: path, 
+            collection: collection
+        },
+        type: 'POST',
+        success: function(data, message) {
+            var ft = $("#collection-tree-tree").fancytree("getTree");
+            
+            // expand target node
+            expandPath(ft, path, "");
+            var targetNode = ft.getNodeByKey(path);
+            var currentNode = ft.getActiveNode();
+            var collectionName = collection.substring(collection.lastIndexOf("/") + 1, collection.length);
+            var originParentNode = currentNode.parent;
+
+            currentNode.moveTo(targetNode, 'child');
+            targetNode.load(true).done(function(){
+                targetNode.setExpanded(true).done(function(){
+                    // originParentNode.load(true);
+                    var selectNode = ft.getNodeByKey(path + '/' + collectionName, targetNode);
+                    selectNode.setActive(true);
+                    // console.debug(originParentNode);
+                    updateCollectionPaths(selectNode.title, selectNode.key);
+                });
+            });
+        },
+        error: function(response, message) {
+            showMessage('Moving collection failed: ' + response.responseText);
+        }
+    });
+
+    //close the dialog
+    dialog.dialog("close");
+}
+
+/*
+ Called when the user clicks on the "remove" button in the remove collection dialog.
+ */
+function removeCollection(dialog) {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var collection = fancyTree.getActiveNode().key;
+    
+    $.ajax({
+        url: "operations.xql",
+        data:{ 
+            action: 'remove-collection', 
+            collection: collection 
+        },
+        type: 'POST',
+        success:
+            function(data, message) { 
+                //remove Node from FancyTree
+                fancyTree.getActiveNode().remove();
+            },
+        error: 
+            function (response, message) { 
+                showMessage('Removing collection failed: ' + response.responseText);
+            }
+    });
+    //close the dialog
+    dialog.dialog("close");
+}
+
+// *****************************************************************************
+// *            RESSOURCE ACTIONS
+// *****************************************************************************
+
+function newResource() {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var collection = fancyTree.getActiveNode().key;
+
+    $("#new-resource-form input[name = collection]").val(collection);
+    $("#new-resource-form").submit();
+}
+
+function newRelatedResource() {
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var collection = fancyTree.getActiveNode().key;
+    $("#add-related-form input[name = collection]").val(collection);
+    $("#add-related-form").submit();
+}
+
+/*
+ Called when the user clicks on the "move" button in the move resource dialog
+ */
+function moveResource(dialog) {
+    var path = $('#move-resource-form select[name = path]').val();
+    var resource = $('#move-resource-form input[name = resource]').val();
+    var resource_type = $('#record-format').html();
+    var source_collection = "/" + $('#file-location-folder').html();
+
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'move-resource',
+            path: path,
+            resource: resource,
+            source_collection: source_collection,
+            resource_type: resource_type
+        },
+        type: 'POST',
+        success: function(data, message) {
+            var fancyTree = $("#collection-tree-tree").fancytree("getTree");
+            var selectNode = fancyTree.getNodeByKey(path);
+            selectNode.setActive(true);
+            updateCollectionPaths(selectNode.title, selectNode.key);
+            tamboti.apis.simpleSearch();
+            console.debug(path);
+        },
+        error: function(response, message) {
+            showMessage('Moving collection failed: ' + response.responseText);
+        }
+    });
+    dialog.dialog("close");
+}
+
+/*
+ Called when the user clicks on the "remove" button in the remove resource dialog
+ */
+function removeResource(dialog) {
+    var resource = $('#remove-resource-form input[name = resource]').val();
+    var params = { action: 'remove-resource', 
+            resource: resource,
+            uuid : $('#remove-resource').attr('id')
+    };
+    $.get("operations.xql", params, function(data) {
+        dialog.dialog("close");
+        $(location).attr('href', 'index.html?reload=true&collection=' + getCurrentCollection());
+    });
 }
