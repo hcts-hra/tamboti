@@ -40,7 +40,7 @@ declare function col:lazy-read($collection-uri as xs:anyURI) {
         )
 
     for $subcol in $subcollections
-    order by $subcol
+    order by lower-case($subcol)
     return
         let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
         let $readable := security:can-read-collection($fullpath)
@@ -95,7 +95,7 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
             )
         )
     for $subcol in $subcollections
-    order by $subcol 
+    order by lower-case($subcol)
     return
         let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
         let $readable := security:can-read-collection($fullpath)
