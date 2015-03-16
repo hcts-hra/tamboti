@@ -1016,7 +1016,7 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
 declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
     let $collection := functx:replace-first(request:get-parameter("collection", theme:get-root()), "/db/", "")
         return
-            templates:copy-set-attribute($node, "data-collection-path", $collection, $model)
+            templates:copy-set-attribute($node, "value", $collection, $model)
 };
 
 declare function biblio:result-count($node as node(), $params as element(parameters)?, $model as item()*) {
