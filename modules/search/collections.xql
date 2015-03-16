@@ -153,9 +153,6 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
 
 (: if no key is submitted, take the predefined root collection :)
 let $key := request:get-parameter("key", ())
-(:let $active-key := request:get-parameter("activeKey",()):)
-(:let $expanded-key-list := fn:tokenize(request:get-parameter("expandedKeyList", ()), ","):)
-(:let $focused-key := request:get-parameter("focusedKey",()):)
 return
 
 (: if no key is submitted, build up the full tree :)
@@ -165,10 +162,18 @@ if (not($key)) then
 
     return
             <something>
+                <json:value json:array="true">
+                    <title>{$config:data-collection-name}</title>
+                    <key>/{xmldb:decode($config:data-collection-name)}</key>
+                    <folder json:literal="true">true</folder>
+                    <writeable json:literal="true">false</writeable>
+                    <extraClasses>fancytree-readable</extraClasses>
+                    <expanded json:literal="true">true</expanded>
+                    <lazy json:literal="true">true</lazy>
                 {
                     (: no home for guest :)
                     if(not($user-id = "guest")) then
-                        <json:value>
+                        <children json:array="true">
                             <title>Home</title>
                             <key>{xmldb:decode($user-home-dir)}</key>
                             <folder json:literal="true">true</folder>
@@ -182,19 +187,19 @@ if (not($key)) then
                                 return
                                     $child-branch
                             }
-                        </json:value>
+                        </children>
                     else
                         ()
                 }
-                <json:value>
+                <children json:array="true">
                     <title>Shared</title>
                     <key>{xmldb:decode($config:users-collection)}</key>
                     <folder json:literal="true">true</folder>
                     <writeable json:literal="true">false</writeable>
                     <lazy json:literal="true">true</lazy>
                     <extraClasses>fancytree-readable</extraClasses>
-                </json:value>
-                <json:value>
+                </children>
+                <children json:array="true">
                     <title>Commons</title>
                     <key>{xmldb:decode($config:mods-commons)}</key>
                     <writeable json:literal="true">false</writeable>
@@ -208,8 +213,9 @@ if (not($key)) then
                             return
                                 $child-branch
                         }
-                </json:value>
-            </something>
+                </children>
+            </json:value>
+        </something>
 else
     (: load a defined branch (lazy) :)
     let $child-branch := col:lazy-read(xmldb:encode-uri($key))
