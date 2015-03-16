@@ -59,7 +59,6 @@ declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
 
 declare variable $config:themes := concat($config:app-root, "/themes");
-declare variable $config:theme-config := concat($config:themes, "/configuration.xml");
 
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, $config:mods-root ||  "/images");
