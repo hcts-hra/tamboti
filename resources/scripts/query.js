@@ -183,6 +183,34 @@ $(document).ready(function() {
 
         return false;
     };
+    
+//     $("#collection-tree-tree").contextmenu({
+//       delegate: "span.fancytree-title",
+// //      menu: "#options",
+//       menu: [
+//           {title: "Cut", cmd: "cut", uiIcon: "ui-icon-scissors"},
+//           {title: "Copy", cmd: "copy", uiIcon: "ui-icon-copy"},
+//           {title: "Paste", cmd: "paste", uiIcon: "ui-icon-clipboard", disabled: false },
+//           {title: "----"},
+//           {title: "Edit", cmd: "edit", uiIcon: "ui-icon-pencil", disabled: true },
+//           {title: "Delete", cmd: "delete", uiIcon: "ui-icon-trash", disabled: true },
+//           {title: "More", children: [
+//             {title: "Sub 1", cmd: "sub1"},
+//             {title: "Sub 2", cmd: "sub1"}
+//             ]}
+//           ],
+//       beforeOpen: function(event, ui) {
+//         var node = jQuery.ui.fancytree.getNode(ui.target);
+// //                node.setFocus();
+//         node.setActive();
+//       },
+//       select: function(event, ui) {
+//         var node = jQuery.ui.fancytree.getNode(ui.target);
+//         alert("select " + jQuery.ui.cmd + " on " + node);
+//       }
+//     });
+
+    
 });
 
 function pingSession() {
@@ -266,7 +294,7 @@ function showNotices() {
 }
 
 function updateCollectionPaths(title, key) {
-    key = key.replace(/^\/db/, "");
+    // key = key.replace(/^\/db/, "");
 
     $("#simple-search-form input[name = collection]").val(key);
     $("#advanced-search-form input[name = collection]").val(key);
@@ -797,6 +825,7 @@ function initCollectionTree() {
         collapse: function(event, data){
             data.node.resetLazy();
         }
+
     });
 
     toggleCollectionTree(true);
@@ -966,7 +995,6 @@ function refreshCollectionMoveList() {
 //called each time the collection/folder sharing dialog is opened
 function updateSharingDialog() {
     $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
-
 }
 
 function updateAttachmentDialog() {
@@ -1037,9 +1065,14 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
     $('td:eq(4)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteableByName(this,\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\', this.checked);"/>');    
 
+    //determine executable for sixth column
+    var isExecuteable = aData[4].indexOf("x") > -1;
+    var inpExecuteableId = 'inpExecuteable_' + iDisplayIndex;
+    $('td:eq(5)', nRow).html('<input id="' + inpExecuteableId + '" type="checkbox" value="true"' + (isExecuteable ? ' checked="checked"' : '')  + ' onclick="javascript: setAceExecutableByName(this,\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\', this.checked);"/>');    
+
     //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
+    $('td:eq(6)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
     //add jQuery cick action to image to perform an update on the server
 
     return nRow;
@@ -1187,6 +1220,29 @@ function setAceWriteableByName(checkbox, collection, target, name, isWriteable) 
         }
     });
 }
+
+//sets an ACE by type/name on a share to executeeable or not
+function setAceExecutableByName(checkbox, collection, target, name, isExecutable) {
+    $.ajax({
+        type: 'POST',
+        url: "operations.xql",
+        data: { 
+            action: "set-ace-executable-by-name",
+            collection: collection,
+            target: target,
+            name:  name,
+            'is-executable': isExecutable
+        },
+        success: function(data, status, xhr) {
+            checkbox.checked = isExecutable;
+        },
+        error: function(xhr, status, error) {
+            showMessage("Could not modify entry");
+            checkbox.checked = ! isExecutable;
+        }
+    });
+}
+
 
 //removes an ACE from a share
 function removeAce(collection, aceId) {

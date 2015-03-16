@@ -50,6 +50,32 @@ declare function sharing:set-collection-ace-writeable-by-name($collection as xs:
     
 };
 
+(:~
+ : toggles the ACE executable bit of a collection by target (USER/GROUP) and name
+ : @param $collection the collection to modify ACE
+ : @param $target USER or GROUP
+ : @param $name User- or groupname
+ : @param $is-executable executable or not
+ :)
+declare function sharing:set-ace-executable-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as xs:boolean {
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+        let $parent-collection-result :=
+            if (security:set-ace-executable-by-name($collection, $target, $name, $is-executable)) then
+                (
+                    for $resource in xmldb:get-child-resources($collection)
+                        let $useless := security:set-ace-executable-by-name(xs:anyURI($collection || "/" || $resource), $target, $name, $is-executable)
+                        return
+                            ()
+                    ,
+                    true()
+                )
+            else false()
+        return
+            $parent-collection-result
+    )
+    
+};
+
 (: removes an ace on a collection and all the documents in that collection :)
 declare function sharing:remove-collection-ace($collection as xs:anyURI, $id as xs:int)  {
     let $removed := security:remove-ace($collection, $id) 
@@ -108,7 +134,7 @@ declare function sharing:remove-collection-ace-by-name($collection as xs:anyURI,
 };
 
 (: adds a user ace on a collection, and also to all the documents in that collection (at the same acl index) :)
-declare function sharing:add-collection-user-ace($collection as xs:anyURI, $username as xs:string) as xs:int {
+declare function sharing:add-collection-user-ace($collection as xs:anyURI, $username as xs:string, $mode as xs:string) as xs:int {
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
         (: check for existing user ACE :)
         let $user-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="USER" and @who=$username]
@@ -116,14 +142,15 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                 if (count($user-ace) > 0) then 
                     fn:error(xs:QName("sharing:add-collection-user-ace"), "ACE for user already exists")
                 else
-                    let $id := security:add-user-ace($collection, $username, "r-x")
+                    let $id := security:add-user-ace($collection, $username, $mode)
                         return
                             if (fn:not(fn:empty($id)))
                                 then
                                     (
+                                        (: add ace to child resources:)
                                         for $resource in xmldb:get-child-resources($collection)
                                             let $resource-path := fn:concat($collection, "/", $resource) return
-                                                if (not(empty(security:add-user-ace($resource-path, $username, "r--")))) then
+                                                if (not(empty(security:add-user-ace($resource-path, $username, $mode)))) then
                                                     ()
                                                 else
                                                     fn:error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not add ace for '", $username , "' for '", $resource-path, "'"))
@@ -142,7 +169,7 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
 };
 
 (: adds a group ace on a collection, and also to all the documents in that collection (at the same acl index) :)
-declare function sharing:add-collection-group-ace($collection as xs:anyURI, $groupname as xs:string) as xs:int {
+declare function sharing:add-collection-group-ace($collection as xs:anyURI, $groupname as xs:string, $mode as xs:string) as xs:int {
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         (: check for existing group ACE :)
         let $group-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="GROUP" and @who=$groupname]
@@ -150,7 +177,7 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
                 if (count($group-ace) > 0) then 
                     fn:error(xs:QName("sharing:add-collection-group-ace"), "ACE for group already exists")
                 else
-                    let $id := security:add-group-ace($collection, $groupname, "r-x")
+                    let $id := security:add-group-ace($collection, $groupname, $mode)
                         return
                             if (fn:not(fn:empty($id)))
                                 then
@@ -158,7 +185,7 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
                                         (: add ACE to child resources :)
                                         for $resource in xmldb:get-child-resources($collection)
                                         let $resource-path := fn:concat($collection, "/", $resource) return
-                                            if(not(empty(security:add-group-ace($resource-path, $groupname, "r--"))))then
+                                            if(not(empty(security:add-group-ace($resource-path, $groupname, $mode))))then
                                                 ()
                                             else
                                                 fn:error(xs:QName("sharing:add-collection-group-ace"), fn:concat("Could not insert ace at index '", $id, "' for '", $resource-path, "'")),
