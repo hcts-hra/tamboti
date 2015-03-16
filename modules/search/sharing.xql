@@ -26,6 +26,7 @@ declare function local:get-sharing($collection-path as xs:anyURI) as element(aaD
         else
             <aaData>{
                 for $ace at $index in $acl/sm:ace
+                let $log := util:log("INFO", $ace)
                     let $target := $ace/@target
                     let $username := $ace/@who/string()
                     let $who :=
@@ -43,6 +44,7 @@ declare function local:get-sharing($collection-path as xs:anyURI) as element(aaD
                             <json:value>{text{$who}}</json:value>,
                             <json:value>{text{$username}}</json:value>,
                             <json:value>{text{$ace/@access_type}}</json:value>,
+                            <json:value>{text{$ace/@mode}}</json:value>,
                             <json:value>{text{$ace/@mode}}</json:value>,
                             <json:value>{$index - 1}</json:value>
                         }

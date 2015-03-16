@@ -168,12 +168,42 @@
             $('#add-user-to-share-dialog').dialog({
                 modal: true,
                 autoOpen: false,
-                buttons: {},
+                buttons:
+                    {
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        },
+                        "Add": function() {
+                            var input_value = $(this).find("input[name='user-auto-list']").attr("value");
+                            var username_no_parenthesis = input_value.match( /\(.*\)/ );
+                            var username = "";
+                            if (username_no_parenthesis !== null)
+                                username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
+                            else
+                                username = input_value;
+
+                            var options = 
+                                {
+                                    username: username,
+                                    inherit: $(this).find("input[name='inherit']").attr("checked"),
+                                    write: $(this).find("input[name='write']").attr("checked"),
+                                    execute: $(this).find("input[name='execute']").attr("checked")
+                                }
+                            addUserACE(options);
+                            $(this).dialog("close");
+                        }
+                    },
                 title: "Add a User to Share With",
-                width: 450
+                width: 450,
+                open: function( event, ui ){
+                    $(this).find("input[name='inherit']").attr("checked", false);
+                    $(this).find("input[name='write']").attr("checked", false);
+                    $(this).find("input[name='execute']").attr("checked", false);
+                }
+                
             }); 
             
-            $('#project-auto-list').autocomplete({
+            $('#group-auto-list').autocomplete({
                 source: function(request, response) {
                     var data = {
                         term: request.term
@@ -191,14 +221,37 @@
                 delay: 700
             });
             
-            $('#add-project-to-share-dialog').dialog({
+
+            $('#add-group-to-share-dialog').dialog({
                 modal: true,
                 autoOpen: false,
-                buttons: {},
+                buttons:
+                    {
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        },
+                        "Add": function() {
+                            var groupname = $(this).find("input[name='group-auto-list']").attr("value");
+                            var options = 
+                                {
+                                    groupname: groupname,
+                                    inherit: $(this).find("input[name='inherit']").attr("checked"),
+                                    write: $(this).find("input[name='write']").attr("checked"),
+                                    execute: $(this).find("input[name='execute']").attr("checked")
+                                }
+                            addGroupACE(options);
+                            $(this).dialog("close");
+                        }
+                    },
                 title: "Add a Project to Share With",
-                width: 450
-            });            
-            
+                width: 450,
+                open: function( event, ui ){
+                    $(this).find("input[name='inherit']").attr("checked", false);
+                    $(this).find("input[name='write']").attr("checked", false);
+                    $(this).find("input[name='execute']").attr("checked", false);
+                }
+            }); 
+
             $('#remove-resource-dialog').dialog({
                 modal: true,
                 autoOpen: false,
@@ -378,8 +431,9 @@
                     <th>Type</th>
                     <th>Full Name</th>
                     <th>UserID</th>
-                    <th>Reading</th>
-                    <th>Writing Allowed?</th>
+                    <th>Read</th>
+                    <th>Write</th>
+                    <th>Execute</th>
                     <th>Remove</th>
                 </tr>
             </thead>
@@ -387,21 +441,41 @@
             </tbody>
         </table>
         <input id="add-new-user-to-share-button" type="button" value="Add User"/>
-        <input id="add-new-project-to-share-button" type="button" value="Add Project"/>
+        <input id="add-new-group-to-share-button" type="button" value="Add Project"/>
     </div>
     <div id="add-user-to-share-dialog">
         <div>Enter the user's name:</div>
         <div>
             <input name="user-auto-list" id="user-auto-list"/>
         </div>
-        <input id="add-user-to-share-button" type="button" value="Add"/>
+        <div style="font-weight:bold;">Permissions:</div>
+        <div>
+            <input style="display: inline;" type="checkbox" name="read" checked="checked" disabled="disabled"/>read
+            <input style="display: inline;" type="checkbox" name="write" value="true"/>write
+            <input style="display: inline;" type="checkbox" name="execute" value="true"/>execute
+        </div>
+<!--
+        <div>
+            <input style="display: inline;" type="checkbox" name="inherit" value="true"/>apply to subcollections
+        </div>
+-->
     </div>
-    <div id="add-project-to-share-dialog">
+    <div id="add-group-to-share-dialog">
         <div>
             <span>Enter the project's name:</span>
-            <input name="project-auto-list" id="project-auto-list"/>
+            <input name="group-auto-list" id="group-auto-list"/>
         </div>
-        <input id="add-project-to-share-button" type="button" value="Add"/>
+        <div style="font-weight:bold;">Permissions:</div>
+        <div>
+            <input style="display: inline;" type="checkbox" name="read" checked="checked" disabled="disabled"/>read
+            <input style="display: inline;" type="checkbox" name="write" value="true"/>write
+            <input style="display: inline;" type="checkbox" name="execute" value="true"/>execute
+        </div>
+<!--
+        <div>
+            <input style="display: inline;" type="checkbox" name="inherit" value="true"/>apply to subcollections
+        </div>
+-->
     </div>
     <div id="remove-resource-dialog">
         <form id="remove-resource-form" action="operations.xql">

@@ -29,7 +29,7 @@ the buttons do not show up (except Delete Folder).:)
 (:NB: creation does not take place if the new name is already taken.:)
 (:TODO: notify user if the new name is already taken.:)
 declare function op:create-collection($parent as xs:string, $name as xs:string) as element(status) {
-
+(:    let $log := util:log("DEBUG", "call: xmldb:create-collection('" || $parent || "', '" || $name || "')"):)
     let $create-collection :=
         system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
                 let $parent-collection-owner := xmldb:get-owner($parent)
@@ -61,6 +61,7 @@ declare function op:move-collection($collection as xs:anyURI, $target-collection
     let $target-collection-group := xmldb:get-group($target-collection)
     let $collection-name := functx:substring-after-last($collection, "/")
     let $moved-collection-path := xs:anyURI($target-collection || "/" || $collection-name)
+(:    let $log := util:log("DEBUG", "call: xmldb:move(" || $collection || ", " || $target-collection || ")"):)
 
     let $result :=
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
@@ -89,7 +90,8 @@ declare function op:move-collection($collection as xs:anyURI, $target-collection
 (:NB: name change does not take place if the new name is already taken.:)
 (:TODO: notify user if the new name is already taken.:)
 declare function op:rename-collection($path as xs:anyURI, $name as xs:string) as element(status) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+(:        let $log := util:log("DEBUG", "call: xmldb:rename('" || $path || "', '" || $name || "')")      :)
         let $null := xmldb:rename($path, $name)
         return
             (:<status id="renamed" from="{uu:unescape-collection-path($path)}">{$name}</status>:)
@@ -271,7 +273,7 @@ declare function op:set-ace-writeable($collection as xs:anyURI, $id as xs:int, $
 
 (:~
  : toggles the ACE writable bit by target (USER/GROUP) and name
- : @param $collection the collection to remove ACE from
+ : @param $collection the collection to modify ACE
  : @param $target USER or GROUP
  : @param $name User- or groupname
  : @param $is-writeable writeable or not
@@ -292,6 +294,31 @@ declare function op:set-ace-writeable-by-name($collection as xs:anyURI, $target 
                 <status id="ace">Permission Denied</status>
             )
 };
+
+(:~
+ : toggles the ACE executable bit by target (USER/GROUP) and name
+ : @param $collection the collection to modify ACE
+ : @param $target USER or GROUP
+ : @param $name User- or groupname
+ : @param $is-executable executable or not
+ :)
+declare function op:set-ace-executable-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as element(status) {
+    let $collection-result := sharing:set-ace-executable-by-name($collection, $target, $name, $is-executable)
+    let $vra-images-result := 
+        if(xmldb:collection-available(xs:anyURI($collection || "/VRA_images"))) then
+            sharing:set-ace-executable-by-name(xs:anyURI($collection || "/VRA_images"), $target, $name, $is-executable)
+        else
+            ()
+    return
+        if(exists($collection-result)) then
+            <status id="ace">updated</status>
+        else
+            (
+                response:set-status-code($op:HTTP-FORBIDDEN),
+                <status id="ace">Permission Denied</status>
+            )
+};
+
 
 declare function op:remove-ace($collection as xs:anyURI, $id as xs:int) as element(status) {
     let $parent-collection-result := sharing:remove-collection-ace($collection, $id)
@@ -334,11 +361,11 @@ declare function op:remove-ace-by-name($collection as xs:anyURI, $target as xs:s
 
 };
 
-declare function op:add-user-ace($collection as xs:anyURI, $username as xs:string) as element(status) {    
-    let $ace-id := sharing:add-collection-user-ace($collection, $username)
+declare function op:add-user-ace($collection as xs:anyURI, $username as xs:string, $mode as xs:string, $inherit as xs:boolean) as element(status) {    
+    let $ace-id := sharing:add-collection-user-ace($collection, $username, $mode)
     let $vra-images-result := 
         if(xmldb:collection-available(xs:anyURI($collection || "/VRA_images"))) then
-            sharing:add-collection-user-ace(xs:anyURI($collection || "/VRA_images"), $username)
+            sharing:add-collection-user-ace(xs:anyURI($collection || "/VRA_images"), $username, $mode)
         else
             ()    
 
@@ -352,11 +379,11 @@ declare function op:add-user-ace($collection as xs:anyURI, $username as xs:strin
             )
 };
 
-declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:string) as element(status) {
-    let $ace-id := sharing:add-collection-group-ace(xs:anyURI($collection), $groupname)    
+declare function op:add-group-ace($collection as xs:anyURI, $groupname as xs:string, $mode as xs:string, $inherit as xs:boolean) as element(status) {
+    let $ace-id := sharing:add-collection-group-ace(xs:anyURI($collection), $groupname, $mode)    
     let $vra-images-result := 
         if(xmldb:collection-available(xs:anyURI($collection || "/VRA_images"))) then
-            sharing:add-collection-group-ace(xs:anyURI($collection || "/VRA_images"), $groupname)
+            sharing:add-collection-group-ace(xs:anyURI($collection || "/VRA_images"), $groupname, $mode)
         else
             ()  
     
@@ -475,84 +502,93 @@ declare function op:unknown-action($action as xs:string) {
         <p>Unknown action: {$action}.</p>
 };
 
+
 let $action := request:get-parameter("action", ())
+let $collection := xmldb:encode-uri(request:get-parameter("collection", ""))
 
 return
-    if($action eq "create-collection") then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        let $name := xmldb:encode-uri(request:get-parameter("name", ""))
-        return
-            op:create-collection($collection, $name)
+    switch ($action)
+        case "create-collection" return
+            op:create-collection($collection, xmldb:encode-uri(request:get-parameter("name", "")))
             
-    else if($action eq "move-collection")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        case "move-collection" return
             op:move-collection($collection, xmldb:encode-uri(request:get-parameter("path",())), false())
-            
-    else if($action eq "rename-collection")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+
+        case "rename-collection" return
             op:rename-collection($collection, xmldb:encode-uri(request:get-parameter("name",())))
-            
-    else if($action eq "remove-collection")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+
+        case "remove-collection" return
             op:remove-collection($collection)
-            
-    else if($action eq "remove-resource")then
-        op:remove-resource(request:get-parameter("resource",()))
         
-    else if($action eq "move-resource")then
-        let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
-        let $log := util:log("INFO", request:get-parameter("resource_type",()))
-        return 
-            op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()))
-            
-    else if($action eq "set-ace-writeable")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        case "remove-resource" return
+            op:remove-resource(request:get-parameter("resource",()))
+        
+        case "move-resource" return
+            let $source-collection := xmldb:decode(request:get-parameter("source_collection",()))
+            return 
+                op:move-resource(xmldb:encode-uri($source-collection), xmldb:encode-uri(request:get-parameter("path",())), request:get-parameter("resource",()))
+
+        case "set-ace-writeable" return
             op:set-ace-writeable($collection, xs:int(request:get-parameter("id",())), xs:boolean(request:get-parameter("is-writeable", false())))
-            
-    else if($action eq "set-ace-writeable-by-name")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        
+        case "set-ace-writeable-by-name" return
             op:set-ace-writeable-by-name($collection, xs:string(request:get-parameter("target",())), xs:string(request:get-parameter("name",())), xs:boolean(request:get-parameter("is-writeable", false())))
-            
-    else if($action eq "remove-ace")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        
+        case "set-ace-executable-by-name" return
+            op:set-ace-executable-by-name($collection, xs:string(request:get-parameter("target",())), xs:string(request:get-parameter("name",())), xs:boolean(request:get-parameter("is-executable", false())))
+
+        case "remove-ace" return
             op:remove-ace($collection, xs:int(request:get-parameter("id",())))
             
-    else if($action eq "remove-ace-by-name")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        case "remove-ace-by-name" return
             op:remove-ace-by-name($collection, xs:string(request:get-parameter("target", ())) , xs:string(request:get-parameter("name", ())))
-            
-    else if($action eq "add-user-ace") then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
-            op:add-user-ace($collection, request:get-parameter("username",()))
-            
-    else if($action eq "is-valid-user-for-share")then
-        op:is-valid-user-for-share(request:get-parameter("username",()))
         
-    else if($action eq "add-group-ace")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
-            op:add-group-ace($collection, request:get-parameter("groupname",()))
-            
-    else if($action eq "is-valid-group-for-share")then
-        op:is-valid-group-for-share(request:get-parameter("groupname",()))
+        case "is-valid-user-for-share" return
+            op:is-valid-user-for-share(request:get-parameter("username",()))
         
-    else if($action eq "get-move-folder-list")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        case "is-valid-group-for-share" return
+            op:is-valid-group-for-share(request:get-parameter("groupname",()))
+
+        case "add-user-ace" return
+            let $log := util:log("INFO", request:get-parameter-names())
+            let $mode := "r--"
+            let $inherit := 
+                if(request:get-parameter("inherit", false())) then 
+                    true() 
+                else 
+                    false()
+            let $writable := if (request:get-parameter("write", "")) then "w" else "-"
+            let $executable := if (request:get-parameter("execute", "")) then "x" else "-"
+            let $mode := 
+                fn:replace($mode, "(.)(.)(.)", "$1" || $writable || $executable)
+
+            let $log := util:log("INFO", "mode: " || $mode || " inherit: " || $inherit)
+            return
+(:                op:add-user-ace($collection, request:get-parameter("username",())):)
+                op:add-user-ace($collection, request:get-parameter("username",()), $mode, $inherit)
+
+        case "add-group-ace" return
+            let $mode := "r--"
+            let $inherit := 
+                if(request:get-parameter("inherit", false())) then 
+                    true() 
+                else 
+                    false()
+            let $writable := if (request:get-parameter("write", "")) then "w" else "-"
+            let $executable := if (request:get-parameter("execute", "")) then "x" else "-"
+            let $mode := 
+                fn:replace($mode, "(.)(.)(.)", "$1" || $writable || $executable)
+
+            let $log := util:log("INFO", "mode: " || $mode || " inherit: " || $inherit)
+            return
+(:                op:add-group-ace($collection, request:get-parameter("groupname",()), $mode):)
+                op:add-group-ace($collection, request:get-parameter("groupname",()), $mode, $inherit)
+
+        case "get-move-folder-list" return
             op:get-move-folder-list($collection)
             
-     else if($action eq "get-move-resource-list")then
-        let $collection := xmldb:encode-uri(request:get-parameter("collection", ()))
-        return
+        case "get-move-resource-list" return
             op:get-move-resource-list($collection)
-            
-     else
-        op:unknown-action($action)
+        
+        default return
+            op:unknown-action($action)
