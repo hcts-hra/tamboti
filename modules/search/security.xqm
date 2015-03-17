@@ -580,31 +580,29 @@ declare function security:get-group($path as xs:string) as xs:string {
     data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
 };
 
-declare function security:duplicate-acl($source-path as xs:string, $target-path as xs:string) as empty() {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        for $ace in sm:get-permissions(xs:anyURI($source-path))//sm:ace
-            let $target := $ace/@target
-            let $who := $ace/@who
-            let $access_type := if ($ace/@access_type = 'ALLOWED') then true() else false()
-            let $mode := $ace/@mode
-            return
-                if ($target = 'USER')
-                then (sm:add-user-ace(xs:anyURI($target-path), $who, $access_type, $mode))
-                else (sm:add-group-ace(xs:anyURI($target-path), $who, $access_type, $mode))
-    )
-};
-
 declare function security:copy-collection-acl-to-child-resources($collection as xs:anyURI) {
     system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+        let $ACL := sm:get-permissions($collection)//sm:ace
         for $resource-name in xmldb:get-child-resources($collection)
+        let $target-resource := xs:anyURI($collection || "/" || $resource-name)
             return
                 (
-                    (: first remove ACL on resource :)
-                    sm:clear-acl(xs:anyURI($collection || "/" || $resource-name)),
-                    (: add each ACE from collection to resource:)
-                    security:duplicate-acl($collection, $collection || "/" || $resource-name)
+                (: first remove ACL on resource :)
+                sm:clear-acl($target-resource),
+                (: add each ACE from collection to resource:)
+                for $ACE in sm:get-permissions($collection)//sm:ace
+                    let $target := $ACE/@target
+                    let $who := $ACE/@who
+                    let $access_type := if ($ACE/@access_type = 'ALLOWED') then true() else false()
+                    let $mode := $ACE/@mode
+                    (: no  :)
+                    return
+                        if ($target = 'USER') then 
+                            sm:add-user-ace($target-resource, $who, $access_type, $mode)
+                        else 
+                            sm:add-group-ace($target-resource, $who, $access_type, $mode)
                 )
-    )
+)
 };
 
 declare function security:copy-collection-rights-to-child-resources($collection as xs:anyURI) {
@@ -709,8 +707,6 @@ declare function security:copy-collection-acl-to-child-resources($collection as 
     for $resource-name in xmldb:get-child-resources($collection)
         return
             (
-                (: first remove ACL on resource :)
-                sm:clear-acl(xs:anyURI($collection || "/" || $resource-name)),
                 (: add each ACE from collection to resource:)
                 security:duplicate-acl($collection, $collection || "/" || $resource-name)
             )
@@ -1096,3 +1092,23 @@ declare function security:get-resource($id as xs:string) as node()? {
         ()
 };
 
+declare function security:duplicate-acl($source as xs:anyURI, $target as xs:anyURI) {
+    (: get ACL from source   :)
+    let $ACL := sm:get-permissions($source)//sm:ace
+    return
+        (: first remove ACL on resource :)
+        sm:clear-acl($target),
+        (: add each ACE from collection to resource:)
+        for $ACE in sm:get-permissions($source)//sm:ace
+            let $ace-target := $ACE/@target
+            let $who := $ACE/@who
+            let $access_type := if ($ACE/@access_type = 'ALLOWED') then true() else false()
+            let $mode := $ACE/@mode
+            (: no  :)
+            return
+                if ($ace-target = 'USER') then 
+                    sm:add-user-ace($target, $who, $access_type, $mode)
+                else 
+                    sm:add-group-ace($target, $who, $access_type, $mode)
+
+};
