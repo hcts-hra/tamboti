@@ -38,7 +38,7 @@ declare variable $config:temp-collection-mode := "rwxrws---";
 declare variable $config:temp-resource-mode := "rwx------";
 declare variable $config:index-collection-mode := "rwxr-xr-x";
 
-declare variable $config:data-collection-name := "resources";
+declare variable $config:data-collection-name := "data";
 declare variable $config:content-root := "/" || $config:data-collection-name;
 declare variable $config:mods-root := "/" || $config:data-collection-name;
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
@@ -59,7 +59,6 @@ declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
 
 declare variable $config:themes := concat($config:app-root, "/themes");
-declare variable $config:theme-config := concat($config:themes, "/configuration.xml");
 
 declare variable $config:resources := concat($config:app-root, "/resources");
 declare variable $config:images := concat($config:app-root, $config:mods-root ||  "/images");
