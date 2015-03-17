@@ -59,21 +59,8 @@ declare function sharing:set-collection-ace-writeable-by-name($collection as xs:
  :)
 declare function sharing:set-ace-executable-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as xs:boolean {
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $parent-collection-result :=
-            if (security:set-ace-executable-by-name($collection, $target, $name, $is-executable)) then
-                (
-                    for $resource in xmldb:get-child-resources($collection)
-                        let $useless := security:set-ace-executable-by-name(xs:anyURI($collection || "/" || $resource), $target, $name, $is-executable)
-                        return
-                            ()
-                    ,
-                    true()
-                )
-            else false()
-        return
-            $parent-collection-result
+        security:set-ace-executable-by-name($collection, $target, $name, $is-executable)
     )
-    
 };
 
 (: removes an ace on a collection and all the documents in that collection :)
@@ -148,7 +135,9 @@ declare function sharing:add-collection-user-ace($collection as xs:anyURI, $user
                                 then
                                     (
                                         (: add ace to child resources:)
-                                        for $resource in xmldb:get-child-resources($collection)
+                                        (: no exec-bit for resources :)
+                                        let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
+                                            for $resource in xmldb:get-child-resources($collection)
                                             let $resource-path := fn:concat($collection, "/", $resource) return
                                                 if (not(empty(security:add-user-ace($resource-path, $username, $mode)))) then
                                                     ()
@@ -183,6 +172,8 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
                                 then
                                     (
                                         (: add ACE to child resources :)
+                                        (: no exec-bit for resources :)
+                                        let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
                                         for $resource in xmldb:get-child-resources($collection)
                                         let $resource-path := fn:concat($collection, "/", $resource) return
                                             if(not(empty(security:add-group-ace($resource-path, $groupname, $mode))))then
