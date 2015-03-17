@@ -96,8 +96,7 @@ declare function theme:theme-for-prefix($prefix as xs:string?) {
     if (not($prefix)) then
         "default"
     else
-        let $theme := request:get-parameter('ui', 'tamboti')
-(:            doc($config:theme-config)//theme[@id = 'default-theme']/@name/string():)
+       let $theme := request:get-parameter('ui', 'tamboti')
         return
             if ($theme) then
                 $theme
@@ -120,7 +119,7 @@ declare function theme:get-root($prefix as xs:string?) as xs:string {
         if ($theme eq "default") then
             $config:mods-commons
         else
-            $config:mods-commons || "/" || doc($config:theme-config)//theme[@name = request:get-parameter('ui', 'tamboti')]/@root/string()
+            $config:mods-commons || "/"
 };
 
 (:~
