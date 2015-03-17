@@ -1,55 +1,22 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" id="query-panel">
-    <script type="text/javascript">
-        $(function() {
-            var selectedTabId = $("#query-history ul").data("selected-tab-id"); 
-            selectedTabId = (selectedTabId != "") ? selectedTabId : "simple-search-tab";
-            $( "#query-tabs" ).tabs({
-                select: searchTabSelected,
-                selected: $("#" + selectedTabId).index() - 1
-            });
-
-			$("#search-help").load("../../includes/search-help.xq");
-            $("#about-tamboti").load("../../includes/about-tamboti.xq");
-            $("#cluster-collections").load("../../includes/tamboti-collections.xq");
-            
-            $("#simple-search-form input[name = 'input1']").autocomplete({
-                source: function(request, response) {
-                    var data = { term: request.term };
-                    autocompleteCallback($("#simple-search-form input[name = 'input1']"), data);
-                    $.ajax({
-                        url: "autocomplete.xql",
-                        dataType: "json",
-       					data: data,
-                        success: function(data) {
-                            response(data);
-                        }});
-                },
-                minLength: 3,
-                delay: 700
-            });
-            
-            $("#advanced-search-form input[name = 'input1']").autocomplete({
-                source: function(request, response) {
-                    var data = { term: request.term };
-                    autocompleteCallback($("#advanced-search-form input[name = 'input1']"), data);
-                    $.ajax({
-                        url: "autocomplete.xql",
-                        dataType: "json",
-       					data: data,
-                        success: function(data) {
-                            response(data);
-                        }});
-                },
-                minLength: 3,
-                delay: 700
-            });            
-            
-            $('.search-form').repeat('#add-field', {
-                deleteTrigger: '',
-                onReady: repeatCallback}
-            );
-        });
-    </script>
+    <style type="text/css">
+        .clearable{
+          background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
+          border: 1px solid #999;
+          padding: 3px 18px 3px 4px; /* Use the same right padding (18) in jQ! */
+          border-radius: 3px;
+          transition: background 0.4 s;
+        }
+        
+        .clearable.x {
+            background-position: right 5px center;
+        }
+        
+        .clearable.onX {
+            cursor: pointer;
+        }
+	</style>
+    <script src="theme/pages/search-form.js" type="text/javascript"/>
     <div id="query-tabs">
         <ul>
             <li>
@@ -80,7 +47,7 @@
                     <tr>
                         <td class="label">Search for </td>
                         <td colspan="2">
-                            <input name="input1"/>
+                            <input class="clearable" name="input1" type="search" />
                         </td>
                     </tr>
                     <tr>
