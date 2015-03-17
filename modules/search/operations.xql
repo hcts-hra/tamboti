@@ -562,7 +562,7 @@ return
             let $mode := 
                 fn:replace($mode, "(.)(.)(.)", "$1" || $writable || $executable)
 
-            let $log := util:log("INFO", "mode: " || $mode || " inherit: " || $inherit)
+            let $log := util:log("DEBUG", "mode: " || $mode || " inherit: " || $inherit)
             return
 (:                op:add-user-ace($collection, request:get-parameter("username",())):)
                 op:add-user-ace($collection, request:get-parameter("username",()), $mode, $inherit)
@@ -579,7 +579,7 @@ return
             let $mode := 
                 fn:replace($mode, "(.)(.)(.)", "$1" || $writable || $executable)
 
-            let $log := util:log("INFO", "mode: " || $mode || " inherit: " || $inherit)
+            let $log := util:log("DEBUG", "mode: " || $mode || " inherit: " || $inherit)
             return
 (:                op:add-group-ace($collection, request:get-parameter("groupname",()), $mode):)
                 op:add-group-ace($collection, request:get-parameter("groupname",()), $mode, $inherit)
