@@ -143,24 +143,30 @@ $(document).ready(function() {
     prepareCollectionSharingDetails();
 
     /********* BIND FANCYTREE TOOLBAR  BUTTONS ***************/
-    //add new user to share event
+    // add new user to share event
     $('#add-new-user-to-share-button').click(function() {
         //clear the textbox for user name
         $('#user-auto-list').val("");
         $('#add-user-to-share-dialog').dialog('open');
     });
-    $('#add-user-to-share-button').click(function() {
-        addUserToShare();
-    });
-    //add new project to share event
-    $('#add-new-project-to-share-button').click(function() {
+    
+    // $('#add-user-to-share-button').click(function() {
+    //     var dialog = $("#add-user-ace");
+    //     console.debug(dialog);
+    //     addUserToShare();
+    // });
+
+    // add new project to share event
+    $('#add-new-group-to-share-button').click(function() {
         //clear the textbox for project name
-        $('#project-auto-list').val("");
-        $('#add-project-to-share-dialog').dialog('open');
+        $('#group-auto-list').val("");
+        $('#add-group-to-share-dialog').dialog('open');
     });
-    $('#add-project-to-share-button').click(function() {
-        addProjectToShare();
-    });
+    
+    // $('#add-project-to-share-button').click(function() {
+    //     addProjectToShare();
+    // });
+
     emptyFileList();
     showNotices();
     $('a#upload-file-to-resource').click(function() {
@@ -1082,21 +1088,14 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
 // *****************************************************************************
 // *            SHARING ACTIONS
 // *****************************************************************************
-//adds a user to a share
-function addUserToShare() {
+//share Collection to an user
+function addUserACE(options) {
+    var username = options.username;
     //check if this is a duplicate user
-    var input_value = $('#user-auto-list').val();
-    var username_no_parenthesis = $('#user-auto-list').val().match( /\(.*\)/ );
-    var username = "";
-    if (username_no_parenthesis !== null)
-        username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
-    else
-        username = input_value;
-    
     if (tamboti.checkDuplicateSharingEntry(username, "USER")) {
         return;
     }
-    //check this is a valid user otherwise show error
+    // //check this is a valid user otherwise show error
     $.ajax({
         type: 'POST',
         url: "operations.xql",
@@ -1105,24 +1104,27 @@ function addUserToShare() {
             username: escape(username)
         },
         success: function(data, status, xhr) {
-
-            //2) create the ace on the server
+            var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+            var collection = fancyTree.getActiveNode().key;
+            
+            //2) create the user ace on the server
             $.ajax({
                 type: 'POST',
                 url: "operations.xql",
                 data: { 
                     action: "add-user-ace",
-                    collection: getCurrentCollection(),
+                    collection: collection,
+                    write: options.write,
+                    execute: options.execute,
+                    inherit: options.inherit,
                     username: escape(username)
                 },
                 success: function(data, status, xhr) {
                     //3) reload dataTable
                     //$('#collectionSharingDetails').dataTable().fnAddData(["USER", $('#user-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
-                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
 
-                    //4) close the dialog
-                    $('#add-user-to-share-dialog').dialog('close');
-                    //(5) go to the last page
+                    //(4) go to the last page
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
@@ -1138,9 +1140,11 @@ function addUserToShare() {
 }
 
 //adds a group to a share
-function addProjectToShare() {
+function addGroupACE(options) {
+    var groupname = options.groupname;
+
     //check if this is a duplicate user
-    if (tamboti.checkDuplicateSharingEntry($("#project-auto-list").val(), "GROUP")) {
+    if (tamboti.checkDuplicateSharingEntry(groupname, "GROUP")) {
         return;
     }
     //1) check this is a valid group otherwise show error
@@ -1149,9 +1153,11 @@ function addProjectToShare() {
         url: "operations.xql",
         data: { 
             action: "is-valid-group-for-share",
-            groupname: escape($('#project-auto-list').val())
+            groupname: escape(groupname)
         },        
         success: function(data, status, xhr) {
+            var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+            var collection = fancyTree.getActiveNode().key;
 
             //2) create the ace on the server
             $.ajax({
@@ -1159,17 +1165,18 @@ function addProjectToShare() {
                 url: "operations.xql",
                 data: { 
                     action: "add-group-ace",
-                    collection: getCurrentCollection(),
-                    groupname: escape($('#project-auto-list').val())
+                    collection: collection,
+                    write: options.write,
+                    execute: options.execute,
+                    inherit: options.inherit,
+                    groupname: escape(groupname)
                 },
                 success: function(data, status, xhr) {
                     //3) reload dataTable
 //                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
-                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+                    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
 
-                    //4) close the dialog
-                    $('#add-project-to-share-dialog').dialog('close');
-                    //(5) go to the last page
+                    //(4) go to the last page
                     //$('#collectionSharingDetails').dataTable().fnPageChange("last");
                 },
                 error: function(xhr, status, error) {
@@ -1178,7 +1185,7 @@ function addProjectToShare() {
             });
         },
         error: function(xhr, status, error) {
-            showMessage("The project '" + $('#project-auto-list').val() + "' does not exist!");
+            showMessage("The group '" + groupname + "' does not exist!");
         }
     });
 }
@@ -1257,7 +1264,6 @@ function removeAce(collection, aceId) {
             },
             error: function(xhr, status, error) {
                 showMessage("Could not remove entry");
-                checkbox.checked = !isWriteable;
             }
         });
     }
@@ -1266,6 +1272,8 @@ function removeAce(collection, aceId) {
 //removes an ACE by user-/group name from a share
 function removeAceByName(collection, target, name) {
     if(confirm("Are you sure you wish to remove this entry?")){
+        var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+        var collection = fancyTree.getActiveNode().key;
         $.ajax({
             type: 'POST',
             url: "operations.xql",
@@ -1281,7 +1289,6 @@ function removeAceByName(collection, target, name) {
             },
             error: function(xhr, status, error) {
                 showMessage("Could not remove entry");
-                checkbox.checked = !isWriteable;
             }
         });
     }
