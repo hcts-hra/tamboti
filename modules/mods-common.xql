@@ -225,7 +225,7 @@ let $type :=
                         then 'transliterated'
                         else ()
     return
-    (:Write the type label, the labguage label and the transliteration label:)
+    (:Write the type label, the language label and the transliteration label:)
     <tr xmlns="http://www.w3.org/1999/xhtml">
         <td class="label">
         {
@@ -2243,6 +2243,13 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
                 if ($item/mods:titleInfo/mods:title)
                 then $item
                 else ()
+        let $advanced-search-data :=
+            <data>
+                <search-field>ID</search-field>
+                <value>{$xlinked-ID}</value>
+                <query-tabs>advanced-search-form</query-tabs>
+                <default-operator>and</default-operator>
+            </data>                
 
     return
         (:Only MODS records have $related-item:)
@@ -2266,7 +2273,7 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
                 then
                     <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
                         <td class="url label relatedItem-label">
-                            <a href="?search-field=ID&amp;value={$xlinked-ID}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $label)}</a>
+                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $label)}</a>
                         </td>
                         <td class="relatedItem-record">
                             <span class="relatedItem-span">{mods-common:format-related-item($related-item, $global-language, $collection-short)}</span>
@@ -2287,7 +2294,7 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
                 then
                     <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
                         <td class="url label relatedItem-label">
-                            <a href="?search-field=ID&amp;value={$xlinked-ID}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $type)}</a>
+                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $type)}</a>
                         </td>
                         <td class="relatedItem-record">
                             <span class="relatedItem-span">Ziziphus VRA Work Record</span>
