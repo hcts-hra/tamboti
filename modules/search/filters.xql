@@ -6,11 +6,10 @@ xquery version "3.0";
     "filter" box.
     The title words are derived from the Lucene index. The names rely on names:format-name() and are therefore expensive.
 :)
-import module namespace names="http://exist-db.org/xquery/biblio/names"
-    at "names.xql";
-import module namespace mods-common="http://exist-db.org/mods/common"
-    at "../mods-common.xql";
+import module namespace names="http://exist-db.org/xquery/biblio/names" at "names.xql";
+import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace json="http://www.json.org";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
@@ -26,7 +25,17 @@ declare variable $local:MAX_RESULTS_SUBJECTS := 750;
 declare variable $local:SEARCH-COLLECTION := session:get-attribute('query');
 
 declare function local:key($key, $options) {
-    <li><a href="?filter=Title&amp;value={$key}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$key} ({$options[1]})</a></li>
+    let $advanced-search-data :=
+        <data>
+            <filter>Title</filter>
+            <value>{$key}</value>
+            <query-tabs>advanced-search-form</query-tabs>
+            <default-operator>and</default-operator>
+            <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+        </data>
+        
+    return
+        <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{$key} ({$options[1]})</a></li>
 };
 
 declare function local:keywords($results as element()*, $record-count as xs:integer) {
@@ -81,9 +90,17 @@ return
                                 names:format-name($author)
                                     let $distinct := distinct-values($authors)
                                     for $name in $distinct
+                                    let $advanced-search-data :=
+                                        <data>
+                                            <filter>Name</filter>
+                                            <value>{$name}</value>
+                                            <query-tabs>advanced-search-form</query-tabs>
+                                            <default-operator>and</default-operator>
+                                            <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                        </data>                                    
                                     order by upper-case($name) empty greatest
                                     return
-                                        <li><a href="?filter=Name&amp;value={$name}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$name}</a></li>
+                                        <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{$name}</a></li>
             }
             </ul>
     else
@@ -94,14 +111,14 @@ return
                 let $dates :=
                     distinct-values(
                     (
-                    	$cached/mods:originInfo/mods:dateIssued,
-                    	$cached/mods:originInfo/mods:dateCreated,
-                    	$cached/mods:originInfo/mods:copyrightDate,
-                    	$cached/mods:relatedItem/mods:originInfo/mods:copyrightDate,
-                    	$cached/mods:relatedItem/mods:originInfo/mods:dateIssued,
-                    	$cached/mods:relatedItem/mods:part/mods:date
-                	)
-                	)
+                        $cached/mods:originInfo/mods:dateIssued,
+                        $cached/mods:originInfo/mods:dateCreated,
+                        $cached/mods:originInfo/mods:copyrightDate,
+                        $cached/mods:relatedItem/mods:originInfo/mods:copyrightDate,
+                        $cached/mods:relatedItem/mods:originInfo/mods:dateIssued,
+                        $cached/mods:relatedItem/mods:part/mods:date
+                    )
+                    )
                 let $dates-count := count($dates)
                 return
                     if ($dates-count gt $local:MAX_RESULTS_DATES) 
@@ -113,9 +130,17 @@ return
                             <li>There are too many records ({$record-count})to process without overloading the server. Please restrict the result set by performing a narrower search. The maximum number is {$local:MAX_RECORD_COUNT}.</li>
                         else
                             for $date in $dates
+                            let $advanced-search-data :=
+                                <data>
+                                    <filter>Date</filter>
+                                    <value>{$date}</value>
+                                    <query-tabs>advanced-search-form</query-tabs>
+                                    <default-operator>and</default-operator>
+                                    <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                </data>                            
                             order by $date descending
                             return
-                                <li><a href="?filter=Date&amp;value={$date}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$date}</a></li>
+                                <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{$date}</a></li>
              }
              </ul>
         else
@@ -142,10 +167,18 @@ return
                             else
                                 (:No distinction is made between different kinds of subjects - topics, temporal, geographic, etc.:)
                                 for $subject in $subjects
+                                let $advanced-search-data :=
+                                    <data>
+                                        <filter>Subject</filter>
+                                        <value>{replace($subject, '-', '')}</value>
+                                        <query-tabs>advanced-search-form</query-tabs>
+                                        <default-operator>and</default-operator>
+                                        <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                    </data>                                
                                 order by upper-case($subject) ascending
                                 return
                                     (:LCSH have '--', so they have to be replaced.:)
-                                    <li><a href="?filter=Subject&amp;value={replace($subject, '-', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{($subject, "[" || $subjects-map($subject) || "]")}</a></li>
+                                    <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{($subject, "[" || $subjects-map($subject) || "]")}</a></li>
                  }
                  </ul>
              else
@@ -173,9 +206,17 @@ return
                                                 if ($label)
                                                 then concat(' (', $label, ')') 
                                                 else ()
+                                        let $advanced-search-data :=
+                                            <data>
+                                                <filter>Language</filter>
+                                                <value>{replace($language, '-', '')}</value>
+                                                <query-tabs>advanced-search-form</query-tabs>
+                                                <default-operator>and</default-operator>
+                                                <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                            </data>                                                
                                         order by upper-case($language) ascending
                                         return
-                                            <li><a href="?filter=Language&amp;value={replace($language, '-', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$language}{$label}</a></li>
+                                            <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{$language}{$label}</a></li>
                      }
                      </ul>
                  else
@@ -211,9 +252,17 @@ return
                                                     if ($label)
                                                     then concat(' (', $label, ')') 
                                                     else ()
+                                            let $advanced-search-data :=
+                                                <data>
+                                                    <filter>Genre</filter>
+                                                    <value>{$genre}</value>
+                                                    <query-tabs>advanced-search-form</query-tabs>
+                                                    <default-operator>and</default-operator>
+                                                    <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                                </data>                                                    
                                             order by upper-case($genre) ascending
                                             return
-                                                <li><a href="?filter=Genre&amp;value={$genre}&amp;query-tabs=advanced-search-form&amp;default-operator=and&amp;collection={$local:SEARCH-COLLECTION//collection}">{$genre}{$label}</a></li>
+                                                <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{$genre}{$label}</a></li>
                          }
                          </ul>
                  else
