@@ -6,6 +6,7 @@ import module namespace config = "http://exist-db.org/mods/config" at "../../../
 import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
 import module namespace functx = "http://www.functx.com";
+import module namespace json="http://www.json.org";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mads = "http://www.loc.gov/mads/v2";
@@ -312,14 +313,22 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
         else 
             if ($linked-records-count gt 10)
             then
-                <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
-                    <td class="url label relatedItem-label"> 
-                        <a href="?action=&amp;search-field=XLink&amp;value={$ID}&amp;query-tabs=advanced-search-form">&lt;&lt; Catalogued Contents</a>
-                    </td>
-                    <td class="relatedItem-record">
-                        <span class="relatedItem-span">{$linked-records-count} records</span>
-                    </td>
-                </tr>
+                let $advanced-search-data :=
+                    <data>
+                        <action />>
+                        <search-field>XLink</search-field>
+                        <value>{$ID}</value>
+                        <query-tabs>advanced-search-form</query-tabs>
+                    </data>
+                return            
+                    <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
+                        <td class="url label relatedItem-label"> 
+                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
+                        </td>
+                        <td class="relatedItem-record">
+                            <span class="relatedItem-span">{$linked-records-count} records</span>
+                        </td>
+                    </tr>
             else
                 for $linked-record in $linked-records
                 let $link-ID := $linked-record/@ID/string()
@@ -327,10 +336,16 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
                     if (string-join($linked-record/mods:titleInfo/mods:title, ''))
                     then retrieve-mods:format-list-view('', $linked-record, '') 
                     else ()
+                let $advanced-search-data :=
+                    <data>
+                        <search-field>XLink</search-field>
+                        <value>{$link-ID}</value>
+                        <query-tabs>advanced-search-form</query-tabs>
+                    </data>                    
                 return
                 <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
                     <td class="url label relatedItem-label">
-                        <a href="?search-field=ID&amp;value={$link-ID}&amp;query-tabs=advanced-search-form">&lt;&lt; Catalogued Contents</a>
+                        <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
                     </td>
                     <td class="relatedItem-record">
                         <span class="relatedItem-span">{$link-contents}</span>
