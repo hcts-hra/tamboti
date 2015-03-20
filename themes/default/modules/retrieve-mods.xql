@@ -315,7 +315,7 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
             then
                 let $advanced-search-data :=
                     <data>
-                        <action />>
+                        <action />
                         <search-field>XLink</search-field>
                         <value>{$ID}</value>
                         <query-tabs>advanced-search-form</query-tabs>
