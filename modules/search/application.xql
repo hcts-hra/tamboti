@@ -26,6 +26,7 @@ import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 import module namespace functx = "http://www.functx.com";
+import module namespace json="http://www.json.org";
 
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace mods="http://www.loc.gov/mods/v3";
@@ -775,8 +776,13 @@ declare function biblio:query-history($node as node(), $params as element(parame
     {
         let $history := session:get-attribute('history')
         for $query-as-string in $history/query
+        let $advanced-search-data :=
+            <data>
+                <history>{data($query-as-string/@id)}</history>
+                <query-tabs>advanced-search-form</query-tabs>
+            </data>        
         return
-            <li><a href="?history={$query-as-string/@id}&amp;query-tabs=advanced-search-form">{biblio:xml-query-to-string($query-as-string)}</a></li>
+            <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{biblio:xml-query-to-string($query-as-string)}</a></li>
     }
     </ul>
 };
