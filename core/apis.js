@@ -56,7 +56,9 @@ $(function() {
                 "sort-direction": $("#advanced-search-form select[name='sort-direction']").val(),
                 "query-tabs": $("#advanced-search-form input[name='query-tabs']").val(),
                 "collection-tree": $("#advanced-search-form input[name='collection-tree']").val(),
-                "collection": $("#advanced-search-form input[name='collection']").val()
+                "collection": $("#advanced-search-form input[name='collection']").val(),
+                "filter": $("#advanced-search-form input[name='filter']").val(),
+                "value": $("#advanced-search-form input[name='value']").val()
             },
             dataType: "html",
             type: "POST",
@@ -78,7 +80,9 @@ $(function() {
         $("#advanced-search-form select[name='sort-direction']").val('descending');
         $("#advanced-search-form input[name='query-tabs']").val(data['query-tabs']);
         $("#advanced-search-form input[name='collection-tree']").val('hidden');
-        $("#advanced-search-form input[name='collection']").val(data['collection']);  
+        $("#advanced-search-form input[name='collection']").val(data['collection']);
+        $("#advanced-search-form input[name='filter']").val(data['filter']);
+        $("#advanced-search-form input[name='value']").val(data['value']);        
         tamboti.apis.advancedSearch();
     }
     
