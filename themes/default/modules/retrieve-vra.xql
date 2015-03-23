@@ -234,7 +234,7 @@ declare function retrieve-vra:format-detail-view($position as xs:string, $entry 
         return
             if (not(empty($measurements))) then
                 <tr>
-                    <td class="collection-label">Measuremenets</td>
+                    <td class="collection-label">Measurements</td>
                     <td>
                     {
                         for $measurement in $measurements
