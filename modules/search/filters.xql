@@ -31,7 +31,7 @@ declare function local:key($key, $options) {
             <value>{$key}</value>
             <query-tabs>advanced-search-form</query-tabs>
             <default-operator>and</default-operator>
-            <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+            <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
         </data>
         
     return
@@ -96,7 +96,7 @@ return
                                             <value>{$name}</value>
                                             <query-tabs>advanced-search-form</query-tabs>
                                             <default-operator>and</default-operator>
-                                            <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                            <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                         </data>                                    
                                     order by upper-case($name) empty greatest
                                     return
@@ -136,7 +136,7 @@ return
                                     <value>{$date}</value>
                                     <query-tabs>advanced-search-form</query-tabs>
                                     <default-operator>and</default-operator>
-                                    <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                    <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                 </data>                            
                             order by $date descending
                             return
@@ -173,7 +173,7 @@ return
                                         <value>{replace($subject, '-', '')}</value>
                                         <query-tabs>advanced-search-form</query-tabs>
                                         <default-operator>and</default-operator>
-                                        <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                        <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                     </data>                                
                                 order by upper-case($subject) ascending
                                 return
@@ -212,7 +212,7 @@ return
                                                 <value>{replace($language, '-', '')}</value>
                                                 <query-tabs>advanced-search-form</query-tabs>
                                                 <default-operator>and</default-operator>
-                                                <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                                <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                             </data>                                                
                                         order by upper-case($language) ascending
                                         return
@@ -258,7 +258,7 @@ return
                                                     <value>{$genre}</value>
                                                     <query-tabs>advanced-search-form</query-tabs>
                                                     <default-operator>and</default-operator>
-                                                    <collection>{$local:SEARCH-COLLECTION//collection}</collection>
+                                                    <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                                 </data>                                                    
                                             order by upper-case($genre) ascending
                                             return
@@ -269,4 +269,3 @@ return
                      if ($type eq 'keywords')
                      then local:keywords($cached, $record-count)
                      else ()
-                 

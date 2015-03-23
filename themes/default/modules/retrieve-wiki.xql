@@ -234,7 +234,7 @@ declare function retrieve-wiki:format-detail-view($position as xs:string, $entry
                 let $measurements := string-join($measurements, '; ')
                     return
                         <tr>
-                            <td class="collection-label">Measuremenets</td><td>{$measurements}</td>
+                            <td class="collection-label">Measurements</td><td>{$measurements}</td>
                         </tr>
             else ()
 ,
