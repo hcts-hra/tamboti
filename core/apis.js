@@ -58,7 +58,8 @@ $(function() {
                 "collection-tree": $("#advanced-search-form input[name='collection-tree']").val(),
                 "collection": $("#advanced-search-form input[name='collection']").val(),
                 "filter": $("#advanced-search-form input[name='filter']").val(),
-                "value": $("#advanced-search-form input[name='value']").val()
+                "value": $("#advanced-search-form input[name='value']").val(),
+                "history": $("#advanced-search-form input[name='history']").val()
             },
             dataType: "html",
             type: "POST",
@@ -70,7 +71,8 @@ $(function() {
     
     tamboti.apis.advancedSearchWithData = function(data) {
         $("#query-tabs").tabs("select", 1);
-        tamboti.resetAdvancedSearchForm()
+        tamboti.resetAdvancedSearchForm();
+        var collection = data['collection'];
         $("#advanced-search-form select[name='format']").val('MODS or TEI or VRA or Wiki');
         $("#advanced-search-form select[name='default-operator']").val(data['default-operator']);
         $("#advanced-search-form select[name='operator1']").val('and');
@@ -80,9 +82,10 @@ $(function() {
         $("#advanced-search-form select[name='sort-direction']").val('descending');
         $("#advanced-search-form input[name='query-tabs']").val(data['query-tabs']);
         $("#advanced-search-form input[name='collection-tree']").val('hidden');
-        $("#advanced-search-form input[name='collection']").val(data['collection']);
+        $("#advanced-search-form input[name='collection']").val(collection ? collection : 'data');
         $("#advanced-search-form input[name='filter']").val(data['filter']);
-        $("#advanced-search-form input[name='value']").val(data['value']);        
+        $("#advanced-search-form input[name='value']").val(data['value']);
+        $("#advanced-search-form input[name='history']").val(data['history']);
         tamboti.apis.advancedSearch();
     }
     
