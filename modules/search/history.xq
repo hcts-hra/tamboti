@@ -3,6 +3,10 @@ xquery version "3.0";
 import module namespace biblio="http://exist-db.org/xquery/biblio" at "application.xql";
 import module namespace json="http://www.json.org";
 
+(:~
+    Returns the query history as a HTML list. The queries are
+    transformed into a simple string representation.
+:)
 <ul>
 {
     let $history := session:get-attribute('history')
