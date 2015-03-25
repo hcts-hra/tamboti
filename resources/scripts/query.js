@@ -37,13 +37,6 @@ $(function() {
     
     $("#simple-search-form input[name = 'input1']").val(sessionStorage.getItem("tamboti.simple-search-term"));    
 
-    if ($("*[name='render-collection-path']")[0]) {
-        var renderCollectionPath = $("#simple-search-form input[name='render-collection-path']").data("collection-path");
-        $("#simple-search-form input[name='render-collection-path']").val(renderCollectionPath);
-        $("#simple-search-form input[name='collection']").val(renderCollectionPath);
-        updateCollectionPathOutputs($("#simple-search-form input[name = 'render-collection-path']").val());
-    }
-
     initCollectionTree();
 
     galleries = new tamboti.galleries.Viewer($("#lightbox"));
@@ -105,16 +98,7 @@ $(document).ready(function() {
     });
 
     $('#clear-search-fields').click(function() {
-        var form = $('#advanced-search-form > form');
-        $("td.operator select option:first-child", form).each(function() {
-            $(this).prop("selected", "selected");
-        });
-        $("td.search-term input.ui-autocomplete-input", form).each(function() {
-            $(this).val('');
-        });
-        $("td.search-field select option:first-child", form).each(function() {
-            $(this).prop("selected", "selected");
-        });
+    	tamboti.resetAdvancedSearchForm();
     });
 
     $(".delete-search-field-button").click(function(ev) {
@@ -235,6 +219,20 @@ $(document).ready(function() {
     
 });
 
+tamboti.resetAdvancedSearchForm = function() {
+    var form = $('#advanced-search-form > form');
+    $("table", form).find("tr.repeat:gt(0)").remove();
+    $("td.operator select option:first-child", form).each(function() {
+        $(this).prop("selected", "selected");
+    });
+    $("td.search-term input.ui-autocomplete-input", form).each(function() {
+        $(this).val('');
+    });
+    $("td.search-field select option:first-child", form).each(function() {
+        $(this).prop("selected", "selected");
+    });    
+}
+
 function pingSession() {
     $.getJSON("check-session.xql", function(result) {
         if (result) {
@@ -321,12 +319,6 @@ function updateCollectionPaths(title, key) {
     $("#simple-search-form input[name = collection]").val(key);
     $("#advanced-search-form input[name = collection]").val(key);
     
-    $("#simple-search-form input[name = 'render-collection-path']").val(key);
-    $("#advanced-search-form input[name = 'render-collection-path']").val(key);
-
-
-    //search forms
-    // updateCollectionPathOutputs(key);
     //dialog collection paths
     $('span[id $= collection-path_]').text(title);
     $('input[id $= collection-path_]').val(key);
@@ -337,12 +329,6 @@ function updateCollectionPaths(title, key) {
 function getCurrentCollection() {
     return "/db" + $("#simple-search-form input[name = collection]").val();
 }
-
-// function updateCollectionPathOutputs(collectionPath) {
-//     collectionPath = collectionPath.replace(/^\//, "").replace(/\/commons\//, "/").replace(/\/users\//, "/");
-//     $("#simple-search-form input[name = 'render-collection-path']").val(collectionPath);
-//     $("#advanced-search-form input[name = 'render-collection-path']").val(collectionPath);
-// }
 
 function showHideCollectionControls() {
     var collection = getCurrentCollection();
