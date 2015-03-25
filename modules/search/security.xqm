@@ -484,6 +484,15 @@ declare function security:remove-ace-by-name($resource as xs:anyURI, $target as 
     )
 };
 
+declare function security:clear-aces-by-name($resource as xs:anyURI, $name as xs:string, $target-type as xs:string) {
+    let $ace-idxs :=  sm:get-permissions($resource)//sm:ace[@target = $target-type and @who = $name]/@index/number()
+    (: remove existing aces :)
+    for $idx in reverse($ace-idxs)
+        return
+            sm:remove-ace($resource, $idx)
+};
+
+
 (: adds a group ace and returns its index:)
 declare function security:add-group-ace($resource as xs:anyURI, $groupname as xs:string, $mode as xs:string) as xs:int? {
     system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
@@ -578,31 +587,6 @@ declare function security:get-owner($path as xs:string) as xs:string {
 
 declare function security:get-group($path as xs:string) as xs:string {
     data(sm:get-permissions(xs:anyURI($path))/sm:permission/@group)
-};
-
-declare function security:copy-collection-acl-to-child-resources($collection as xs:anyURI) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        let $ACL := sm:get-permissions($collection)//sm:ace
-        for $resource-name in xmldb:get-child-resources($collection)
-        let $target-resource := xs:anyURI($collection || "/" || $resource-name)
-            return
-                (
-                (: first remove ACL on resource :)
-                sm:clear-acl($target-resource),
-                (: add each ACE from collection to resource:)
-                for $ACE in sm:get-permissions($collection)//sm:ace
-                    let $target := $ACE/@target
-                    let $who := $ACE/@who
-                    let $access_type := if ($ACE/@access_type = 'ALLOWED') then true() else false()
-                    let $mode := $ACE/@mode
-                    (: no  :)
-                    return
-                        if ($target = 'USER') then 
-                            sm:add-user-ace($target-resource, $who, $access_type, $mode)
-                        else 
-                            sm:add-group-ace($target-resource, $who, $access_type, $mode)
-                )
-)
 };
 
 declare function security:copy-collection-rights-to-child-resources($collection as xs:anyURI) {
@@ -701,32 +685,6 @@ declare function security:copy-owner-and-group($source as xs:anyURI, $target as 
                 sm:chgrp($target, $source-group)
             )
         )
-};
-
-declare function security:copy-collection-acl-to-child-resources($collection as xs:anyURI) {
-    for $resource-name in xmldb:get-child-resources($collection)
-        return
-            (
-                (: add each ACE from collection to resource:)
-                security:duplicate-acl($collection, $collection || "/" || $resource-name)
-            )
-};
-
-declare function security:copy-tamboti-collection-user-acl($collection as xs:anyURI) {
-    (: update ACL for resources in parent collection  :)
-    security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
-    
-    if (xmldb:collection-available($collection || "/" || $config:images-subcollection)) then
-        (
-            (: update ACL for VRA_images collection  :)
-            sm:clear-acl(xs:anyURI($collection || "/" || $config:images-subcollection)),
-            security:duplicate-acl($collection, $collection || "/" || $config:images-subcollection),
-            (: update ACL for resources in VRA_images   :)
-            security:copy-collection-acl-to-child-resources(xs:anyURI($collection || "/" || $config:images-subcollection))
-        )
-    else
-        ()
-
 };
 
 (:NB: below, commented out group-related functions, not used yet:)
@@ -995,23 +953,6 @@ declare function security:copy-collection-acl-to-child-resources($collection as 
             )
 };
 
-declare function security:copy-tamboti-collection-user-acl($collection as xs:anyURI) {
-    (: update ACL for resources in parent collection  :)
-    security:copy-collection-acl-to-child-resources(xs:anyURI($collection)),
-    
-    if (xmldb:collection-available($collection || "/" || $config:images-subcollection)) then
-        (
-            (: update ACL for VRA_images collection  :)
-            sm:clear-acl(xs:anyURI($collection || "/" || $config:images-subcollection)),
-            security:duplicate-acl($collection, $collection || "/" || $config:images-subcollection),
-            (: update ACL for resources in VRA_images   :)
-            security:copy-collection-acl-to-child-resources(xs:anyURI($collection ||  "/" || $config:images-subcollection))
-        )
-    else
-        ()
-
-};
-
 (:~
 : get searchable children. Recursively goes into collection structure to get collections that are searchable by user but maybe not directly accessible because located in a non-searchable collection
 :
@@ -1112,3 +1053,62 @@ declare function security:duplicate-acl($source as xs:anyURI, $target as xs:anyU
                     sm:add-group-ace($target, $who, $access_type, $mode)
 
 };
+
+(:~
+: Copy collection ACL to resource and change mode to corresponding resource-mode
+:
+: @param $source-collection the target collection
+: @param $resource the resource-name to move
+: @param $target-collection the target collection
+:)
+
+declare function security:copy-collection-ace-to-resource-apply-modechange($collection as xs:anyURI, $resource as xs:anyURI) {
+    let $target-collection-aces := sm:get-permissions($collection)
+    (: clear respource ACL :)
+    let $clear := sm:clear-acl($resource)
+    
+    for $ace in $target-collection-aces//sm:ace
+        let $resource-mode := 
+            for $key in map:keys($config:sharing-permissions)
+            return
+                if($config:sharing-permissions($key)("collection") = $ace/@mode/string()) then
+                    $config:sharing-permissions($key)("resource")
+                else
+                    ()
+        let $target := $ace/@target/string()
+        let $who := $ace/@who/string()
+        let $access-type := $ace/@access_type/string() = "ALLOWED"
+        return
+            if ($target = "USER") then
+                sm:add-user-ace($resource, $who, $access-type, $resource-mode)
+            else
+                sm:add-group-ace($resource, $who, $access-type, $resource-mode)
+};
+
+
+(:~
+: Move resource to a collection and apply permissions specified for Tamboti
+:
+: @param $source-collection the target collection
+: @param $resource the resource-name to move
+: @param $target-collection the target collection
+:)
+declare function security:move-resource-to-tamboti-collection($source-collection as xs:anyURI, $resource as xs:anyURI, $target-collection as xs:anyURI) {
+(:    util:log("DEBUG", xmldb:get-owner($target-collection) || "=" || security:get-user-credential-from-session()[1]),:)
+    (: first move the resource :)
+    xmldb:move($source-collection, $target-collection, $resource),
+    (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
+    if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+        (
+            security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+            ,
+            security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+        )
+    else
+        (
+            security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+            ,
+            security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+        )
+};
+

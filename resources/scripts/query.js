@@ -9,6 +9,22 @@ tamboti.createGuid = function() {
 	});
 };
 
+// get roles for sharing defined in config.xml
+var shareRoles;
+    $.ajax({
+        url: "operations.xql",
+            dataType: "json",
+            data: {
+                action: 'getSharingRoles'
+            },
+            type: 'POST',
+            success: function(data, message) {
+                shareRoles = data;
+            },
+            error: function(response, message) {
+            }
+        });
+
 $(function() {
     $('#keyword-form').submit(function() {
         loadIndexTerms();
@@ -20,6 +36,13 @@ $(function() {
     });
     
     $("#simple-search-form input[name = 'input1']").val(sessionStorage.getItem("tamboti.simple-search-term"));    
+
+    if ($("*[name='render-collection-path']")[0]) {
+        var renderCollectionPath = $("#simple-search-form input[name='render-collection-path']").data("collection-path");
+        $("#simple-search-form input[name='render-collection-path']").val(renderCollectionPath);
+        $("#simple-search-form input[name='collection']").val(renderCollectionPath);
+        updateCollectionPathOutputs($("#simple-search-form input[name = 'render-collection-path']").val());
+    }
 
     initCollectionTree();
 
@@ -82,7 +105,16 @@ $(document).ready(function() {
     });
 
     $('#clear-search-fields').click(function() {
-        tamboti.resetAdvancedSearchForm();
+        var form = $('#advanced-search-form > form');
+        $("td.operator select option:first-child", form).each(function() {
+            $(this).prop("selected", "selected");
+        });
+        $("td.search-term input.ui-autocomplete-input", form).each(function() {
+            $(this).val('');
+        });
+        $("td.search-field select option:first-child", form).each(function() {
+            $(this).prop("selected", "selected");
+        });
     });
 
     $(".delete-search-field-button").click(function(ev) {
@@ -203,20 +235,6 @@ $(document).ready(function() {
     
 });
 
-tamboti.resetAdvancedSearchForm = function() {
-    var form = $('#advanced-search-form > form');
-    $("table", form).find("tr.repeat:gt(0)").remove();
-    $("td.operator select option:first-child", form).each(function() {
-        $(this).prop("selected", "selected");
-    });
-    $("td.search-term input.ui-autocomplete-input", form).each(function() {
-        $(this).val('');
-    });
-    $("td.search-field select option:first-child", form).each(function() {
-        $(this).prop("selected", "selected");
-    });    
-}
-
 function pingSession() {
     $.getJSON("check-session.xql", function(result) {
         if (result) {
@@ -302,7 +320,13 @@ function updateCollectionPaths(title, key) {
 
     $("#simple-search-form input[name = collection]").val(key);
     $("#advanced-search-form input[name = collection]").val(key);
+    
+    $("#simple-search-form input[name = 'render-collection-path']").val(key);
+    $("#advanced-search-form input[name = 'render-collection-path']").val(key);
 
+
+    //search forms
+    // updateCollectionPathOutputs(key);
     //dialog collection paths
     $('span[id $= collection-path_]').text(title);
     $('input[id $= collection-path_]').val(key);
@@ -313,6 +337,12 @@ function updateCollectionPaths(title, key) {
 function getCurrentCollection() {
     return "/db" + $("#simple-search-form input[name = collection]").val();
 }
+
+// function updateCollectionPathOutputs(collectionPath) {
+//     collectionPath = collectionPath.replace(/^\//, "").replace(/\/commons\//, "/").replace(/\/users\//, "/");
+//     $("#simple-search-form input[name = 'render-collection-path']").val(collectionPath);
+//     $("#advanced-search-form input[name = 'render-collection-path']").val(collectionPath);
+// }
 
 function showHideCollectionControls() {
     var collection = getCurrentCollection();
@@ -588,9 +618,7 @@ function resultsLoaded(options) {
 
     /** add move resource action */
     $('.actions-toolbar .move-resource', this).click(function() {
-        var collection = fancyTree.getActiveNode().key;
         $('#move-resource-id').val($(this).attr('href').substr(1));
-        $("#move-resource-collection-path").val(collection);        
         refreshResourceMoveList();
         $('#move-resource-dialog').dialog('open');
         return false;
@@ -1042,30 +1070,59 @@ function prepareAttachmentSharingDetails() {
 
 //custom rendered for each row of the sharing dataTable
 function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
+    // console.debug(aData);
+    var aceTarget = aData[0];
+    var name = aData[2];
+
     //add attribute defining the entry type
-    $(nRow).attr("data-entry-type", aData[0]);
+    $(nRow).attr("data-entry-type", aceTarget);
     //determine user or group icon for first column
-    if (aData[0] == "USER") {
+    if (aceTarget == "USER") {
         $('td:eq(0)', nRow).html('<img alt="User Icon" src="theme/images/user.png"/>');
-    } else if (aData[0] == "GROUP") {
+    } else if (aceTarget == "GROUP") {
         $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
     }
+    // console.debug(shareRoles);
 
-    //determine writeable for fifth column
-    var isWriteable = aData[4].indexOf("w") > -1;
-    //add the checkbox, with action to perform an update on the server
-    var inpWriteableId = 'inpWriteable_' + iDisplayIndex;
-    $('td:eq(4)', nRow).html('<input id="' + inpWriteableId + '" type="checkbox" value="true"' + (isWriteable ? ' checked="checked"' : '') + ' onclick="javascript: setAceWriteableByName(this,\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\', this.checked);"/>');    
+    // build role dropdown
+    var collectionMode = aData[3];
+    var dropdown = $("<select/>");
+    $.each(shareRoles.options, function (key, data) {
+        // console.debug("colMode: " + collectionMode + " selectMode: " + data.collectionPermissions);
+        dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions?"selected='selected'":"") + ">" + data.title + "</option>");
+    });
+    // register change event listener to update Permissions
+    dropdown.change(function() {
+        var selectedShareType = this.value;
+        var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+        var collection = fancyTree.getActiveNode().key;
+        $.ajax({
+            url: "operations.xql",
+            data: {
+                action: 'share',
+                collection: collection,
+                name: name,
+                target: aceTarget,
+                type: selectedShareType
+            },
+            type: 'POST',
+            success: function(data, message) {
+                // console.debug(shareRoles.options);
+                
+                $.each(shareRoles.options, function (key, data){
+                    if(data.value == selectedShareType) $('td:eq(3)', nRow).html(data.collectionPermissions);
+                } );
+            },
+            error: function(response, message) {
+                showMessage('Updating Permissions failed: ' + response.responseText);
+            }
+        });
+    });
 
-    //determine executable for sixth column
-    var isExecuteable = aData[4].indexOf("x") > -1;
-    var inpExecuteableId = 'inpExecuteable_' + iDisplayIndex;
-    $('td:eq(5)', nRow).html('<input id="' + inpExecuteableId + '" type="checkbox" value="true"' + (isExecuteable ? ' checked="checked"' : '')  + ' onclick="javascript: setAceExecutableByName(this,\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\', this.checked);"/>');    
-
-    //add a delete button, with action to perform an update on the server
+    $('td:eq(4)', nRow).html(dropdown);
+    // //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    $('td:eq(6)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
-    //add jQuery cick action to image to perform an update on the server
+    $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
 
     return nRow;
 }
@@ -1280,6 +1337,38 @@ function removeAceByName(collection, target, name) {
     }
 }
 
+function shareCollection(options){
+    if (tamboti.checkDuplicateSharingEntry(options.name, options.target)) {
+        return;
+    }
+
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var collection = fancyTree.getActiveNode().key;
+
+    $.ajax({
+        type: 'POST',
+        url: "operations.xql",
+        data: { 
+            action: "share",
+            collection: collection,
+            name: options.name,
+            target: options.target,
+            type: options.type
+            },
+        success: function(data, status, xhr) {
+            // reload dataTable
+//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
+            $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
+
+            // go to the last page
+            //$('#collectionSharingDetails').dataTable().fnPageChange("last");
+        },
+        error: function(response, message) {
+            showMessage('Sharing failed: ' + response.responseText);
+        }
+    });
+}
+
 // *****************************************************************************
 // *            COLLECTION ACTIONS
 // *****************************************************************************
@@ -1480,12 +1569,12 @@ function moveResource(dialog) {
         },
         type: 'POST',
         success: function(data, message) {
+            // console.debug(path);
             var fancyTree = $("#collection-tree-tree").fancytree("getTree");
             var selectNode = fancyTree.getNodeByKey(path);
             selectNode.setActive(true);
             updateCollectionPaths(selectNode.title, selectNode.key);
             tamboti.apis.simpleSearch();
-            console.debug(path);
         },
         error: function(response, message) {
             showMessage('Moving collection failed: ' + response.responseText);

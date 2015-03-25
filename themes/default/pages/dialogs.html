@@ -131,11 +131,14 @@
                 open: function(event, ui){
                     updateSharingDialog();
                 },
-                buttons: {
-                    "Close": function() {
-                        $(this).dialog("close");
+                buttons: [
+                    {
+                        text: "Close",
+                        click: function() {
+                            $(this).dialog("close");
+                        }
                     }
-                },
+                ],
                 title: "Folder Sharing",
                 width: 700
             });
@@ -146,7 +149,7 @@
                     return false;
                 });                
             }
-            
+
             $('#user-auto-list').autocomplete({
                 source: function(request, response) {
                     var data = {
@@ -184,24 +187,29 @@
 
                             var options = 
                                 {
-                                    username: username,
-                                    inherit: $(this).find("input[name='inherit']").attr("checked"),
-                                    write: $(this).find("input[name='write']").attr("checked"),
-                                    execute: $(this).find("input[name='execute']").attr("checked")
+                                    name: username,
+                                    target: "USER",
+                                    type: $(this).find('select.shareRoles option:selected').val()
                                 }
-                            addUserACE(options);
+                            shareCollection(options);
                             $(this).dialog("close");
                         }
                     },
                 title: "Add a User to Share With",
                 width: 450,
                 open: function( event, ui ){
-                    $(this).find("input[name='inherit']").attr("checked", false);
-                    $(this).find("input[name='write']").attr("checked", false);
-                    $(this).find("input[name='execute']").attr("checked", false);
+                    $(this).find("select[class='shareRoles'] option").removeAttr('selected');
+                    $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
+                    // $(this).find("input[name='inherit']").attr("checked", false);
+                    // $(this).find("input[name='write']").attr("checked", false);
+                    // $(this).find("input[name='execute']").attr("checked", false);
                 }
                 
             }); 
+            $.each(shareRoles.options, function(idx, data){
+                $('#add-user-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
+            });
+
             
             $('#group-auto-list').autocomplete({
                 source: function(request, response) {
@@ -234,23 +242,28 @@
                             var groupname = $(this).find("input[name='group-auto-list']").attr("value");
                             var options = 
                                 {
-                                    groupname: groupname,
-                                    inherit: $(this).find("input[name='inherit']").attr("checked"),
-                                    write: $(this).find("input[name='write']").attr("checked"),
-                                    execute: $(this).find("input[name='execute']").attr("checked")
+                                    name: groupname,
+                                    target: "GROUP",
+                                    type: $(this).find("select[class='shareRoles']:selected")
                                 }
-                            addGroupACE(options);
+                            shareCollection(options);
                             $(this).dialog("close");
                         }
                     },
                 title: "Add a Project to Share With",
                 width: 450,
                 open: function( event, ui ){
-                    $(this).find("input[name='inherit']").attr("checked", false);
-                    $(this).find("input[name='write']").attr("checked", false);
-                    $(this).find("input[name='execute']").attr("checked", false);
+                    $(this).find("select[class='shareRoles'] option").removeAttr('selected');
+                    $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
+                    // $(this).find("input[name='inherit']").attr("checked", false);
+                    // $(this).find("input[name='write']").attr("checked", false);
+                    // $(this).find("input[name='execute']").attr("checked", false);
                 }
-            }); 
+            });
+            $.each(shareRoles.options, function(idx, data){
+                $('#add-group-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
+            });
+            
 
             $('#remove-resource-dialog').dialog({
                 modal: true,
@@ -431,9 +444,8 @@
                     <th>Type</th>
                     <th>Full Name</th>
                     <th>UserID</th>
-                    <th>Read</th>
-                    <th>Write</th>
-                    <th>Execute</th>
+                    <th>Permission</th>
+                    <th>Role</th>
                     <th>Remove</th>
                 </tr>
             </thead>
@@ -448,11 +460,9 @@
         <div>
             <input name="user-auto-list" id="user-auto-list"/>
         </div>
-        <div style="font-weight:bold;">Permissions:</div>
+        <div style="font-weight:bold;">Role:</div>
         <div>
-            <input style="display: inline;" type="checkbox" name="read" checked="checked" disabled="disabled"/>read
-            <input style="display: inline;" type="checkbox" name="write" value="true"/>write
-            <input style="display: inline;" type="checkbox" name="execute" value="true"/>execute
+            <select class="shareRoles" style="display: inline;" name="role"/>
         </div>
 <!--
         <div>
@@ -465,11 +475,9 @@
             <span>Enter the project's name:</span>
             <input name="group-auto-list" id="group-auto-list"/>
         </div>
-        <div style="font-weight:bold;">Permissions:</div>
+        <div style="font-weight:bold;">Role:</div>
         <div>
-            <input style="display: inline;" type="checkbox" name="read" checked="checked" disabled="disabled"/>read
-            <input style="display: inline;" type="checkbox" name="write" value="true"/>write
-            <input style="display: inline;" type="checkbox" name="execute" value="true"/>execute
+            <select class="shareRoles" style="display: inline;" name="role"/>
         </div>
 <!--
         <div>

@@ -172,6 +172,8 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
                                 then
                                     (
                                         (: add ACE to child resources :)
+                                        (: get correspondent resource mode for Collection :)
+
                                         (: no exec-bit for resources :)
                                         let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
                                         for $resource in xmldb:get-child-resources($collection)
@@ -349,4 +351,23 @@ declare function sharing:is-valid-user-for-share($username as xs:string) as xs:b
 declare function sharing:is-valid-group-for-share($groupname as xs:string) as xs:boolean
 {
     $groupname != ("SYSTEM", "guest", $config:biblio-users-group)
+};
+
+declare function sharing:get-resource-ace-mode-for-collection-ace($collection as xs:anyURI, $target as xs:string, $name as xs:string) {
+    let $user-ace := 
+        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+            sm:get-permissions($collection)//sm:ace[@target=$target and @who=$name][1]
+        )
+        
+    let $collection-mode := $user-ace/@mode/string()
+    
+    for $key in map:keys($config:sharing-permissions)
+    return
+        if($config:sharing-permissions($key)("collection") = $collection-mode) then
+            $key
+        else
+            ()
+    
+        
+(:        $config:sharing-permissions($key)("resource"):)
 };
