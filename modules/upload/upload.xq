@@ -110,15 +110,12 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
 
     let $image-record-filename := concat($image-uuid, '.xml')
     let $image-record-file-path := xs:anyURI($image-collection-path || '/' || $image-record-filename)
-
     let $collection-owner-username := xmldb:get-owner($upload-collection-path)
-
-
     let $upload :=  
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2] ,
             (
                 
-                security:duplicate-acl($upload-collection-path, $workrecord-file-path)
+                security:copy-collection-ace-to-resource-apply-modechange($upload-collection-path, $workrecord-file-path)
                 ,
                 if (not(xmldb:collection-available($image-collection-path))) then
                     (
@@ -135,13 +132,13 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
                 sm:chown($image-record-file-path, $collection-owner-username),
                 sm:chmod($image-record-file-path, $config:resource-mode),
                 sm:chgrp($image-record-file-path, $config:biblio-users-group),
-                security:duplicate-acl($upload-collection-path, $image-record-file-path),
+                security:copy-collection-ace-to-resource-apply-modechange($upload-collection-path, $image-record-file-path),
                     
                 xmldb:store($image-collection-path, $image-filename, $data),
                 sm:chown($image-file-path, $collection-owner-username),
                 sm:chmod($image-file-path, $config:resource-mode),
                 sm:chgrp($image-file-path, $config:biblio-users-group),
-                security:duplicate-acl($upload-collection-path, $image-file-path),                
+                security:copy-collection-ace-to-resource-apply-modechange($upload-collection-path, $image-file-path),                
                     
                 concat($filename, ' ' ,$message)
             )
