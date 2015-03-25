@@ -95,6 +95,11 @@ else if ($exist:resource eq 'retrieve') then
 		<forward url="{ theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, 'modules/session.xql') }">
 		</forward>
 	</dispatch>
+	
+else if ($exist:path = "/history/") then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="../history.xq" />
+    </dispatch> 
 
 else if (contains($exist:path, "/$shared/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
