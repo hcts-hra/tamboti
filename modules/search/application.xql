@@ -772,7 +772,7 @@ declare function biblio:query-from-history($id as xs:string) {
     transformed into a simple string representation.
 :)
 declare function biblio:query-history($node as node(), $params as element(parameters)?, $model as item()*) {
-    <ul data-selected-tab-id="{request:get-parameter('query-tabs', ())}">
+    <ul>
     {
         let $history := session:get-attribute('history')
         for $query-as-string in $history/query
