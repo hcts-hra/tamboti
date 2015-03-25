@@ -10,16 +10,15 @@ $(function() {
         $(this).removeClass('x onX').val('').change();
     });
     
-    var selectedTabId = $("#query-history ul").data("selected-tab-id"); 
-    selectedTabId = (selectedTabId != "") ? selectedTabId : "simple-search-tab";
-    $( "#query-tabs" ).tabs({
+    $("#query-tabs").tabs({
         select: searchTabSelected,
-        selected: $("#" + selectedTabId).index() - 1
+        selected: 0
     });
 
 	$("#search-help").load("../../includes/search-help.xq");
     $("#about-tamboti").load("../../includes/about-tamboti.xq");
     $("#cluster-collections").load("../../includes/tamboti-collections.xq");
+    $("#query-history").load("../../modules/search/history/");
     
     $("#simple-search-form input[name = 'input1']").autocomplete({
         source: function(request, response) {
