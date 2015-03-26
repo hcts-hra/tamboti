@@ -11,14 +11,20 @@ $(function() {
     });
     
     $("#query-tabs").tabs({
-        select: searchTabSelected,
+        select: function(ev, ui) {
+            if (ui.index == 2) {
+               $("#query-history").load("../../modules/search/history/");
+            }
+            if (ui.index == 3) {
+                $('#personal-list-size').load('user.xql', {action: 'count'});
+            }    
+        },
         selected: 0
     });
 
 	$("#search-help").load("../../includes/search-help.xq");
     $("#about-tamboti").load("../../includes/about-tamboti.xq");
     $("#cluster-collections").load("../../includes/tamboti-collections.xq");
-    $("#query-history").load("../../modules/search/history/");
     
     $("#simple-search-form input[name = 'input1']").autocomplete({
         source: function(request, response) {
