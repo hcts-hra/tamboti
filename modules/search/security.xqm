@@ -1112,3 +1112,36 @@ declare function security:move-resource-to-tamboti-collection($source-collection
         )
 };
 
+declare function security:copy-collection-acl($source-collection as xs:anyURI, $target-collection as xs:anyURI) {
+    try {
+        (
+            sm:clear-acl($target-collection)
+            ,
+            security:duplicate-acl($source-collection, $target-collection)
+            ,
+            for $resource in xmldb:get-child-resources($target-collection)
+            return
+                security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection ||  "/" || $resource))
+            ,
+            let $call-for-VRA-images :=
+                if(xmldb:collection-available(xs:anyURI($target-collection || "/VRA_images"))) then
+                    (
+                    sm:clear-acl(xs:anyURI($target-collection || "/VRA_images"))
+                    ,
+                    security:duplicate-acl($source-collection, xs:anyURI($target-collection || "/VRA_images"))
+                    ,
+                    for $resource in xmldb:get-child-resources(xs:anyURI($target-collection || "/VRA_images"))
+                    return
+                        security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/VRA_images/" || $resource))
+                    )
+
+(:                    security:copy-collection-acl($target-collection, xs:anyURI($target-collection || "/VRA_images")):)
+                else 
+                    ()
+            return true()
+        )    
+    } catch * {
+          "Catched Error: " ||  $err:code || ": " || $err:description
+  }
+
+};

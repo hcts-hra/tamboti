@@ -687,6 +687,17 @@ return
                             <status>{$collection-result}</status>
                         )
     
+            case "copyCollectionACL" return
+                let $result := security:copy-collection-acl($collection, xmldb:encode-uri(request:get-parameter("targetCollection", "")))
+                return
+                    if($result = true()) then
+                        <status>Successfully copied ACL</status>
+                    else
+                        (
+                            response:set-status-code($op:HTTP-FORBIDDEN),
+                            <status>{$result}</status>
+                        )
+    
             default return
                 op:unknown-action($action)
     )
