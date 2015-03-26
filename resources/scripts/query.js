@@ -657,12 +657,6 @@ function resultsLoaded(options) {
     }
 }
 
-function searchTabSelected(ev, ui) {
-    if (ui.index == 3) {
-        $('#personal-list-size').load('user.xql', {action: 'count'});
-    }
-}
-
 function attachedDetailsRowCallback(nRow, aData, iDisplayIndex) {
     //determine user or group icon for first column
     var img_src = aData[0];
