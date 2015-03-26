@@ -9,21 +9,37 @@ tamboti.createGuid = function() {
 	});
 };
 
-// get roles for sharing defined in config.xml
-var shareRoles;
-    $.ajax({
-        url: "operations.xql",
-            dataType: "json",
-            data: {
-                action: 'getSharingRoles'
-            },
-            type: 'POST',
-            success: function(data, message) {
-                shareRoles = data;
-            },
-            error: function(response, message) {
-            }
+//Add a hidden span with status display on 
+function addStatusDisplay(selector){
+    selector.append('<span class="result"> \
+                        <image class="progress" style="height:2em;vertical-align:bottom;display:none;" src="theme/images/ajax-loader.gif"/> \
+                        <image class="success" style="height:2em;vertical-align:bottom;display:none;" src="theme/images/task-complete.png"/> \
+                    </span>');
+    selector.bind('showLoading', function(){
+        selector.find('span.result img.progress').show();
+    });
+    selector.bind('showDone', function(){
+        selector.find('span.result img.progress').fadeOut( "fast", function() {
+            selector.find('span.result img.success').fadeIn("slow").delay( 800 ).fadeOut("slow");
         });
+    });
+}
+
+// get roles for sharing defined in config.xml
+tamboti.shareRoles = {};
+$.ajax({
+    url: "operations.xql",
+        dataType: "json",
+        data: {
+            action: 'getSharingRoles'
+        },
+        type: 'POST',
+        success: function(data, message) {
+            tamboti.shareRoles = data;
+        },
+        error: function(response, message) {
+        }
+    });
 
 $(function() {
     $('#keyword-form').submit(function() {
@@ -1351,6 +1367,31 @@ function shareCollection(options){
         },
         error: function(response, message) {
             showMessage('Sharing failed: ' + response.responseText);
+        }
+    });
+}
+
+function copyCollectionACL(source, target) {
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'copyCollectionACL', 
+            collection: source,
+            targetCollection: target, 
+        },
+        type: 'POST',
+        success: function(data, message) {
+            var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+            var targetNode = fancyTree.getNodeByKey(target);
+            var parentNode = targetNode.getParent();
+            parentNode.load(true).done(function(){
+                parentNode.setExpanded();
+            });
+            return true;
+        },
+        error: function(response, message) {
+            //ToDo: Popup when creating Collection failed
+            return false;
         }
     });
 }
