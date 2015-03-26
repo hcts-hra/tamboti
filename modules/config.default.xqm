@@ -67,7 +67,7 @@ declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mad
 
 declare variable $config:themes := concat($config:app-root, "/themes");
 
-declare variable $config:resources := concat($config:app-root, "/resources");
+declare variable $config:resources := concat($config:app-root, $config:mods-root);
 declare variable $config:images := concat($config:app-root, $config:mods-root ||  "/images");
 
 declare variable $config:images-subcollection := ("VRA_images");

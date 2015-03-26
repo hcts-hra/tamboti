@@ -143,8 +143,41 @@
                 width: 700
             });
             var trigger = '#collection-sharing';
+            // add the  progress indicator with custon events (showLoading and showDone)
+            var copyACLStatusSelector = $('form#copy-acl-to .messageContainer');
+            addStatusDisplay(copyACLStatusSelector);
+            $('form#copy-acl-to').bind("submit", function(event, data) {
+                if(confirm("Warning: existing sharing-table on target collection will get overwritten! Proceed?")){
+                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
+                    copyACLStatusSelector.trigger('showLoading');
+                    copyCollectionACL(node.key, $('#copy-acl-target-collection-list option:selected').val());
+                    copyACLStatusSelector.trigger('showDone');
+                }
+                event.preventDefault();
+            });
             if (trigger != '') {
                 $(trigger).click(function() {
+                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
+                    if (node !== null) {
+                        var selectedCollection = node.key;
+                        //clear the list
+                        $("#copy-acl-target-collection-list").find("option").remove();
+                        $.ajax({
+                            url: "operations.xql",
+                            data: {
+                                action: 'get-move-folder-list', 
+                                collection: selectedCollection
+                            },
+                            type: 'POST',
+                            success: function(data, message) {
+                                $('option', data).each(function() {
+                                    $('#copy-acl-target-collection-list').append('<option value="' + $.trim($(this).attr('value')) + '">' + $.trim($(this).text()) + '</option>');
+                                });
+                            },
+                            error: function(response, message) {
+                            }
+                        });
+                    }
                     $('#sharing-collection-dialog').dialog('open');
                     return false;
                 });                
@@ -206,7 +239,7 @@
                 }
                 
             }); 
-            $.each(shareRoles.options, function(idx, data){
+            $.each(tamboti.shareRoles.options, function(idx, data){
                 $('#add-user-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
             });
 
@@ -260,7 +293,7 @@
                     // $(this).find("input[name='execute']").attr("checked", false);
                 }
             });
-            $.each(shareRoles.options, function(idx, data){
+            $.each(tamboti.shareRoles.options, function(idx, data){
                 $('#add-group-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
             });
             
@@ -452,6 +485,11 @@
             <tbody>
             </tbody>
         </table>
+        <form id="copy-acl-to">
+            <div class="messageContainer">copy sharing table to <select id="copy-acl-target-collection-list"/>
+                <button type="sumbit">copy</button>
+            </div>
+        </form>
         <input id="add-new-user-to-share-button" type="button" value="Add User"/>
         <input id="add-new-group-to-share-button" type="button" value="Add Project"/>
     </div>
@@ -464,11 +502,6 @@
         <div>
             <select class="shareRoles" style="display: inline;" name="role"/>
         </div>
-<!--
-        <div>
-            <input style="display: inline;" type="checkbox" name="inherit" value="true"/>apply to subcollections
-        </div>
--->
     </div>
     <div id="add-group-to-share-dialog">
         <div>
@@ -479,11 +512,6 @@
         <div>
             <select class="shareRoles" style="display: inline;" name="role"/>
         </div>
-<!--
-        <div>
-            <input style="display: inline;" type="checkbox" name="inherit" value="true"/>apply to subcollections
-        </div>
--->
     </div>
     <div id="remove-resource-dialog">
         <form id="remove-resource-form" action="operations.xql">
