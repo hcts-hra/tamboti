@@ -40,7 +40,7 @@ declare option exist:serialize "method=xhtml media-type=application/xhtml+xml om
 (:~
     Mapping field names to XPath expressions.
     NB: Changes in field names should be reflected in autocomplete.xql, biblio:construct-order-by-expression() and biblio:get-year().
-    Fields used should be reflected in the collection.xconf in /db/system/config/db/resources/.
+    Fields used should be reflected in the collection.xconf in /db/system/config/db/data/.
     'q' is expanded in biblio:generate-query().
     An XLink may be passed through retrieve-mods:format-detail-view() without a hash or or it may be passed with a hash through the search interface; 
     therefore any leading hash is first removed and then added, to prevent double hashes. 
@@ -452,7 +452,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
             <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
             The search term, to be substituted for '$q', is held in $query-as-xml. :)
             
-            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
+            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /data. :)
             let $collection-path := 
                 if ($expr/@name = ('the Record ID Field (MODS, VRA)', 'ID', 'the XLink Field (MODS)')) 
                 then $config:mods-root
@@ -771,8 +771,8 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, $config:mods-commons, 'resources'), $config:users-collection, 'resources') 
-            else 'resources' 
+            then replace(replace($search-collection, $config:mods-commons, $config:data-collection-name), $config:users-collection, $config:data-collection-name) 
+            else $config:data-collection-name 
         let $search-collection := 
             if (starts-with($search-collection, '/db'))
             then replace($search-collection, '/db', '')
