@@ -27,6 +27,7 @@ function addStatusDisplay(selector){
 
 // get roles for sharing defined in config.xml
 tamboti.shareRoles = {};
+tamboti.shareRoles.options = [];
 $.ajax({
     url: "operations.xql",
         dataType: "json",
