@@ -190,7 +190,7 @@
                     <xf:setvalue ref="instance('i-variables')/number-of-selected-options" value="event('number-of-selected-options')"/>
                 </xf:action>
                 <xf:action ev:event="selected-action-for-selected-options" ev:observer="main-content">
-                    <xf:action if="instance('i-variables')/selected-action = 'edit'">
+                    <xf:action>
                         <script type="text/javascript">
                                 var uuid = tamboti.createGuid();
                                 $.ajax({
@@ -224,9 +224,6 @@
                                     }
                                 });                           
                         </script>
-                    </xf:action>
-                    <xf:action if="instance('i-variables')/selected-action = ('delete', 'move', 'save', 'export')">
-                        <xf:message level="modal">This action is not yet implemented!</xf:message>
                     </xf:action>
                     <xf:setvalue ref="instance('i-variables')/selected-action"/>
                 </xf:action>
