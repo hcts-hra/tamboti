@@ -501,13 +501,15 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
 
     (: identifier :)
     let $identifiers := $entry/mods:identifier
-    for $identifer in $identifiers
-    let $type := $identifer/@type/string()
+    for $identifier in $identifiers
+    let $type := $identifier/@type/string()
     let $type := doc(concat($config:edit-app-root, "/code-tables/identifier-type-codes.xml"))/*:code-table/*:items/*:item[*:value eq $type]/*:label
     return 
         mods-common:simple-row
         (
-            $identifer/text(), 
+            if ($identifier/@type = 'doi')
+            then <a href="http://dx.doi.org/{$identifier/text()}" target="_blank">{$identifier/text()}</a>
+            else $identifier/text(), 
             concat
             (
                 'Identifier',
@@ -519,7 +521,7 @@ declare function retrieve-mods:format-detail-view($position as xs:string, $entry
                 , 
                 if ($type eq 'local')
                 then
-                    let $local-identifiers := collection($config:mods-root-minus-temp)//mods:mods[.//mods:identifier eq $identifer]/@ID/string()
+                    let $local-identifiers := collection($config:mods-root-minus-temp)//mods:mods[.//mods:identifier eq $identifier]/@ID/string()
                     let $local-identifiers := 
                         (for $local-identifier in $local-identifiers where $local-identifier ne $ID return $local-identifier)
                     return
