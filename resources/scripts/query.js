@@ -95,6 +95,19 @@ $(function() {
         // ToDo: check for Sharing and add/remove class instead of refresh complete tree
         refreshParentTreeNode();
     });
+    
+    $(document).tooltip({
+        items: "tr.list img.relatedImage",
+        position: { my: "center bottom-20", at: "center top" },
+        track: true,
+        content: function() {
+          var element = $( this );
+          var src = element.attr("src");
+          var caption = element.closest("tr").find("div.vra-record").html();
+          
+          return "<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' /><div class='vra-record'>" + caption + "</div>";
+        }
+      });     
 
 });
 
