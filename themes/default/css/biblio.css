@@ -629,10 +629,33 @@ table .biblio-full .related td {
   line-height: 3.4em;
   border-top: 1px solid #bbbbbb;
 }
+.image-tooltip {
+  width: 300px;
+  height: 300px;
+}
+.ui-tooltip {
+  max-width: 300px;
+}
 /*main structures for display of search results ends*/
 /*results-view styling begins*/
 td .title {
   font-style: italic;
+}
+.vra-title {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+.vra-date {
+  font-size: 0.9em;
+}
+.vra-agent {
+  font-size: 0.9em;
+}
+.vra-role {
+  font-style: italic;
+}
+.vra-location {
+  font-size: 0.9em;
 }
 /*results-view styling ends*/
 .actions-toolbar {
@@ -852,12 +875,12 @@ form ul li {
 #add-new-user-to-share-button {
   margin-right: 1em;
 }
-#group-auto-list,
+#project-auto-list,
 #user-auto-list {
   width: 20em;
 }
 #add-user-to-share-dialog input,
-#add-group-to-share-dialog input {
+#add-project-to-share-dialog input {
   margin: 1em 1em 1em 0;
   display: block;
 }
