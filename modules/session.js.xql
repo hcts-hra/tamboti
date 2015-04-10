@@ -60,7 +60,7 @@ if (security:get-user-credential-from-session()[1] ne $security:GUEST_CREDENTIAL
             };
             
             //intercept ajax requests and reset the session warning
-            $(window).ajaxComplete(function() {
+            $(document).ajaxComplete(function() {
                 if (typeof sessionWarningTimeout != 'undefined') {
                     resetSessionTimeoutWarning();
                 }
