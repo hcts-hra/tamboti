@@ -37,6 +37,7 @@ declare variable $config:collection-mode := "rwx------";
 declare variable $config:temp-collection-mode := "rwxrws---";
 declare variable $config:temp-resource-mode := "rwx------";
 declare variable $config:index-collection-mode := "rwxr-xr-x";
+declare variable $config:public-collection-mode := "rwxr-xr-x";
 
 (: Sharing permission definition :)
 declare variable $config:sharing-permissions := map {
