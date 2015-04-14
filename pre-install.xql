@@ -137,7 +137,7 @@ local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-roo
 (: Create users and groups collections :)
 util:log($log-level, fn:concat("Config: Creating users '", $config:users-collection, "' collections"))
 ,
-local:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:collection-mode)
+local:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 util:log($log-level, "Config: Done.")
 ,
