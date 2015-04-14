@@ -27,7 +27,6 @@ declare variable $editor-collection-name := "edit";
 declare variable $code-tables-collection-name := "code-tables";
 
 declare variable $temp-collection-name := "temp";
-declare variable $commons-collection-name := "commons";
 declare variable $samples-collection-name := "Samples";
 
 (:~ Collection paths :)
@@ -38,7 +37,6 @@ declare variable $editor-code-tables-collection := fn:concat($editor-collection,
 
 declare variable $resources-collection := fn:concat($db-root, "/", $config:data-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
-declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);
 
 declare function local:mkcol-recursive($collection, $components, $permissions as xs:string) {
     if (exists($components))
@@ -131,9 +129,9 @@ util:log($log-level, "Config: Done.")
 ,
 
 (: Create "commons" collections :)
-util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'..."))
+util:log($log-level, fn:concat("Config: Creating commons collection '", $config:mods-commons, "'..."))
 ,
-local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:collection-mode)
+local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:collection-mode)
 ,
 
 (: Create users and groups collections :)
