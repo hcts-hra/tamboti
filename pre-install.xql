@@ -46,8 +46,14 @@ declare function local:mkcol-recursive($collection, $components, $permissions as
     if (exists($components)) then
         let $newColl := concat($collection, "/", $components[1])
         return (
-            xmldb:create-collection($collection, $components[1]),
-            local:set-resource-properties(xs:anyURI($newColl), $permissions),
+            if (not(xmldb:collection-available($newColl)))
+            then
+                (
+                    xmldb:create-collection($collection, $components[1]),
+                    local:set-resource-properties(xs:anyURI($newColl), $permissions)
+                )
+            else ()
+            ,
             local:mkcol-recursive($newColl, subsequence($components, 2), $permissions)
         )
     else
@@ -78,6 +84,15 @@ util:log($log-level, "Script: Running pre-install script ..."),
 util:log($log-level, fn:concat("...Script: using $home '", $home, "'")),
 util:log($log-level, fn:concat("...Script: using $dir '", $dir, "'")),
 
+(: create $config:data-collection-name collection :)
+if (not(xmldb:collection-available($config:content-root)))
+then
+    (
+        xmldb:create-collection("/db", $config:data-collection-name),
+        local:set-resource-properties(xs:anyURI($config:content-root), $config:public-collection-mode)
+    )
+else ()
+,
 (: Create users and groups :)
 util:log($log-level, fn:concat("Security: Creating user '", $config:biblio-admin-user, "' and group '", $config:biblio-users-group, "' ...")),
     if (xmldb:group-exists($config:biblio-users-group)) then ()
