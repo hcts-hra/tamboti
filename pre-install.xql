@@ -43,21 +43,22 @@ declare variable $users-collection := fn:concat($resources-collection, "/", $use
 declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);
 
 declare function local:mkcol-recursive($collection, $components, $permissions as xs:string) {
-    if (exists($components)) then
+    if (exists($components))
+    then
         let $newColl := concat($collection, "/", $components[1])
         return (
             if (not(xmldb:collection-available($newColl)))
             then
                 (
-                    xmldb:create-collection($collection, $components[1]),
+                    xmldb:create-collection($collection, $components[1])
+                    ,
                     local:set-resource-properties(xs:anyURI($newColl), $permissions)
                 )
             else ()
             ,
             local:mkcol-recursive($newColl, subsequence($components, 2), $permissions)
         )
-    else
-        ()
+    else ()
 };
 
 (: Helper function to recursively create a collection hierarchy. :)
