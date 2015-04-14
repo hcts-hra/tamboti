@@ -111,11 +111,11 @@ util:log($log-level, "Security: Done.")
 (: Load collection.xconf documents :)
 util:log($log-level, "Config: Loading collection configuration ...")
 ,
-local:mkcol($config-collection, $editor-code-tables-collection, $config:index-collection-mode)
+local:mkcol($config-collection, $editor-code-tables-collection, $config:public-collection-mode)
 ,
 xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf")
 ,
-local:mkcol($config-collection, $resources-collection, $config:index-collection-mode)
+local:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
 ,
 xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf")
 ,
