@@ -25,10 +25,5 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/reports/reports.xqm"))
     ,
-    (: make admin:biblio.users as owner of $config:users-collection :)
-    sm:chown($config:users-collection, 'admin')
-    ,
-    sm:chgrp($config:users-collection, $config:biblio-users-group)
-    ,
     sm:remove-group-member($config:biblio-users-group, "admin")
 )

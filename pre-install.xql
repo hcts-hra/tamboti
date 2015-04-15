@@ -26,9 +26,7 @@ declare variable $modules-collection-name := "modules";
 declare variable $editor-collection-name := "edit";
 declare variable $code-tables-collection-name := "code-tables";
 
-declare variable $users-collection-name := "users";
 declare variable $temp-collection-name := "temp";
-declare variable $commons-collection-name := "commons";
 declare variable $samples-collection-name := "Samples";
 
 (:~ Collection paths :)
@@ -39,19 +37,24 @@ declare variable $editor-code-tables-collection := fn:concat($editor-collection,
 
 declare variable $resources-collection := fn:concat($db-root, "/", $config:data-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
-declare variable $users-collection := fn:concat($resources-collection, "/", $users-collection-name);
-declare variable $commons-collection := fn:concat($resources-collection, "/", $commons-collection-name);
 
 declare function local:mkcol-recursive($collection, $components, $permissions as xs:string) {
-    if (exists($components)) then
+    if (exists($components))
+    then
         let $newColl := concat($collection, "/", $components[1])
         return (
-            xmldb:create-collection($collection, $components[1]),
-            local:set-resource-properties(xs:anyURI($newColl), $permissions),
+            if (not(xmldb:collection-available($newColl)))
+            then
+                (
+                    xmldb:create-collection($collection, $components[1])
+                    ,
+                    local:set-resource-properties(xs:anyURI($newColl), $permissions)
+                )
+            else ()
+            ,
             local:mkcol-recursive($newColl, subsequence($components, 2), $permissions)
         )
-    else
-        ()
+    else ()
 };
 
 (: Helper function to recursively create a collection hierarchy. :)
@@ -78,38 +81,70 @@ util:log($log-level, "Script: Running pre-install script ..."),
 util:log($log-level, fn:concat("...Script: using $home '", $home, "'")),
 util:log($log-level, fn:concat("...Script: using $dir '", $dir, "'")),
 
+(: create $config:data-collection-name collection :)
+if (not(xmldb:collection-available($config:content-root)))
+then
+    (
+        xmldb:create-collection("/db", $config:data-collection-name)
+        ,
+        security:set-resource-permissions(xs:anyURI($config:content-root), "admin", "dba", $config:public-collection-mode)
+    )
+else ()
+,
 (: Create users and groups :)
-util:log($log-level, fn:concat("Security: Creating user '", $config:biblio-admin-user, "' and group '", $config:biblio-users-group, "' ...")),
-    if (xmldb:group-exists($config:biblio-users-group)) then ()
-    else xmldb:create-group($config:biblio-users-group),
-    if (xmldb:exists-user($config:biblio-admin-user)) then ()
-    else xmldb:create-user($config:biblio-admin-user, $config:biblio-admin-user, $config:biblio-users-group, ()),
-util:log($log-level, "Security: Done."),
+util:log($log-level, fn:concat("Security: Creating user '", $config:biblio-admin-user, "' and group '", $config:biblio-users-group, "' ..."))
+,
+if (xmldb:group-exists($config:biblio-users-group))
+then ()
+else xmldb:create-group($config:biblio-users-group)
+,
+if (xmldb:exists-user($config:biblio-admin-user))
+then ()
+else xmldb:create-user($config:biblio-admin-user, $config:biblio-admin-user, $config:biblio-users-group, ())
+,
+util:log($log-level, "Security: Done.")
+,
 
 (: Load collection.xconf documents :)
-util:log($log-level, "Config: Loading collection configuration ..."),
-    local:mkcol($config-collection, $editor-code-tables-collection, $config:index-collection-mode),
-    xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf"),
-    local:mkcol($config-collection, $resources-collection, $config:index-collection-mode),
-    xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf"),
-    (:local:mkcol($config-collection, $mads-collection),:)
-    (:xmldb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
-util:log($log-level, "Config: Done."),
-
+util:log($log-level, "Config: Loading collection configuration ...")
+,
+local:mkcol($config-collection, $editor-code-tables-collection, $config:public-collection-mode)
+,
+xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf")
+,
+local:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
+,
+xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf")
+,
+(:local:mkcol($config-collection, $mads-collection),:)
+(:xmldb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
+util:log($log-level, "Config: Done.")
+,
 
 (: Create temp collection :)
-util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-collection, "'...")),
-    local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode),
-util:log($log-level, "Config: Done."),
+util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-collection, "'..."))
+,
+local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode)
+,
+util:log($log-level, "Config: Done.")
+,
 
 (: Create "commons" collections :)
-util:log($log-level, fn:concat("Config: Creating commons collection '", $commons-collection, "'...")),
-    local:mkcol($db-root, local:strip-prefix($commons-collection, fn:concat($db-root, "/")), $config:collection-mode),
+util:log($log-level, fn:concat("Config: Creating commons collection '", $config:mods-commons, "'..."))
+,
+local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
+,
 
 (: Create users and groups collections :)
-util:log($log-level, fn:concat("Config: Creating users '", $users-collection, "' collections")),
-    local:mkcol($db-root, local:strip-prefix($users-collection, fn:concat($db-root, "/")), $config:collection-mode)
-    ,
-util:log($log-level, "Config: Done."),
-
+util:log($log-level, fn:concat("Config: Creating users '", $config:users-collection, "' collections"))
+,
+local:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)
+,
+(: make admin:dba as owner of $config:users-collection :)
+sm:chown($config:users-collection, 'admin')
+,
+sm:chgrp($config:users-collection, "dba")
+,
+util:log($log-level, "Config: Done.")
+,
 util:log($log-level, "Script: Done.")
