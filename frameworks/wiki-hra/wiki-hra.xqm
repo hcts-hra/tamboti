@@ -1,40 +1,137 @@
 xquery version "3.0";
 
-module namespace retrieve-wiki = "http://exist-db.org/wiki/retrieve";
+module namespace wiki-hra-framework = "http://hra.uni-heidelberg.de/ns/wiki-hra-framework";
 
-import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
-import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../../modules/tamboti-common.xql";
-import module namespace mods-common = "http://exist-db.org/mods/common" at "../../../modules/mods-common.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
+
+import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../modules/tamboti-common.xql";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "../../modules/mods-common.xql";
+import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "/db/apps/tamboti/frameworks/vra-hra/vra-hra.xqm";
+
 import module namespace functx = "http://www.functx.com";
 
 declare namespace atom = "http://www.w3.org/2005/Atom";
-declare namespace html = "http://www.w3.org/1999/xhtml";
+(:declare namespace html = "http://www.w3.org/1999/xhtml";:)
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";(:delete when finished:)
 declare namespace wiki = "http://exist-db.org/xquery/wiki";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 
-declare option exist:serialize "media-type=text/xml";
-
-
-declare function wiki:make-paths-above-collection($path as xs:string, $divisor as xs:string, $last-path-step as xs:string) as item()* {
-    let $steps := tokenize($path, $divisor)
-    let $count := count($steps)
-    let $number-of-steps := 1 to $count
-    for $step-number in $number-of-steps
-        let $paths := string-join(subsequence($steps, 1, $step-number), $divisor)
-            for $path in $paths 
-                where contains($path, $last-path-step)
-                    return $path
-        
+declare function wiki-hra-framework:get-icon-from-folder($size as xs:int, $collection as xs:string) {
+    let $thumb := xmldb:get-child-resources($collection)[1]
+    let $imgLink := concat(substring-after($collection, "/db"), "/", $thumb)
+    return
+        <img src="images/{$imgLink}?s={$size}"/>
 };
 
 (:~
-: The <b>retrieve-wiki:format-detail-view</b> function returns the detail view of a VRA record.
+    Get the preview icon for a linked image resource or get the thumbnail showing the resource type.
+:)
+declare function wiki-hra-framework:get-icon($size as xs:int, $item, $currentPos as xs:int) {
+    let $image-url :=
+    (: NB: Refine criteria for existence of image:)
+        ( 
+            $item/mods:location/mods:url[@access="preview"]/string(), 
+            $item/mods:location/mods:url[@displayLabel="Path to Folder"]/string() 
+        )[1]
+    let $type := $item/mods:typeOfResource[1]/string()
+    let $hint := 
+        if ($type)
+        then functx:capitalize-first($type)
+        else
+            if (in-scope-prefixes($item) = 'xml')
+            then 'Unknown Type'
+            else 'Extracted Text'
+    return
+        if (string-length($image-url)) 
+        (: Only run if there actually is a URL:)
+        (: NB: It should be checked if the URL leads to an image described in the record:)
+        then
+            let $image-path := concat(util:collection-name($item), "/", $image-url)
+            return
+                if (collection($image-path)) 
+                then wiki-hra-framework:get-icon-from-folder($size, $image-path)
+                else
+                    let $imgLink := concat(substring-after(util:collection-name($item), "/db"), "/", $image-url)
+                    return
+                        <img title="{$hint}" src="images/{$imgLink}?s={$size}"/>        
+        else
+        (: For non-image records:)
+            let $type := 
+                (: If there is a typeOfResource, render the icon for it. :)
+                if ($type)
+                (: Remove spaces and commas from the image name:)
+                then translate(translate($type,' ','_'),',','')
+                else
+                    (: If there is no typeOfResource, but the resource is XML, render the default icon for it. :)
+                    if (in-scope-prefixes($item) = 'xml')
+                    then 'shape_square'
+                    (: Otherwise it is non-XML contents extracted from a document by tika. This could be a PDF, a Word document, etc. :) 
+                    else 'text-x-changelog'
+            return 
+                <img title="{$hint}" src="theme/images/{$type}.png"/>
+};
+
+
+declare function wiki-hra-framework:list-view-table($item as node(), $currentPos as xs:int) {
+    let $document-uri  := document-uri(root($item))
+    let $node-id := util:node-id($item)
+    let $id := concat($document-uri, '#', $node-id)
+    let $id := functx:substring-after-last($id, '/')
+    let $id := functx:substring-before-last($id, '.')
+    let $type := substring($id, 1, 1)
+    let $stored := session:get-attribute("personal-list")
+    let $saved := exists($stored//*[@id = $id])
+    return
+        <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
+            <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{$item/@id}"/></td>
+            <td class="pagination-number">{$currentPos}</td>
+            {
+            <td class="actions-cell">
+                <a id="save_{$id}" href="#{$currentPos}" class="save">
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                </a>
+            </td>
+            }
+            <td class="list-type icon magnify">
+            { wiki-hra-framework:get-icon($bs:THUMB_SIZE_FOR_GALLERY, $item, $currentPos)}
+            </td>
+            <td/>
+            {
+            <td class="pagination-toggle">
+                <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <a>
+                {
+                    let $collection := util:collection-name($item)
+                    let $collection := functx:replace-first($collection, '/db/', '')
+                    (:let $clean := clean:cleanup($item):)
+                    return
+                        try {
+                            wiki-hra-framework:format-list-view(string($currentPos), $item, $collection, $document-uri, $node-id)
+                        } catch * {
+                            util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
+                            <td class="error" colspan="2">
+                                {$session:error-message-before-link} 
+                                <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
+                                {$session:error-message-after-link}
+                            </td>
+                        }
+                }
+                </a>
+            </td>
+            }
+        </tr>
+};
+
+
+(:~
+: The <b>wiki-hra-framework:format-detail-view</b> function returns the detail view of a VRA record.
 : @param $entry a VRA record, processed by clean:cleanup() in session.xql.
 : @param $collection the location of the VRA record, with '/db/' removed.
 : @param $position the position of the record displayed with the search results (this parameter is not used).
 : @return an XHTML table.
 :)
-declare function retrieve-wiki:format-detail-view($position as xs:string, $entry as element(), $collection as xs:string, $type as xs:string, $id as xs:string) as element(table) {
+declare function wiki-hra-framework:format-detail-view($position as xs:string, $entry as element(), $collection as xs:string, $type as xs:string, $id as xs:string) as element(table) {
     (:let $log := util:log("DEBUG", ("##$entry11): ", $entry)):)
     let $result :=
     <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
@@ -168,7 +265,7 @@ declare function retrieve-wiki:format-detail-view($position as xs:string, $entry
                     then 'Work Record'
                     else 'Collection Record'
             let $list-view := collection($config:mods-root)//vra:image[@id = $relid]/..
-            let $list-view := retrieve-wiki:format-list-view('', $list-view, '')
+            let $list-view := wiki-hra-framework:format-list-view('', $list-view, '')
             return
                 <tr>
                     <td class="collection-label">{$type}</td>
@@ -234,7 +331,7 @@ declare function retrieve-wiki:format-detail-view($position as xs:string, $entry
                 let $measurements := string-join($measurements, '; ')
                     return
                         <tr>
-                            <td class="collection-label">Measurements</td><td>{$measurements}</td>
+                            <td class="collection-label">Measuremenets</td><td>{$measurements}</td>
                         </tr>
             else ()
 ,
@@ -253,7 +350,7 @@ declare function retrieve-wiki:format-detail-view($position as xs:string, $entry
 };
 
 (:~
-: The <b>retrieve-wiki:format-list-view</b> function returns the list view of a sequence of VRA records.
+: The <b>wiki-hra-framework:format-list-view</b> function returns the list view of a sequence of VRA records.
 : @param $entry a VRA record, processed by clean:cleanup().
 : @param $collection the location of the VRA record, with '/db/' removed
 : @param $position the position of the record displayed with the search results (this parameter is not used)
@@ -261,7 +358,7 @@ declare function retrieve-wiki:format-detail-view($position as xs:string, $entry
 : @param $id the id of the record.
 : @return an XHTML span.
 :)
-declare function retrieve-wiki:format-list-view($position as xs:string, $entry as element(), $collection as xs:string, $document-uri as xs:string, $node-id as xs:string) as element(span) {
+declare function wiki-hra-framework:format-list-view($position as xs:string, $entry as element(), $collection as xs:string, $document-uri as xs:string, $node-id as xs:string) as element(span) {
     let $result :=
     <div class="vra-record">
     
@@ -324,3 +421,88 @@ declare function retrieve-wiki:format-list-view($position as xs:string, $entry a
     return
         $result    
 };
+
+declare function wiki-hra-framework:detail-view-table($item as element(), $currentPos as xs:int) {
+    let $isWritable := security:can-write-collection(util:collection-name($item))
+    let $id := concat(document-uri(root($item)), '#', util:node-id($item))
+    let $id := functx:substring-after-last($id, '/')
+    let $id := functx:substring-before-last($id, '.')
+    let $type := substring($id, 1, 1)
+    let $id-position :=
+        if ($type eq 'c')
+        then '/vra:collection/@id'
+        else 
+            if ($type eq 'w')
+            then '/vra:work/@id'
+            else '/vra:image/@id'
+    let $stored := session:get-attribute("personal-list")
+    let $saved := exists($stored//*[@id = $id])
+    let $vra-work := security:get-resource($id)/vra:relationSet/vra:relation
+    
+    return
+        <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
+            <td class="pagination-number">{$currentPos}</td>
+            <td class="actions-cell">
+                <a id="save_{$id}" href="#{$currentPos}" class="save">
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                </a>
+            </td>
+            <td class="detail-type" style="vertical-align:top"><img src="theme/images/image.png" title="Still Image"/></td>
+            <td style="vertical-align:top;">
+                <div id="image-cover-box"> 
+                { 
+                    if ($vra-work)
+                    then
+                        (: relids/refid workaround :)
+                        for $rel in $vra-work/vra:relationSet/vra:relation
+                            let $image-uuid := 
+                                if(starts-with(data($rel/@refid), "i_")) then
+                                    data($rel/@refid)
+                                else 
+                                    data($rel/@relids)
+                            let $image := security:get-resource($image-uuid)
+                            return
+                                <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
+                    else 
+                        let $image := collection($config:mods-root)//vra:image[@id=$id]
+                        return
+                            <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
+                     (: 
+                     return <img src="{concat(request:get-scheme(),'://',request:get-server-name(),':',request:get-server-port(),request:get-context-path(),'/rest', util:collection-name($image),"/" ,$image-name)}"  width="200px"/>
+                     :)               
+                }
+                </div>
+            </td>            
+            <td class="detail-xml" style="vertical-align:top;">
+                { vra-hra-framework:toolbar($item, $isWritable) }
+                <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                {
+                    let $collection := util:collection-name($item)
+                    return
+                        try {
+                            wiki-hra-framework:format-detail-view(string($currentPos), $item, $collection, $type, $id)
+                        } catch * {
+                            util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
+                            <td class="error" colspan="2">
+                                {$session:error-message-before-link} 
+                                <a href="{$session:error-message-href}{$item/@xml:id/string()}.">{$session:error-message-link-text}</a>
+                                {$session:error-message-after-link}
+                            </td>
+                        }
+                }
+            </td>
+        </tr>
+};
+
+declare function wiki:make-paths-above-collection($path as xs:string, $divisor as xs:string, $last-path-step as xs:string) as item()* {
+    let $steps := tokenize($path, $divisor)
+    let $count := count($steps)
+    let $number-of-steps := 1 to $count
+    for $step-number in $number-of-steps
+        let $paths := string-join(subsequence($steps, 1, $step-number), $divisor)
+            for $path in $paths 
+                where contains($path, $last-path-step)
+                    return $path
+        
+};
+
