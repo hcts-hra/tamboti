@@ -85,8 +85,9 @@ util:log($log-level, fn:concat("...Script: using $dir '", $dir, "'")),
 if (not(xmldb:collection-available($config:content-root)))
 then
     (
-        xmldb:create-collection("/db", $config:data-collection-name),
-        local:set-resource-properties(xs:anyURI($config:content-root), $config:public-collection-mode)
+        xmldb:create-collection("/db", $config:data-collection-name)
+        ,
+        security:set-resource-permissions(xs:anyURI($config:content-root), "admin", "dba", $config:public-collection-mode)
     )
 else ()
 ,
