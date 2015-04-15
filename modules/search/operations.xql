@@ -5,14 +5,19 @@ import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.x
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "../../frameworks/vra-hra/vra-hra.xqm";
 import module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework" at "../../frameworks/mods-hra/mods-hra.xqm";
+import module namespace svg-hra-framework = "http://hra.uni-heidelberg.de/ns/svg-hra-framework" at "../../frameworks/svg-hra/svg-hra.xqm";
+import module namespace tei-hra-framework = "http://hra.uni-heidelberg.de/ns/tei-hra-framework" at "../../frameworks/tei-hra/tei-hra.xqm";
 import module namespace functx = "http://www.functx.com";
 import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti/utils" at "../utils/utils.xqm";
 
 declare namespace op="http://exist-db.org/xquery/biblio/operations";
-declare namespace mods="http://www.loc.gov/mods/v3";
-declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace json="http://www.json.org";
+
+declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace vra="http://www.vraweb.org/vracore4.htm";
+declare namespace svg="http://www.w3.org/2000/svg";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 declare variable $op:HTTP-FORBIDDEN := 403;
  
@@ -137,109 +142,84 @@ declare function op:remove-collection($collection as xs:anyURI) as element(statu
 TODO: Perform search for contents of the collection that the removed resource belonged to.
 :)
 declare function op:remove-resource($resource-id as xs:string) as element(status)* {
-    let $mods-record := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
-    let $xlink-to-mods-record := concat('#', $resource-id)
-    (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
-    let $xlinked-mods-records := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink-to-mods-record, $resource-id)]
-    
-    let $vra-work-record := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
-    (:NB: we assume that @relids (plural) can hold several values:)
-    let $vra-image-records := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
-    (:NB: we assume that all image files are in the same collection as their metadata 
-    and that all image records belonging to a work record are in the same collection:)
-    let $vra-image-record-collection := util:collection-name($vra-image-records[1])
-    let $vra-binary-file-names := $vra-image-records/vra:image/@href    
-    let $vra-records := ($vra-work-record, $vra-image-records)
-    
-    let $records := 
-        if ($mods-record) 
-        then $mods-record 
-        else $vra-records 
-    
-    for $record in $records 
-    return
-    (
-        (:do not remove records which erroneously have the same ID:)
-        (:TODO: inform user that this is the case:)
-        if (count($record) eq 1)
-        then
-            (:do not remove a record which is xlinked to from one or more other records:)
-            (:TODO: inform user that this is the case:)
-            if (count($xlinked-mods-records) eq 0) 
-            then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove(util:collection-name($record), util:document-name($record)))
-            else ()
-        else ()
-        ,
-        if (count($vra-binary-file-names) gt 0) 
-        then
-            for $vra-binary-name in $vra-binary-file-names
-            return
-                (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, 
-                causing the script to halt. However, the existence of the file to be deleted should first be checked, 
-                in order to prevent the function from halting in case the file does not exist.:)
-                if (util:binary-doc-available(concat($vra-image-record-collection, '/', $vra-binary-name))) 
-                then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], xmldb:remove($vra-image-record-collection, $vra-binary-name))
-                else ()
-        else ()
-(:        ,:)
-(:        response:set-status-code($HTTP-FORBIDDEN),:)
-(:        <p>Unknown action: Movee.</p>:)
-    )
-};
+    let $resource := 
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+            collection($config:mods-root-minus-temp)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1] | svg:svg[@xml:id = $resource-id][1] | tei:TEI[@xml:id = $resource-id][1])
+        )
+    let $document-uri := xs:anyURI(document-uri(root($resource)))
 
-declare function op:remove-resource($resource-id as xs:string) as element(status)* {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-    (
-        let $mods-doc := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
-        let $xlink := concat('#', $resource-id)
-        (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
-        let $mods-xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
-        (:let $base-uri := concat(util:collection-name($doc), '/', util:document-name($doc)):)
-        (:NB: we assume that @relids (plural) can hold several values:)
-        
-        let $vra-work := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
-        let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
-        (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
-        let $vra-image-collection := util:collection-name($vra-images[1])
-        let $vra-binary-names := $vra-images/vra:image/@href    
-        let $vra-docs := ($vra-work, $vra-images)
-        
-        let $docs := if ($mods-doc) then $mods-doc else $vra-docs 
-       
-        for $doc in $docs return
-            (
-                (:do not remove records which erroneously have the same ID:)
-                (:NB: inform user that this is the case:)
-                if (count($doc) eq 1)
-                then
-                    (:do not remove records which are linked to from other records:)
-                    (:NB: inform user that this is the case:)
-                    if (count($mods-xlink-recs/..) eq 0) 
-                    then
-                        (
-                            xmldb:remove(util:collection-name($doc), util:document-name($doc))
+    let $record-namespace := namespace-uri($resource)
+    let $result :=
+        switch($record-namespace)
+            case "http://www.w3.org/2000/svg"
+                return 
+                    svg-hra-framework:remove-resource($document-uri)
+(:            case "http://www.tei-c.org/ns/1.0":)
+(:                return tei-hra-framework:remove-resource($document-uri):)
+            default return 
+                (:    let $log := util:log("INFO", $move-record):)
+                try {
+                    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+                    (
+                        let $mods-doc := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
+                        let $xlink := concat('#', $resource-id)
+                        (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
+                        let $mods-xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
+                        (:let $base-uri := concat(util:collection-name($doc), '/', util:document-name($doc)):)
+                        (:NB: we assume that @relids (plural) can hold several values:)
+                        
+                        let $vra-work := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
+                        let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
+                        (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
+                        let $vra-image-collection := util:collection-name($vra-images[1])
+                        let $vra-binary-names := $vra-images/vra:image/@href    
+                        let $vra-docs := ($vra-work, $vra-images)
+                        
+                        let $docs := if ($mods-doc) then $mods-doc else $vra-docs 
+                       
+                        for $doc in $docs return
+                            (
+                                (:do not remove records which erroneously have the same ID:)
+                                (:NB: inform user that this is the case:)
+                                if (count($doc) eq 1)
+                                then
+                                    (:do not remove records which are linked to from other records:)
+                                    (:NB: inform user that this is the case:)
+                                    if (count($mods-xlink-recs/..) eq 0) 
+                                    then
+                                        (
+                                            xmldb:remove(util:collection-name($doc), util:document-name($doc))
+                                            ,
+                                            if (count($vra-binary-names) gt 0) then
+                                                for $vra-binary-name in $vra-binary-names
+                                                    return
+                                                        (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
+                                                        (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
+                                                        if (util:binary-doc-available(concat($vra-image-collection, '/', $vra-binary-name))) then
+                                                            xmldb:remove($vra-image-collection, $vra-binary-name)
+                                                        else ()
+                                            else ()
+                                        )
+                                    else ()
+                                else()
+                                (:
+                                ,
+                                update insert $record into doc('/db{$config:mods-commons}/temp/deletions.xml')/records
+                                :)
                             ,
-                            if (count($vra-binary-names) gt 0) then
-                                for $vra-binary-name in $vra-binary-names
-                                    return
-                                        (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
-                                        (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
-                                        if (util:binary-doc-available(concat($vra-image-collection, '/', $vra-binary-name))) then
-                                            xmldb:remove($vra-image-collection, $vra-binary-name)
-                                        else ()
-                            else ()
+                            true()
+                            )
                         )
-                    else ()
-                else()
-                (:
-                ,
-                update insert $record into doc('/db{$config:mods-commons}/temp/deletions.xml')/records
-                :)
-                ,
-                <status id="removed">{$resource-id}</status>
-            )
-    )
-    )
+                    )
+                } catch * {
+                    false()
+                }
+    return
+        if($result) then
+            <status id="removed">{$resource-id}</status>
+        else
+            response:set-status-code($op:HTTP-FORBIDDEN),
+            <status id="remove">Removing failed</status>
 };
 
 
@@ -251,10 +231,12 @@ TODO: Perform search for record after it has been moved.
 declare function op:move-resource($source-collection as xs:anyURI, $target-collection as xs:anyURI, $resource-id as xs:string) as element(status) {
     let $resource := 
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-            collection($config:mods-root-minus-temp)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1])
+            collection($source-collection)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1] | svg:svg[@xml:id = $resource-id][1] | tei:TEI[@xml:id = $resource-id][1])
         )
+    let $document-uri := xs:anyURI(document-uri(root($resource)))
 
-    let $log := util:log("INFO", "source:" || $source-collection || " target:" || $target-collection || " res:" || $resource)
+    let $log := util:log("INFO", "source:" || $source-collection || " target:" || $target-collection || " resID: " || $resource-id || " found: " || $document-uri)
+
     let $record-namespace := namespace-uri($resource)
     let $move-record :=
         switch($record-namespace)
@@ -262,9 +244,14 @@ declare function op:move-resource($source-collection as xs:anyURI, $target-colle
                 return mods-hra-framework:move-resource($source-collection, $target-collection, $resource-id)
             case "http://www.vraweb.org/vracore4.htm"
                 return vra-hra-framework:move-resource($source-collection, $target-collection, $resource-id)
+            case "http://www.w3.org/2000/svg"
+                return svg-hra-framework:move-resource($document-uri, $target-collection)
+            case "http://www.tei-c.org/ns/1.0"
+                return tei-hra-framework:move-resource($document-uri, $target-collection)
             default return ()
-
-        return $move-record
+    
+(:    let $log := util:log("INFO", $move-record):)
+    return $move-record
 };
 
 declare function op:set-ace-writeable($collection as xs:anyURI, $id as xs:int, $is-writeable as xs:boolean) as element(status) {
@@ -686,7 +673,6 @@ return
                             response:set-status-code($op:HTTP-FORBIDDEN),
                             <status>{$collection-result}</status>
                         )
-    
             case "copyCollectionACL" return
                 let $result := security:copy-collection-acl($collection, xmldb:encode-uri(request:get-parameter("targetCollection", "")))
                 return

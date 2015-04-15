@@ -2,8 +2,8 @@ xquery version "3.0";
 
 module namespace mods-common = "http://exist-db.org/mods/common";
 
-import module namespace retrieve-mods = "http://exist-db.org/mods/retrieve" at "../themes/default/modules/retrieve-mods.xql";
-import module namespace config = "http://exist-db.org/mods/config" at "../themes/default/modules/retrieve-mods.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
+
 import module namespace functx = "http://www.functx.com";
 import module namespace json="http://www.json.org";
 
@@ -12,6 +12,7 @@ declare namespace mads = "http://www.loc.gov/mads/v2";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace ext = "http://exist-db.org/mods/extension";
 
+declare variable $mods-common:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
 declare variable $mods-common:given-name-last-languages := ('chi', 'jpn', 'kor', 'vie'); 
 declare variable $mods-common:no-word-space-languages := ('chi', 'jpn', 'kor');
 
@@ -1685,11 +1686,11 @@ declare function mods-common:format-related-item($relatedItem as element(mods:re
         (
             <span>{(
                 (:Display author roles:)
-                if ($relatedItem-role-terms = $retrieve-mods:primary-roles or not($relatedItem-role-terms))
+                if ($relatedItem-role-terms = $mods-common:primary-roles or not($relatedItem-role-terms))
                 then mods-common:format-multiple-names($relatedItem, 'list-first', $global-transliteration, $global-language)
                 else ()
                 ,
-                if ($relatedItem-role-terms = $retrieve-mods:primary-roles)
+                if ($relatedItem-role-terms = $mods-common:primary-roles)
                 then '. '
                 else ()
                 ,
@@ -1707,7 +1708,7 @@ declare function mods-common:format-related-item($relatedItem as element(mods:re
                     else
                         let $roleTerms := distinct-values($relatedItem/mods:name/mods:role/mods:roleTerm)
                         return
-                            for $roleTerm in $roleTerms[. != $retrieve-mods:primary-roles]        
+                            for $roleTerm in $roleTerms[. != $mods-common:primary-roles]        
                                     return
                                         let $names := <entry>{$relatedItem/mods:name[mods:role/mods:roleTerm eq $roleTerm]}</entry>
                                             return

@@ -4,6 +4,9 @@ module namespace security = "http://exist-db.org/mods/security";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+declare namespace svg="http://www.w3.org/2000/svg";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
+
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 
@@ -1014,7 +1017,7 @@ declare function security:get-resource($id as xs:string) as node()? {
     (: Do search as dba :)
     let $resource :=
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-            collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1])
+            collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
         )
     return
         if ($resource) then
@@ -1096,20 +1099,25 @@ declare function security:copy-collection-ace-to-resource-apply-modechange($coll
 declare function security:move-resource-to-tamboti-collection($source-collection as xs:anyURI, $resource as xs:anyURI, $target-collection as xs:anyURI) {
 (:    util:log("DEBUG", xmldb:get-owner($target-collection) || "=" || security:get-user-credential-from-session()[1]),:)
     (: first move the resource :)
-    xmldb:move($source-collection, $target-collection, $resource),
-    (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
-    if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
-        (
-            security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
-            ,
-            security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
-        )
-    else
-        (
-            security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
-            ,
-            security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
-        )
+    try {
+        xmldb:move($source-collection, $target-collection, $resource),
+        (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
+        if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+            (
+                security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+                ,
+                security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+            )
+        else
+            (
+                security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+                ,
+                security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+            )
+    } catch * {
+        util:log("DEBUG", $err:code || ": " || $err:description)
+    }
+
 };
 
 declare function security:copy-collection-acl($source-collection as xs:anyURI, $target-collection as xs:anyURI) {

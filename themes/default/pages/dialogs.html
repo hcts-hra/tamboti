@@ -233,17 +233,19 @@
                 open: function( event, ui ){
                     $(this).find("select[class='shareRoles'] option").removeAttr('selected');
                     $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
+                    $('#add-user-to-share-dialog').find('select.shareRoles').empty();
+                    $.each(tamboti.shareRoles.options, function(idx, data){
+                        $('#add-user-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
+                    });
+                    
                     // $(this).find("input[name='inherit']").attr("checked", false);
                     // $(this).find("input[name='write']").attr("checked", false);
                     // $(this).find("input[name='execute']").attr("checked", false);
                 }
                 
-            }); 
-            $.each(tamboti.shareRoles.options, function(idx, data){
-                $('#add-user-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
             });
 
-            
+
             $('#group-auto-list').autocomplete({
                 source: function(request, response) {
                     var data = {
@@ -288,13 +290,15 @@
                 open: function( event, ui ){
                     $(this).find("select[class='shareRoles'] option").removeAttr('selected');
                     $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
+                    $('#add-group-to-share-dialog').find('select.shareRoles').empty();
+                    $.each(tamboti.shareRoles.options, function(idx, data){
+                        $('#add-group-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
+                    });
+
                     // $(this).find("input[name='inherit']").attr("checked", false);
                     // $(this).find("input[name='write']").attr("checked", false);
                     // $(this).find("input[name='execute']").attr("checked", false);
                 }
-            });
-            $.each(tamboti.shareRoles.options, function(idx, data){
-                $('#add-group-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
             });
             
 
