@@ -140,6 +140,11 @@ util:log($log-level, fn:concat("Config: Creating users '", $config:users-collect
 ,
 local:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
+(: make admin:dba as owner of $config:users-collection :)
+sm:chown($config:users-collection, 'admin')
+,
+sm:chgrp($config:users-collection, "dba")
+,
 util:log($log-level, "Config: Done.")
 ,
 util:log($log-level, "Script: Done.")
