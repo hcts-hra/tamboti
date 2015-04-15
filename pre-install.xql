@@ -132,7 +132,7 @@ util:log($log-level, "Config: Done.")
 (: Create "commons" collections :)
 util:log($log-level, fn:concat("Config: Creating commons collection '", $config:mods-commons, "'..."))
 ,
-local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:collection-mode)
+local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 
 (: Create users and groups collections :)
