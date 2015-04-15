@@ -9,7 +9,7 @@ tamboti.createGuid = function() {
 	});
 };
 
-//Add a hidden span with status display on 
+// Add a hidden span with status display on 
 function addStatusDisplay(selector){
     selector.append('<span class="result"> \
                         <image class="progress" style="height:2em;vertical-align:bottom;display:none;" src="theme/images/ajax-loader.gif"/> \
@@ -1092,12 +1092,11 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     } else if (aceTarget == "GROUP") {
         $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
     }
-    // console.debug(shareRoles);
 
     // build role dropdown
     var collectionMode = aData[3];
     var dropdown = $("<select/>");
-    $.each(shareRoles.options, function (key, data) {
+    $.each(tamboti.shareRoles.options, function (key, data) {
         // console.debug("colMode: " + collectionMode + " selectMode: " + data.collectionPermissions);
         dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions?"selected='selected'":"") + ">" + data.title + "</option>");
     });
@@ -1117,9 +1116,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
             },
             type: 'POST',
             success: function(data, message) {
-                // console.debug(shareRoles.options);
-                
-                $.each(shareRoles.options, function (key, data){
+                $.each(tamboti.shareRoles.options, function (key, data){
                     if(data.value == selectedShareType) $('td:eq(3)', nRow).html(data.collectionPermissions);
                 } );
             },
@@ -1379,31 +1376,6 @@ function shareCollection(options){
     });
 }
 
-function copyCollectionACL(source, target) {
-    $.ajax({
-        url: "operations.xql",
-        data: {
-            action: 'copyCollectionACL', 
-            collection: source,
-            targetCollection: target, 
-        },
-        type: 'POST',
-        success: function(data, message) {
-            var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-            var targetNode = fancyTree.getNodeByKey(target);
-            var parentNode = targetNode.getParent();
-            parentNode.load(true).done(function(){
-                parentNode.setExpanded();
-            });
-            return true;
-        },
-        error: function(response, message) {
-            //ToDo: Popup when creating Collection failed
-            return false;
-        }
-    });
-}
-
 // *****************************************************************************
 // *            COLLECTION ACTIONS
 // *****************************************************************************
@@ -1472,7 +1444,6 @@ function renameCollection(dialog) {
                 var currentNodeKey = currentNode.key;
                 currentNode.setTitle(name);
                 currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
-                console.debug(currentNode);
                 refreshCurrentTreeNode();
                 currentNode.parent.sortChildren();
                 //If it has children, trigger reload to regenerate keys with new name
@@ -1564,6 +1535,32 @@ function removeCollection(dialog) {
     //close the dialog
     dialog.dialog("close");
 }
+
+function copyCollectionACL(source, target) {
+    $.ajax({
+        url: "operations.xql",
+        data: {
+            action: 'copyCollectionACL', 
+            collection: source,
+            targetCollection: target, 
+        },
+        type: 'POST',
+        success: function(data, message) {
+            var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+            var targetNode = fancyTree.getNodeByKey(target);
+            var parentNode = targetNode.getParent();
+            parentNode.load(true).done(function(){
+                parentNode.setExpanded();
+            });
+            return true;
+        },
+        error: function(response, message) {
+            //ToDo: Popup when creating Collection failed
+            return false;
+        }
+    });
+}
+
 
 // *****************************************************************************
 // *            RESSOURCE ACTIONS
