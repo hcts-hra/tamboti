@@ -26,7 +26,6 @@ import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 import module namespace functx = "http://www.functx.com";
-import module namespace json="http://www.json.org";
 
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace mods="http://www.loc.gov/mods/v3";
@@ -34,13 +33,15 @@ declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace html="http://www.w3.org/1999/xhtml";
+declare namespace svg="http://www.w3.org/2000/svg";
+
 
 declare option exist:serialize "method=xhtml media-type=application/xhtml+xml omit-xml-declaration=no enforce-xhtml=yes";
 
 (:~
     Mapping field names to XPath expressions.
     NB: Changes in field names should be reflected in autocomplete.xql, biblio:construct-order-by-expression() and biblio:get-year().
-    Fields used should be reflected in the collection.xconf in /db/system/config/db/data/.
+    Fields used should be reflected in the collection.xconf in /db/system/config/db/resources/.
     'q' is expanded in biblio:generate-query().
     An XLink may be passed through retrieve-mods:format-detail-view() without a hash or or it may be passed with a hash through the search interface; 
     therefore any leading hash is first removed and then added, to prevent double hashes. 
@@ -452,7 +453,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
             <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
             The search term, to be substituted for '$q', is held in $query-as-xml. :)
             
-            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /data. :)
+            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
             let $collection-path := 
                 if ($expr/@name = ('the Record ID Field (MODS, VRA)', 'ID', 'the XLink Field (MODS)')) 
                 then $config:mods-root
@@ -767,12 +768,27 @@ declare function biblio:query-from-history($id as xs:string) {
         $history/query[@id = $id]
 };
 
+(:~
+    Returns the query history as a HTML list. The queries are
+    transformed into a simple string representation.
+:)
+declare function biblio:query-history($node as node(), $params as element(parameters)?, $model as item()*) {
+    <ul data-selected-tab-id="{request:get-parameter('query-tabs', ())}">
+    {
+        let $history := session:get-attribute('history')
+        for $query-as-string in $history/query
+        return
+            <li><a href="?history={$query-as-string/@id}&amp;query-tabs=advanced-search-form">{biblio:xml-query-to-string($query-as-string)}</a></li>
+    }
+    </ul>
+};
+
 declare function biblio:last-collection-queried($node as node(), $params as element(parameters)?, $model as item()*) {
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, $config:mods-commons, $config:data-collection-name), $config:users-collection, $config:data-collection-name) 
-            else $config:data-collection-name 
+            then replace(replace($search-collection, $config:mods-commons, 'resources'), $config:users-collection, 'resources') 
+            else 'resources' 
         let $search-collection := 
             if (starts-with($search-collection, '/db'))
             then replace($search-collection, '/db', '')
@@ -830,10 +846,7 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
-        let $null := 
-            if ($query-as-xml//field)
-            then biblio:add-to-history($query-as-xml)
-            else ()
+        let $null := biblio:add-to-history($query-as-xml)
         return
             count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
@@ -867,7 +880,7 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
                     return $item
                 else
                     (:when listing collection, the Lucene-based Score has no meaning; therefore default to sorting by Title.:) 
-                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
+                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry | svg:svg]/*
                     order by translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')
                     return $item
         (:~ Take the query results and store them into the HTTP session. :)
@@ -875,10 +888,7 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
-        let $null := 
-            if ($query-as-xml//field)
-            then biblio:add-to-history($query-as-xml)
-            else ()
+        let $null := biblio:add-to-history($query-as-xml)
         return
             count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
