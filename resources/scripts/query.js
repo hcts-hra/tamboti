@@ -96,18 +96,87 @@ $(function() {
         refreshParentTreeNode();
     });
     
-    $(document).tooltip({
-        items: "tr.list img.relatedImage",
-        position: { my: "center bottom-20", at: "center top" },
-        track: true,
-        content: function() {
-          var element = $( this );
-          var src = element.attr("src");
-          var caption = element.closest("tr").find("div.vra-record").html();
+    $("#results").on("mouseover", "td.list-image a", function() {
+        $(this).qtip({
+              content: function() {
+                var element = $(this);
+                var caption = element.closest("tr").find("div.vra-record").html();
+                
+                return $("<div class='vra-record'>" + caption + "</div>");
+              },
+              position: {
+                      my: 'top left',
+                      at: 'bottom right'
+                  },            
+          //     position: {
+      	   // 	target: 'mouse',
+      	   //     adjust: { x: 5, y: 5 }           
+          //     },          
+              show: {
+               ready: true
+              },
+      	    style: {
+      	        classes: 'qtip-light'
+      	    }            
+        });
+      });    
+
+      $("#results").on("mouseover", "td.list-image a img", function() {
+        $(this).qtip({
+              content: function() {
+                var element = $(this);
+                var src = element.attr("src");
+                
+                return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");
+              },
+              position: {
+                      my: 'bottom left',
+                      at: 'top right'
+                  },    
+          //     position: {
+      	   // 	target: 'mouse',	    
+      	   //     adjust: { x: 5, y: 5 }
+          //     },          
+              show: {
+               ready: true
+              },
+      	    style: {
+      	        classes: 'qtip-light'
+      	    } 
+        });
+      });
+
+  // $("#results table").tooltip({
+//       items: "td.list-image a img",
+//       content: function() {
+//           var element = $(this);
+//           var src = element.attr("src");
           
-          return "<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' /><div class='vra-record'>" + caption + "</div>";
-        }
-      });     
+//           return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");
+//       },
+//       position: {
+//           my: "left+15 bottom-15",
+//           at: "right top",
+//           collision: 'flipfit'
+//       },
+//       track: true
+  // });
+
+  // $("#results").tooltip({
+//           items: "td.list-image a",    
+//         content: function() {
+//           var element = $(this);
+//           var caption = element.closest("tr").find("div.vra-record").html();
+          
+//           return $("<div class='vra-record'>" + caption + "</div>");
+//         },
+//         position: {
+//           my: "left+15 bottom+170",
+//           at: "right bottom",
+//           collision: 'flipfit'
+//         },
+//         track: true
+//       });         
 
 });
 
