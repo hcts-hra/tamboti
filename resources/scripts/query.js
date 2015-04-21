@@ -96,11 +96,11 @@ $(function() {
         refreshParentTreeNode();
     });
     
-    $("#results").on("mouseover", "td.list-image a", function() {
+    $("#results").on("mouseover", "td.list-image", function() {
         $(this).qtip({
               content: function() {
                 var element = $(this);
-                var caption = element.closest("tr").find("div.vra-record").html();
+                var caption = element.closest("tr").find("div[class $= '-record']").html();
                 
                 return $("<div class='vra-record'>" + caption + "</div>");
               },
@@ -121,13 +121,21 @@ $(function() {
         });
       });    
 
-      $("#results").on("mouseover", "td.list-image a img", function() {
+      $("#results").on("mouseover", "td.list-image > * > *", function() {
         $(this).qtip({
               content: function() {
                 var element = $(this);
                 var src = element.attr("src");
                 
-                return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");
+                if (element.is("img")) {
+                    return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");    
+                }
+                
+                if (element.is("svg")) {
+                    //alert("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+                    return $("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+                }
+                
               },
               position: {
                       my: 'bottom left',
@@ -140,9 +148,10 @@ $(function() {
               show: {
                ready: true
               },
-      	    style: {
-      	        classes: 'qtip-light'
-      	    } 
+            style: {
+              classes: 'qtip-light'
+            },
+            hide: 'unfocus'
         });
       });
 
