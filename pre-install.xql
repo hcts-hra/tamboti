@@ -7,6 +7,7 @@ xquery version "3.0";
 import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
+import module namespace installation = "http://hra.uni-heidelberg.de/ns/tamboti/installation/" at "modules/installation/installation.xqm";
 
 (: The following external variables are set by the repo:deploy function :)
 
@@ -37,40 +38,6 @@ declare variable $editor-code-tables-collection := fn:concat($editor-collection,
 
 declare variable $resources-collection := fn:concat($db-root, "/", $config:data-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
-
-declare function local:mkcol-recursive($collection, $components, $permissions as xs:string) {
-    if (exists($components))
-    then
-        let $newColl := concat($collection, "/", $components[1])
-        return (
-            if (not(xmldb:collection-available($newColl)))
-            then
-                (
-                    xmldb:create-collection($collection, $components[1])
-                    ,
-                    local:set-resource-properties(xs:anyURI($newColl), $permissions)
-                )
-            else ()
-            ,
-            local:mkcol-recursive($newColl, subsequence($components, 2), $permissions)
-        )
-    else ()
-};
-
-(: Helper function to recursively create a collection hierarchy. :)
-declare function local:mkcol($collection, $path, $permissions as xs:string) {
-    local:mkcol-recursive($collection, tokenize($path, "/"), $permissions)
-};
-
-declare function local:set-resource-properties($resource-path as xs:anyURI, $permissions as xs:string) {
-    (
-        security:set-resource-permissions($resource-path, $config:biblio-admin-user, $config:biblio-users-group, $permissions)        
-    )
-};
-
-declare function local:set-resources-properties($collection-path as xs:anyURI, $permissions as xs:string) {
-    for $resource-name in xmldb:get-child-resources($collection-path) return local:set-resource-properties(xs:anyURI(concat($collection-path, '/', $resource-name)), $permissions)
-};
 
 declare function local:strip-prefix($str as xs:string, $prefix as xs:string) as xs:string? {
     fn:replace($str, $prefix, "")
@@ -108,15 +75,15 @@ util:log($log-level, "Security: Done.")
 (: Load collection.xconf documents :)
 util:log($log-level, "Config: Loading collection configuration ...")
 ,
-local:mkcol($config-collection, $editor-code-tables-collection, $config:public-collection-mode)
+installation:mkcol($config-collection, $editor-code-tables-collection, $config:public-collection-mode)
 ,
 xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf")
 ,
-local:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
+installation:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
 ,
 xmldb:store-files-from-pattern(fn:concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf")
 ,
-(:local:mkcol($config-collection, $mads-collection),:)
+(: installation:mkcol($config-collection, $mads-collection),:)
 (:xmldb:store-files-from-pattern(fn:concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
 util:log($log-level, "Config: Done.")
 ,
@@ -124,7 +91,7 @@ util:log($log-level, "Config: Done.")
 (: Create temp collection :)
 util:log($log-level, fn:concat("Config: Creating temp collection '", $temp-collection, "'..."))
 ,
-local:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode)
+installation:mkcol($db-root, local:strip-prefix($temp-collection, fn:concat($db-root, "/")), $config:temp-collection-mode)
 ,
 util:log($log-level, "Config: Done.")
 ,
@@ -132,13 +99,13 @@ util:log($log-level, "Config: Done.")
 (: Create "commons" collections :)
 util:log($log-level, fn:concat("Config: Creating commons collection '", $config:mods-commons, "'..."))
 ,
-local:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
+installation:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 
 (: Create users and groups collections :)
 util:log($log-level, fn:concat("Config: Creating users '", $config:users-collection, "' collections"))
 ,
-local:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)
+installation:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 (: make admin:dba as owner of $config:users-collection :)
 sm:chown($config:users-collection, 'admin')
