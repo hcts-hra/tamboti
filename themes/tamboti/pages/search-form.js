@@ -11,15 +11,15 @@ $(function() {
     });
     
     $("#query-tabs").tabs({
-        select: function(ev, ui) {
-            if (ui.index == 2) {
+        beforeActivate: function(ev, ui) {
+            if (ui.newTab.index() == 2) {
                $("#query-history").load("../../modules/search/history/");
             }
-            if (ui.index == 3) {
+            if (ui.newTab.index() == 3) {
                 $('#personal-list-size').load('user.xql', {action: 'count'});
             }    
         },
-        selected: 0
+        active: 0
     });
 
 	$("#search-help").load("../../includes/search-help.xq");
