@@ -70,7 +70,7 @@ $(function() {
     };
     
     tamboti.apis.advancedSearchWithData = function(data) {
-        $("#query-tabs").tabs("select", 1);
+    	$("#query-tabs").tabs("option", "active", 1);
         tamboti.resetAdvancedSearchForm();
         var collection = data['collection'];
         $("#advanced-search-form select[name='format']").val('MODS or TEI or VRA or Wiki');
