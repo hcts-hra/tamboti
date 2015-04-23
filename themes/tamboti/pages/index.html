@@ -1,60 +1,54 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms">
-    <head>
-        <title>Tamboti Metadata Framework</title>
-		<script src="resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
-        <link rel="stylesheet" type="text/css" href="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
-        <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery-utils.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/qtip/jquery.qtip.min.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/fancytree/jquery.fancytree.min.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/angular.min.js">/**/</script>
-        <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.dataTables-1.8.1.min.js">/**/</script>
-        <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.cookie.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/jquery-utils.js">/**/</script>
-        <script type="text/javascript" src="../session.js.xql">/**/</script>
-		<script type="text/javascript" src="core/apis.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/query.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/galleries.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/jquery.ieblocker.js">/**/</script>
-        <script type="text/javascript" src="../upload/upload.js">/**/</script>        
-        <link rel="stylesheet" type="text/css" href="resources/scripts/fancytree/skin-tamboti/ui.fancytree.css"></link>
-        <link rel="stylesheet" type="text/css" href="theme/css/biblio.css"></link>
-        <link rel="stylesheet" type="text/css" href="theme/css/theme.css"></link>
-        <link rel="stylesheet" type="text/css" href="theme/css/upload.css"></link>
-        <link rel="shortcut icon" href="theme/images/favicon.ico"></link>
-        <link rel="unapi-server" type="application/xml" title="unAPI" href="unapi.xql"></link>
-        <link rel="stylesheet" type="text/css" href="../../themes/default/css/upload_angular.css"></link>    
-    </head>
-    <body ng-app="app" ng-controller="FileUploadCtrl">
-        <div style="display:none">
-            <xf:model id="m-multiple-selection-component">
-                <xf:instance xmlns="http://www.lisa.org/tmx14" id="i-ui-text" src="../i18n/tmx.xml"/>
-                <xf:instance id="i-configuration">
-                    <configuration xmlns="">
-                        <languages>
-                            <language>en</language>
-                            <language>de</language>
-                            <language>fr</language>
-                        </languages>
-                    </configuration>
-                </xf:instance>
-                <xf:instance id="i-variables">
-                    <selected-values xmlns="">
-                        <ui-language>en</ui-language>
-                        <number-of-all-options>0</number-of-all-options>
-                        <number-of-selected-options>0</number-of-selected-options>
-                        <selected-action/>
-                    </selected-values>
-                </xf:instance>
-                <xf:bind ref="instance('i-variables')">
-                    <xf:bind ref="selected-action" relevant="number(instance('i-variables')/number-of-selected-options) gt 0"/>
-                </xf:bind>
-                <xf:action ev:event="xforms-ready">
-                    <xf:load show="embed" targetid="ddlcb-container">
-                        <xf:resource value="'../../components/multiple-selection-component/multiple-selection-component.xml#ddlcb-container'"/>
-                        <xf:extension includeCSS="true" includeScript="true"/>
-                    </xf:load>
-                    <script type="text/javascript">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+<head>
+<title>Tamboti Metadata Framework</title>
+<script src="resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
+<link rel="stylesheet" type="text/css" href="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css" />
+<script type="text/javascript" src="$shared/resources/scripts/jquery/jquery-utils.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/qtip/jquery.qtip.min.js">/**/</script>
+<link rel="stylesheet" href="resources/scripts/qtip/jquery.qtip.min.css" type="text/css" />
+<script type="text/javascript" src="resources/scripts/fancytree/jquery.fancytree.min.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/angular.min.js">/**/</script>
+<script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.dataTables-1.8.1.min.js">/**/</script>
+<script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.cookie.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/jquery-utils.js">/**/</script>
+<script type="text/javascript" src="../session.js.xql">/**/</script>
+<script type="text/javascript" src="core/apis.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/query.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/galleries.js">/**/</script>
+<script type="text/javascript" src="resources/scripts/jquery.ieblocker.js">/**/</script>
+<script type="text/javascript" src="../upload/upload.js">/**/</script>
+<link rel="stylesheet" type="text/css" href="resources/scripts/fancytree/skin-tamboti/ui.fancytree.css"></link>
+<link rel="stylesheet" type="text/css" href="theme/css/biblio.css"></link>
+<link rel="stylesheet" type="text/css" href="theme/css/theme.css"></link>
+<link rel="stylesheet" type="text/css" href="theme/css/upload.css"></link>
+<link rel="shortcut icon" href="theme/images/favicon.ico"></link>
+<link rel="unapi-server" type="application/xml" title="unAPI" href="unapi.xql"></link>
+<link rel="stylesheet" type="text/css" href="../../themes/default/css/upload_angular.css"></link>
+</head>
+<body ng-app="app" ng-controller="FileUploadCtrl">
+	<div style="display: none">
+		<xf:model id="m-multiple-selection-component">
+			<xf:instance xmlns="http://www.lisa.org/tmx14" id="i-ui-text" src="../i18n/tmx.xml" />
+			<xf:instance id="i-configuration">
+				<configuration xmlns=""> <languages> <language>en</language> <language>de</language> <language>fr</language>
+				</languages> </configuration>
+			</xf:instance>
+			<xf:instance id="i-variables">
+				<selected-values xmlns=""> <ui-language>en</ui-language> <number-of-all-options>0</number-of-all-options>
+				<number-of-selected-options>0</number-of-selected-options> <selected-action /> </selected-values>
+			</xf:instance>
+			<xf:bind ref="instance('i-variables')">
+				<xf:bind ref="selected-action" relevant="number(instance('i-variables')/number-of-selected-options) gt 0" />
+			</xf:bind>
+			<xf:action ev:event="xforms-ready">
+				<xf:load show="embed" targetid="ddlcb-container">
+					<xf:resource
+						value="'../../components/multiple-selection-component/multiple-selection-component.xml#ddlcb-container'" />
+					<xf:extension includeCSS="true" includeScript="true" />
+				</xf:load>
+				<script type="text/javascript">
                         tamboti.totalSearchResultOptions = $(".hit-count").text();
                         fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
                             "number-of-all-options": tamboti.totalSearchResultOptions
@@ -180,16 +174,16 @@
         				    }
                         });                        
                     </script>
-                </xf:action>
-                <xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
-                    <xf:setvalue ref="instance('i-variables')/number-of-all-options" value="event('number-of-all-options')"/>
-                </xf:action>
-                <xf:action ev:event="set-number-of-selected-options" ev:observer="main-content">
-                    <xf:setvalue ref="instance('i-variables')/number-of-selected-options" value="event('number-of-selected-options')"/>
-                </xf:action>
-                <xf:action ev:event="selected-action-for-selected-options" ev:observer="main-content">
-                    <xf:action>
-                        <script type="text/javascript">
+			</xf:action>
+			<xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
+				<xf:setvalue ref="instance('i-variables')/number-of-all-options" value="event('number-of-all-options')" />
+			</xf:action>
+			<xf:action ev:event="set-number-of-selected-options" ev:observer="main-content">
+				<xf:setvalue ref="instance('i-variables')/number-of-selected-options" value="event('number-of-selected-options')" />
+			</xf:action>
+			<xf:action ev:event="selected-action-for-selected-options" ev:observer="main-content">
+				<xf:action>
+					<script type="text/javascript">
                                 var uuid = tamboti.createGuid();
                                 $.ajax({
                                     type: "PUT",
@@ -222,76 +216,75 @@
                                     }
                                 });                           
                         </script>
-                    </xf:action>
-                    <xf:setvalue ref="instance('i-variables')/selected-action"/>
-                </xf:action>
-            </xf:model>
-        </div>
-        <div class="templates:include?path=pages/dialogs.html"/>
-        <div style="float: right;">
-            <xf:group appearance="full" model="m-multiple-selection-component">
-                <xf:select1 ref="instance('i-variables')/ui-language" appearance="minimal" incremental="true">
-                    <xf:label>
-                        <xf:output value="instance('i-ui-text')//*[@tuid = 'language-selecting-select1']/*[@xml:lang = instance('i-variables')/ui-language]"/>
-                    </xf:label>
-                    <xf:itemset ref="instance('i-configuration')/languages/language">
-                        <xf:label ref="."/>
-                        <xf:value ref="."/>
-                    </xf:itemset>
-                </xf:select1>
-            </xf:group>
-        </div>
-        <div id="page-head">
-            <div id="page-head-left">
-                <a href="/exist/apps/tamboti/">
-                    <img src="theme/images/tamboti-test.png" title="Tamboti Metadata Framework" alt="Tamboti Metadata Framework"/>
-                </a>
-            </div>
-            <div id="page-head-right">
-                <a href="http://www.asia-europe.uni-heidelberg.de/en/home.html" target="_blank">
-                    <img src="theme/images/cluster_logo.png" title="The Cluster of Excellence 'Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows' at Heidelberg University" alt="The Cluster of Excellence 'Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows' at Heidelberg University" width="200"/>
-                </a>
-            </div>
-        </div>
-        <div id="content1col">
-            <div class="biblio:login"/>
-            <div class="biblio:query">
-                <div class="templates:include?path=pages/search-form.html"/>
-                <div class="templates:include?path=pages/collection-tree.html"/>
-                <div id="main-content">
-                    <div id="ddlcb-container"/>
-                    <div id="results-head">
-                        <div class="navbar">
-                            <span>
-                                <span class="pagination-first">|&lt;</span>
-                                <span class="pagination-previous">&lt;</span>
-                                <span class="pagination-info"/>
-                                <span class="pagination-next">&gt;</span>
-                                <span class="pagination-last">&gt;|</span>
-                            </span> of 
-                            <span class="biblio:result-count result-count"/>
-                            <span class="biblio:last-collection-queried last-collection-queried"/>
-                            <a class="pagination-toggle" href="#">List view</a>
-                            <!--<span class="pagination-mode">
+				</xf:action>
+				<xf:setvalue ref="instance('i-variables')/selected-action" />
+			</xf:action>
+		</xf:model>
+	</div>
+	<div class="templates:include?path=pages/dialogs.html" />
+	<div style="float: right;">
+		<xf:group appearance="full" model="m-multiple-selection-component">
+			<xf:select1 ref="instance('i-variables')/ui-language" appearance="minimal" incremental="true">
+				<xf:label>
+					<xf:output
+						value="instance('i-ui-text')//*[@tuid = 'language-selecting-select1']/*[@xml:lang = instance('i-variables')/ui-language]" />
+				</xf:label>
+				<xf:itemset ref="instance('i-configuration')/languages/language">
+					<xf:label ref="." />
+					<xf:value ref="." />
+				</xf:itemset>
+			</xf:select1>
+		</xf:group>
+	</div>
+	<div id="page-head">
+		<div id="page-head-left">
+			<a href="/exist/apps/tamboti/"> <img src="theme/images/tamboti-test.png" title="Tamboti Metadata Framework"
+				alt="Tamboti Metadata Framework" />
+			</a>
+		</div>
+		<div id="page-head-right">
+			<a href="http://www.asia-europe.uni-heidelberg.de/en/home.html" target="_blank"> <img
+				src="theme/images/cluster_logo.png"
+				title="The Cluster of Excellence 'Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows' at Heidelberg University"
+				alt="The Cluster of Excellence 'Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows' at Heidelberg University"
+				width="200" />
+			</a>
+		</div>
+	</div>
+	<div id="content1col">
+		<div class="biblio:login" />
+		<div class="biblio:query">
+			<div class="templates:include?path=pages/search-form.html" />
+			<div class="templates:include?path=pages/collection-tree.html" />
+			<div id="main-content">
+				<div id="ddlcb-container" />
+				<div id="results-head">
+					<div class="navbar">
+						<span> <span class="pagination-first">|&lt;</span> <span class="pagination-previous">&lt;</span> <span
+							class="pagination-info" /> <span class="pagination-next">&gt;</span> <span class="pagination-last">&gt;|</span>
+						</span> of <span class="biblio:result-count result-count" /> <span
+							class="biblio:last-collection-queried last-collection-queried" /> <a class="pagination-toggle" href="#">List
+							view</a>
+						<!--<span class="pagination-mode">
                                 View as: 
                                 <a href="" class="pagination-mode-list">List</a> |
                                 <a href="" class="pagination-mode-gallery">Gallery</a> |
                                 <a href="" class="pagination-mode-grid">Grid</a>
                             </span>-->
-                        </div>
-                        <div id="optimize-trigger"/>
-                        <div class="navbar"/>
-                    </div>
-                    <div id="result-container">
-                        <div class="templates:include?path=pages/filters.html"/>
-                        <div id="pagination">
-                            <div id="results"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--<div id="page-footer">Tamboti Metadata Framework, version 1.0, 2011-09-01. Licence: GNU-LGPL.</div>-->
-        <div id="splash"/>
-    </body>
+					</div>
+					<div id="optimize-trigger" />
+					<div class="navbar" />
+				</div>
+				<div id="result-container">
+					<div class="templates:include?path=pages/filters.html" />
+					<div id="pagination">
+						<div id="results" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--<div id="page-footer">Tamboti Metadata Framework, version 1.0, 2011-09-01. Licence: GNU-LGPL.</div>-->
+	<div id="splash" />
+</body>
 </html>
