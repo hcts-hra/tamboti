@@ -99,6 +99,9 @@ util:log($log-level, "Config: Done.")
 (: Create "commons" collections :)
 util:log($log-level, fn:concat("Config: Creating commons collection '", $config:mods-commons, "'..."))
 ,
+(: Create samples collection :)
+installation:mkcol($db-root, $config:samples-collection-path, $config:public-collection-mode)
+,
 installation:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 

@@ -16,7 +16,7 @@ declare function installation:mkcol-recursive($collection, $components, $permiss
                 (
                     xmldb:create-collection($collection, $components[1])
                     ,
-                    installation:set-resource-properties(xs:anyURI($newColl), $permissions)
+                    security:set-resource-permissions(xs:anyURI($newColl), $config:biblio-admin-user, $config:biblio-users-group, $permissions)
                 )
             else ()
             ,
@@ -30,18 +30,14 @@ declare function installation:mkcol($collection, $path, $permissions as xs:strin
     installation:mkcol-recursive($collection, tokenize($path, "/"), $permissions)
 };
 
-declare function installation:set-resource-properties($resource-path as xs:anyURI, $permissions as xs:string) {
+declare function installation:set-public-collection-permissions-recursively($collection-path as xs:anyURI) {
     (
-        security:set-resource-permissions($resource-path, $config:biblio-admin-user, $config:biblio-users-group, $permissions)        
+        security:set-resource-permissions($collection-path, $config:biblio-admin-user, $config:biblio-users-group, $config:public-collection-mode)
+        ,
+        for $subcollection-name in xmldb:get-child-collections($collection-path)
+        return installation:set-public-collection-permissions-recursively(xs:anyURI($collection-path || "/" || $subcollection-name))
+        ,
+        for $resource-name in xmldb:get-child-resources($collection-path)
+        return security:set-resource-permissions(xs:anyURI(concat($collection-path, '/', $resource-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:public-resource-mode)
     )
-};
-
-declare function installation:set-resources-properties($collection-path as xs:anyURI, $permissions as xs:string) {
-    for $resource-name in xmldb:get-child-resources($collection-path)
-    return installation:set-resource-properties(xs:anyURI(concat($collection-path, '/', $resource-name)), $permissions)
-};
-
-declare function installation:set-child-resources-properties($collection-path as xs:anyURI, $permissions as xs:string) {
-    for $resource-name in xmldb:get-child-resources($collection-path)
-    return installation:set-resource-properties(xs:anyURI(concat($collection-path, '/', $resource-name)), $permissions)
 };
