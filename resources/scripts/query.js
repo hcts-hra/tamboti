@@ -100,9 +100,11 @@ $(function() {
         $(this).qtip({
               content: function() {
                 var element = $(this);
-                var caption = element.closest("tr").find("div[class $= '-record']").html();
+                var record = element.closest("tr").find("div[class $= '-record']");
+                var recordType = record.attr("class").replace("-record", "");
+                var caption = record.html();
                 
-                return $("<div class='vra-record'>" + caption + "</div>");
+                return $("<div class='" + recordType + "-record'>" + caption + "</div>");
               },
               position: {
                       my: 'top left',
@@ -121,13 +123,13 @@ $(function() {
         });
       });    
 
-      $("#results").on("mouseover", "td.list-image > * > *", function() {
+      $("#results").on("mouseover", "td.list-image > *", function() {
         $(this).qtip({
               content: function() {
                 var element = $(this);
-                var src = element.attr("src");
-                
+
                 if (element.is("img")) {
+                    var src = element.attr("src");
                     return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");    
                 }
                 
@@ -146,12 +148,11 @@ $(function() {
       	   //     adjust: { x: 5, y: 5 }
           //     },          
               show: {
-               ready: true
+              ready: true
               },
             style: {
               classes: 'qtip-light'
-            },
-            hide: 'unfocus'
+            }
         });
       });
 
