@@ -18,6 +18,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", true);
+            	$('span.last-collection-queried').text($("#simple-search-form input[name='collection']").val());
             }
         });
     };
@@ -38,6 +39,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
+            	$('span.last-collection-queried').text($("#simple-search-form input[name='collection']").val());
             }
         });
     };
@@ -65,6 +67,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
+            	    $('span.last-collection-queried').text($("#advanced-search-form input[name='collection']").val());
             }
         });
     };
@@ -87,7 +90,7 @@ $(function() {
         $("#advanced-search-form input[name='value']").val(data['value']);
         $("#advanced-search-form input[name='history']").val(data['history']);
         tamboti.apis.advancedSearch();
-    }
+    };
     
     tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
         var hitCounts = $(data).find("#results-head .hit-count").first().text();
@@ -107,4 +110,8 @@ $(function() {
             $("#results").html("No records found.");
         }
     };
+    
+    tamboti.apis.redoLastSearch = function(data) {
+    	$("#query-history a:first").click();
+    };    
 });
