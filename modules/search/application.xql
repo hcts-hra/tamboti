@@ -793,9 +793,9 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
             if (starts-with($search-collection, '/db'))
             then replace($search-collection, '/db', '')
             else $search-collection
-        let $search-collection := concat(' found in ', $search-collection)
-            return
-                $search-collection
+
+        return
+            <span class="last-collection-queried">{$search-collection}</span>
 };
 
 (:~
