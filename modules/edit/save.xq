@@ -394,7 +394,6 @@ return
                         sm:chmod($record-path, $config:resource-mode)
                         ,                        
                         (:Remove the $doc record from temp if store in target was successful.:)
-<<<<<<< HEAD
                         if (doc($record-path)) then
                             xmldb:remove($config:mods-temp-collection, $file-to-update) 
                         else 
@@ -402,18 +401,6 @@ return
                         ,
                         (:Set the same permissions on the moved file that the parent collection has.:)
                         system:as-user($config:dba-credentials[1], $config:dba-credentials[2],security:apply-parent-collection-permissions($record-path))
-=======
-                        if (doc($record-path)) then
-                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else 
-                            ()
->>>>>>> refs/remotes/origin/master
-
-                        (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc($record-path)) then
-                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else 
-                            ()
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
