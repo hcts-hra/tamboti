@@ -787,8 +787,8 @@ declare function biblio:last-collection-queried($node as node(), $params as elem
         let $search-collection := $model[1]//collection
         let $search-collection := 
             if ($search-collection) 
-            then replace(replace($search-collection, $config:mods-commons, 'resources'), $config:users-collection, 'resources') 
-            else 'resources' 
+            then replace(replace($search-collection, $config:mods-commons, $config:data-collection-name), $config:users-collection, $config:data-collection-name) 
+            else $config:data-collection-name
         let $search-collection := 
             if (starts-with($search-collection, '/db'))
             then replace($search-collection, '/db', '')
