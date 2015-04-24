@@ -258,23 +258,23 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     <td>{$list-view}</td>
                 </tr>
     (: relation-href :)
-    let $advanced-search-data :=
-        <data>
-            <search-field>ID</search-field>
-            <value>{$rel/@href}</value>
-            <query-tabs>advanced-search-form</query-tabs>
-            <default-operator>and</default-operator>
-        </data>    
     let $relation-href-node :=
         let $href-relation := $entry//vra:relationSet/vra:relation[@type="relatedTo"]
         for $rel in $href-relation
-            return
-               <tr>
-                   <td class="collection-label">
-                      <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $rel/@type)}</a>
-                   </td>
-                   <td>Tamboti MODS Record</td>
-               </tr>
+        let $advanced-search-data :=
+            <data>
+                <search-field>ID</search-field>
+                <value>{$rel/@href}</value>
+                <query-tabs>advanced-search-form</query-tabs>
+                <default-operator>and</default-operator>
+            </data>          
+        return
+           <tr>
+               <td class="collection-label">
+                  <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $rel/@type)}</a>
+               </td>
+               <td>Tamboti MODS Record</td>
+           </tr>
 
     (: subjects :)
     let $subjects-node :=
