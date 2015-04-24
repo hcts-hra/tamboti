@@ -10,8 +10,8 @@ import module namespace clean = "http://exist-db.org/xquery/mods/cleanup" at "..
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../../modules/mods-common.xql";
 import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../modules/tamboti-common.xql";
 import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../modules/display/image-link-generator.xqm";
-
 import module namespace functx="http://www.functx.com";
+import module namespace json="http://www.json.org";
 
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
@@ -258,13 +258,20 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     <td>{$list-view}</td>
                 </tr>
     (: relation-href :)
+    let $advanced-search-data :=
+        <data>
+            <search-field>ID</search-field>
+            <value>{$rel/@href}</value>
+            <query-tabs>advanced-search-form</query-tabs>
+            <default-operator>and</default-operator>
+        </data>    
     let $relation-href-node :=
         let $href-relation := $entry//vra:relationSet/vra:relation[@type="relatedTo"]
         for $rel in $href-relation
             return
                <tr>
                    <td class="collection-label">
-                      <a href="?search-field=ID&amp;value={$rel/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $rel/@type)}</a>
+                      <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $rel/@type)}</a>
                    </td>
                    <td>Tamboti MODS Record</td>
                </tr>
