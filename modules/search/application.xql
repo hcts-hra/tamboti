@@ -846,7 +846,10 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
-        let $null := biblio:add-to-history($query-as-xml)
+        let $null := 
+            if ($query-as-xml//field)
+            then biblio:add-to-history($query-as-xml)
+            else ()        
         return
             count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
@@ -888,7 +891,10 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
-        let $null := biblio:add-to-history($query-as-xml)
+        let $null := 
+            if ($query-as-xml//field)
+            then biblio:add-to-history($query-as-xml)
+            else ()        
         return
             count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
