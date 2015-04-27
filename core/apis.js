@@ -40,6 +40,9 @@ $(function() {
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
             	$('span.last-collection-queried').text($("#simple-search-form input[name='collection']").val());
+                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
+                    "number-of-all-options": $(".hit-count").text()
+                });            	
             }
         });
     };
@@ -67,7 +70,10 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-            	    $('span.last-collection-queried').text($("#advanced-search-form input[name='collection']").val());
+            	$('span.last-collection-queried').text($("#advanced-search-form input[name='collection']").val());
+                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
+                    "number-of-all-options": $(".hit-count").text()
+                });            	
             }
         });
     };
