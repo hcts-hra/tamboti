@@ -151,78 +151,25 @@ declare function op:remove-resource($resource-id as xs:string) as element(status
     let $record-namespace := namespace-uri($resource)
     let $result :=
         switch($record-namespace)
-            case "http://www.w3.org/2000/svg"
-                return 
-                    svg-hra-framework:remove-resource($document-uri)
+            case "http://www.w3.org/2000/svg" return 
+                svg-hra-framework:remove-resource($document-uri)
+            case "http://www.loc.gov/mods/v3" return
+                mods-hra-framework:remove-resource($document-uri)
+            case "http://www.vraweb.org/vracore4.htm" return
+                vra-hra-framework:remove-resource($document-uri)
 (:            case "http://www.tei-c.org/ns/1.0":)
 (:                return tei-hra-framework:remove-resource($document-uri):)
             default return 
-                (:    let $log := util:log("INFO", $move-record):)
-                try {
-                    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                    (
-                        let $mods-doc := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id]
-                        let $xlink := concat('#', $resource-id)
-                        (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
-                        let $mods-xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
-                        (:let $base-uri := concat(util:collection-name($doc), '/', util:document-name($doc)):)
-                        (:NB: we assume that @relids (plural) can hold several values:)
-                        
-                        let $vra-work := collection($config:mods-root-minus-temp)//vra:vra/vra:work[@id eq $resource-id]
-                        let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
-                        (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
-                        let $vra-image-collection := util:collection-name($vra-images[1])
-                        let $vra-binary-names := $vra-images/vra:image/@href    
-                        let $vra-docs := ($vra-work, $vra-images)
-                        
-                        let $docs := if ($mods-doc) then $mods-doc else $vra-docs 
-                       
-                        for $doc in $docs return
-                            (
-                                (:do not remove records which erroneously have the same ID:)
-                                (:NB: inform user that this is the case:)
-                                if (count($doc) eq 1)
-                                then
-                                    (:do not remove records which are linked to from other records:)
-                                    (:NB: inform user that this is the case:)
-                                    if (count($mods-xlink-recs/..) eq 0) 
-                                    then
-                                        (
-                                            xmldb:remove(util:collection-name($doc), util:document-name($doc))
-                                            ,
-                                            if (count($vra-binary-names) gt 0) then
-                                                for $vra-binary-name in $vra-binary-names
-                                                    return
-                                                        (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
-                                                        (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
-                                                        if (util:binary-doc-available(concat($vra-image-collection, '/', $vra-binary-name))) then
-                                                            xmldb:remove($vra-image-collection, $vra-binary-name)
-                                                        else ()
-                                            else ()
-                                        )
-                                    else ()
-                                else()
-                                (:
-                                ,
-                                update insert $record into doc('/db{$config:mods-commons}/temp/deletions.xml')/records
-                                :)
-                            ,
-                            true()
-                            )
-                        )
-                    )
-                } catch * {
-                    false()
-                }
+                false()
     return
         if($result) then
             <status id="removed">{$resource-id}</status>
         else
-            response:set-status-code($op:HTTP-FORBIDDEN),
-            <status id="remove">Removing failed</status>
+            (
+                response:set-status-code($op:HTTP-FORBIDDEN),
+                <status id="remove">Removing failed</status>
+            )
 };
-
-
 
 (:~
 : @ resource-id has the format db-document-path#node-id e.g. /db/mods/eXist/exist-articles.xml#1.36
