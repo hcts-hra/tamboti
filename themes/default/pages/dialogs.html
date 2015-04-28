@@ -210,7 +210,7 @@
                             $(this).dialog("close");
                         },
                         "Add": function() {
-                            var input_value = $(this).find("input[name='user-auto-list']").attr("value");
+                            var input_value = $(this).find("input[name='user-auto-list']").val();
                             var username_no_parenthesis = input_value.match( /\(.*\)/ );
                             var username = "";
                             if (username_no_parenthesis !== null)
