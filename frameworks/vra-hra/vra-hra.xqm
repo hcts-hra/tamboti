@@ -782,3 +782,47 @@ declare function vra-hra-framework:move-resource($source-collection as xs:anyURI
         else
             <status id="error">Error trying to move</status>
 };
+
+declare function vra-hra-framework:remove-resource($document-uri as xs:anyURI){
+    let $vra-work := doc($document-uri)
+    let $collection-name := util:collection-name(root($vra-work))
+    let $doc-name := util:document-name(root($vra-work))
+
+    let $resource-id := vra-hra-framework:get-UUID($vra-work//vra:vra)
+    let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
+    (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
+    let $vra-image-collection := util:collection-name($vra-images[1])
+    let $vra-binary-names := $vra-images/vra:image/@href/string()   
+    return
+        if (count($vra-binary-names) gt 0) then
+            try {
+                (: Remove the binaries :)
+                for $vra-binary-name in $vra-binary-names
+                    return
+                        (:NB: since this iterates inside another iteration, files are attempted deleted which have been deleted already, causing the script to halt. However,:)
+                        (:the existence of the file to be deleted should first be checked, in order to prevent the function from halting in case the file does not exist.:)
+                        if (util:binary-doc-available($vra-image-collection || '/' || $vra-binary-name)) then
+                            xmldb:remove($vra-image-collection, $vra-binary-name)
+                        else 
+                            let $useless := util:log("INFO", "VRA-Binary not found (maybe external image service?): "|| $vra-binary-name)
+                            return
+                                ()
+                ,
+                (: remove the image records:)
+                for $image-record in $vra-images
+                    return
+                        xmldb:remove($vra-image-collection, util:document-name($image-record))
+                ,
+                (: remove the work record:)
+                xmldb:remove($collection-name, $doc-name)
+                ,
+                true()
+            } catch * {
+                let $log := util:log("DEBUG", "Error: remove resource failed: " ||  $err:code || ": " || $err:description)
+                return false()
+            }
+        else
+            let $useless := util:log("DEBUG", "counting VRA-Binaries eq 0")
+            return
+                true()
+};

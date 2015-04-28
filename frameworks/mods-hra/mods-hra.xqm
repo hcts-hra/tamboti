@@ -972,3 +972,28 @@ declare function mods-hra-framework:move-resource($source-collection as xs:anyUR
         else
             <status id="error">Error trying to move</status>
 };
+
+declare function mods-hra-framework:remove-resource($document-uri as xs:anyURI){
+    let $doc := doc($document-uri)
+    let $resource-id := $doc/@id/string()
+    let $xlink := concat('#', $resource-id)
+    (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
+    let $xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
+    return
+        try {
+            let $result := 
+                (: ToDo: if the resource is linked: handle it:)
+                if (count($xlink-recs/..) = 0) then
+                    xmldb:remove(util:collection-name($doc), util:document-name($doc))
+                else
+                    let $log := util:log("DEBUG", "Prevented removing resource " || $resource-id || ": it has " || count($xlink-recs/..) || " xlinks")
+                    return 
+                        false()
+            return
+                true()
+        } catch * {
+            let $log := util:log("DEBUG", "Error: remove resource failed: " ||  $err:code || ": " || $err:description)
+            return
+                false()
+        }
+};
