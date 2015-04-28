@@ -348,10 +348,13 @@ declare function op:is-valid-user-for-share($username as xs:string) as element(s
 };
 
 declare function op:get-child-collection-paths($start-collection as xs:anyURI) {
-    for $child-collection in xmldb:get-child-collections("/db" ||$start-collection)
+    for $child-collection in xmldb:get-child-collections("/db" || $start-collection)
         return
-            (concat($start-collection, '/', $child-collection), 
-            op:get-child-collection-paths(concat($start-collection, '/', $child-collection) cast as xs:anyURI))
+            if(xmldb:collection-available($start-collection || '/' || $child-collection)) then
+                (concat($start-collection, '/', $child-collection), 
+                op:get-child-collection-paths(concat($start-collection, '/', $child-collection) cast as xs:anyURI))
+            else
+                ()
 };
 
 (:A collection cannot be moved into itself or into its parent, nor can it be moved into a subcollection, 
