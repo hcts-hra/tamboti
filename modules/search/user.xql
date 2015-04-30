@@ -74,17 +74,22 @@ declare function user:export-personal-list() as element(my-list-export) {
 };
 
 declare function user:get-vra-image-records() as element()* {
-    let $work-records := session:get-attribute("personal-list")/listitem/vra:vra
-    let $image-records :=
-        for $work-record in $work-records
-        let $image-record-ids := $work-record//vra:relationSet/vra:relation[@type eq "imageIs"]/@relids/string()
-        let $image-record-ids := tokenize($image-record-ids, ' ')
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],(
+        let $work-records := session:get-attribute("personal-list")/listitem/vra:vra
+        let $image-records :=
+            for $work-record in $work-records
+                let $image-record-id-strings := $work-record//vra:relationSet/vra:relation[@type eq "imageIs"]/@relids/string()
+                return
+                    for $image-record-id-string in $image-record-id-strings
+                        let $log := util:log("INFO", $image-record-id-string)
+                        let $image-record-ids := tokenize($image-record-id-string, ' ')
+                            for $image-record-id in $image-record-ids
+                                let $image-record := collection($config:mods-root-minus-temp)/vra:vra[vra:image/@id eq $image-record-id]
+                                return $image-record
         return
-            for $image-record-id in $image-record-ids
-            let $image-record := collection($config:mods-root-minus-temp)/vra:vra[vra:image/@id eq $image-record-id]
-                return $image-record
-    return
-        $image-records
+            $image-records
+    )
+    )
 };
 
 let $list := request:get-parameter("list", ())
