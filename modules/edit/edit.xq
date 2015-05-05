@@ -11,6 +11,7 @@ import module namespace config = "http://exist-db.org/mods/config" at "../config
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (:TODO move security module up one level:)
 import module namespace functx = "http://www.functx.com";
 
+declare default element namespace "http://www.w3.org/1999/xhtml";
 declare namespace xf="http://www.w3.org/2002/xforms";
 declare namespace ev="http://www.w3.org/2001/xml-events";
 declare namespace xlink="http://www.w3.org/1999/xlink";
@@ -139,27 +140,37 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
     let $instance-src := concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)
     return
         <xf:model>
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="{$instance-src}" id="save-data"/>
+           <xf:instance src="{$instance-src}" id="save-data">
+                <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" />
+           </xf:instance>
            
            <!--The instance insert-templates contain an almost full embodiment of the MODS schema, version 3.5; 
            It is used mainly to insert attributes and uncommon elements, 
            but it can also be chosen as a template.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/insert-templates.xml" id="insert-templates"/>
+           <xf:instance xmlns:mods="http://www.loc.gov/mods/v3" src="instances/insert-templates.xml" id="insert-templates">
+                <mods xmlns="http://www.loc.gov/mods/v3" />
+           </xf:instance>
            
            <!--A basic selection of elements and attributes from the MODS schema, 
            used inserting basic elements, but it can also be chosen as a template.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/new-instance.xml" id="new-instance"/>
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/new-instance.xml" id="new-instance">
+                <mods xmlns="http://www.loc.gov/mods/v3" />
+           </xf:instance>
            
            <!--A selection of elements and attributes from the MADS schema used for default records.-->
            <!--not used at present-->
            <!--<xf:instance xmlns="http://www.loc.gov/mads/" src="instances/mads.xml" id='mads' readonly="true"/>-->
     
            <!--Elements and attributes for insertion of special configurations of elements into the compact forms.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/compact-template.xml" id="compact-template"/> 
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/compact-template.xml" id="compact-template"> 
+                <mods xmlns="http://www.loc.gov/mods/v3" />
+           </xf:instance>
            
            <!--Only load the code-tables that are used by the active tab.-->
            <!--Every code table must have a tab-id to ensure that it is collected into the model.-->
-           <xf:instance xmlns="" id="code-tables" src="codes-for-tab.xq?tab-id={$instance-id}" />
+           <xf:instance id="code-tables" src="codes-for-tab.xq?tab-id={$instance-id}">
+                <code-tables xmlns="" />
+            </xf:instance>
            
            <!--Having binds would prevent a tab from being saved when clicking on another tab, 
            so binds are not used.--> 
@@ -425,106 +436,7 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
-    (:Copy the template and store it with the ID as file name.:)
-    (:First, get the right template, based on the type-request and the presence or absence of transliteration.:)
-    let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
-    let $template-request := 
-        if ($type-request = (
-                        'suebs-tibetan', 
-                        'suebs-chinese', 
-                        'insert-templates', 
-                        'new-instance', 
-                        'mads'))
-        (:These document types do not divide into latin and transliterated.:)
-        then $type-request
-        else
-            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
-            if ($transliterationOfResource) 
-            then concat($type-request, '-transliterated') 
-            else concat($type-request, '-latin') 
-    let $template := doc(concat($config:edit-app-root, '/instances/', $template-request, '.xml'))
-    
-    (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
-    let $doc-name := concat($id, '.xml')
-    let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
-    (:Make the record accessible to the user alone in the temp collection.:)
-    let $null := sm:chmod(xs:anyURI($stored), $config:temp-resource-mode)
-    (:If the record is created in a collection inside commons, it should be visible to all.:)
-    (:let $null := 
-        if (contains($target-collection, $config:mods-commons)) 
-        then security:set-resource-permissions(xs:anyURI(concat($config:mods-temp-collection, "/", $doc-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:collection-mode)
-        else ():)
-    
-    (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
-    let $scriptOfResource := request:get-parameter("scriptOfResource", '')
-    let $languageOfResource := request:get-parameter("languageOfResource", '')
-    let $languageOfCataloging := request:get-parameter("languageOfCataloging", '')
-    let $scriptOfCataloging := request:get-parameter("scriptOfCataloging", '')           
-    (:Parameter 'host' is used when related records with type "host" are created.:)
-    let $host := request:get-parameter('host', '')
-    
-    let $doc := doc($stored)
-          let $language-insert :=
-              <mods:language>
-                  <mods:languageTerm authority="iso639-2b" type="code">
-                      {$languageOfResource}
-                  </mods:languageTerm>
-                  <mods:scriptTerm authority="iso15924" type="code">
-                      {$scriptOfResource}
-                  </mods:scriptTerm>
-              </mods:language>
-          let $recordInfo-insert :=
-              <mods:recordInfo lang="eng" script="Latn">
-                  <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
-                  <mods:recordCreationDate encoding="w3cdtf">
-                      {current-date()}
-                  </mods:recordCreationDate>
-                  <mods:recordChangeDate encoding="w3cdtf"/>
-                  <mods:languageOfCataloging>
-                      <mods:languageTerm authority="iso639-2b" type="code">
-                          {$languageOfResource}
-                      </mods:languageTerm>
-                      <mods:scriptTerm authority="iso15924" type="code">
-                          {$scriptOfResource}
-                  </mods:scriptTerm>
-                  </mods:languageOfCataloging>
-              </mods:recordInfo>                
-    let $updates := 
-        (
-            update value $doc/mods:mods/@ID with $id,
-            update value $doc/mads:mads/@ID with $id,
-            update insert $language-insert into $doc/mods:mods,
-            update insert $recordInfo-insert into $doc/mods:mods,
-              update insert
-                  <extension xmlns="http://www.loc.gov/mods/v3" xmlns:e="http://exist-db.org/mods/extension">
-                      <ext:template>{$template-request}</ext:template>
-                      <ext:transliterationOfResource>{$transliterationOfResource}</ext:transliterationOfResource>
-                      <ext:catalogingStage/>
-                  </extension>
-              into $doc/mods:mods,
-              if ($host)
-              then
-                (
-                    update value doc($stored)/mods:mods/mods:relatedItem[string-length(@type) eq 0][1]/@type with "host",
-                    update value doc($stored)/mods:mods/mods:relatedItem[@type eq 'host'][1]/@xlink:href with concat('#', $host)
-                )
-              else ()              
-        )
-    
-    (:Note that we cannot use "update replace" if we want to keep the default namespace.:)
-
-           
-           (:
-
-          ,
-          (:If the user requests to create a related record, 
-          a record which refers to the record being browsed, 
-          insert the ID into @xlink:href on the first empty <relatedItem> in the new record.:)
-
-      )
-      
-     :)
-
+let $log := util:log("INFO", $model)
 
 return 
     (:Set serialization options.:)
@@ -533,12 +445,13 @@ return
     (:Reference the stylesheet.:)
     processing-instruction xml-stylesheet {concat('type="text/xsl" href="', '/exist/rest/db/apps/xsltforms/xsltforms.xsl"')}
     ,
-
+(:    processing-instruction xsltforms-options {'debug="yes" lang="en"'}:)
+(:    ,:)
     (:Construct the editor page.:)
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">
         <head>
             <title>
-                {$header-title}
+                {$header-title} {concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
             </title> 
 
             <link rel="stylesheet" type="text/css" href="edit.css"/>
@@ -568,5 +481,5 @@ return
             </div>
             </div>
         </body>
-    </html>  )
-
+    </html>
+)
