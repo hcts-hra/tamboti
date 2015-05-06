@@ -730,7 +730,7 @@ function resultsLoaded(options) {
 
     /**  add upload action*/
     $('.actions-toolbar .upload-file-style', this).click(function(ev) {
-        var collection = fancyTree.getActiveNode().key;
+        var collection = $('#file-location-folder').html();
         ev.preventDefault();
         $('#upload-resource-id').html($(this).attr('href').substr(1));
         $('#file-upload-folder').empty();
