@@ -1181,7 +1181,7 @@ declare function biblio:apply-search($collection as xs:string?, $search-field as
     let $collection := if ($collection) then $collection else '/db' || $config:mods-root || '/'
     return
         <query>
-            { $collection }
+            <collection>{$collection}</collection>
             <field name="{$biblio:FIELDS/field[(@name, @short-name) = $search-field]/@name}">{$value}</field>
         </query>
     
