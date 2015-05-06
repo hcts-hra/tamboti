@@ -87,22 +87,22 @@ declare function local:collection-relationship($collection as xs:string) as elem
 
 if (request:get-parameter("action", ())) 
 then
-(
     let $action := request:get-parameter("action", ()) 
     return
-        if ($action eq "is-collection-owner") then
-            let $collection := xmldb:encode(request:get-parameter("collection",()))
-            return 
-                security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
-        else if ($action eq "collection-relationship") then
-            let $collection := xmldb:encode(request:get-parameter("collection",()))
-            return 
-                local:collection-relationship($collection)
-        else
-            (
-                response:set-status-code(403),
-                <unknown action="{$action}"/>
-            )
-)
+        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],                    
+            if ($action eq "is-collection-owner") then
+                let $collection := xmldb:encode(request:get-parameter("collection",()))
+                return 
+                    security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
+            else if ($action eq "collection-relationship") then
+                let $collection := xmldb:encode(request:get-parameter("collection",()))
+                return
+                    local:collection-relationship($collection)
+            else
+                (
+                    response:set-status-code(403),
+                    <unknown action="{$action}"/>
+                )
+        )
 else
     local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))
