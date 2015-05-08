@@ -142,6 +142,7 @@
                 title: "Folder Sharing",
                 width: 700
             });
+            
             var trigger = '#collection-sharing';
             // add the  progress indicator with custon events (showLoading and showDone)
             var copyACLStatusSelector = $('form#copy-acl-to .messageContainer');
@@ -182,6 +183,84 @@
                     return false;
                 });                
             }
+            
+            $("#sharing-collection-dialog-tabs").tabs({
+                beforeActivate: function(ev, ui) {
+                    if (ui.newTab.index() == 1) {
+                        var shareRolesSelectElement = $(this).find("select.shareRoles");
+                        $("option", shareRolesSelectElement).removeAttr('selected');
+                        $("option:first", shareRolesSelectElement).attr('selected','selected');
+                        shareRolesSelectElement.empty();
+                        $.each(tamboti.shareRoles.options, function(idx, data){
+                            shareRolesSelectElement.append('<option value="' + data.value + '">' + data.title + '</option>');
+                        });
+                        
+                        // $(this).find("input[name='inherit']").attr("checked", false);
+                        // $(this).find("input[name='write']").attr("checked", false);
+                        // $(this).find("input[name='execute']").attr("checked", false);                        
+                    }
+                    if (ui.newTab.index() == 2) {
+                        var shareRolesSelectElement = $(this).find("select.shareRoles");
+                        $("option", shareRolesSelectElement).removeAttr('selected');
+                        $("option:first", shareRolesSelectElement).attr('selected','selected');
+                        shareRolesSelectElement.empty();
+                        $.each(tamboti.shareRoles.options, function(idx, data){
+                            shareRolesSelectElement.append('<option value="' + data.value + '">' + data.title + '</option>');
+                        });
+    
+                        // $(this).find("input[name='inherit']").attr("checked", false);
+                        // $(this).find("input[name='write']").attr("checked", false);
+                        // $(this).find("input[name='execute']").attr("checked", false);                        
+                    }    
+                }                
+            });            
+            
+            // add new user to share event
+            $('#add-new-user-to-share-button').click(function() {
+                var input_value = $("#user-auto-list").val();
+                var username_no_parenthesis = input_value.match( /\(.*\)/ );
+                var username = "";
+                if (username_no_parenthesis !== null)
+                    username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
+                else
+                    username = input_value;
+
+                var options = 
+                    {
+                        name: username,
+                        target: "USER",
+                        type: $("select.shareRoles option:selected", $("#add-user-tab")).val()
+                    }
+                shareCollection(options);
+                
+                //clear the textbox for user name
+                $('#user-auto-list').val("");
+            });
+            
+            // $('#add-user-to-share-button').click(function() {
+            //     var dialog = $("#add-user-ace");
+            //     console.debug(dialog);
+            //     addUserToShare();
+            // });            
+            
+            // add new project to share event
+            $('#add-new-group-to-share-button').click(function() {
+                var groupname = $("#group-auto-list").attr("value");
+                var options = 
+                    {
+                        name: groupname,
+                        target: "GROUP",
+                        type: $("select.shareRoles option:selected", $("#add-group-tab")).val()
+                    }
+                shareCollection(options);
+                
+                //clear the textbox for project name
+                $('#group-auto-list').val("");
+            });
+            
+            // $('#add-project-to-share-button').click(function() {
+            //     addProjectToShare();
+            // });            
 
             $('#user-auto-list').autocomplete({
                 source: function(request, response) {
@@ -199,52 +278,7 @@
                 },
                 minLength: 2,
                 delay: 700
-            });            
-            
-            $('#add-user-to-share-dialog').dialog({
-                modal: true,
-                autoOpen: false,
-                buttons:
-                    {
-                        "Cancel": function() {
-                            $(this).dialog("close");
-                        },
-                        "Add": function() {
-                            var input_value = $(this).find("input[name='user-auto-list']").val();
-                            var username_no_parenthesis = input_value.match( /\(.*\)/ );
-                            var username = "";
-                            if (username_no_parenthesis !== null)
-                                username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
-                            else
-                                username = input_value;
-
-                            var options = 
-                                {
-                                    name: username,
-                                    target: "USER",
-                                    type: $(this).find('select.shareRoles option:selected').val()
-                                }
-                            shareCollection(options);
-                            $(this).dialog("close");
-                        }
-                    },
-                title: "Add a User to Share With",
-                width: 450,
-                open: function( event, ui ){
-                    $(this).find("select[class='shareRoles'] option").removeAttr('selected');
-                    $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
-                    $('#add-user-to-share-dialog').find('select.shareRoles').empty();
-                    $.each(tamboti.shareRoles.options, function(idx, data){
-                        $('#add-user-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
-                    });
-                    
-                    // $(this).find("input[name='inherit']").attr("checked", false);
-                    // $(this).find("input[name='write']").attr("checked", false);
-                    // $(this).find("input[name='execute']").attr("checked", false);
-                }
-                
-            });
-
+            }); 
 
             $('#group-auto-list').autocomplete({
                 source: function(request, response) {
@@ -263,44 +297,6 @@
                 minLength: 2,
                 delay: 700
             });
-            
-
-            $('#add-group-to-share-dialog').dialog({
-                modal: true,
-                autoOpen: false,
-                buttons:
-                    {
-                        "Cancel": function() {
-                            $(this).dialog("close");
-                        },
-                        "Add": function() {
-                            var groupname = $(this).find("input[name='group-auto-list']").attr("value");
-                            var options = 
-                                {
-                                    name: groupname,
-                                    target: "GROUP",
-                                    type: $(this).find("select[class='shareRoles']:selected")
-                                }
-                            shareCollection(options);
-                            $(this).dialog("close");
-                        }
-                    },
-                title: "Add a Project to Share With",
-                width: 450,
-                open: function( event, ui ){
-                    $(this).find("select[class='shareRoles'] option").removeAttr('selected');
-                    $(this).find("select[class='shareRoles'] option:first").attr('selected','selected');
-                    $('#add-group-to-share-dialog').find('select.shareRoles').empty();
-                    $.each(tamboti.shareRoles.options, function(idx, data){
-                        $('#add-group-to-share-dialog').find('select.shareRoles').append('<option value="' + data.value + '">' + data.title + '</option>');
-                    });
-
-                    // $(this).find("input[name='inherit']").attr("checked", false);
-                    // $(this).find("input[name='write']").attr("checked", false);
-                    // $(this).find("input[name='execute']").attr("checked", false);
-                }
-            });
-            
 
             $('#remove-resource-dialog').dialog({
                 modal: true,
@@ -472,49 +468,64 @@
         </form>
     </div>
     <div id="sharing-collection-dialog">
-        <div>Folder <strong>
-                <span id="sharing-collection-path_"/>
-            </strong> is shared with:</div>
-        <table id="collectionSharingDetails">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Full Name</th>
-                    <th>UserID</th>
-                    <th>Permission</th>
-                    <th>Role</th>
-                    <th>Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <form id="copy-acl-to">
-            <div class="messageContainer">copy sharing table to <select id="copy-acl-target-collection-list"/>
-                <button type="sumbit">copy</button>
+        <div id="sharing-collection-dialog-tabs">
+            <ul>
+                <li>
+                    <a href="#shared-to-tab">Shared To</a>
+                </li>
+                <li>
+                    <a href="#add-user-tab">Add User</a>
+                </li>
+                <li>
+                    <a href="#add-project-tab">Add Project</a>
+                </li>
+            </ul>
+            <div id="shared-to-tab">
+                <div>Folder <strong>
+                        <span id="sharing-collection-path_"/>
+                    </strong> is shared with:</div>
+                <table id="collectionSharingDetails">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Full Name</th>
+                            <th>UserID</th>
+                            <th>Permission</th>
+                            <th>Role</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <form id="copy-acl-to">
+                    <div class="messageContainer">copy sharing table to <select id="copy-acl-target-collection-list"/>
+                        <button type="sumbit">copy</button>
+                    </div>
+                </form>
             </div>
-        </form>
-        <input id="add-new-user-to-share-button" type="button" value="Add User"/>
-        <input id="add-new-group-to-share-button" type="button" value="Add Project"/>
-    </div>
-    <div id="add-user-to-share-dialog">
-        <div>Enter the user's name:</div>
-        <div>
-            <input name="user-auto-list" id="user-auto-list"/>
-        </div>
-        <div style="font-weight:bold;">Role:</div>
-        <div>
-            <select class="shareRoles" style="display: inline;" name="role"/>
-        </div>
-    </div>
-    <div id="add-group-to-share-dialog">
-        <div>
-            <span>Enter the project's name:</span>
-            <input name="group-auto-list" id="group-auto-list"/>
-        </div>
-        <div style="font-weight:bold;">Role:</div>
-        <div>
-            <select class="shareRoles" style="display: inline;" name="role"/>
+            <div id="add-user-tab">
+                <div>Enter the user's name:</div>
+                <div>
+                    <input id="user-auto-list"/>
+                </div>
+                <div style="font-weight:bold;">Role:</div>
+                <div>
+                    <select class="shareRoles" style="display: inline;" name="role"/>
+                </div>
+                <input id="add-new-user-to-share-button" type="button" value="Add"/>
+            </div>
+            <div id="add-project-tab">
+                <div>Enter the project's name:</div>
+                <div>
+                    <input id="group-auto-list"/>
+                </div>
+                <div style="font-weight:bold;">Role:</div>
+                <div>
+                    <select class="shareRoles" style="display: inline;" name="role"/>
+                </div>
+                <input id="add-new-group-to-share-button" type="button" value="Add"/>
+            </div>
         </div>
     </div>
     <div id="remove-resource-dialog">
