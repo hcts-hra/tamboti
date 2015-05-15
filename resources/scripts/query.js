@@ -252,30 +252,6 @@ $(document).ready(function() {
     prepareCollectionSharingDetails();
 
     /********* BIND FANCYTREE TOOLBAR  BUTTONS ***************/
-    // add new user to share event
-    $('#add-new-user-to-share-button').click(function() {
-        //clear the textbox for user name
-        $('#user-auto-list').val("");
-        $('#add-user-to-share-dialog').dialog('open');
-    });
-    
-    // $('#add-user-to-share-button').click(function() {
-    //     var dialog = $("#add-user-ace");
-    //     console.debug(dialog);
-    //     addUserToShare();
-    // });
-
-    // add new project to share event
-    $('#add-new-group-to-share-button').click(function() {
-        //clear the textbox for project name
-        $('#group-auto-list').val("");
-        $('#add-group-to-share-dialog').dialog('open');
-    });
-    
-    // $('#add-project-to-share-button').click(function() {
-    //     addProjectToShare();
-    // });
-
     emptyFileList();
     showNotices();
     $('a#upload-file-to-resource').click(function() {
@@ -1302,7 +1278,7 @@ function addGroupACE(options) {
                 },
                 success: function(data, status, xhr) {
                     //3) reload dataTable
-//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
+//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#group-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
                     $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
 
                     //(4) go to the last page
@@ -1443,7 +1419,7 @@ function shareCollection(options){
             },
         success: function(data, status, xhr) {
             // reload dataTable
-//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#project-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
+//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#group-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
             $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
 
             // go to the last page
