@@ -1028,10 +1028,13 @@ function refreshCurrentTreeNode() {
 /* refreshes the parent of the currently selected tree node */
 function refreshParentTreeNode() {
     //reload the parent tree node
-    var parentNode = $("#collection-tree-tree").fancytree("getActiveNode").getParent();
-    refreshTreeNode(parentNode);
-    parentNode.setExpanded(true); //expand the node after reloading the children
+    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+    var targetNode = fancyTree.getActiveNode();
+    var parentNode = targetNode.getParent();
+    parentNode.resetLazy();
+    parentNode.setExpanded();
 }
+
 
 function refreshParentTreeNodeAndFocusOnChild(focusOnKey) {
     //reload the parent tree node
