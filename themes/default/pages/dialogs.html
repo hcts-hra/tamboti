@@ -131,19 +131,16 @@
                 open: function(event, ui){
                     updateSharingDialog();
                 },
-                buttons: [
-                    {
-                        text: "Close",
-                        click: function() {
-                            $(this).dialog("close");
-                        }
+                buttons: {
+                    "Close": function() {
+                        $(this).dialog("close");
                     }
-                ],
+                }
+                ,
                 title: "Folder Sharing",
                 width: 700
             });
             
-            var trigger = '#collection-sharing';
             // add the  progress indicator with custon events (showLoading and showDone)
             var copyACLStatusSelector = $('form#copy-acl-to .messageContainer');
             addStatusDisplay(copyACLStatusSelector);
@@ -156,33 +153,32 @@
                 }
                 event.preventDefault();
             });
-            if (trigger != '') {
-                $(trigger).click(function() {
-                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
-                    if (node !== null) {
-                        var selectedCollection = node.key;
-                        //clear the list
-                        $("#copy-acl-target-collection-list").find("option").remove();
-                        $.ajax({
-                            url: "operations.xql",
-                            data: {
-                                action: 'get-move-folder-list', 
-                                collection: selectedCollection
-                            },
-                            type: 'POST',
-                            success: function(data, message) {
-                                $('option', data).each(function() {
-                                    $('#copy-acl-target-collection-list').append('<option value="' + $.trim($(this).attr('value')) + '">' + $.trim($(this).text()) + '</option>');
-                                });
-                            },
-                            error: function(response, message) {
-                            }
-                        });
-                    }
-                    $('#sharing-collection-dialog').dialog('open');
-                    return false;
-                });                
-            }
+            
+            $("#collection-sharing").click(function() {
+                var node = $("#collection-tree-tree").fancytree("getActiveNode");
+                if (node !== null) {
+                    var selectedCollection = node.key;
+                    //clear the list
+                    $("#copy-acl-target-collection-list").find("option").remove();
+                    $.ajax({
+                        url: "operations.xql",
+                        data: {
+                            action: 'get-move-folder-list', 
+                            collection: selectedCollection
+                        },
+                        type: 'POST',
+                        success: function(data, message) {
+                            $('option', data).each(function() {
+                                $('#copy-acl-target-collection-list').append('<option value="' + $.trim($(this).attr('value')) + '">' + $.trim($(this).text()) + '</option>');
+                            });
+                        },
+                        error: function(response, message) {
+                        }
+                    });
+                }
+                $('#sharing-collection-dialog').dialog('open');
+                return false;
+            });
             
             $("#sharing-collection-dialog-tabs").tabs({
                 beforeActivate: function(ev, ui) {
