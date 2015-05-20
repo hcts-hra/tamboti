@@ -181,9 +181,9 @@
 			<xf:action ev:event="set-number-of-selected-options" ev:observer="main-content">
 				<xf:setvalue ref="instance('i-variables')/number-of-selected-options" value="event('number-of-selected-options')" />
 			</xf:action>
-			<xf:action ev:event="selected-action-for-selected-options" ev:observer="main-content">
-				<xf:action>
-					<script type="text/javascript">
+                <xf:action ev:event="selected-action-for-selected-options" ev:observer="main-content" if="instance('i-variables')/selected-action != ''">
+                    <xf:action>
+                        <script type="text/javascript">
                                 var uuid = tamboti.createGuid();
                                 $.ajax({
                                     type: "PUT",
@@ -192,7 +192,7 @@
                                     contentType: "application/json",
                                     dataType: "json",                                    
                                     error: function() {
-                                        showMessage("Could not send record ids to ziziphus.");
+                                        showMessage("Could not save the selected id-s on the 'temp' collection on server.");
                                     },
                                     success: function() {
                                         $.ajax({
@@ -216,9 +216,9 @@
                                     }
                                 });                           
                         </script>
-				</xf:action>
-				<xf:setvalue ref="instance('i-variables')/selected-action" />
-			</xf:action>
+                    </xf:action>
+                    <xf:setvalue ref="instance('i-variables')/selected-action"/>
+                </xf:action>
 		</xf:model>
 	</div>
 	<div class="templates:include?path=pages/dialogs.html" />
