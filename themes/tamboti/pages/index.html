@@ -189,8 +189,7 @@
                                     type: "PUT",
                                     url: '/exist/rest/db/data/temp/' + uuid + '.js',
                                     data: JSON.stringify(tamboti.selectedSearchResultOptions),
-                                    contentType: "application/json",
-                                    dataType: "json",                                    
+                                    contentType: "application/json; charset=utf-8",                                   
                                     error: function() {
                                         showMessage("Could not save the selected id-s on the 'temp' collection on server.");
                                     },
