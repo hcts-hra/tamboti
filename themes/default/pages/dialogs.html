@@ -241,7 +241,7 @@
             
             // add new project to share event
             $('#add-new-group-to-share-button').click(function() {
-                var groupname = $("#group-auto-list").attr("value");
+                var groupname = $("#group-auto-list").val();
                 var options = 
                     {
                         name: groupname,
@@ -473,7 +473,7 @@
                     <a href="#add-user-tab">Add User</a>
                 </li>
                 <li>
-                    <a href="#add-project-tab">Add Project</a>
+                    <a href="#add-group-tab">Add Project</a>
                 </li>
             </ul>
             <div id="shared-to-tab">
@@ -511,7 +511,7 @@
                 </div>
                 <input id="add-new-user-to-share-button" type="button" value="Add"/>
             </div>
-            <div id="add-project-tab">
+            <div id="add-group-tab">
                 <div>Enter the project's name:</div>
                 <div>
                     <input id="group-auto-list"/>
