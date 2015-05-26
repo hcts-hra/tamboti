@@ -14,18 +14,9 @@ $(function() {
     tamboti.utils.resetSimpleSearchForm = function() {
         var form = $('#simple-search-form');
         $("input[name='input1']", form).val('');
-        
-        
-        $("table", form).find("tr.repeat:gt(0)").remove();
-        $("td.operator select option:first-child", form).each(function() {
+        $("select[name = 'sort'] option:first-child", form).each(function() {
             $(this).prop("selected", "selected");
         });
-        $("td.search-term input.ui-autocomplete-input", form).each(function() {
-            $(this).val('');
-        });
-        $("td.search-field select option:first-child", form).each(function() {
-            $(this).prop("selected", "selected");
-        });    
     };    
     
     tamboti.utils.resetAdvancedSearchForm = function() {
