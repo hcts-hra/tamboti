@@ -1,6 +1,9 @@
 tamboti = {};
 
 tamboti.utils = {};
+tamboti.browser = {};
+
+tamboti.browser.chrome = (typeof window.chrome === "object");
 
 tamboti.selectedSearchResultOptions = {};
 
@@ -890,6 +893,7 @@ function initCollectionTree() {
             var node = data.node;
             var title = node.title;
             var key = node.key;
+            tamboti.utils.resetSimpleSearchForm();
             tamboti.utils.resetAdvancedSearchForm();
             updateCollectionPaths(title, key);
             showHideCollectionControls();
