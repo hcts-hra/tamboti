@@ -551,7 +551,7 @@ function login(dialog) {
         			});
                 },
         error: function(response, message) {
-            showMessage('Login failed: ' + response.responseText);
+        	showMessage('Login failed: ' + $(response.responseXML).text());
         }
     });
 }
