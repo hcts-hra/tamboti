@@ -7,14 +7,21 @@ import module namespace config="http://exist-db.org/mods/config" at "../config.x
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
 
-declare function local:authenticate($user as xs:string, $password as xs:string?) as element()
-{
-    if (security:login($user, $password)) then
-        <ok/>
-    else (
-        response:set-status-code(403),
-        <span>Wrong username and/or wrong password.</span>
-    )
+declare function local:authenticate($user as xs:string, $password as xs:string?) as element() {
+   try {
+        if (security:login($user, $password)) then
+            <ok/>
+        else (
+            response:set-status-code(403),
+            <span>Wrong username and/or wrong password.</span>
+        )
+   } catch * {
+       (
+           response:set-status-code(403)
+           ,
+           <span>{$err:description}</span>
+       )
+   }    
 };
 
 (:~
