@@ -1,5 +1,10 @@
 tamboti = {};
 
+tamboti.utils = {};
+tamboti.browser = {};
+
+tamboti.browser.chrome = (typeof window.chrome === "object");
+
 tamboti.selectedSearchResultOptions = {};
 
 tamboti.createGuid = function() {
@@ -207,7 +212,7 @@ $(document).ready(function() {
     });
 
     $('#clear-search-fields').click(function() {
-    	tamboti.resetAdvancedSearchForm();
+    	tamboti.utils.resetAdvancedSearchForm();
     });
 
     $(".delete-search-field-button").click(function(ev) {
@@ -303,20 +308,6 @@ $(document).ready(function() {
 
     
 });
-
-tamboti.resetAdvancedSearchForm = function() {
-    var form = $('#advanced-search-form > form');
-    $("table", form).find("tr.repeat:gt(0)").remove();
-    $("td.operator select option:first-child", form).each(function() {
-        $(this).prop("selected", "selected");
-    });
-    $("td.search-term input.ui-autocomplete-input", form).each(function() {
-        $(this).val('');
-    });
-    $("td.search-field select option:first-child", form).each(function() {
-        $(this).prop("selected", "selected");
-    });    
-}
 
 function pingSession() {
     $.getJSON("check-session.xql", function(result) {
@@ -902,6 +893,8 @@ function initCollectionTree() {
             var node = data.node;
             var title = node.title;
             var key = node.key;
+            tamboti.utils.resetSimpleSearchForm();
+            tamboti.utils.resetAdvancedSearchForm();
             updateCollectionPaths(title, key);
             showHideCollectionControls();
             tamboti.apis.simpleSearch();
