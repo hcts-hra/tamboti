@@ -1,14 +1,40 @@
 $(function() {
+    
     function tog(v) {
         return v?'addClass':'removeClass';
     }
-    $(document).on('input', '.clearable', function() {
-        $(this)[tog(this.value)]('x');
-    }).on('mousemove', '.x', function( e ){
-        $(this)[tog(this.offsetWidth-18 < e.clientX-this.getBoundingClientRect().left)]('onX');
-    }).on('click', '.onX', function() {
-        $(this).removeClass('x onX').val('').change();
-    });
+
+    if (!tamboti.browser.chrome) {
+        $(document).on('input', '.clearable', function() {
+            $(this)[tog(this.value)]('x');
+        }).on('mousemove', '.x', function( e ){
+            $(this)[tog(this.offsetWidth-18 < e.clientX-this.getBoundingClientRect().left)]('onX');
+        }).on('click', '.onX', function() {
+            $(this).removeClass('x onX').val('').change();
+        });        
+    }    
+    
+    tamboti.utils.resetSimpleSearchForm = function() {
+        var form = $('#simple-search-form');
+        $("input[name='input1']", form).val('');
+        $("select[name = 'sort'] option:first-child", form).each(function() {
+            $(this).prop("selected", "selected");
+        });
+    };    
+    
+    tamboti.utils.resetAdvancedSearchForm = function() {
+        var form = $('#advanced-search-form > form');
+        $("table", form).find("tr.repeat:gt(0)").remove();
+        $("td.operator select option:first-child", form).each(function() {
+            $(this).prop("selected", "selected");
+        });
+        $("td.search-term input.ui-autocomplete-input", form).each(function() {
+            $(this).val('');
+        });
+        $("td.search-field select option:first-child", form).each(function() {
+            $(this).prop("selected", "selected");
+        });    
+    };    
     
     $("#query-tabs").tabs({
         beforeActivate: function(ev, ui) {

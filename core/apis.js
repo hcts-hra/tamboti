@@ -80,7 +80,7 @@ $(function() {
     
     tamboti.apis.advancedSearchWithData = function(data) {
     	$("#query-tabs").tabs("option", "active", 1);
-        tamboti.resetAdvancedSearchForm();
+    	tamboti.utils.resetAdvancedSearchForm();
         var collection = data['collection'];
         $("#advanced-search-form select[name='format']").val('MODS or TEI or VRA or Wiki');
         $("#advanced-search-form select[name='default-operator']").val(data['default-operator']);
