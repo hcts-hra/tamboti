@@ -7,6 +7,23 @@ tamboti.browser.chrome = (typeof window.chrome === "object");
 
 tamboti.selectedSearchResultOptions = {};
 
+$.extend({
+  getParameterNames: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getParameter: function(name){
+    return $.getParameterNames()[name];
+  }
+});
+
 tamboti.createGuid = function() {
 	return 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
@@ -63,9 +80,13 @@ $(function() {
 
     galleries = new tamboti.galleries.Viewer($("#lightbox"));
 
-    // Init pagination
-    tamboti.apis.initialSearch();
-
+    //check if the URL has a query string for search, in order to trigger that search
+    if ($.getParameter('search-field') != undefined && $.getParameter('value') != undefined) {
+        tamboti.apis.advancedSearch();
+    } else {
+        tamboti.apis.initialSearch();    
+    }
+    
     $(".pagination-mode-gallery").click(function(ev) {
         ev.preventDefault();
         $("#results").pagination("option", "params", {mode: "gallery"});
@@ -551,7 +572,7 @@ function login(dialog) {
         			});
                 },
         error: function(response, message) {
-        	showMessage('Login failed: ' + $(response.responseXML).text());
+            showMessage('Login failed: ' + $(response.responseXML).text());
         }
     });
 }
