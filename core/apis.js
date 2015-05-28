@@ -18,7 +18,6 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", true);
-            	$('span.last-collection-queried').text($("#simple-search-form input[name='collection']").val());
             }
         });
     };
@@ -39,7 +38,6 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-            	$('span.last-collection-queried').text($("#simple-search-form input[name='collection']").val());
                 fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
                     "number-of-all-options": $(".hit-count").text()
                 });            	
@@ -70,7 +68,6 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-            	$('span.last-collection-queried').text($("#advanced-search-form input[name='collection']").val());
                 fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
                     "number-of-all-options": $(".hit-count").text()
                 });            	
@@ -101,7 +98,6 @@ $(function() {
     tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
         var hitCounts = $(data).find("#results-head .hit-count").first().text();
         $("#results-head .hit-count").text(hitCounts);
-        $("#last-collection-queried").text(" found in " + $("#simple-search-form input[name='collection']").val());
         
         if (hitCounts > 0) {
             $("#results").pagination({

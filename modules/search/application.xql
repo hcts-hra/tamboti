@@ -783,21 +783,6 @@ declare function biblio:query-history($node as node(), $params as element(parame
     </ul>
 };
 
-declare function biblio:last-collection-queried($node as node(), $params as element(parameters)?, $model as item()*) {
-        let $search-collection := $model[1]//collection
-        let $search-collection := 
-            if ($search-collection) 
-            then replace(replace($search-collection, $config:mods-commons, $config:data-collection-name), $config:users-collection, $config:data-collection-name) 
-            else $config:data-collection-name
-        let $search-collection := 
-            if (starts-with($search-collection, '/db'))
-            then replace($search-collection, '/db', '')
-            else $search-collection
-
-        return
-            <span class="last-collection-queried">{$search-collection}</span>
-};
-
 (:~
     Evaluate the query given as XML and store its results into the HTTP session
     for later reference.
