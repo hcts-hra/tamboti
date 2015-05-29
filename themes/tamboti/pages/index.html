@@ -29,7 +29,7 @@
 </head>
 <body ng-app="app" ng-controller="FileUploadCtrl">
 	<div style="display: none">
-		<xf:model id="m-multiple-selection-component">
+		<xf:model id="m-main">
 			<xf:instance xmlns="http://www.lisa.org/tmx14" id="i-ui-text" src="../i18n/tmx.xml" />
 			<xf:instance id="i-configuration">
 				<configuration xmlns=""> <languages> <language>en</language> <language>de</language> <language>fr</language>
@@ -222,7 +222,7 @@
 	</div>
 	<div class="templates:include?path=pages/dialogs.html" />
 	<div style="float: right;">
-		<xf:group appearance="full" model="m-multiple-selection-component">
+		<xf:group appearance="full" model="m-main">
 			<xf:select1 ref="instance('i-variables')/ui-language" appearance="minimal" incremental="true">
 				<xf:label>
 					<xf:output
