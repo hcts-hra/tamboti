@@ -1170,7 +1170,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     var dropdown = $("<select/>");
     $.each(tamboti.shareRoles.options, function (key, data) {
         // console.debug("colMode: " + collectionMode + " selectMode: " + data.collectionPermissions);
-        dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions?"selected='selected'":"") + ">" + data.title + "</option>");
+        dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions ? "selected='selected'" : "") + ">" + data.title + "</option>");
     });
     // register change event listener to update Permissions
     dropdown.change(function() {
