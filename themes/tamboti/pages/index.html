@@ -29,11 +29,17 @@
 </head>
 <body ng-app="app" ng-controller="FileUploadCtrl">
 	<div style="display: none">
-		<xf:model id="m-multiple-selection-component">
+		<xf:model id="m-main">
 			<xf:instance xmlns="http://www.lisa.org/tmx14" id="i-ui-text" src="../i18n/tmx.xml" />
 			<xf:instance id="i-configuration">
-				<configuration xmlns=""> <languages> <language>en</language> <language>de</language> <language>fr</language>
-				</languages> </configuration>
+				<configuration xmlns="">
+					<languages>
+						<language>en</language>
+						<language>de</language>
+						<language>fr</language>
+					</languages>
+					<current-username />
+				</configuration>
 			</xf:instance>
 			<xf:instance id="i-variables">
 				<selected-values xmlns=""> <ui-language>en</ui-language> <number-of-all-options>0</number-of-all-options>
@@ -50,9 +56,14 @@
 				</xf:load>
 				<script type="text/javascript">
                         tamboti.totalSearchResultOptions = $(".hit-count").text();
+                        tamboti.currentUsername = $("span.username").text();
                         fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
                             "number-of-all-options": tamboti.totalSearchResultOptions
                         });
+                        fluxProcessor.dispatchEventType("main-content", "set-current-username", {
+                            "current-username": tamboti.currentUsername
+                        }); 
+                        
                         fluxProcessor.skipshutdown=true;
 
                         // initialize the check boxes of the search list
@@ -178,6 +189,9 @@
 			<xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
 				<xf:setvalue ref="instance('i-variables')/number-of-all-options" value="event('number-of-all-options')" />
 			</xf:action>
+			<xf:action ev:event="set-current-username" ev:observer="main-content">
+			    <xf:setvalue ref="instance('i-configuration')/current-username" value="event('current-username')"/>
+			</xf:action> 			
 			<xf:action ev:event="set-number-of-selected-options" ev:observer="main-content">
 				<xf:setvalue ref="instance('i-variables')/number-of-selected-options" value="event('number-of-selected-options')" />
 			</xf:action>
@@ -222,7 +236,7 @@
 	</div>
 	<div class="templates:include?path=pages/dialogs.html" />
 	<div style="float: right;">
-		<xf:group appearance="full" model="m-multiple-selection-component">
+		<xf:group appearance="full" model="m-main">
 			<xf:select1 ref="instance('i-variables')/ui-language" appearance="minimal" incremental="true">
 				<xf:label>
 					<xf:output

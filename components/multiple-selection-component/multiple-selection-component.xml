@@ -104,7 +104,7 @@
         </div>
         <div class="ddlcb-right">
             <div id="ddlcb-message-container">
-                <xf:group appearance="minimal" model="m-multiple-selection-component">
+                <xf:group appearance="minimal" model="m-main">
                     <xf:output value="concat(instance('i-variables')/number-of-selected-options, instance('i-ui-text')//*[@tuid = 'message-part-1']/*[@xml:lang = instance('i-variables')/ui-language], instance('i-variables')/number-of-all-options, instance('i-ui-text')//*[@tuid = 'message-part-2']/*[@xml:lang = instance('i-variables')/ui-language])"/>
                     <xf:select1 ref="instance('i-variables')/selected-action" appearance="minimal" incremental="true" style="margin-left: 30px;">
                         <xf:label>
