@@ -214,12 +214,18 @@
             // add new user to share event
             $('#add-new-user-to-share-button').click(function() {
                 var input_value = $("#user-auto-list").val();
+                if (input_value == tamboti.currentUsername) {
+                    showMessage("You cannot share to yourself!")
+                    return;
+                }
                 var username_no_parenthesis = input_value.match( /\(.*\)/ );
                 var username = "";
-                if (username_no_parenthesis !== null)
+                
+                if (username_no_parenthesis !== null) {
                     username = username_no_parenthesis[0].substring(1, username_no_parenthesis[0].length-1);
-                else
+                } else {
                     username = input_value;
+                }
 
                 var options = 
                     {
