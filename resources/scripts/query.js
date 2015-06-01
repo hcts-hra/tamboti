@@ -795,6 +795,7 @@ function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw)
         if (typeof fnCallback == 'function' && fnCallback !== null) {
             fnCallback(oSettings);
         }
+        $("#shared-to-counter").text($("#collectionSharingDetails tr[data-entry-type = 'USER']").size() + "/" + $("#collectionSharingDetails tr[data-entry-type = 'GROUP']").size());
     }, oSettings);
 }
 
@@ -1197,7 +1198,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     // //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
     $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
-
+    
     return nRow;
 }
 
