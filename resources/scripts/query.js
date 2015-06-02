@@ -795,6 +795,7 @@ function dataTableReloadAjax(oSettings, sNewSource, fnCallback, bStandingRedraw)
         if (typeof fnCallback == 'function' && fnCallback !== null) {
             fnCallback(oSettings);
         }
+        $("#shared-to-counter").text($("#collectionSharingDetails tr[data-entry-type = 'USER']").size() + "/" + $("#collectionSharingDetails tr[data-entry-type = 'GROUP']").size());
     }, oSettings);
 }
 
@@ -1094,11 +1095,6 @@ function refreshCollectionMoveList() {
     }
 }
 
-//called each time the collection/folder sharing dialog is opened
-function updateSharingDialog() {
-    $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
-}
-
 function updateAttachmentDialog() {
     /**
      var oTable = $('#attachedFilesDetails').dataTable();
@@ -1170,7 +1166,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     var dropdown = $("<select/>");
     $.each(tamboti.shareRoles.options, function (key, data) {
         // console.debug("colMode: " + collectionMode + " selectMode: " + data.collectionPermissions);
-        dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions?"selected='selected'":"") + ">" + data.title + "</option>");
+        dropdown.append("<option value='"  + data.value + "' " + (collectionMode == data.collectionPermissions ? "selected='selected'" : "") + ">" + data.title + "</option>");
     });
     // register change event listener to update Permissions
     dropdown.change(function() {
@@ -1202,7 +1198,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     // //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
     $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
-
+    
     return nRow;
 }
 
@@ -1414,38 +1410,6 @@ function removeAceByName(collection, target, name) {
             }
         });
     }
-}
-
-function shareCollection(options){
-    if (tamboti.checkDuplicateSharingEntry(options.name, options.target)) {
-        return;
-    }
-
-    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-    var collection = fancyTree.getActiveNode().key;
-
-    $.ajax({
-        type: 'POST',
-        url: "operations.xql",
-        data: { 
-            action: "share",
-            collection: collection,
-            name: options.name,
-            target: options.target,
-            type: options.type
-            },
-        success: function(data, status, xhr) {
-            // reload dataTable
-//                  $('#collectionSharingDetails').dataTable().fnAddData(["GROUP", $('#group-auto-list').val(), "ALLOWED", "r--", $(data).find("status").attr("ace-id")]);
-            $('#collectionSharingDetails').dataTable().fnReloadAjax("sharing.xql?collection=" + escape(collection));
-
-            // go to the last page
-            //$('#collectionSharingDetails').dataTable().fnPageChange("last");
-        },
-        error: function(response, message) {
-            showMessage('Sharing failed: ' + response.responseText);
-        }
-    });
 }
 
 // *****************************************************************************
