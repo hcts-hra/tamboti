@@ -43,7 +43,7 @@ declare function local:get-sharing($collection-path as xs:anyURI) as element(aaD
                             <json:value>{text{$ace/@target}}</json:value>,
                             <json:value>{text{$who}}</json:value>,
                             <json:value>{text{$username}}</json:value>,
-                            <json:value>{text{$ace/@access_type}}</json:value>,
+                            <json:value>{text{$ace/@mode}}</json:value>,
                             <json:value>{text{$ace/@mode}}</json:value>,
                             <json:value>{text{$ace/@mode}}</json:value>,
                             <json:value>{$index - 1}</json:value>

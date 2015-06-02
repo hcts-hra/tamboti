@@ -1,6 +1,43 @@
 <div xmlns="http://www.w3.org/1999/xhtml">
     <script type="text/javascript">
         $(function() {
+            
+            //called each time the collection/folder sharing dialog is opened, and when a sharing operation occurs
+            function updateSharingDialog() {
+                // reload dataTable
+                $("#collectionSharingDetails").dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+
+                // go to the last page
+                //$('#collectionSharingDetails').dataTable().fnPageChange("last");
+            }
+            
+            function shareCollection(options) {
+                if (tamboti.checkDuplicateSharingEntry(options.name, options.target)) {
+                    return;
+                }
+            
+                var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+                var collection = fancyTree.getActiveNode().key;
+            
+                $.ajax({
+                    type: 'POST',
+                    url: "operations.xql",
+                    data: { 
+                        action: "share",
+                        collection: collection,
+                        name: options.name,
+                        target: options.target,
+                        type: options.type
+                        },
+                    success: function(data, status, xhr) {
+                        updateSharingDialog();
+                    },
+                    error: function(response, message) {
+                        showMessage('Sharing failed: ' + response.responseText);
+                    }
+                });
+            }            
+
             $('#login-dialog').dialog({
                 modal: true,
                 autoOpen: false,
@@ -473,7 +510,7 @@
         <div id="sharing-collection-dialog-tabs">
             <ul>
                 <li>
-                    <a href="#shared-to-tab">Shared To</a>
+                    <a href="#shared-to-tab">Shared To (<span id="shared-to-counter">0/0</span>)</a>
                 </li>
                 <li>
                     <a href="#add-user-tab">Add User</a>
