@@ -769,21 +769,6 @@ declare function biblio:query-from-history($id as xs:string) {
 };
 
 (:~
-    Returns the query history as a HTML list. The queries are
-    transformed into a simple string representation.
-:)
-declare function biblio:query-history($node as node(), $params as element(parameters)?, $model as item()*) {
-    <ul data-selected-tab-id="{request:get-parameter('query-tabs', ())}">
-    {
-        let $history := session:get-attribute('history')
-        for $query-as-string in $history/query
-        return
-            <li><a href="?history={$query-as-string/@id}&amp;query-tabs=advanced-search-form">{biblio:xml-query-to-string($query-as-string)}</a></li>
-    }
-    </ul>
-};
-
-(:~
     Evaluate the query given as XML and store its results into the HTTP session
     for later reference.
 :)
