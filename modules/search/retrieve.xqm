@@ -148,8 +148,8 @@ declare function retrieve:list-view-table($item as node(), $currentPos as xs:int
                     retrieve:plain-list-view-table($item, $currentPos)
 };
 
-declare function retrieve:view-table($cached as item()*, $stored as item()*, $start as xs:int, $count as xs:int, $available as xs:int) {
-    <table xmlns="http://www.w3.org/1999/xhtml">
+declare function retrieve:view-table($cached as item()*, $stored as item()*, $start as xs:int, $count as xs:int, $available as xs:int, $total as xs:int) {
+    <table xmlns="http://www.w3.org/1999/xhtml" data-result-count="{$total}">
     {
         for $item at $pos in subsequence($cached, $start, $available)
         let $currentPos := $start + $pos - 1
@@ -226,7 +226,7 @@ declare function retrieve:retrieve($start as xs:int, $count as xs:int) {
     return
         (: A single entry is always shown in table view for now :)
         if ($mode eq "ajax" and $count eq 1) 
-        then retrieve:view-table($cached, $stored, $start, $count, $available)
+        then retrieve:view-table($cached, $stored, $start, $count, $available, $total)
         else
             switch ($mode)
 (:                case "gallery" return:)
@@ -236,5 +236,5 @@ declare function retrieve:retrieve($start as xs:int, $count as xs:int) {
                 case "multiple-selection" return
                     retrieve:view-all($cached)
                 default return
-                    retrieve:view-table($cached, $stored, $start, $count, $available)
+                    retrieve:view-table($cached, $stored, $start, $count, $available, $total)
 };
