@@ -774,9 +774,9 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                             mods-hra-framework:format-detail-view(string($currentPos), $clean, $collection)
                         } catch * {
                         <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
+                        {$config:error-message-before-link} 
+                        <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
+                        {$config:error-message-after-link}
                         </td>
                         }
                 
@@ -920,9 +920,9 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
                             mods-hra-framework:format-list-view(string($currentPos), $clean, $collection)
                         } catch * {
                         <td class="error" colspan="2">
-                        {$session:error-message-before-link} 
-                        <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                        {$session:error-message-after-link}
+                        {$config:error-message-before-link} 
+                        <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
+                        {$config:error-message-after-link}
                         </td>
                         }                        
                         (: Originally $item was passed to retrieve-mods:format-list-view() - was there a reason for that? Performance? :)

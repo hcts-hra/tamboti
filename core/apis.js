@@ -5,7 +5,7 @@ $(function() {
     tamboti.apis.initialSearch = function() {
         $("#results").html("Searching ...");
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "input1": $("#simple-search-form input[name='input1']").val(),
                 "sort": $("#simple-search-form select[name='sort']").val(),
@@ -25,7 +25,7 @@ $(function() {
     tamboti.apis.simpleSearch = function() {
         $("#results").html("Searching ...");
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "input1": $("#simple-search-form input[name='input1']").val(),
                 "sort": $("#simple-search-form select[name='sort']").val(),
@@ -39,7 +39,7 @@ $(function() {
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
                 fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                    "number-of-all-options": $(".hit-count").text()
+                    "number-of-all-options": $("#result-items-count").text()
                 });            	
             }
         });
@@ -48,7 +48,7 @@ $(function() {
     tamboti.apis.advancedSearch = function() {
         $("#results").html("Searching ...");        
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "format": $("#advanced-search-form select[name='format']").val(),
                 "default-operator": $("#advanced-search-form select[name='default-operator']").val(),
@@ -69,7 +69,7 @@ $(function() {
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
                 fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                    "number-of-all-options": $(".hit-count").text()
+                    "number-of-all-options": $("#result-items-count").text()
                 });            	
             }
         });
@@ -96,13 +96,13 @@ $(function() {
     };
     
     tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
-        var hitCounts = $(data).find("#results-head .hit-count").first().text();
-        $("#results-head .hit-count").text(hitCounts);
+        var hitCounts = $(data).data("result-count");
+        $("#result-items-count").text(hitCounts);
         
         if (hitCounts > 0) {
             $("#results").pagination({
                 url: "retrieve",
-                totalItems: $("#results-head .hit-count").text(),
+                totalItems: $("#result-items-count").text(),
                 itemsPerPage: 20,
                 navContainer: navContainer,
                 readyCallback: resultsLoaded,
