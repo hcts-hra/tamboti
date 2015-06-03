@@ -116,3 +116,11 @@ declare function config:rewrite-username($username as xs:string) as xs:string {
 };
 
 declare variable $config:max-inactive-interval-in-minutes := 480;
+
+declare variable $config:error-message-before-link := "An error occurred when displaying this record. In order to have this error fixed, please send us an email identifying the record by clicking on the following link: ";
+declare variable $config:error-message-after-link := " Clicking on the link will open your default email client.";
+declare variable $config:error-message-href := " mailto:petersen@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
+declare variable $config:error-message-link-text := "Send email.";
+
+(: paginator component :)
+declare variable $config:number-of-items-per-page := 20;

@@ -96,6 +96,13 @@ else if ($exist:resource eq 'retrieve') then
 		</forward>
 	</dispatch>
 	
+else if ($exist:path eq '/search/') then
+   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+      <forward url="/modules/search/search.xq">
+        <set-attribute name="exist:prefix" value="{$exist:prefix}"/>
+      </forward>
+   </dispatch>	
+	
 else if ($exist:path = "/history/") then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="../history.xq" />
