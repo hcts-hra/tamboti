@@ -55,7 +55,7 @@
 					<xf:extension includeCSS="true" includeScript="true" />
 				</xf:load>
 				<script type="text/javascript">
-                        tamboti.totalSearchResultOptions = $(".hit-count").text();
+                        tamboti.totalSearchResultOptions = $("#result-items-count").text();
                         tamboti.currentUsername = $("span.username").text();
                         fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
                             "number-of-all-options": tamboti.totalSearchResultOptions
@@ -275,7 +275,7 @@
 					<div class="navbar">
 						<span> <span class="pagination-first">|&lt;</span> <span class="pagination-previous">&lt;</span> <span
 							class="pagination-info" /> <span class="pagination-next">&gt;</span> <span class="pagination-last">&gt;|</span>
-						</span> of <span class="biblio:result-count result-count" /><a class="pagination-toggle" href="#">List
+						</span> of <span id="result-items-count">0</span> record(s)<a class="pagination-toggle" href="#">List
 							view</a>
 						<!--<span class="pagination-mode">
                                 View as: 
