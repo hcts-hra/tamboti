@@ -5,7 +5,7 @@ $(function() {
     tamboti.apis.initialSearch = function() {
         $("#results").html("Searching ...");
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "input1": $("#simple-search-form input[name='input1']").val(),
                 "sort": $("#simple-search-form select[name='sort']").val(),
@@ -25,7 +25,7 @@ $(function() {
     tamboti.apis.simpleSearch = function() {
         $("#results").html("Searching ...");
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "input1": $("#simple-search-form input[name='input1']").val(),
                 "sort": $("#simple-search-form select[name='sort']").val(),
@@ -48,7 +48,7 @@ $(function() {
     tamboti.apis.advancedSearch = function() {
         $("#results").html("Searching ...");        
         $.ajax({
-            url: "index.html",
+            url: "search/",
             data: {
                 "format": $("#advanced-search-form select[name='format']").val(),
                 "default-operator": $("#advanced-search-form select[name='default-operator']").val(),
@@ -96,7 +96,7 @@ $(function() {
     };
     
     tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
-        var hitCounts = $(data).find("#results-head .hit-count").first().text();
+        var hitCounts = $(data).data("result-count");
         $("#results-head .hit-count").text(hitCounts);
         
         if (hitCounts > 0) {
