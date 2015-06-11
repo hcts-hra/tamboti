@@ -113,5 +113,9 @@ $(function() {
     
     $("#advanced-search-form-submit-button").click(function() {
         tamboti.apis.advancedSearch();
+    });
+    
+    $("#display-personal-list-button").click(function() {
+        tamboti.apis.displayPersonalList();
     });    
 });
