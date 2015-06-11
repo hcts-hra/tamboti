@@ -645,8 +645,6 @@ function saveToPersonalList(anchor) {
 }
 
 function resultsLoaded(options) {
-    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-
     if (options.itemsPerPage > 1) {
         $('tbody > tr:even > td', this).addClass('even');
         $(".pagination-mode", $(options.navContainer)).show();
@@ -674,16 +672,6 @@ function resultsLoaded(options) {
             galleries.open();
             galleries.show(parseInt(num));
         }
-    });
-
-    //detail view
-    $('.actions-toolbar .save', this).click(function(ev) {
-        saveToPersonalList(this);
-    });
-
-    //list view
-    $('.actions-cell .save', this).click(function(ev) {
-        saveToPersonalList(this);
     });
 
     /** add remove resource action */
