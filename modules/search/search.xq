@@ -37,24 +37,3 @@ let $count := xs:int(request:get-parameter("count", $config:number-of-items-per-
 
 
 return retrieve:retrieve($start, $count)
-
-(: 
-$.ajax({
-    url: "search/",
-    data: {
-        "input1": $("#simple-search-form input[name='input1']").val(),
-        "sort": $("#simple-search-form select[name='sort']").val(),
-        "field1": $("#simple-search-form input[name='field1']").val(),
-        "query-tabs": $("#simple-search-form input[name='query-tabs']").val(),
-        "collection-tree": $("#simple-search-form input[name='collection-tree']").val(),
-        "collection": $("#simple-search-form input[name='collection']").val()
-    },
-    dataType: "html",
-    type: "POST",
-    success: function (data) {
-        console.log(data);
-    }
-});
-
-
-:)

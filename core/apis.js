@@ -112,8 +112,4 @@ $(function() {
             $("#results").html("No records found.");
         }
     };
-    
-    tamboti.apis.redoLastSearch = function(data) {
-    	$("#query-history a:first").click();
-    };    
 });
