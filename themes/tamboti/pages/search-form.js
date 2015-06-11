@@ -137,5 +137,15 @@ $(function() {
     
     $("#display-personal-list-button").click(function() {
         tamboti.apis.displayPersonalList();
+    });
+    
+    //detail view
+     $("#results").on("click", ".actions-toolbar .save", function(ev) {
+        saveToPersonalList(this);
+    });
+
+    //list view
+    $("#results").on("click", ".actions-cell .save", function(ev) {
+        saveToPersonalList(this);
     });    
 });
