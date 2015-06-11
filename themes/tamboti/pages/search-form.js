@@ -34,7 +34,25 @@ $(function() {
         $("td.search-field select option:first-child", form).each(function() {
             $(this).prop("selected", "selected");
         });    
-    };    
+    };
+    
+    tamboti.apis.displayPersonalList = function() {
+        $("#results").html("Searching ...");
+        $.ajax({
+            url: "search/",
+            data: {
+                "mylist": true
+            },
+            dataType: "html",
+            type: "POST",
+            success: function (data) {
+            	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
+                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
+                    "number-of-all-options": $("#result-items-count").text()
+                });            	
+            }
+        });
+    };
     
     $("#query-tabs").tabs({
         beforeActivate: function(ev, ui) {
@@ -88,4 +106,12 @@ $(function() {
         deleteTrigger: '',
         onReady: repeatCallback}
     );
+    
+    $("#simple-search-form-submit-button").click(function() {
+        tamboti.apis.simpleSearch();
+    }); 
+    
+    $("#advanced-search-form-submit-button").click(function() {
+        tamboti.apis.advancedSearch();
+    });    
 });

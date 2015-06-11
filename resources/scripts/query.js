@@ -105,12 +105,6 @@ $(function() {
         $("#results").pagination("option", "itemsPerPage", 20);
         $("#results").pagination("refresh");
     });
-    $("#simple-search-form-submit-button").click(function() {
-        tamboti.apis.simpleSearch();
-    });
-    $("#advanced-search-form-submit-button").click(function() {
-        tamboti.apis.advancedSearch();
-    });
 
     pingSession();
 
