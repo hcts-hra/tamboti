@@ -66,7 +66,7 @@
                                 <option value="Title">Title</option>
                                 <option value="Year">Year</option>
                             </select>
-                            <button name="action" id="simple-search-form-submit-button" type="button">Search</button>
+                            <button id="simple-search-form-submit-button" type="button" class="button">Search</button>
                             <input type="hidden" name="field1" value="All"/>
                         </td>
                     </tr>
@@ -106,10 +106,9 @@
                         <td class="add-field" align="center" colspan="2">
                             <button class="button" id="add-field">
                                 <span>+</span> Add Search Field</button>
-                            <button id="clear-search-fields" class="button" name="clear" value="clear" type="button">Clear
-                                Search Terms</button>
+                            <button id="clear-search-fields" class="button" name="clear" value="clear" type="button">Clear Search Terms</button>
                             <div class="advanced-search">
-                                <button class="advanced-search" name="action" id="advanced-search-form-submit-button" type="button">Search</button>
+                                <button id="advanced-search-form-submit-button" type="button" class="advanced-search">Search</button>
                             </div>
                         </td>
                     </tr>
@@ -128,7 +127,7 @@
                 <p>
                     <input type="hidden" name="query-tabs" value="personal-list"/>
                     <button class="button" name="mylist" type="submit" value="clear">Clear</button>
-                    <button class="button" name="mylist" type="submit" value="display">Display</button>
+                    <button id="display-personal-list-button" class="button" type="button">Display</button>
                 </p>
             </form>
             <form action="user.xql" method="POST">
