@@ -465,23 +465,24 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                         security:get-searchable-child-collections(xs:anyURI($collection-path), true())
                     else 
                         security:get-searchable-child-collections(xs:anyURI($collection-path), false())
-                return
-                    "collection('" || fn:string-join($all-collections, "', '") ||  "')//"
+                        
+                return "collection('" || fn:string-join(($collection-path, $all-collections), "', '") ||  "')//"
+                
             return
                 (:The search term held in $query-as-xml is substituted for the '$q' held in $expr.:)
                 ($collection, replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string())))
         case element(collection)
             return
                 if (not($query-as-xml/..//field)) 
-                then 
-                    ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                then ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
                 else ()
-            default 
-                return ()
+        default return ()
+        
          (:Leading wildcards cannot appear in searches within extracted text. :) 
          let $query := 
             for $q in $query
-                return replace(replace($q, ':[?*]', ':'), '\s[?*]', ' ')
+            return replace(replace($q, ':[?*]', ':'), '\s[?*]', ' ')
+        
          return
             $query
 };
@@ -1236,7 +1237,7 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
     else 
         if (empty($collection)) 
         then ()
-        else 
+        else
             if ($reload) 
             then session:get-attribute('query')
             else 
@@ -1383,6 +1384,7 @@ declare function biblio:query($node as node(), $params as element(parameters)?, 
     let $query-as-regex := biblio:get-query-as-regex($query-as-xml)
     let $null := session:set-attribute('regex', $query-as-regex)
     let $results := biblio:get-or-create-cached-results($mylist, $query-as-xml, $sort)
+    
     return
         templates:process($node/node(), ($query-as-xml, $results))
 };
