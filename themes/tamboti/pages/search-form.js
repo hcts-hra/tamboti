@@ -46,10 +46,30 @@ $(function() {
             dataType: "html",
             type: "POST",
             success: function (data) {
-            	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
+            	var resultCount = $(data).data("result-count");
+                $("#result-items-count").text(resultCount);
+                
+                function displayPersonalListCallback(options) {
+                    resultsLoaded(options);
+                    $("#results td.actions-cell img").each(function(index) {
+                        var $this = $(this);
+                        $this.attr('src', 'theme/images/disk_gew.gif');
+                        $this.addClass('stored');
+                    });                     
+                }
+                
+                $("#results").pagination({
+                    url: "retrieve",
+                    totalItems: $("#result-items-count").text(),
+                    itemsPerPage: 20,
+                    navContainer: "#results-head .navbar",
+                    readyCallback: displayPersonalListCallback,
+                    params: { "mode": "list", "initialiseNavbar": false }
+                });
+                
                 fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                    "number-of-all-options": $("#result-items-count").text()
-                });            	
+                    "number-of-all-options": resultCount
+                });
             }
         });
     };
