@@ -34,7 +34,45 @@ $(function() {
         $("td.search-field select option:first-child", form).each(function() {
             $(this).prop("selected", "selected");
         });    
-    };    
+    };
+    
+    tamboti.apis.displayPersonalList = function() {
+        $("#results").html("Searching ...");
+        $.ajax({
+            url: "search/",
+            data: {
+                "mylist": true
+            },
+            dataType: "html",
+            type: "POST",
+            success: function (data) {
+            	var resultCount = $(data).data("result-count");
+                $("#result-items-count").text(resultCount);
+                
+                function displayPersonalListCallback(options) {
+                    resultsLoaded(options);
+                    $("#results td.actions-cell img").each(function(index) {
+                        var $this = $(this);
+                        $this.attr('src', 'theme/images/disk_gew.gif');
+                        $this.addClass('stored');
+                    });                     
+                }
+                
+                $("#results").pagination({
+                    url: "retrieve",
+                    totalItems: $("#result-items-count").text(),
+                    itemsPerPage: 20,
+                    navContainer: "#results-head .navbar",
+                    readyCallback: displayPersonalListCallback,
+                    params: { "mode": "list", "initialiseNavbar": false }
+                });
+                
+                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
+                    "number-of-all-options": resultCount
+                });
+            }
+        });
+    };
     
     $("#query-tabs").tabs({
         beforeActivate: function(ev, ui) {
@@ -88,4 +126,26 @@ $(function() {
         deleteTrigger: '',
         onReady: repeatCallback}
     );
+    
+    $("#simple-search-form-submit-button").click(function() {
+        tamboti.apis.simpleSearch();
+    }); 
+    
+    $("#advanced-search-form-submit-button").click(function() {
+        tamboti.apis.advancedSearch();
+    });
+    
+    $("#display-personal-list-button").click(function() {
+        tamboti.apis.displayPersonalList();
+    });
+    
+    //detail view
+     $("#results").on("click", ".actions-toolbar .save", function(ev) {
+        saveToPersonalList(this);
+    });
+
+    //list view
+    $("#results").on("click", ".actions-cell .save", function(ev) {
+        saveToPersonalList(this);
+    });    
 });
