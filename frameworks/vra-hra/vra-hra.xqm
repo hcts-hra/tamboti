@@ -584,7 +584,7 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                             util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                             <td class="error" colspan="2">
                                 {$config:error-message-before-link} 
-                                <a href="{$confgi:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
+                                <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
                             </td>
                         }                        
