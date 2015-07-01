@@ -583,9 +583,9 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                         } catch * {
                             util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                             <td class="error" colspan="2">
-                                {$session:error-message-before-link} 
-                                <a href="{$session:error-message-href}{$item/*/@id/string()}.">{$session:error-message-link-text}</a>
-                                {$session:error-message-after-link}
+                                {$config:error-message-before-link} 
+                                <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
+                                {$config:error-message-after-link}
                             </td>
                         }                        
                 }
@@ -662,9 +662,9 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
                             } catch * {
                                 util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                                 <td class="error" colspan="2">
-                                    {$session:error-message-before-link} 
-                                    <a href="{$session:error-message-href}{$item/*/@id/string()}.">{$session:error-message-link-text}</a>
-                                    {$session:error-message-after-link}
+                                    {$config:error-message-before-link} 
+                                    <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
+                                    {$config:error-message-after-link}
                                 </td>
                             }
                     }
