@@ -9,9 +9,9 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
 import module namespace clean = "http://exist-db.org/xquery/mods/cleanup" at "../../modules/search/cleanup.xql";
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../../modules/mods-common.xql";
 import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../modules/tamboti-common.xql";
-import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../modules/display/image-link-generator.xqm";
+(:import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../modules/display/image-link-generator.xqm";:)
+
 import module namespace functx="http://www.functx.com";
-import module namespace json="http://www.json.org";
 
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
@@ -261,20 +261,13 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
     let $relation-href-node :=
         let $href-relation := $entry//vra:relationSet/vra:relation[@type="relatedTo"]
         for $rel in $href-relation
-        let $advanced-search-data :=
-            <data>
-                <search-field>ID</search-field>
-                <value>{$rel/@href}</value>
-                <query-tabs>advanced-search-form</query-tabs>
-                <default-operator>and</default-operator>
-            </data>          
-        return
-           <tr>
-               <td class="collection-label">
-                  <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $rel/@type)}</a>
-               </td>
-               <td>Tamboti MODS Record</td>
-           </tr>
+            return
+               <tr>
+                   <td class="collection-label">
+                      <a href="?search-field=ID&amp;value={$rel/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $rel/@type)}</a>
+                   </td>
+                   <td>Tamboti MODS Record</td>
+               </tr>
 
     (: subjects :)
     let $subjects-node :=
@@ -591,7 +584,7 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                             util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                             <td class="error" colspan="2">
                                 {$config:error-message-before-link} 
-                                <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
+                                <a href="{$confgi:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
                             </td>
                         }                        
@@ -681,33 +674,72 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
             </tr>
 };
 
+
+(:declare function vra-hra-framework:return-thumbnail-detail-view($image){:)
+(:    let $image-uuid := $image/@id:)
+(:    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail"):)
+(:    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000"):)
+(:    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")    :)
+(:    let $image-url := :)
+(:        if (security:get-user-credential-from-session()[1] eq "guest") then:)
+(:            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>:)
+(:        else :)
+(:            <a href="{$image-size1000-href}" target="_blank">:)
+(:                <img src="{$image-size150-href}" alt="image" class="relatedImage picture zoom"/>:)
+(:            </a>:)
+(::)
+(:    return $image-url:)
+(:};:)
+(::)
+(:declare function vra-hra-framework:return-thumbnail-list-view($image){:)
+(:    let $image-uuid := $image/@id:)
+(:    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail"):)
+(:    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000"):)
+(:    let $image-url := :)
+(:        if (security:get-user-credential-from-session()[1] eq "guest") then:)
+(:            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>:)
+(:        else :)
+(:            <a href="{$image-size1000-href}" target="_blank">:)
+(:                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture zoom"/>:)
+(:            </a>:)
+(::)
+(:    return $image-url:)
+(:};:)
+
+
+
 declare function vra-hra-framework:return-thumbnail-detail-view($image){
     let $image-uuid := $image/@id
-    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
-    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
-    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")    
     let $image-url := 
         if (security:get-user-credential-from-session()[1] eq "guest") then
-            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>
+            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;">
+                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
+<img src="{$config:app-http-root}/modules/display/image.xql?uuid={$image-uuid}&amp;width={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}&amp;height={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+            </span>
         else 
-            <a href="{$image-size1000-href}" target="_blank">
-                <img src="{$image-size150-href}" alt="image" class="relatedImage picture zoom"/>
-            </a>
-
+            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;">
+                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
+                    <img src="{$config:app-http-root}/modules/display/image.xql?uuid={$image-uuid}&amp;width={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}&amp;height={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}" alt="image" class="relatedImage picture zoom" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/> 
+                </a>
+            </span>
     return $image-url
 };
 
 declare function vra-hra-framework:return-thumbnail-list-view($image){
     let $image-uuid := $image/@id
-    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail")
-    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000")
     let $image-url := 
         if (security:get-user-credential-from-session()[1] eq "guest") then
-            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>
+            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;">
+                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
+                <img src="{$config:app-http-root}/modules/display/image.xql?schema=IIIF&amp;call=/{$image-uuid}/full/!{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW},{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+            </span>
         else 
-            <a href="{$image-size1000-href}" target="_blank">
-                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture zoom"/>
-            </a>
+            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;">
+                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
+                    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+                    <img src="{$config:app-http-root}/modules/display/image.xql?schema=IIIF&amp;call=/{$image-uuid}/full/!{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW},{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+                </a>
+            </span>
 
     return $image-url
 };
@@ -765,7 +797,7 @@ declare function vra-hra-framework:move-resource($source-collection as xs:anyURI
                                     (: move image record :)
                                     security:move-resource-to-tamboti-collection($vra-images-source-collection, $image-resource-name, $vra-images-target-collection)
                                 )
-                    let $useless := util:log("DEBUG", "Error: move resource failed: " ||  $err:code || ": " || $err:description)
+                    let $useless := util:log("ERROR", "Error: move resource failed: " ||  $err:code || ": " || $err:description)
                     let $move-work-record := security:move-resource-to-tamboti-collection($source-collection, $resource-name, $target-collection)
                     return
                         $resource-name
