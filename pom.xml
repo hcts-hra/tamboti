@@ -77,21 +77,24 @@
 									</replacements>
 								</configuration>
 							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
 							<execution>
-								<id>filter-services.default.xml</id>
+								<id>download-services.xml</id>
 								<phase>generate-resources</phase>
 								<goals>
-									<goal>replace</goal>
+									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<file>${basedir}/modules/configuration/services.default.xml</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/services.xml</outputFile>
-									<replacements>
-										<replacement>
-											<token>&lt;/service&gt;</token>
-											<value>${image-services}&lt;/service&gt;</value>
-										</replacement>
-									</replacements>
+									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VUXpuYl9XdFRhcWM?alt=media&amp;key=${google-api-key}</url>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputFileName>services.xml</outputFileName>
+									<skipCache>true</skipCache>
 								</configuration>
 							</execution>
 						</executions>
@@ -168,21 +171,24 @@
 									</replacements>
 								</configuration>
 							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
 							<execution>
-								<id>filter-services.default.xml</id>
+								<id>download-services.xml</id>
 								<phase>generate-resources</phase>
 								<goals>
-									<goal>replace</goal>
+									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<file>${basedir}/modules/configuration/services.default.xml</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/services.xml</outputFile>
-									<replacements>
-										<replacement>
-											<token>&lt;/service&gt;</token>
-											<value>${image-services}&lt;/service&gt;</value>
-										</replacement>
-									</replacements>
+									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VUXpuYl9XdFRhcWM?alt=media&amp;key=${google-api-key}</url>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputFileName>services.xml</outputFileName>
+									<skipCache>true</skipCache>
 								</configuration>
 							</execution>
 						</executions>
@@ -240,21 +246,24 @@
 									</replacements>
 								</configuration>
 							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
 							<execution>
-								<id>filter-services.default.xml</id>
+								<id>download-services.xml</id>
 								<phase>generate-resources</phase>
 								<goals>
-									<goal>replace</goal>
+									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<file>${basedir}/modules/configuration/services.default.xml</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/services.xml</outputFile>
-									<replacements>
-										<replacement>
-											<token>&lt;/service&gt;</token>
-											<value>${image-services}&lt;/service&gt;</value>
-										</replacement>
-									</replacements>
+									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VUXpuYl9XdFRhcWM?alt=media&amp;key=${google-api-key}</url>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputFileName>services.xml</outputFileName>
+									<skipCache>true</skipCache>
 								</configuration>
 							</execution>
 						</executions>
@@ -335,21 +344,24 @@
 									</replacements>
 								</configuration>
 							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.googlecode.maven-download-plugin</groupId>
+						<artifactId>download-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<executions>
 							<execution>
-								<id>filter-services.default.xml</id>
+								<id>download-services.xml</id>
 								<phase>generate-resources</phase>
 								<goals>
-									<goal>replace</goal>
+									<goal>wget</goal>
 								</goals>
 								<configuration>
-									<file>${basedir}/modules/configuration/services.default.xml</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/services.xml</outputFile>
-									<replacements>
-										<replacement>
-											<token>&lt;/service&gt;</token>
-											<value>${image-services}&lt;/service&gt;</value>
-										</replacement>
-									</replacements>
+									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VUXpuYl9XdFRhcWM?alt=media&amp;key=${google-api-key}</url>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<outputFileName>services.xml</outputFileName>
+									<skipCache>true</skipCache>
 								</configuration>
 							</execution>
 						</executions>
