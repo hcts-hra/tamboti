@@ -5,6 +5,7 @@ tamboti.browser = {};
 
 tamboti.browser.chrome = (typeof window.chrome === "object");
 
+tamboti.totalSearchResultOptions = 0;
 tamboti.selectedSearchResultOptions = {};
 
 $.extend({
