@@ -38,9 +38,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                    "number-of-all-options": $("#result-items-count").text()
-                });            	
+                tamboti.totalSearchResultOptions = $("#result-items-count").text();            	
             }
         });
     };
@@ -68,9 +66,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-                fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                    "number-of-all-options": $("#result-items-count").text()
-                });            	
+            	tamboti.totalSearchResultOptions = $("#result-items-count").text();
             }
         });
     };
