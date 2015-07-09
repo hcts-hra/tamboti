@@ -60,7 +60,8 @@ $(function() {
                 "collection": $("#advanced-search-form input[name='collection']").val(),
                 "filter": $("#advanced-search-form input[name='filter']").val(),
                 "value": $("#advanced-search-form input[name='value']").val(),
-                "history": $("#advanced-search-form input[name='history']").val()
+                "history": $("#advanced-search-form input[name='history']").val(),
+                "search-field": $.getParameter('search-field')
             },
             dataType: "html",
             type: "POST",

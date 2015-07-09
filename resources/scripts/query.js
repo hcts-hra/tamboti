@@ -83,6 +83,7 @@ $(function() {
 
     //check if the URL has a query string for search, in order to trigger that search
     if ($.getParameter('search-field') != undefined && $.getParameter('value') != undefined) {
+    	$("#advanced-search-form input[name='value']").val($.getParameter('value'));
         tamboti.apis.advancedSearch();
     } else {
         tamboti.apis.initialSearch();    
