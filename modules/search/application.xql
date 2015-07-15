@@ -67,7 +67,7 @@ declare variable $biblio:FIELDS :=
             union
             atom:entry[atom:id eq '$q']
             union
-            vra:vra[vra:work/@id eq $uuid]
+            vra:vra[vra:work/@id eq '$q']
             )
         </search-expression>
         <targets>
