@@ -66,6 +66,8 @@ declare variable $biblio:FIELDS :=
             mods:mods[mods:relatedItem/@xlink:href eq '$q']
             union
             atom:entry[atom:id eq '$q']
+            union
+            vra:vra[vra:work/@id eq $uuid]
             )
         </search-expression>
         <targets>
