@@ -47,6 +47,11 @@
 					<artifactId>kuberam-expath-plugin</artifactId>
 					<version>0.4.2</version>
 				</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0-beta-4</version>
+					</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -80,25 +85,23 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>com.googlecode.maven-download-plugin</groupId>
-						<artifactId>download-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-services.xml</id>
-								<phase>generate-resources</phase>
+								<id>download-test-data</id>
+								<phase>prepare-package</phase>
 								<goals>
-									<goal>wget</goal>
+									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VQ2NJN1Q1SmlXWnM?alt=media&amp;key=${google-api-key}</url>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<outputFileName>services.xml</outputFileName>
-									<skipCache>true</skipCache>
+									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
+									<toDir>${project.build.directory}</toDir>
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>					
 					<plugin>
 						<groupId>ro.kuberam.maven.plugins</groupId>
 						<artifactId>kuberam-expath-plugin</artifactId>
@@ -174,25 +177,23 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>com.googlecode.maven-download-plugin</groupId>
-						<artifactId>download-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-services.xml</id>
-								<phase>generate-resources</phase>
+								<id>download-test-data</id>
+								<phase>prepare-package</phase>
 								<goals>
-									<goal>wget</goal>
+									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VQ2NJN1Q1SmlXWnM?alt=media&amp;key=${google-api-key}</url>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<outputFileName>services.xml</outputFileName>
-									<skipCache>true</skipCache>
+									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
+									<toDir>${project.build.directory}</toDir>
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>					
 					<plugin>
 						<groupId>ro.kuberam.maven.plugins</groupId>
 						<artifactId>kuberam-expath-plugin</artifactId>
@@ -249,25 +250,23 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>com.googlecode.maven-download-plugin</groupId>
-						<artifactId>download-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-services.xml</id>
-								<phase>generate-resources</phase>
+								<id>download-test-data</id>
+								<phase>prepare-package</phase>
 								<goals>
-									<goal>wget</goal>
+									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VQ2NJN1Q1SmlXWnM?alt=media&amp;key=${google-api-key}</url>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<outputFileName>services.xml</outputFileName>
-									<skipCache>true</skipCache>
+									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
+									<toDir>${project.build.directory}</toDir>
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>					
 					<plugin>
 						<groupId>ro.kuberam.maven.plugins</groupId>
 						<artifactId>kuberam-expath-plugin</artifactId>
@@ -347,21 +346,19 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>com.googlecode.maven-download-plugin</groupId>
-						<artifactId>download-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-services.xml</id>
-								<phase>generate-resources</phase>
+								<id>download-test-data</id>
+								<phase>prepare-package</phase>
 								<goals>
-									<goal>wget</goal>
+									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>https://www.googleapis.com/drive/v2/files/0B44EmdT9aQ2VQ2NJN1Q1SmlXWnM?alt=media&amp;key=${google-api-key}</url>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<outputFileName>services.xml</outputFileName>
-									<skipCache>true</skipCache>
+									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
+									<toDir>${project.build.directory}</toDir>
 								</configuration>
 							</execution>
 						</executions>
