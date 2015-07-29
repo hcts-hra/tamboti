@@ -48,7 +48,7 @@ declare variable $local:loading-image := $config:app-http-root || "/themes/defau
 
 declare variable $session:error-message-before-link := "An error occurred when displaying this record. In order to have this error fixed, please send us an email identifying the record by clicking on the following link: ";
 declare variable $session:error-message-after-link := " Clicking on the link will open your default email client.";
-declare variable $session:error-message-href := " mailto:petersen@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
+declare variable $session:error-message-href := " mailto:hra@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
 declare variable $session:error-message-link-text := "Send email.";
 
 declare function bs:get-item-uri($item-id as xs:string) {
