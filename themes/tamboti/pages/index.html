@@ -54,7 +54,7 @@
 						value="'../../components/multiple-selection-component/multiple-selection-component.xml#ddlcb-container'" />
 					<xf:extension includeCSS="true" includeScript="true" />
 				</xf:load>
-				<script type="text/javascript">
+                    <script type="text/javascript">
                         tamboti.totalSearchResultOptions = $("#result-items-count").text();
                         tamboti.currentUsername = $("span.username").text();
                         fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
@@ -76,7 +76,7 @@
                             if ($this.is(":checked")) {
                                 selectedSearchResultOptions[optionId] = 1;
                                 fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
-                                if (Object.keys(selectedSearchResultOptions).length &amp;lt; totalSearchResultOptions) {
+                                if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
                                     $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
                                 } else if (Object.keys(selectedSearchResultOptions).length == totalSearchResultOptions) {
                                     $("#ddlcb-container").trigger("flag-ddlcb-full-checked");
@@ -86,7 +86,7 @@
                                 fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
                                 if (Object.keys(selectedSearchResultOptions).length === 0) {
                                     $("#ddlcb-container").trigger("unflag-ddlcb-partial-checked");
-                                } else if (Object.keys(selectedSearchResultOptions).length &amp;lt; totalSearchResultOptions) {
+                                } else if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
                                     $("#ddlcb-container").trigger("unflag-ddlcb-full-checked");
                                     $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");                                    
                                 }
@@ -180,7 +180,7 @@
                 		    }        				    
         				    
         				    var currentPageSelectedOptionsNumber = $("input.search-list-item-checkbox:checked", resultsTable).length;
-        				    if (currentPageSelectedOptionsNumber !== 0 &amp;amp;&amp;amp; currentPageSelectedOptionsNumber == currentPageOptions.length) {
+        				    if (currentPageSelectedOptionsNumber !== 0 &amp;&amp; currentPageSelectedOptionsNumber == currentPageOptions.length) {
         				        $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
         				    }
                         });                        
