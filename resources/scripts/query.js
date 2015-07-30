@@ -425,84 +425,41 @@ function getCurrentCollection() {
 
 function showHideCollectionControls() {
     var collection = getCurrentCollection();
+    var params = {action: "collection-relationship", collection: collection, output: "json"};
 
-    var params = {action: "collection-relationship", collection: collection};
     $.post("checkuser.xql", params, function(data) {
-
-        /**
-         data looks like this -
-         
+        // console.debug(data);
+        /*
          <relationship user="" collection="">
             <home/>
             <owner/>
             <read/>
             <write/>
             <execute/>
+            <remove/>
+            <copy/>
+            <move/>
             <read-parent/>
             <write-parent/>
             <execute-parent/>
          </relationship>
          */
 
-        var write = $(data).find('write');
-        var isWriteable = (write !== null && write.text() == 'true');
-
-        var execute = $(data).find('execute');
-        var isExecutable = (execute !== null && execute.text() == 'true');
-
-        var home = $(data).find('home');
-        var isUsersHome = (home !== null && home.text() == 'true');
-
-        var owner = $(data).find('owner');
-        var isOwner = (owner !== null && owner.text() == 'true');
-
-        var parentWrite = $(data).find('write-parent');
-        var isParentWriteable = (parentWrite !== null && parentWrite.text() == 'true');
-
-        var parentExecute = $(data).find('execute-parent');
-        var isParentExecutable = (parentExecute !== null && parentExecute.text() == 'true');
         //collection is writeable
-        if (isWriteable) {
-            $('#collection-create-folder').show();
-            $('#collection-create-resource').show();
-            if (!isUsersHome) {
-                $('#upload-file-to-resource').show();
-            }
-            else {
-                $('#upload-file-to-resource').hide();
-            }
-        } else {
-            $('#collection-create-folder').hide();
-            $('#collection-create-resource').hide();
-            $('#upload-file-to-resource').hide();
-        }
+        $('#collection-create-folder').toggle(data.write);
+        $('#collection-create-resource').toggle(data.write);
+        $('#upload-file-to-resource').toggle(data.write);
 
         //collection is not current users home and is owned by current user
-        if (!isUsersHome && isExecutable && isWriteable) {
-            $('#collection-sharing').show();
-        } else {
-            $('#collection-sharing').hide();
-        }
+        $('#collection-sharing').toggle((data.execute && data.write));
 
         // moving and renaming needs parentCollection to be writeable and executable
-        if (isParentWriteable && isParentExecutable && !isUsersHome) {
-            $('#collection-rename-folder').show();
-            $('#collection-move-folder').show();
-            //$('#upload-file-to-resource').show();
-        } else {
-            $('#collection-rename-folder').hide();
-            $('#collection-move-folder').hide();
-            //$('#upload-file-to-resource').hide();
-        }
+        console.debug("may rename and move:" + (data['write-parent'] && data['execute-parent']));
+        $('#collection-rename-folder').toggle(data.write && data['write-parent'] && data['execute-parent']);
+        $('#collection-move-folder').toggle(data.write && data['write-parent'] && data['execute-parent']);
 
-        //parent is writeable and executable and its not the current users home folder
-        if (isParentWriteable && isParentExecutable && !isUsersHome) {
-            $('#collection-remove-folder').show();
-            //$('#upload-file-to-resource').show();
-        } else {
-            $('#collection-remove-folder').hide();
-            //$('#upload-file-to-resource').hide();
-        }
+        //parent is writeable and executable and user has rwx on all subfolders
+        $('#collection-remove-folder').toggle(data['write-parent'] && data['execute-parent'] && data.remove);
     });
 }
 
