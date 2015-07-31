@@ -371,10 +371,13 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
             let $move-folder-list :=
                 for $available-collection-path in $available-collection-paths 
                     return 
+                        distinct-values(
                     (
+                        $available-collection-path,
                         security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
                         op:get-child-collection-paths($available-collection-path),
                         sharing:recursively-get-shared-subcollections(xs:anyURI($config:mods-root), true())
+                    )
                     )
             for $path in distinct-values($move-folder-list)
                 (:let $log := util:log("DEBUG", ("##$path): ", $path)):)
