@@ -113,7 +113,7 @@ installation:mkcol($db-root, local:strip-prefix($config:users-collection, fn:con
 (: make admin:dba as owner of $config:users-collection :)
 sm:chown($config:users-collection, 'admin')
 ,
-sm:chgrp($config:users-collection, "dba")
+sm:chgrp($config:users-collection, $config:biblio-users-group)
 ,
 util:log($log-level, "Config: Done.")
 ,
