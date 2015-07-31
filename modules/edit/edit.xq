@@ -51,12 +51,15 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     
     (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
     let $doc-name := concat($id, '.xml')
+    
     let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
+
     (:Make the record accessible to the user alone in the temp collection.:)
     let $permissions := 
         (
             sm:chmod(xs:anyURI($stored), $config:temp-resource-mode)
         )
+    
     (:If the record is created in a collection inside commons, it should be visible to all.:)
     (:let $null := 
         if (contains($target-collection, $config:mods-commons)) 
@@ -72,68 +75,72 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     let $host := request:get-parameter('host', '')
     
     let $doc := doc($stored)
+    
     (:Note that we cannot use "update replace" if we want to keep the default namespace.:)
-       return (
-          (:Update the record with ID attribute.:)
-          update value $doc/mods:mods/@ID with $id,
-          update value $doc/mads:mads/@ID with $id
-          ,
-          (:Save the language and script of the resource.:)
-          (:If namespace is not applied in the updates, the elements will be in the empty namespace.:)
-          let $language-insert :=
-              <mods:language>
+    return
+       (
+           (:Update the record with ID attribute.:)
+           update insert attribute ID {$id} into $doc/mods:mods
+           ,
+           update insert attribute ID {$id} into $doc/mads:mads
+      ,
+      (:Save the language and script of the resource.:)
+      (:If namespace is not applied in the updates, the elements will be in the empty namespace.:)
+      let $language-insert :=
+          <mods:language>
+              <mods:languageTerm authority="iso639-2b" type="code">
+                  {$languageOfResource}
+              </mods:languageTerm>
+              <mods:scriptTerm authority="iso15924" type="code">
+                  {$scriptOfResource}
+              </mods:scriptTerm>
+          </mods:language>
+      return
+      update insert $language-insert into $doc/mods:mods
+      ,
+      (:Save the library reference, the creation date, and the language and script of cataloguing:)
+      (:To simplify input, resource language and language of cataloging are identical be default.:) 
+      let $recordInfo-insert :=
+          <mods:recordInfo lang="eng" script="Latn">
+              <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
+              <mods:recordCreationDate encoding="w3cdtf">
+                  {current-date()}
+              </mods:recordCreationDate>
+              <mods:recordChangeDate encoding="w3cdtf"/>
+              <mods:languageOfCataloging>
                   <mods:languageTerm authority="iso639-2b" type="code">
                       {$languageOfResource}
                   </mods:languageTerm>
                   <mods:scriptTerm authority="iso15924" type="code">
                       {$scriptOfResource}
-                  </mods:scriptTerm>
-              </mods:language>
-          return
-          update insert $language-insert into $doc/mods:mods
-          ,
-          (:Save the library reference, the creation date, and the language and script of cataloguing:)
-          (:To simplify input, resource language and language of cataloging are identical be default.:) 
-          let $recordInfo-insert :=
-              <mods:recordInfo lang="eng" script="Latn">
-                  <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
-                  <mods:recordCreationDate encoding="w3cdtf">
-                      {current-date()}
-                  </mods:recordCreationDate>
-                  <mods:recordChangeDate encoding="w3cdtf"/>
-                  <mods:languageOfCataloging>
-                      <mods:languageTerm authority="iso639-2b" type="code">
-                          {$languageOfResource}
-                      </mods:languageTerm>
-                      <mods:scriptTerm authority="iso15924" type="code">
-                          {$scriptOfResource}
-                  </mods:scriptTerm>
-                  </mods:languageOfCataloging>
-              </mods:recordInfo>            
-          return
-          update insert $recordInfo-insert into $doc/mods:mods
-          ,
-          (:Save the name of the template used, transliteration scheme used, 
-          and an empty catalogingStage into mods:extension.:)  
-          update insert
-              <extension xmlns="http://www.loc.gov/mods/v3" xmlns:e="http://exist-db.org/mods/extension">
-                  <ext:template>{$template-request}</ext:template>
-                  <ext:transliterationOfResource>{$transliterationOfResource}</ext:transliterationOfResource>
-                  <ext:catalogingStage/>
-              </extension>
-          into $doc/mods:mods
-          ,
-          (:If the user requests to create a related record, 
-          a record which refers to the record being browsed, 
-          insert the ID into @xlink:href on the first empty <relatedItem> in the new record.:)
-          if ($host)
-          then
-            (
-                update value doc($stored)/mods:mods/mods:relatedItem[string-length(@type) eq 0][1]/@type with "host",
-                update value doc($stored)/mods:mods/mods:relatedItem[@type eq 'host'][1]/@xlink:href with concat('#', $host)
-            )
-          else ()
-      )
+              </mods:scriptTerm>
+              </mods:languageOfCataloging>
+          </mods:recordInfo>            
+      return
+      update insert $recordInfo-insert into $doc/mods:mods
+      ,
+      (:Save the name of the template used, transliteration scheme used, 
+      and an empty catalogingStage into mods:extension.:)  
+      update insert
+          <extension xmlns="http://www.loc.gov/mods/v3" xmlns:e="http://exist-db.org/mods/extension">
+              <ext:template>{$template-request}</ext:template>
+              <ext:transliterationOfResource>{$transliterationOfResource}</ext:transliterationOfResource>
+              <ext:catalogingStage/>
+          </extension>
+      into $doc/mods:mods
+      ,
+      (:If the user requests to create a related record, 
+      a record which refers to the record being browsed, 
+      insert the ID into @xlink:href on the first empty <relatedItem> in the new record.:)
+      if ($host)
+      then
+        (
+            update value doc($stored)/mods:mods/mods:relatedItem[string-length(@type) eq 0][1]/@type with "host",
+            update value doc($stored)/mods:mods/mods:relatedItem[@type eq 'host'][1]/@xlink:href with concat('#', $host)
+        )
+      else ()
+      
+    )
 };
 
 declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string) as element(xf:model) {
@@ -436,7 +443,6 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
-let $log := util:log("INFO", $model)
 
 return 
     (:Set serialization options.:)
