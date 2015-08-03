@@ -1097,27 +1097,27 @@ declare function security:copy-collection-ace-to-resource-apply-modechange($coll
 : @param $target-collection the target collection
 :)
 declare function security:move-resource-to-tamboti-collection($source-collection as xs:anyURI, $resource as xs:anyURI, $target-collection as xs:anyURI) {
-(:    util:log("DEBUG", xmldb:get-owner($target-collection) || "=" || security:get-user-credential-from-session()[1]),:)
-    (: first move the resource :)
-    try {
-        xmldb:move($source-collection, $target-collection, $resource),
-        (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
-        if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
-            (
-                security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
-                ,
-                security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
-            )
-        else
-            (
-                security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
-                ,
-                security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
-            )
-    } catch * {
-        util:log("DEBUG", $err:code || ": " || $err:description)
-    }
-
+    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], (
+        (: first move the resource :)
+        try {
+            xmldb:move($source-collection, $target-collection, $resource),
+            (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
+            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+                (
+                    security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+                    ,
+                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+                )
+            else
+                (
+                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource))
+                    ,
+                    security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
+                )
+        } catch * {
+            util:log("INFO", $err:code || ": " || $err:description)
+        }
+    ))
 };
 
 declare function security:copy-collection-acl($source-collection as xs:anyURI, $target-collection as xs:anyURI) {
