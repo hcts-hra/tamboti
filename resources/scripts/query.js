@@ -451,7 +451,7 @@ function showHideCollectionControls() {
         $('#upload-file-to-resource').toggle(data.write);
 
         //collection is not current users home and is owned by current user
-        $('#collection-sharing').toggle((data.execute && data.write));
+        $('#collection-sharing').toggle(!data.home && (data.execute && data.write));
 
         // moving and renaming needs parentCollection to be writeable and executable
         $('#collection-rename-folder').toggle(data.write && data['write-parent'] && data['execute-parent']);
