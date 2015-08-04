@@ -115,7 +115,12 @@ $(function() {
     // add event listener for sharing dialog. If closed: update selected node
     $("#sharing-collection-dialog").on("dialogclose", function( event, ui) {
         // ToDo: check for Sharing and add/remove class instead of refresh complete tree
-        refreshParentTreeNode();
+        var fancyTree = $('#collection-tree-tree').fancytree('getTree');
+        var currentNode = fancyTree.getActiveNode();
+        var currentNodeKey = currentNode.key;
+        refreshTreeNode(currentNode.parent, function(){
+                fancyTree.activateKey(currentNode.key);
+            });
     });
     
     $("#results").on("mouseover", "td.list-image", function() {
