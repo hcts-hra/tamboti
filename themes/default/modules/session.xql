@@ -46,11 +46,6 @@ declare variable $bs:THUMB_SIZE_FOR_LIST_VIEW := 128;
 
 declare variable $local:loading-image := $config:app-http-root || "/themes/default/images/ajax-loader.gif";
 
-declare variable $session:error-message-before-link := "An error occurred when displaying this record. In order to have this error fixed, please send us an email identifying the record by clicking on the following link: ";
-declare variable $session:error-message-after-link := " Clicking on the link will open your default email client.";
-declare variable $session:error-message-href := " mailto:hra@asia-europe.uni-heidelberg.de?Subject=Tamboti%20Display%20Problem&amp;body=Fix%20display%20of%20record%20";
-declare variable $session:error-message-link-text := "Send email.";
-
 declare function bs:get-item-uri($item-id as xs:string) {
     fn:concat(
         request:get-scheme(),
@@ -119,9 +114,9 @@ declare function bs:plain-list-view-table($item as node(), $currentPos as xs:int
                         } catch * {
                             util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                             <td class="error" colspan="2">
-                                {$session:error-message-before-link} 
-                                <a href="{$session:error-message-href}{$item/@ID/string()}.">{$session:error-message-link-text}</a>
-                                {$session:error-message-after-link}
+                                {$config:error-message-before-link} 
+                                <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
+                                {$config:error-message-after-link}
                             </td>
                         }
                 }</span>
