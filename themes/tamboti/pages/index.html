@@ -55,11 +55,7 @@
 					<xf:extension includeCSS="true" includeScript="true" />
 				</xf:load>
                     <script type="text/javascript">
-                        tamboti.totalSearchResultOptions = $("#result-items-count").text();
                         tamboti.currentUsername = $("span.username").text();
-                        fluxProcessor.dispatchEventType("main-content", "set-number-of-all-options", {
-                            "number-of-all-options": tamboti.totalSearchResultOptions
-                        });
                         fluxProcessor.dispatchEventType("main-content", "set-current-username", {
                             "current-username": tamboti.currentUsername
                         }); 
