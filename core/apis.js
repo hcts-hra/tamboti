@@ -18,6 +18,7 @@ $(function() {
             type: "POST",
             success: function (data) {
             	tamboti.apis._loadPaginator(data, "#results-head .navbar", true);
+            	tamboti.totalSearchResultOptions = $("#result-items-count").text();
             }
         });
     };
