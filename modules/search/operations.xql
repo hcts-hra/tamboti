@@ -374,10 +374,7 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                     (
                         $available-collection-path,
                         security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
-                        if(not($chosen-collection = $available-collection-path)) then
-                            op:get-child-collection-paths($available-collection-path)
-                        else
-                            (),
+                        op:get-child-collection-paths($available-collection-path),
                         sharing:recursively-get-shared-subcollections(xs:anyURI($config:mods-root), true())
                     )
                     )
