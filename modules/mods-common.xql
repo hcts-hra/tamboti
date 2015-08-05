@@ -487,7 +487,7 @@ declare function mods-common:get-short-title($entry as element()) {
 : @param $location The MODS location element minus the url child
 : @return The location as XHTML a element.
 :)
-declare function mods-common:format-location($location as element(mods:location), $collection-short as xs:string) as xs:string+ {
+declare function mods-common:format-location($location as element(mods:location), $collection-short as xs:string) as xs:string* {
     let $location := $location[not(url)]
     let $physical-location := $location/mods:physicalLocation
     let $shelf-locator := $location/mods:holdingSimple/mods:copyInformation/mods:shelfLocator
