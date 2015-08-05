@@ -210,11 +210,14 @@
                             });
                         },
                         error: function(response, message) {
+                            console.debug("Loading the sharing folder list failed");
                         }
                     });
+                    $('#sharing-collection-dialog').dialog('open');
                 }
-                $('#sharing-collection-dialog').dialog('open');
-                return false;
+                else{
+                    console.debug("no node selected");
+                }
             });
             
             $("#sharing-collection-dialog-tabs").tabs({

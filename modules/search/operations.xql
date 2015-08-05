@@ -182,7 +182,7 @@ declare function op:move-resource($source-collection as xs:anyURI, $target-colle
         )
     let $document-uri := xs:anyURI(document-uri(root($resource)))
 
-    let $log := util:log("INFO", "source:" || $source-collection || " target:" || $target-collection || " resID: " || $resource-id || " found: " || $document-uri)
+    let $log := util:log("DEBUG", "source:" || $source-collection || " target:" || $target-collection || " resID: " || $resource-id || " found: " || $document-uri)
 
     let $record-namespace := namespace-uri($resource)
     let $move-record :=
@@ -362,7 +362,6 @@ so it is necessary to check against the path of the collection that is to be mov
 A file cannot, by stipulation, be moved into the top level of the home collection, nor can it be moved to its own parent collection.:)
 (:TODO: capture the collection that the resource to be moved belongs to.:)
 
-
 declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as element(select) {
     <select>
         {
@@ -375,7 +374,10 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                     (
                         $available-collection-path,
                         security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
-                        op:get-child-collection-paths($available-collection-path),
+                        if(not($chosen-collection = $available-collection-path)) then
+                            op:get-child-collection-paths($available-collection-path)
+                        else
+                            (),
                         sharing:recursively-get-shared-subcollections(xs:anyURI($config:mods-root), true())
                     )
                     )
@@ -388,19 +390,24 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                 let $display-path := substring-after($path, '/db/')
                 let $user := xmldb:get-current-user()
                 let $display-path := replace($path, concat('users/', $user), 'Home')
+                let $valid-col-mode := $config:sharing-permissions("full")("collection")
                 order by $display-path
                 return
                 (:leave out the folder that the user has marked, since you cannot move something to itself:)
                 (:leave out descendant folders, since you cannot move a folders into a descendant:)
                 (:if (contains($path, $chosen-collection) or contains($chosen-collection, $path)):)
-                    if ($path eq $chosen-collection or functx:substring-after-last($path, "/") = "VRA_images") then
+                    if (starts-with($path, $chosen-collection)
+                        or not(sm:has-access($path, $valid-col-mode))
+                        or $path eq $chosen-collection
+                        or functx:substring-after-last($path, "/") = "VRA_images") then
                         () 
                     else
                         <option value="{xmldb:decode-uri($path)}">{xmldb:decode-uri($display-path)}</option>
+                    
         }
     </select>
 };
- 
+
 declare function op:get-move-list($chosen-collection as xs:anyURI, $type as xs:string) as element(select) {
     <select>
         {

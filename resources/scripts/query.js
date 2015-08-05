@@ -115,7 +115,12 @@ $(function() {
     // add event listener for sharing dialog. If closed: update selected node
     $("#sharing-collection-dialog").on("dialogclose", function( event, ui) {
         // ToDo: check for Sharing and add/remove class instead of refresh complete tree
-        refreshParentTreeNode();
+        var fancyTree = $('#collection-tree-tree').fancytree('getTree');
+        var currentNode = fancyTree.getActiveNode();
+        var currentNodeKey = currentNode.key;
+        refreshTreeNode(currentNode.parent, function(){
+                fancyTree.activateKey(currentNode.key);
+            });
     });
     
     $("#results").on("mouseover", "td.list-image", function() {
@@ -451,10 +456,9 @@ function showHideCollectionControls() {
         $('#upload-file-to-resource').toggle(data.write);
 
         //collection is not current users home and is owned by current user
-        $('#collection-sharing').toggle((data.execute && data.write));
+        $('#collection-sharing').toggle(!data.home && (data.execute && data.write));
 
         // moving and renaming needs parentCollection to be writeable and executable
-        console.debug("may rename and move:" + (data['write-parent'] && data['execute-parent']));
         $('#collection-rename-folder').toggle(data.write && data['write-parent'] && data['execute-parent']);
         $('#collection-move-folder').toggle(data.write && data['write-parent'] && data['execute-parent']);
 
@@ -821,15 +825,6 @@ function initCollectionTree() {
             addFocusedKey: true, // add &focusedKey= parameter to URL
             addExpandedKeyList: true // add &expandedKeyList= parameter to URL
         },
-        onActivate: function(dtnode) {
-            /**
-             Executed when a tree node is clicked
-             */
-            var title = dtnode.data.title;
-            var key = dtnode.data.key;
-            updateCollectionPaths(title, key);
-            showHideCollectionControls();
-        },
         lazyLoad: function(event, data) {
             var node = data.node;
             
@@ -845,13 +840,6 @@ function initCollectionTree() {
             // when tree is reloaded, reactivate the current node to trigger an onActivate event
             this.reactivate();
         },
-        click: function(event, data) {
-            var node = data.node;
-            var title = node.title;
-            var key = node.key;
-            updateCollectionPaths(title, key);
-            showHideCollectionControls();
-        },
         dblclick: function(event, data) {
             var node = data.node;
             var title = node.title;
@@ -865,8 +853,14 @@ function initCollectionTree() {
         },
         collapse: function(event, data){
             data.node.resetLazy();
+        },
+        activate: function(event, data) {
+            var node = data.node;
+            var title = node.title;
+            var key = node.key;
+            updateCollectionPaths(title, key);
+            showHideCollectionControls();
         }
-
     });
 
     toggleCollectionTree(true);
@@ -911,8 +905,8 @@ function hideCollectionActionButtons() {
     $('#collection-remove-folder').hide();
     $('#collection-sharing').hide();
     $('#collection-create-resource').hide();
-    $('#remove-group-button').hide();
-    $('#upload-file-to-resource').hide();
+//    $('#remove-group-button').hide();
+//    $('#upload-file-to-resource').hide();
 }
 
 function toggleCollectionTree(show) {
@@ -956,10 +950,12 @@ function expandPath(fancyTreeObj, fullPath, actualPath){
 }
 
 /* refreshes the tree node */
-function refreshTreeNode(node) {
+function refreshTreeNode(node, callback) {
     if (node) {
         node.resetLazy();
-        node.setExpanded(true);
+        node.setExpanded(true).done(function(){
+            if (callback) callback();
+        });
     }
 }
 
@@ -986,11 +982,12 @@ function refreshParentTreeNode() {
     //reload the parent tree node
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
     var targetNode = fancyTree.getActiveNode();
-    var parentNode = targetNode.getParent();
-    parentNode.resetLazy();
-    parentNode.setExpanded();
+    if(targetNode) {
+        var parentNode = targetNode.getParent();
+        parentNode.resetLazy();
+        parentNode.setExpanded();
+    }
 }
-
 
 function refreshParentTreeNodeAndFocusOnChild(focusOnKey) {
     //reload the parent tree node
@@ -1364,7 +1361,7 @@ function createCollection(dialog) {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
     var name = $("#new-collection-name").val();
     var collection = fancyTree.getActiveNode().key;
-    // console.debug("create '" + name + "' in '" + collection + "'");
+    var currentNode = fancyTree.getNodeByKey(collection);
     var params = {
         action: 'create-collection', 
         name: name, 
@@ -1379,13 +1376,14 @@ function createCollection(dialog) {
             collection: collection
         },
         type: 'POST',
-        success:
-                function(data, message) {
-                    //reload the tree node
-                    refreshCurrentTreeNode();
-                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
-                    node.setExpanded();
-                },
+        success: function(data, message) {
+            //reload the tree node
+            console.debug(collection + "/" + name);
+            refreshTreeNode(currentNode, function(){
+                fancyTree.activateKey(collection + "/" + name, currentNode);
+            });
+
+        },
         error: function(response, message) {
             // alert("creating collection failed!")
             //ToDo: Popup when creating Collection failed
@@ -1398,42 +1396,44 @@ function createCollection(dialog) {
 }
 
 /*
- Called when the user clicks on the "rename" button in the rename collection dialog.
- */
+Called when the user clicks on the "rename" button in the rename collection dialog.
+*/
 function renameCollection(dialog) {
-    var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-    var name = $('#rename-collection-form input[name = name]').val();
-    var collection = fancyTree.getActiveNode().key;
-    // console.debug("rename '" + collection + "' to '" + name + "'");
-    
-    $.ajax({
-        url: "operations.xql",
-        data: {
-            action: 'rename-collection',
-            name: name, 
-            collection: collection
-        },
-        type: 'POST',
-        success:
-            function(data, message) {
-                //current node
-                var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
-                var currentNodeKey = currentNode.key;
-                currentNode.setTitle(name);
-                currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
-                refreshCurrentTreeNode();
-                currentNode.parent.sortChildren();
-                //If it has children, trigger reload to regenerate keys with new name
-                //ToDo: add recursive change child-keys to avoid reloading
-                
-            },
-        error: function(response, message) {
-            showMessage('Renaming collection failed: ' + response.responseText);
-        }
-    });
+   var fancyTree = $('#collection-tree-tree').fancytree("getTree");
+   var name = $('#rename-collection-form input[name = name]').val();
+   var collection = fancyTree.getActiveNode().key;
+   // console.debug("rename '" + collection + "' to '" + name + "'");
+   
+   $.ajax({
+       url: "operations.xql",
+       data: {
+           action: 'rename-collection',
+           name: name, 
+           collection: collection
+       },
+       type: 'POST',
+       success:
+           function(data, message) {
+               //current node
+               var currentNode = $("#collection-tree-tree").fancytree("getActiveNode");
+               var currentNodeKey = currentNode.key;
+               currentNode.setTitle(name);
+               currentNode.key = currentNodeKey.substring(0, currentNodeKey.lastIndexOf("/") + 1) + name;
+               currentNode.parent.sortChildren();
+               refreshTreeNode(currentNode.parent, function(){
+                       fancyTree.activateKey(currentNode.key);
+                   });
+               //If it has children, trigger reload to regenerate keys with new name
+               //ToDo: add recursive change child-keys to avoid reloading
+               
+           },
+       error: function(response, message) {
+           showMessage('Renaming collection failed: ' + response.responseText);
+       }
+   });
 
-    //close the dialog
-    dialog.dialog("close");
+   //close the dialog
+   dialog.dialog("close");
 }
 
 /*
@@ -1490,7 +1490,9 @@ function moveCollection(dialog) {
  */
 function removeCollection(dialog) {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-    var collection = fancyTree.getActiveNode().key;
+    var activeNode = fancyTree.getActiveNode();
+    var parentNode = activeNode.parent;
+    var collection = activeNode.key;
     
     $.ajax({
         url: "operations.xql",
@@ -1502,7 +1504,10 @@ function removeCollection(dialog) {
         success:
             function(data, message) { 
                 //remove Node from FancyTree
-                fancyTree.getActiveNode().remove();
+                activeNode.remove();
+                refreshTreeNode(parentNode, function(){
+                    fancyTree.activateKey(parentNode.key);
+                });
             },
         error: 
             function (response, message) { 
