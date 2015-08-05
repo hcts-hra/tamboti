@@ -362,7 +362,6 @@ so it is necessary to check against the path of the collection that is to be mov
 A file cannot, by stipulation, be moved into the top level of the home collection, nor can it be moved to its own parent collection.:)
 (:TODO: capture the collection that the resource to be moved belongs to.:)
 
-
 declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as element(select) {
     <select>
         {
@@ -375,7 +374,12 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                     (
                         $available-collection-path,
                         security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
-                        op:get-child-collection-paths($available-collection-path),
+                        let $log := util:log("INFO", "avail:" || $available-collection-path || "selected:" || $chosen-collection)
+                        return
+                        if(not($chosen-collection = $available-collection-path)) then
+                            op:get-child-collection-paths($available-collection-path)
+                        else
+                            (),
                         sharing:recursively-get-shared-subcollections(xs:anyURI($config:mods-root), true())
                     )
                     )
@@ -394,8 +398,9 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                 (:leave out the folder that the user has marked, since you cannot move something to itself:)
                 (:leave out descendant folders, since you cannot move a folders into a descendant:)
                 (:if (contains($path, $chosen-collection) or contains($chosen-collection, $path)):)
-                    if (not(sm:has-access($path, $valid-col-mode)) 
-                        or $path eq $chosen-collection 
+                    if (starts-with($path, $chosen-collection)
+                        or not(sm:has-access($path, $valid-col-mode))
+                        or $path eq $chosen-collection
                         or functx:substring-after-last($path, "/") = "VRA_images") then
                         () 
                     else
@@ -403,7 +408,8 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                     
         }
     </select>
-}; 
+};
+
 declare function op:get-move-list($chosen-collection as xs:anyURI, $type as xs:string) as element(select) {
     <select>
         {
