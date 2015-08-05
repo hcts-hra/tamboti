@@ -825,15 +825,6 @@ function initCollectionTree() {
             addFocusedKey: true, // add &focusedKey= parameter to URL
             addExpandedKeyList: true // add &expandedKeyList= parameter to URL
         },
-        onActivate: function(dtnode) {
-            /**
-             Executed when a tree node is clicked
-             */
-            var title = dtnode.data.title;
-            var key = dtnode.data.key;
-            updateCollectionPaths(title, key);
-            showHideCollectionControls();
-        },
         lazyLoad: function(event, data) {
             var node = data.node;
             
@@ -849,13 +840,6 @@ function initCollectionTree() {
             // when tree is reloaded, reactivate the current node to trigger an onActivate event
             this.reactivate();
         },
-        click: function(event, data) {
-            var node = data.node;
-            var title = node.title;
-            var key = node.key;
-            updateCollectionPaths(title, key);
-            showHideCollectionControls();
-        },
         dblclick: function(event, data) {
             var node = data.node;
             var title = node.title;
@@ -869,8 +853,14 @@ function initCollectionTree() {
         },
         collapse: function(event, data){
             data.node.resetLazy();
+        },
+        activate: function(event, data) {
+            var node = data.node;
+            var title = node.title;
+            var key = node.key;
+            updateCollectionPaths(title, key);
+            showHideCollectionControls();
         }
-
     });
 
     toggleCollectionTree(true);
@@ -915,8 +905,8 @@ function hideCollectionActionButtons() {
     $('#collection-remove-folder').hide();
     $('#collection-sharing').hide();
     $('#collection-create-resource').hide();
-    $('#remove-group-button').hide();
-    $('#upload-file-to-resource').hide();
+//    $('#remove-group-button').hide();
+//    $('#upload-file-to-resource').hide();
 }
 
 function toggleCollectionTree(show) {
@@ -964,7 +954,7 @@ function refreshTreeNode(node, callback) {
     if (node) {
         node.resetLazy();
         node.setExpanded(true).done(function(){
-            callback();
+            if (callback) callback();
         });
     }
 }
@@ -1371,7 +1361,7 @@ function createCollection(dialog) {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
     var name = $("#new-collection-name").val();
     var collection = fancyTree.getActiveNode().key;
-    // console.debug("create '" + name + "' in '" + collection + "'");
+    var currentNode = fancyTree.getNodeByKey(collection);
     var params = {
         action: 'create-collection', 
         name: name, 
@@ -1386,13 +1376,14 @@ function createCollection(dialog) {
             collection: collection
         },
         type: 'POST',
-        success:
-                function(data, message) {
-                    //reload the tree node
-                    refreshCurrentTreeNode();
-                    var node = $("#collection-tree-tree").fancytree("getActiveNode");
-                    node.setExpanded();
-                },
+        success: function(data, message) {
+            //reload the tree node
+            console.debug(collection + "/" + name);
+            refreshTreeNode(currentNode, function(){
+                fancyTree.activateKey(collection + "/" + name, currentNode);
+            });
+
+        },
         error: function(response, message) {
             // alert("creating collection failed!")
             //ToDo: Popup when creating Collection failed
@@ -1499,7 +1490,9 @@ function moveCollection(dialog) {
  */
 function removeCollection(dialog) {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
-    var collection = fancyTree.getActiveNode().key;
+    var activeNode = fancyTree.getActiveNode();
+    var parentNode = activeNode.parent;
+    var collection = activeNode.key;
     
     $.ajax({
         url: "operations.xql",
@@ -1511,7 +1504,10 @@ function removeCollection(dialog) {
         success:
             function(data, message) { 
                 //remove Node from FancyTree
-                fancyTree.getActiveNode().remove();
+                activeNode.remove();
+                refreshTreeNode(parentNode, function(){
+                    fancyTree.activateKey(parentNode.key);
+                });
             },
         error: 
             function (response, message) { 
