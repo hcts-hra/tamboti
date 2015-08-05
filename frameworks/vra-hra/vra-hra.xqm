@@ -269,6 +269,22 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                    <td>Tamboti MODS Record</td>
                </tr>
 
+    let $rights-node :=
+        let $rights := $entry//vra:rightsSet/vra:rights
+        for $right in $rights
+            let $type := $right/@type/string()
+            let $holder := 
+                if($right/vra:rightsHolder/string() = "") then
+                    ""
+                else
+                    " (by " || $right/vra:rightsHolder/string() || ")"
+            return
+               <tr>
+                   <td class="collection-label">{$type}</td>
+                   <td>{$right/vra:text/string()}<br/>
+                        {$holder}</td>
+               </tr>
+
     (: subjects :)
     let $subjects-node :=
         if ($entry//vra:subjectSet/vra:subject) then
@@ -377,6 +393,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
             {$material-node}
             {$technique-node}
             {$measurement-node}
+            {$rights-node}
             {$stable-link-node}
             {$image-embedding-node}
         </table>
