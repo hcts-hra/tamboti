@@ -374,8 +374,6 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                     (
                         $available-collection-path,
                         security:get-home-collection-uri(security:get-user-credential-from-session()[1]),
-                        let $log := util:log("INFO", "avail:" || $available-collection-path || "selected:" || $chosen-collection)
-                        return
                         if(not($chosen-collection = $available-collection-path)) then
                             op:get-child-collection-paths($available-collection-path)
                         else
