@@ -3,7 +3,7 @@ xquery version "3.0";
 import module namespace templates="http://exist-db.org/xquery/templates" at "templates.xql";
 import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
 
-declare option exist:serialize "method=xhtml media-type=application/xhtml+xml enforce-xhtml=yes";
+declare option exist:serialize "method=xml media-type=application/xml";
 
 declare variable $modules :=
     <modules>
@@ -24,3 +24,4 @@ return
     jquery:process(
         templates:apply($content, $modules, ())
     )
+    
