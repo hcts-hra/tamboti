@@ -770,7 +770,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                     let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
+                     try {
                             mods-hra-framework:format-detail-view(string($currentPos), $clean, $collection)
                         } catch * {
                         <td class="error" colspan="2">
@@ -916,7 +916,7 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
                     let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                        try {
+                     try {
                             mods-hra-framework:format-list-view(string($currentPos), $clean, $collection)
                         } catch * {
                         <td class="error" colspan="2">
