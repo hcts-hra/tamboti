@@ -126,16 +126,26 @@ $(function() {
     $("#results").on("mouseover", "td.list-image", function() {
         $(this).qtip({
               content: function() {
-                var element = $(this);
-                var record = element.closest("tr").find("div[class $= '-record']");
-                var recordType = record.attr("class").replace("-record", "");
-                var caption = record.html();
+                var container = $(this);
+                var captionContainer = container.closest("tr").find("div[class $= '-record']");
+                var recordType = captionContainer.attr("class").replace("-record", "");
+                var caption = captionContainer.html();
+                var activeElement = container.find("img:eq(1), svg");
                 
-                return $("<div class='" + recordType + "-record'>" + caption + "</div>");
+                if (activeElement.is("img")) {
+                    var src = activeElement.attr("src");
+                    src = src.replace("128,128", "280,280");
+                    return $("<img class='image-tooltip' alt='" + activeElement.attr("alt") + "' src='" + src + "' />" + "<div class='" + recordType + "-record'>" + caption + "</div>");    
+                }
+                
+                if (element.is("svg")) {
+                    //alert("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+                    return $("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+                }                
               },
               position: {
                       my: 'top left',
-                      at: 'bottom right'
+                      at: 'top right'
                   },            
           //     position: {
       	   // 	target: 'mouse',
@@ -150,38 +160,38 @@ $(function() {
         });
       });    
 
-      $("#results").on("mouseover", "td.list-image > *", function() {
-        $(this).qtip({
-              content: function() {
-                var element = $(this);
+    //   $("#results").on("mouseover", "td.list-image > *", function() {
+    //     $(this).qtip({
+    //           content: function() {
+    //             var element = $(this);
 
-                if (element.is("img")) {
-                    var src = element.attr("src");
-                    return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");    
-                }
+    //             if (element.is("img")) {
+    //                 var src = element.attr("src");
+    //                 return $("<img class='image-tooltip' alt='" + element.attr("alt") + "' src='" + src + "' />");    
+    //             }
                 
-                if (element.is("svg")) {
-                    //alert("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
-                    return $("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
-                }
+    //             if (element.is("svg")) {
+    //                 //alert("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+    //                 return $("<svg xmlns='http://www.w3.org/2000/svg' height='300' width='300' viewBox='323.526 442.775 425.197 425.197'>" + $(this).html() + "</svg>");
+    //             }
                 
-              },
-              position: {
-                      my: 'bottom left',
-                      at: 'top right'
-                  },    
-          //     position: {
-      	   // 	target: 'mouse',	    
-      	   //     adjust: { x: 5, y: 5 }
-          //     },          
-              show: {
-              ready: true
-              },
-            style: {
-              classes: 'qtip-light'
-            }
-        });
-      });
+    //           },
+    //           position: {
+    //                   my: 'bottom left',
+    //                   at: 'top right'
+    //               },    
+    //       //     position: {
+    //   	   // 	target: 'mouse',	    
+    //   	   //     adjust: { x: 5, y: 5 }
+    //       //     },          
+    //           show: {
+    //           ready: true
+    //           },
+    //         style: {
+    //           classes: 'qtip-light'
+    //         }
+    //     });
+    //   });
 
   // $("#results table").tooltip({
 //       items: "td.list-image a img",
