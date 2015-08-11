@@ -70,6 +70,14 @@
                 title: "Create Folder",
                 width: 450
             });
+            $("#new-collection-dialog").on("keydown", function (event) {
+                if (event.keyCode == 13) {
+                    $(this).parent()
+                           .find("button:eq(1)").trigger("click");
+                    return false;
+                }
+            });            
+            
             var trigger = '#collection-create-folder';
             if (trigger != '') {
                 $(trigger).click(function() {
