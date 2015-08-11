@@ -376,8 +376,6 @@ declare function local:get-tab-id($tab-id as xs:string, $type-request as xs:stri
 
 (:Main:)
 (:Find the record.:)
-(: Disable the betterFORM XForms filter on all requests. XSLTForms is used in Tamboti. :)
-let $dummy := request:set-attribute("betterform.filter.ignoreResponseBody", "true")
 let $record-id := request:get-parameter('id', '')
 let $temp-record-path := concat($config:mods-temp-collection, "/", $record-id,'.xml')
 
@@ -446,13 +444,8 @@ let $content := local:create-page-content($id, $tab-id, $type-request, $target-c
 
 return 
     (:Set serialization options.:)
-    (util:declare-option('exist:serialize', 'method=xhtml media-type=text/xml indent=yes process-xsl-pi=no')
+    (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
-    (:Reference the stylesheet.:)
-    processing-instruction xml-stylesheet {concat('type="text/xsl" href="', '/exist/rest/db/apps/xsltforms/xsltforms.xsl"')}
-    ,
-(:    processing-instruction xsltforms-options {'debug="yes" lang="en"'}:)
-(:    ,:)
     (:Construct the editor page.:)
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">
         <head>
