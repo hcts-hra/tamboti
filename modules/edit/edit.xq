@@ -218,7 +218,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
 
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
     (:Get the part of the form that belongs to the active tab.:)
-    let $form-body := collection(concat($config:edit-app-root, '/body'))/div[@tab-id eq $instance-id]
+    let $form-body := collection(concat($config:edit-app-root, '/body'))/*[local-name() = 'div'][@tab-id eq $instance-id]
     (:Get the relevant information to display in the info-line, 
     the label for the template chosen (if any) and the hint belonging to it (if any). :)
     let $hint-data := concat($config:edit-app-root, '/code-tables/hint-codes.xml')
