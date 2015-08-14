@@ -20,7 +20,7 @@ declare function local:generate-image-record($uuid, $file-uuid, $title, $workrec
             <image id="{$uuid}" source="Tamboti" refid="" href="{$file-uuid}">
                 <titleSet>
                     <display/>
-                    <title type="generalView">{concat('Image record ', xmldb:decode($title))}</title>
+                    <title type="descriptive">{concat('Image record ', xmldb:decode($title))}</title>
                 </titleSet>
                 <relationSet>
                     <relation type="imageOf" relids="{$workrecord}" refid="" source="Tamboti">attachment</relation>
@@ -83,7 +83,7 @@ declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string
         <work id="{$workrecord-uuid}" source="Kurs" refid="{$collection-uuid}">
             <titleSet>
                 <display/>
-                <title type="generalView">{concat('Work record ', $image-filename)}</title>
+                <title type="descriptive">{concat('Work record ', $image-filename)}</title>
             </titleSet>
         </work>
     </vra>    
