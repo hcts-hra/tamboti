@@ -183,7 +183,7 @@
         </item>
         <item xml:id="hint-code_abstract">
             <help>
-                <![CDATA[
+                
                 Abstract is used to record a succinct summary of some aspect of the content of
                 the resource.
                 Use one Abstract in every record, except when Title Information serves as an
@@ -193,7 +193,7 @@
                 summarize only that portion.
                 A link may be supplied in lieu of or in addition to a summary of the content.
                 Repeat Abstract as many times as necessary.
-                ]]>
+                
             </help>
             <local-name>abstract</local-name>
             <tab-id>abstract</tab-id>
@@ -601,7 +601,7 @@
         </item>
         <item xml:id="hint-code_copyrightDate-compact">
             <help>
-                <![CDATA[
+                
                 Note in Copyright Date the year in which copyright was claimed for the resource.
                 Copyright Date is typically found on the page following the title page. It
                 occurs in connection with a copyright symbol, (c) or ©.
@@ -613,7 +613,7 @@
                 dates in the corresponding two fields.
                 If no Point is specified a year noted in Copyright Date is assumed to be a
                 single year.
-                ]]>
+                
             </help>
             <local-name>copyrightDate</local-name>
             <tab-id>compact-a</tab-id>
@@ -661,7 +661,7 @@
         </item>
         <item xml:id="hint-code_dateIssued-compact">
             <help>
-                <![CDATA[
+                
                 Note in Date of Issue the year in which the resource was issued.
                 The Date of Issue is typically found on the title page, in connection with place
                 of publication and publisher.
@@ -676,7 +676,7 @@
                 The field Point will appear. Choose "start" in one Point and "end" in the other,
                 and enter the appropriate dates in the corresponding two fields.
                 If no Point is specified a year noted in date is assumed to be a single year.
-                ]]>
+                
             </help>
             <local-name>dateIssued</local-name>
             <tab-id>compact-a</tab-id>
@@ -816,18 +816,19 @@
         </item>
         <item xml:id="hint-code_temporal-encoding">
             <help>
-                <p> Encoding is used to note the encoding followed in the date notation.</p>
-                <p>The recommendation is to use the w3cdtf encoding. According to this encoding,
-                    dates are formatted in the following way: <ul>
+                <![CDATA[
+                Encoding is used to note the encoding followed in the date notation.
+                The recommendation is to use the w3cdtf encoding. According to this encoding,
+                dates are formatted in the following way: <ul>
                         <li>Year: YYYY (e.g. 1997)</li>
                         <li>Year and month: YYYY-MM (e.g. 1997-07)</li>
                         <li>Complete date: YYYY-MM-DD (e.g. 1997-07-16)</li>
                     </ul>
-                </p>
-                <p>For more options, use the Extended Date-Time Format
-                    (http://www.loc.gov/standards/datetime/).</p>
-                <p>If you are inputting a controlled subject term such as the designation of a
-                    period or an era, select "text". </p>
+                For more options, use the Extended Date-Time Format
+                (http://www.loc.gov/standards/datetime/).
+                If you are inputting a controlled subject term such as the designation of a
+                period or an era, select "text".
+                ]]>
             </help>
             <local-name>encoding</local-name>
             <tab-id>compact-c</tab-id>
@@ -872,7 +873,7 @@
         </item>
         <item xml:id="hint-code_extent-compact">
             <help>
-                <![CDATA[
+                
                 The number of units and the material of the units of the resource that express
                 physical extent. Typical entries for a book might read "xiv, 213 p.", "21 p. :
                 ill", "2 v.", " 3, 5, 697 p". Use 'p.' for page, 'v.' for volume and 'ill.' for
@@ -884,7 +885,7 @@
                 text string. The field is text-only and there are no more input options.
                 One could enter these values in other languages and scripts than English and
                 Latin, but this is not recommended.
-                ]]>
+                
             </help>
             <local-name>extent</local-name>
             <tab-id>compact-a</tab-id>
@@ -963,10 +964,10 @@
         </item>
         <item xml:id="hint-code_part-extent-unit">
             <help>
-                <![CDATA[
+                
                 Suggested values include page, minute, etc.
-                <!--NB: make code table with open selection?-->
-                ]]>
+                &lt;!--NB: make code table with open selection?--&gt;
+                
             </help>
             <local-name>unit</local-name>
             <tab-id>part</tab-id>
@@ -1077,16 +1078,18 @@
         </item>
         <item xml:id="hint-code_geographic">
             <help>
-                <p> Use here standard names for geographical places.</p>
-                <p> Add as many Place fields as you need.</p>
-                <p> The relation between the different fields is not specified, but one may start
-                    with more inclusive places and move down to more restricted terms, within the
-                    same Subject.</p>
-                <p> If the geographic name is part of a corporate body (for example, United States.
-                    Senate), it is coded as Name, not Geographic.</p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms. Here it is e.g. possible to parse geographic subject within
-                    the Hierarchical Geographic field.</p>
+                <![CDATA[
+                Use here standard names for geographical places.
+                Add as many Place fields as you need.
+                The relation between the different fields is not specified, but one may start
+                with more inclusive places and move down to more restricted terms, within the
+                same Subject.
+                If the geographic name is part of a corporate body (for example, United States.
+                Senate), it is coded as Name, not Geographic.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms. Here it is e.g. possible to parse geographic subject within
+                the Hierarchical Geographic field.
+                ]]>
             </help>
             <local-name>geographic</local-name>
             <tab-id>compact-c</tab-id>
@@ -1269,7 +1272,7 @@
         </item>
         <item xml:id="hint-code_identifier">
             <help>
-                <![CDATA[
+                
                 For books, enter here primarily the International Standard Book Number (ISBN) of
                 the book you are cataloguing or its Digital Object Identifier (DOI).
                 Use the 13-digit version of the ISBN number, if available.
@@ -1283,7 +1286,7 @@
                 The identifier element should refer to the digital resource being described or to
                 its analog equivalent. The identifier should identify the object universally;
                 local call numbers or other identifiers, therefore, are not generally suitable.
-                ]]>
+                
             </help>
             <value>identifier</value>
             <local-name>identifier</local-name>
@@ -1297,11 +1300,11 @@
         </item>
         <item xml:id="hint-code_internetMediaType-compact">
             <help>
-                <![CDATA[
+                
                 Use this field if the resource is electronic.
                 Internet Media Type specifies the electronic format type of the resource, such as
                 text/html, PDF file, JPEG image or executable application.
-                ]]>
+                
             </help>
             <hint/>
             <value>internetMediaType-compact</value>
@@ -1564,9 +1567,9 @@
         </item>
         <item xml:id="hint-code_more-related-item">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Related Items Forms tab.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-related-item</value>
@@ -1581,10 +1584,10 @@
         </item>
         <item xml:id="hint-code_more-physical-description">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Physical Description tab on the Citation
                 Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-physical-description</value>
@@ -1594,9 +1597,9 @@
         </item>
         <item xml:id="hint-code_more-location">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Locations tab on the Remaining Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-location</value>
@@ -1608,10 +1611,10 @@
         </item>
         <item xml:id="hint-code_more-identifier">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Identifiers tab on the Remaining
                 Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-identifier</value>
@@ -1634,10 +1637,10 @@
         </item>
         <item xml:id="hint-code_more-title-information">
             <help>
-            <![CDATA[
+            
                 More input options can be found on the Title Information tab on the Citation
                 Forms.
-            ]]>
+            
             </help>
             <hint/>
             <value>more-title-information</value>
@@ -1649,10 +1652,10 @@
         </item>
         <item xml:id="hint-code_more-name-information">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Name Information tab on the Citation
                     Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-name-information</value>
@@ -1666,10 +1669,10 @@
         </item>
         <item xml:id="hint-code_more-origin-information">
             <help>
-                <![CDATA[
+                
                 More input options can be found on the Origin Information tab on the Citation
                 Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>more-origin-information</value>
@@ -1710,7 +1713,7 @@
         </item>
         <item xml:id="hint-code_name-relatedItem-periodical-editor-compact">
             <help>
-                <![CDATA[
+                
                 In Editor(s) of Periodical, catalogue the names of the institution that serves
                 as editor of the periodical.
                 The editor of the periodical as such, not a specific issue, is recorded
@@ -1721,7 +1724,7 @@
                 in the first field and a more specific designation in the second field. If this
                 is not possible, enter the whole name in one field.
                 Please note that the role pertaining to a name follows the name in question.
-                ]]>
+                
             </help>
             <hint/>
             <value>name-relatedItem-periodical-editor-compact</value>
@@ -1733,7 +1736,7 @@
         </item>
         <item xml:id="hint-code_name-compact">
             <help>
-                <![CDATA[
+                
                 In Names and Roles, catalogue the names of each person, corporation or
                 conference associated with the resource.
                 Include as many Names and Roles as needed, by clicking the '+' button.
@@ -1746,7 +1749,7 @@
                 "Family Name" as is relevant.
                 Given Name and Family Name can occur in any order.
                 Please note that the role pertaining to a name follows the name in question.
-                ]]>
+                
             </help>
             <hint/>
             <value>name-compact</value>
@@ -1759,13 +1762,14 @@
         </item>
         <item xml:id="hint-code_subject-name-corporate-compact">
             <help>
-                <p> In Institution(s) as Topic, catalogue the names of the corporations occurring as
-                    topic in the catalogued resource.</p>
-                <p> Analyse each name into separate name parts. Record the more general designation
-                    in the first field and a more specific designation in the second field. If this
-                    is not possible, enter the whole name in one field.</p>
-                <p> Include as many names of institutions as needed, by clicking the '+' button.
-                </p>
+                <![CDATA[
+                In Institution(s) as Topic, catalogue the names of the corporations occurring as
+                topic in the catalogued resource.
+                Analyse each name into separate name parts. Record the more general designation
+                in the first field and a more specific designation in the second field. If this
+                is not possible, enter the whole name in one field.
+                Include as many names of institutions as needed, by clicking the '+' button.
+                ]]>
             </help>
             <hint/>
             <value>subject-name-corporate-compact</value>
@@ -1775,11 +1779,12 @@
         </item>
         <item xml:id="hint-code_subject-namePart-corporate-compact">
             <help>
-                <p> Analyse each name into separate name parts. Record the more general designation
-                    in the first field and a more specific designation in the second field. If this
-                    is not possible, enter the whole name in one field.</p>
-                <p> Include as many names of institutions as needed, by clicking the '+' button.
-                </p>
+                <![CDATA[
+                Analyse each name into separate name parts. Record the more general designation
+                in the first field and a more specific designation in the second field. If this
+                is not possible, enter the whole name in one field.
+                Include as many names of institutions as needed, by clicking the '+' button.
+                ]]>
             </help>
             <hint/>
             <value>subject-namePart-corporate-compact</value>
@@ -1789,11 +1794,11 @@
         </item>
         <item xml:id="hint-code_relatedItem-namePart-corporate-compact">
             <help>
-                <![CDATA[
+                
                 Analyse each name into separate name parts. Record the more general designation
                 in the first field and a more specific designation in the second field. If this
                 is not possible, enter the whole name in one field.
-                ]]>
+                
             </help>
             <hint/>
             <value>relatedItem-namePart-corporate-compact</value>
@@ -1805,9 +1810,11 @@
         </item>
         <item xml:id="hint-code_subject-name-personal-compact">
             <help>
-                <p> In Person(s) as Topic, catalogue the names of the persons or corporate entities
-                    that occur as topic in the work you are cataloguing.</p>
-                <p> Add as many Names as needed, by clicking the '+' button. </p>
+                <![CDATA[
+                In Person(s) as Topic, catalogue the names of the persons or corporate entities
+                that occur as topic in the work you are cataloguing.
+                Add as many Names as needed, by clicking the '+' button.
+                ]]>
             </help>
             <hint/>
             <value>subject-name-personal-compact</value>
@@ -1817,11 +1824,13 @@
         </item>
         <item xml:id="hint-code_subject-name">
             <help>
-                <p> In Persons and Institutions as Topics, catalogue the names of each person or
-                    institution that serves as topic of the resource you are cataloguing. </p>
-                <p> Add as many Persons and Institutions as Topics as is necessary. </p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms.</p>
+                <![CDATA[
+                In Persons and Institutions as Topics, catalogue the names of each person or
+                institution that serves as topic of the resource you are cataloguing.
+                Add as many Persons and Institutions as Topics as is necessary.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms.
+                ]]>
             </help>
             <hint/>
             <value>subject-name</value>
@@ -1901,7 +1910,7 @@
         </item>
         <item xml:id="hint-code_namePart-compact">
             <help>
-                <![CDATA[
+                
                 Analyse each name into separate name parts.
                 If possible, analyse each personal name into Given Name and Family Name.
                 If this is not possible, choose "(none selected)" and enter the whole name
@@ -1919,7 +1928,7 @@
                 If the name is in a language that is usually transliterated, enter the
                 transliterated name parts in their respective fields. Use the transliteration
                 scheme you chose when selecting a record template.
-                ]]>
+                
             </help>
             <hint/>
             <value>namePart-compact</value>
@@ -1934,9 +1943,11 @@
         </item>
         <item xml:id="hint-code_subject-namePart-personal-compact">
             <help>
-                <p> If possible, analyse each personal name into Given Name and Family Name. If this
-                    is not possible, select the Subjects tab on Content Description Forms and
-                    deselect the name part type.</p>
+                <![CDATA[
+                If possible, analyse each personal name into Given Name and Family Name. If this
+                is not possible, select the Subjects tab on Content Description Forms and
+                deselect the name part type.
+                ]]>
             </help>
             <hint/>
             <value>subject-namePart-personal-compact</value>
@@ -2011,12 +2022,12 @@
         </item>
         <item xml:id="hint-code_nonSort">
             <help>
-                <![CDATA[
+                
                 Non Sort contains characters, including initial articles (typically "A" and
                 "The" in English), punctuation, and spaces that appear at the beginning of a
                 title that should be ignored when indexing and sorting.
                 Non Sort should only be used with languages that have pre-posed articles.
-                ]]>
+                
             </help>
             <hint/>
             <value>nonSort</value>
@@ -2032,7 +2043,7 @@
         </item>
         <item xml:id="hint-code_note">
             <help>
-                <![CDATA[
+                
                 A note contains general information relating to a resource.
                 Notes should be used only for information that cannot be encoded in another,
                 more specific, ways.
@@ -2041,8 +2052,8 @@
                 markup is not well-formed XHTML, the record will be saved, but you will not be
                 able to access it through the search interface, since this only accepts
                 well-formed XHTML.
-                For the ampersand ('&amp;'), use '&amp;#x26;'.
-                ]]>
+                For the ampersand ('&amp;amp;'), use '&amp;amp;#x26;'.
+                
             </help>
             <hint/>
             <value>note</value>
@@ -2186,10 +2197,10 @@
         </item>
         <item xml:id="hint-code_originInfo-compact">
             <help>
-                <![CDATA[
+                
                 Enter here information about the publication's origin, including its place of
                 origin or publication, its publisher, and its date of issue or date of copyright.
-                ]]>
+                
             </help>
             <hint/>
             <value>originInfo-compact</value>
@@ -2202,19 +2213,19 @@
         </item>
         <item xml:id="hint-code_part-relatedItem-periodical-compact">
             <help>
-                <![CDATA[
-                For an article or a book review in a periodical, note here <ul>
-                        <li>in which volume and (if relevant) which issue the article or book review
-                            occurs in the periodical </li>
-                        <li>in which year the volume/issue was published</li>
-                        <li>on which pages the article occurs</li>
-                    </ul>.</p>
-                <p> For a contribution to an edited volume, note here <ul>
-                        <li>in which volume the contribution occurs in the edited volume</li>
-                        <li>leave volume and issue blank</li>
-                        <li>on which pages the contribution occurs</li>
-                    </ul>.
-                ]]>
+                
+                For an article or a book review in a periodical, note here &lt;ul&gt;
+                        &lt;li&gt;in which volume and (if relevant) which issue the article or book review
+                            occurs in the periodical &lt;/li&gt;
+                        &lt;li&gt;in which year the volume/issue was published&lt;/li&gt;
+                        &lt;li&gt;on which pages the article occurs&lt;/li&gt;
+                    &lt;/ul&gt;.&lt;/p&gt;
+                &lt;p&gt; For a contribution to an edited volume, note here &lt;ul&gt;
+                        &lt;li&gt;in which volume the contribution occurs in the edited volume&lt;/li&gt;
+                        &lt;li&gt;leave volume and issue blank&lt;/li&gt;
+                        &lt;li&gt;on which pages the contribution occurs&lt;/li&gt;
+                    &lt;/ul&gt;.
+                
             </help>
             <hint/>
             <value>part-relatedItem-periodical-compact</value>
@@ -2340,10 +2351,10 @@
         </item>
         <item xml:id="hint-code_physicalDescription-compact">
             <help>
-                <![CDATA[
+                
                 The Extent and (for some types of publication) the Internet Media Type of the
                 publication are noted in Physical Description.
-                ]]>
+                
             </help>
             <hint/>
             <value>physicalDescription-compact</value>
@@ -2424,7 +2435,7 @@
         </item>
         <item xml:id="hint-code_place-compact">
             <help>
-                <![CDATA[
+                
                 Record in City the name of the city in which the publisher has its principal
                 domicile, as noted on the title page.
                 If the publisher is housed in several cities, record the one given prominence on
@@ -2435,7 +2446,7 @@
                 If the city name is in a language that is usually transliterated, enter the
                 transliterated city name in its field. Use the transliteration scheme you chose
                 when selecting a record template.
-                ]]>
+                
             </help>
             <hint/>
             <value>place-compact</value>
@@ -2509,12 +2520,14 @@
         </item>
         <item xml:id="hint-code_point">
             <help>
-                <p> Use Point if you wish to record a span of time, e.g. 1912-1914.</p>
-                <p>The following values are used with Point: start, end.</p>
-                <p> Repeat the date field and choose "start" in one and "end" in the other
-                    repetition, and enter the appropriate dates in the two date fields. </p>
-                <p> If no point is specified, a date is assumed to be a single date, i.e. a whole
-                    year, month or day. </p>
+                <![CDATA[
+                Use Point if you wish to record a span of time, e.g. 1912-1914.
+                The following values are used with Point: start, end.
+                Repeat the date field and choose "start" in one and "end" in the other
+                repetition, and enter the appropriate dates in the two date fields.
+                If no point is specified, a date is assumed to be a single date, i.e. a whole
+                year, month or day.
+                ]]>
             </help>
             <value>point</value>
             <local-name>point</local-name>
@@ -2548,7 +2561,7 @@
         </item>
         <item xml:id="hint-code_publisher-compact">
             <help>
-                <![CDATA[
+                
                 Record in Publisher the name of the entity that is the originator for a
                 resource, i.e. that has published, printed, distributed, released, issued, or
                 produced it, as noted on the title page.
@@ -2557,7 +2570,7 @@
                 If the publisher name is in a language that is usually transliterated, enter the
                 transliterated publisher name in its field. Use the transliteration scheme you
                 chose when selecting a record template.
-                ]]>
+                
             </help>
             <hint/>
             <value>publisher-compact</value>
@@ -2615,13 +2628,13 @@
         </item>
         <item xml:id="hint-code_relatedItem-periodical-compact">
             <help>
-                <![CDATA[
+                
                 Enter here information related to the periodical that the article you are
                 cataloguing occurs in.
                 This information falls into two groups: general information relating to the
                 periodical and specific information relating to the location of the article in
                 the periodical.
-                ]]>
+                
             </help>
             <value>relatedItem-periodical-compact</value>
             <local-name>relatedItem</local-name>
@@ -2631,7 +2644,7 @@
         </item>
         <item xml:id="hint-code_relatedItem-periodical-titleInfo-compact">
             <help>
-                <![CDATA[
+                
                 Enter here the title of the periodical you are cataloguing. If the title divides
                 into a main title and a subtitle, enter each part in its separate field.
                 If you have chosen a transliteration scheme when you created the record, you
@@ -2642,7 +2655,7 @@
                 If you believe it is useful to supply a translation of the title, do so in the
                 relevant fields. If the language that the title information is translated into
                 is not English, you should choose another language.
-                ]]>
+                
             </help>
             <value>relatedItem-periodical-titleInfo-compact</value>
             <local-name>relatedItem</local-name>
@@ -2798,12 +2811,12 @@
         </item>
         <item xml:id="hint-code_role-compact">
             <help>
-                <![CDATA[
+                
                 Role contains a description of the role of the person or institution named above 
                 to the resource being catalogued.
                 Repeat Role for each new role played by the named entity, i.e. the same person
                 or institution can have several roles in relation to one resource.
-                ]]>
+                
             </help>
             <hint/>
             <value>role-compact</value>
@@ -3024,7 +3037,7 @@
         </item>
         <item xml:id="hint-code_script-compact">
             <help>
-                <![CDATA[
+                
                 Global Script specifies the script used within individual fields. The use of
                 Latin script is not noted.
                 "Chinese" is "Han (Simplified Variant)" or "Han (Traditional Variant)". If the
@@ -3037,7 +3050,7 @@
                 If you need to specify a script for an individual field that is different from
                 the global script, you should use the Citation Forms. Here script can be applied
                 to individual fields.
-                ]]>
+                
             </help>
             <hint/>
             <value>script-compact</value>
@@ -3086,55 +3099,57 @@
         </item>
         <item xml:id="hint-code_subject">
             <help>
-                <p> A Subject is a term or a phrase that represents the primary topic(s) on which a
-                    work is focused. Use at least one Subject field in each record to allow
-                    retrieval of the record by its contents. Enter as many specific terms as
-                    necessary to capture the contents. Be consistent in the formatting of Subject
-                    terms. </p>
-                <p> A publication is often on a number of different subjects. If these are separate
-                    subjects, repeat the Subject instead of storing diverse information inside one
-                    Subject.</p>
-                <p> Values for Subject indicate which contents is found within or represented by the
-                    work, and these values typically answer such questions as who, what, where, and
-                    when.</p>
-                <p> While it is allowed to place multiple values in a single Subject field, such as
-                    within on Topic field, it is the preferred practice to split up Subject terms
-                    into separate sub-fields, each of which answer the question of who, what, where,
-                    and when in relation to the resource being catalogued. Analyse as much as
-                    possible.</p>
-                <p> A Subject is basically composed of a Topic, a Place reference and a Time
-                    reference. All these fields are optional, that is, one can have a Topic without
-                    any Place or Time reference, and one can have a Place reference without a Topic
-                    or a Time reference. To have a Time reference all on its own would be a little
-                    unusual, but if period labels are used, this might still be acceptable.</p>
-                <p> Topics can be divided into different kinds: "plain" Topics, Name topics and Work
-                    topics. "Plain" topics are references to abstract or concrete entities that are
-                    not persons or organisations or works created by these. Topics of this kind are
-                    "beauty" or "bicycle", "democracy" or "doors". No distinction is made between
-                    abstract or concrete topics. </p>
-                <p> In addition to plain topics, a person or an institution can serve as topic,
-                    examples being "George Washington" or "United Nations." These are identified by
-                    their names. If a work of literature or art, or any other creation, serves as
-                    topic, it is identified by its title. These three subtypes address different
-                    aspects of the "what" of a subject. </p>
-                <p> In order not to complicate matters, no notice is here taken of language, script,
-                    transliteration, etc. If you need to enter information using these categories,
-                    select the Subjects tab on Content Description Forms.</p>
-                <p> The "where" of a subject can be expressed in a number of ways. "Place" simply
-                    contains the name of the place. </p>
-                <p> "Time", the answer to "when," can be encoded in a number of different ways. The
-                    recommendation is to use the w3cdtf encoding. According to this encoding, dates
-                    are formatted in the following way: Year: YYYY (e.g. 1997); Year and month:
-                    YYYY-MM (e.g. 1997-07); Complete date: YYYY-MM-DD (e.g. 1997-07-16). </p>
-                <p> Date ranges are indicated using "start" and "end" in Point. If a date range is
-                    open to one side, leave that side blank. If the date is completely unknown,
-                    leave the Date field blank. </p>
-                <p> In Time one can also use period designations, such as "the Middle Ages" and
-                    "Industrialisation," with the dangers of differing construals of what these
-                    labels denote. If you enter a time designation which uses a designation of this
-                    type, choose "text" in type.</p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms.</p>
+                <![CDATA[
+                A Subject is a term or a phrase that represents the primary topic(s) on which a
+                work is focused. Use at least one Subject field in each record to allow
+                retrieval of the record by its contents. Enter as many specific terms as
+                necessary to capture the contents. Be consistent in the formatting of Subject
+                terms.
+                A publication is often on a number of different subjects. If these are separate
+                subjects, repeat the Subject instead of storing diverse information inside one
+                Subject.
+                Values for Subject indicate which contents is found within or represented by the
+                work, and these values typically answer such questions as who, what, where, and
+                when.
+                While it is allowed to place multiple values in a single Subject field, such as
+                within on Topic field, it is the preferred practice to split up Subject terms
+                into separate sub-fields, each of which answer the question of who, what, where,
+                and when in relation to the resource being catalogued. Analyse as much as
+                possible.
+                A Subject is basically composed of a Topic, a Place reference and a Time
+                reference. All these fields are optional, that is, one can have a Topic without
+                any Place or Time reference, and one can have a Place reference without a Topic
+                or a Time reference. To have a Time reference all on its own would be a little
+                unusual, but if period labels are used, this might still be acceptable.
+                Topics can be divided into different kinds: "plain" Topics, Name topics and Work
+                topics. "Plain" topics are references to abstract or concrete entities that are
+                not persons or organisations or works created by these. Topics of this kind are
+                "beauty" or "bicycle", "democracy" or "doors". No distinction is made between
+                abstract or concrete topics.
+                In addition to plain topics, a person or an institution can serve as topic,
+                examples being "George Washington" or "United Nations." These are identified by
+                their names. If a work of literature or art, or any other creation, serves as
+                topic, it is identified by its title. These three subtypes address different
+                aspects of the "what" of a subject.
+                In order not to complicate matters, no notice is here taken of language, script,
+                transliteration, etc. If you need to enter information using these categories,
+                select the Subjects tab on Content Description Forms.
+                The "where" of a subject can be expressed in a number of ways. "Place" simply
+                contains the name of the place.
+                "Time", the answer to "when," can be encoded in a number of different ways. The
+                recommendation is to use the w3cdtf encoding. According to this encoding, dates
+                are formatted in the following way: Year: YYYY (e.g. 1997); Year and month:
+                YYYY-MM (e.g. 1997-07); Complete date: YYYY-MM-DD (e.g. 1997-07-16).
+                Date ranges are indicated using "start" and "end" in Point. If a date range is
+                open to one side, leave that side blank. If the date is completely unknown,
+                leave the Date field blank.
+                In Time one can also use period designations, such as "the Middle Ages" and
+                "Industrialisation," with the dangers of differing construals of what these
+                labels denote. If you enter a time designation which uses a designation of this
+                type, choose "text" in type.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms.
+                ]]>
             </help>
             <hint/>
             <value>subject</value>
@@ -3168,14 +3183,14 @@
         </item>
         <item xml:id="hint-code_subTitle-compact">
             <help>
-                <![CDATA[
+                
                 Subtitle is used to record a part of a title that is secondary to the core
                 title.
                 Use Subtitle whenever a subtitle is present, rather than including the subtitle
                 in Title.
                 Subtitle contains every part of the title that do not belong in Non Sort, Title,
                 Part Number or Part Name.
-                ]]>
+                
             </help>
             <hint/>
             <value>subTitle-compact</value>
@@ -3254,19 +3269,21 @@
         </item>
         <item xml:id="hint-code_temporal">
             <help>
-                <p> Use Time for chronological Subject terms to denote temporal coverage. Time may
-                    be expressed as a term (e.g. "Middle Ages") or as a structured date (e.g.
-                    "2001-09-11"). In the first case, choose "text" in Type; otherwise choose
-                    "YYY-MM-DD" and enter the time you wish to refer to as precisely as
-                    possible.</p>
-                <p> One may leave out the MM and DD parts, to denote larger stretches of time. For
-                    more options, use the Extended Date-Time Format
-                    (http://www.loc.gov/standards/datetime/).</p>
-                <p> Point is used to note whether the date noted is a start point or an end point
-                    when using a structured date. If no point is specified, date is assumed to be a
-                    single date. </p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms.</p>
+                <![CDATA[
+                Use Time for chronological Subject terms to denote temporal coverage. Time may
+                be expressed as a term (e.g. "Middle Ages") or as a structured date (e.g.
+                "2001-09-11"). In the first case, choose "text" in Type; otherwise choose
+                "YYY-MM-DD" and enter the time you wish to refer to as precisely as
+                possible.
+                One may leave out the MM and DD parts, to denote larger stretches of time. For
+                more options, use the Extended Date-Time Format
+                (http://www.loc.gov/standards/datetime/).
+                Point is used to note whether the date noted is a start point or an end point
+                when using a structured date. If no point is specified, date is assumed to be a
+                single date.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms.
+                ]]>
             </help>
             <hint/>
             <value>temporal</value>
@@ -3319,13 +3336,13 @@
         </item>
         <item xml:id="hint-code_title-compact">
             <help>
-                <![CDATA[
+                
                 Title contains the core title of the resource catalogued.
                 At least one Title is required. When no title appears on the item being
                 described, a title should be supplied.
                 Title includes all parts of a title that are not covered by Non Sort, Subtitle,
                 Part Number and Part Name.
-                ]]>
+                
             </help>
             <hint/>
             <value>title-compact</value>
@@ -3339,34 +3356,36 @@
         </item>
         <item xml:id="hint-code_subject-titleInfo">
             <help>
-                <p> Title Information is used under Subject to note when the resource catalogued is
-                    about another resource with a title, e.g. when it is a book about another book
-                    or an article about a work of art. The aim is here not to refer to a concrete
-                    publication, but to a more abstract work. This may be a written work, such as
-                    "Hamlet", a work of art, such a "Guernica", or a work of music, such as "The
-                    Wall", etc.</p>
-                <p> (Note that there is no regular way of recording authorship, editorship and so
-                    on. If a person or institution needs to be pointed to in order to identify a
-                    work, one can add such a reference in Persons and Institutions as Topic, but
-                    there is no place to specify the relation of the person or institution to the
-                    work.).</p>
-                <p> If the title divides into a main title and a subtitle, enter each part in its
-                    separate field. </p>
-                <p> A Title Information consists of a Title and fields that relate to it. A Title
-                    may have a Subtitle, usually an expansion of the Title proper. If the Title
-                    begins with a word according to which it should not be sorted (such as "The" or
-                    "A" and the like), enter this word in Non Sort and remove it from Title. </p>
-                <p> The division between basic, alternative, translated, transliterated or uniform
-                    titles is not observed here, in the interest of simplicity. If you need to enter
-                    information using these categories, select the Subjects tab on Content
-                    Description Forms.</p>
-                <p> Part Number and Part Name are not used here. If you need to enter information
-                    using these categories, select the Subjects tab on Content Description Forms. </p>
-                <p> The language, script and transliteration of the title is not recorded in this
-                    interface. If you need to enter information using these categories, select the
-                    Subjects tab on Content Description Forms. </p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms.</p>
+                <![CDATA[
+                Title Information is used under Subject to note when the resource catalogued is
+                about another resource with a title, e.g. when it is a book about another book
+                or an article about a work of art. The aim is here not to refer to a concrete
+                publication, but to a more abstract work. This may be a written work, such as
+                "Hamlet", a work of art, such a "Guernica", or a work of music, such as "The
+                Wall", etc.
+                (Note that there is no regular way of recording authorship, editorship and so
+                on. If a person or institution needs to be pointed to in order to identify a
+                work, one can add such a reference in Persons and Institutions as Topic, but
+                there is no place to specify the relation of the person or institution to the
+                work.).
+                If the title divides into a main title and a subtitle, enter each part in its
+                separate field.
+                A Title Information consists of a Title and fields that relate to it. A Title
+                may have a Subtitle, usually an expansion of the Title proper. If the Title
+                begins with a word according to which it should not be sorted (such as "The" or
+                "A" and the like), enter this word in Non Sort and remove it from Title.
+                The division between basic, alternative, translated, transliterated or uniform
+                titles is not observed here, in the interest of simplicity. If you need to enter
+                information using these categories, select the Subjects tab on Content
+                Description Forms.
+                Part Number and Part Name are not used here. If you need to enter information
+                using these categories, select the Subjects tab on Content Description Forms.
+                The language, script and transliteration of the title is not recorded in this
+                interface. If you need to enter information using these categories, select the
+                Subjects tab on Content Description Forms.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms.
+                ]]>
             </help>
             <hint/>
             <value>subject-titleInfo</value>
@@ -3419,7 +3438,7 @@
             <tab-id>title</tab-id>
         </item>
         <item xml:id="hint-code_titleInfo-compact">
-            <help><![CDATA[
+            <help>
                 Enter here the title of the publication that you are cataloguing. This
                 publication may be a book, an edited volume, a periodical, an article, or a
                 contribution to an edited volume.
@@ -3437,7 +3456,7 @@
                 If you believe it is useful to supply a translation of the title, do so in the
                 relevant fields. If the language that the title information is translated into
                 is not English, you should choose another language.
-                    ]]>
+                    
             </help>
             <hint/>
             <value>titleInfo-compact</value>
@@ -3527,23 +3546,25 @@
         </item>
         <item xml:id="hint-code_topic">
             <help>
-                <p> Use Topic to indicate any primary subjects that do not fit into the Place, Time,
-                    Works as Topics, or Persons and Institutions as Topics sub-fields. In general,
-                    abstract nouns should be used. Add as many Topic fields as you need in order to
-                    analyse your topic. The relation between the different fields is not specified,
-                    but one may start with more abstract terms and move to more specific terms,
-                    within the same Subject.</p>
-                <p> Before adding a Topic, consider whether what you are cataloguing is not rather
-                    another Subject. There are no hard-and-fast rules here, but it is best to
-                    analyse as much as possible, i.e. if the term to be entered as a Topic is not a
-                    specification of the Topic term already entered, one should probably add another
-                    Subject instead of another Topic.</p>
-                <p> More input options can be accessed by clicking the Subjects tab on Content
-                    Description Forms.</p>
-                <p> While it is highly recommended that subject values be parsed into sub-fields,
-                    they are often listed as a string, divided by e.g. double dashes, as in Library
-                    of Congress Subject Headings. If you have imported such Subjects, please analyse
-                    them.</p>
+                <![CDATA[
+                Use Topic to indicate any primary subjects that do not fit into the Place, Time,
+                Works as Topics, or Persons and Institutions as Topics sub-fields. In general,
+                abstract nouns should be used. Add as many Topic fields as you need in order to
+                analyse your topic. The relation between the different fields is not specified,
+                but one may start with more abstract terms and move to more specific terms,
+                within the same Subject.
+                Before adding a Topic, consider whether what you are cataloguing is not rather
+                another Subject. There are no hard-and-fast rules here, but it is best to
+                analyse as much as possible, i.e. if the term to be entered as a Topic is not a
+                specification of the Topic term already entered, one should probably add another
+                Subject instead of another Topic.
+                More input options can be accessed by clicking the Subjects tab on Content
+                Description Forms.
+                While it is highly recommended that subject values be parsed into sub-fields,
+                they are often listed as a string, divided by e.g. double dashes, as in Library
+                of Congress Subject Headings. If you have imported such Subjects, please analyse
+                them.
+                ]]>
             </help>
             <hint/>
             <value>topic</value>
@@ -3600,7 +3621,7 @@
         </item>
         <item xml:id="hint-code_transliteration-global-compact">
             <help>
-                <![CDATA[
+                
                 Global Transliteration specifies the transliteration (transcription,
                 romanisation) scheme used.
                 Note that the value shown here is the value chosen when the record template was
@@ -3609,7 +3630,7 @@
                 record.
                 The Global Transliteration can be overruled for a specific field by choosing a
                 Local Transliteration in Citation Forms.
-                ]]>
+                
             </help>
             <hint/>
             <value>transliteration-global-compact</value>
@@ -3656,9 +3677,9 @@
         </item>
         <item xml:id="hint-code_identifier-type">
             <help>
-                <![CDATA[
+                
                 Type identifies the type of identifier that is recorded.
-                ]]>
+                
             </help>
             <value>identifier-type</value>
             <local-name>type</local-name>
@@ -3714,7 +3735,9 @@
         </item>
         <item xml:id="hint-code_genre-type">
             <help>
-                <p>Distinguishes different aspects of genre, such as class, work type or style.</p>
+                <![CDATA[
+                Distinguishes different aspects of genre, such as class, work type or style.
+                ]]>
             </help>
             <value>genre-type</value>
             <local-name>type</local-name>
@@ -3735,9 +3758,9 @@
         </item>
         <item xml:id="hint-code_languageTerm-type">
             <help>
-                <![CDATA[
+                
                 Hint
-                ]]>
+                
             </help>
             <hint/>
             <value>languageTerm-type</value>
@@ -3798,11 +3821,11 @@
         </item>
         <item xml:id="hint-code_url-compact">
             <help>
-                <![CDATA[
+                
                 In URL, record the Uniform Resource Locator (URL) of the resource if it has been
                 accessed on the Internet.
                 Note also the date of the last time you have accessed the resource.
-                ]]>
+                
             </help>
             <hint/>
             <value>url-compact</value>
@@ -3849,10 +3872,12 @@
         </item>
         <item xml:id="hint-code_value-uri">
             <help>
-                <p>A URI uniquely identifying the term or controlled value from a vocabulary, as
-                    assigned by the body responsible for the maintenance of the vocabulary.</p>
-                <p>URIs identifying terms may or may not be dereferenceable to human- or
-                    machine-readable records for the term.</p>
+                <![CDATA[
+                A URI uniquely identifying the term or controlled value from a vocabulary, as
+                assigned by the body responsible for the maintenance of the vocabulary.
+                URIs identifying terms may or may not be dereferenceable to human- or
+                machine-readable records for the term.
+                ]]>
             </help>
             <hint/>
             <value>value-uri</value>
