@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="compact block-form" tab-id="compact-b-moving-images" ext:dummy="dummy" xlink:dummy="dummy">
     <xf:group>
         <fieldset class="level-1">
@@ -49,84 +48,29 @@
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Non
-                                                  Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+	                                    <xf:label>
+	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''">
+	                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+	                                        </xf:output> 
+	                                    </xf:label>
                                     </xf:input>
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:title" class="text_150 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+	                                    <xf:label>
+	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''">
+	                                            <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>                                    
+	                                    </xf:label>
                                     </xf:input>
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+				                        <xf:label>
+				                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
+				                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+				                            </xf:output>                            
+				                        </xf:label>
                                     </xf:input>
                                 </xf:group>
                             </xf:repeat>
@@ -258,84 +202,29 @@
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Non
-                                                  Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+	                                    <xf:label>
+	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''">
+	                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+	                                        </xf:output> 
+	                                    </xf:label>
                                     </xf:input>
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:title" class="text_150 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_title-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+	                                    <xf:label>
+	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''">
+	                                            <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>                                    
+	                                    </xf:label>
                                     </xf:input>
                                 </xf:group>
                                 <xf:group>
                                     <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-                                        <xf:label>
-                                            <xf:group ref=".[string-length(../@type) = 0]">Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle<span class="xforms-help">
-                                                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                    <div class="xforms-help-value">
-                                                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"/>
-                                                    </div>
-                                                </span>
-                                            </xf:group>
-                                        </xf:label>
+				                        <xf:label>
+				                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
+				                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+				                            </xf:output>                            
+				                        </xf:label>
                                     </xf:input>
                                 </xf:group>
                             </xf:repeat>
