@@ -1,5 +1,5 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="title block-form" tab-id="title" ext:dummy="dummy" xlink:dummy="dummy">
-    <xf:group class="schema_3.3 schema_3.4 schema_3.5">
+    <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
                 <xf:output value="'Title Information'">
@@ -271,7 +271,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@authority]">
+                <xf:group ref=".[@authority]">
                     <xf:select1 ref="./@authority" selection="open">
                         <xf:label>
                             <xf:output value="'Abbreviated Title Authorities'">
@@ -284,7 +284,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@authority]">
+                <xf:group ref=".[@authority]">
                     <xf:select1 ref="./@authority" selection="open">
                         <xf:label>
                             <xf:output value="'Name-Title Authorities'">
@@ -297,7 +297,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.4 schema_3.5" ref=".[@authorityURI]">
+                <xf:group ref=".[@authorityURI]">
                     <xf:input ref="./@authorityURI">
                         <xf:label>
                             <xf:output value="'Authority URI'">
@@ -306,7 +306,7 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <xf:group class="text_100 schema_3.3 schema_3.4 schema_3.5" ref=".[@displayLabel]">
+                <xf:group class="text_100" ref=".[@displayLabel]">
                     <xf:input ref="./@displayLabel">
                         <xf:label>
                             <xf:output value="'Display Label'">
@@ -315,7 +315,7 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <xf:group class="text_50 schema_3.3 schema_3.4 schema_3.5" ref=".[@ID]">
+                <xf:group class="text_50" ref=".[@ID]">
                     <xf:input ref="./@ID">
                         <xf:label>
                             <xf:output value="'ID'">
@@ -324,7 +324,7 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <xf:group class="schema_3.4 schema_3.5" ref=".[@nameTitleGroup]">
+                <xf:group ref=".[@nameTitleGroup]">
                     <xf:select1 ref="./@nameTitleGroup" selection="open">
                         <xf:label>
                             <xf:output value="'Name-Title Group'">
@@ -337,7 +337,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@supplied]">
+                <xf:group ref=".[@supplied]">
                     <xf:select1 ref="./@supplied">
                         <xf:label>
                             <xf:output value="'Supplied'">
@@ -350,7 +350,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@type]">
+                <xf:group ref=".[@type]">
                     <xf:select1 ref="./@type">
                         <xf:label>
                             <xf:output value="'Type'">
@@ -363,7 +363,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.4 schema_3.5 select" ref=".[@usage]">
+                <xf:group class="select" ref=".[@usage]">
                     <xf:select1 ref="./@usage">
                         <xf:label>
                             <xf:output value="'Usage'">
@@ -376,7 +376,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.4 schema_3.5" ref=".[@valueURI]">
+                <xf:group ref=".[@valueURI]">
                     <xf:input ref="./@valueURI">
                         <xf:label>
                             <xf:output value="'Value URI'">
@@ -385,7 +385,7 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <xf:group class="text_50 schema_3.3 schema_3.4 schema_3.5" ref=".[@xlink:href]">
+                <xf:group class="text_50" ref=".[@xlink:href]">
                     <xf:input ref="./@xlink:href">
                         <xf:label>
                             <xf:output value="'xlink:href'">
@@ -394,7 +394,7 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@lang]">
+                <xf:group ref=".[@lang]">
                     <xf:select1 ref="./@lang">
                         <xf:label>
                             <xf:output value="'Language'">
@@ -407,7 +407,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@script]">
+                <xf:group ref=".[@script]">
                     <xf:select1 ref="./@script">
                         <xf:label>
                             <xf:output value="'Script'">
@@ -420,7 +420,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@transliteration]">
+                <xf:group ref=".[@transliteration]">
                     <xf:select1 ref="./@transliteration" selection="open">
                         <xf:label>
                             <xf:output value="'Transliteration'">
@@ -433,7 +433,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" ref=".[@xml:lang]">
+                <xf:group ref=".[@xml:lang]">
                     <xf:select1 ref="./@xml:lang">
                         <xf:label>
                             <xf:output value="'xml:lang'">
@@ -446,7 +446,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group><!-- non-repeating --><!-- attributes: lang; xml:lang; script; transliteration. --><!-- subelements: none. -->
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full" ref=".[mods:nonSort]">
+                <xf:group appearance="full" ref=".[mods:nonSort]">
                     <fieldset class="level-2">
                         <div class="label-box">
                             <xf:output value="'Non Sort'">
@@ -514,7 +514,7 @@
                                     </xf:case>
                                 </xf:switch>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@lang]">
+                            <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
                                         <xf:output value="'Language'">
@@ -527,7 +527,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@script]">
+                            <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
                                         <xf:output value="'Script'">
@@ -540,7 +540,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@transliteration]">
+                            <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
                                     <xf:label>
                                         <xf:output value="'Transliteration'">
@@ -553,7 +553,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@xml:lang]">
+                            <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
                                         <xf:output value="'xml:lang'">
@@ -567,7 +567,7 @@
                                 </xf:select1>
                             </xf:group>
                             <br/>
-                            <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full">
+                            <xf:group appearance="full">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>
                                         <xf:output value="'Non Sort'">
@@ -579,7 +579,7 @@
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full" ref=".[mods:title]">
+                <xf:group appearance="full" ref=".[mods:title]">
                     <fieldset class="level-2">
                         <div class="label-box">
                             <xf:output value="'Title'">
@@ -639,7 +639,7 @@
                                     </xf:case>
                                 </xf:switch>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@lang]">
+                            <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
                                         <xf:output value="'Language'">
@@ -652,7 +652,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@script]">
+                            <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
                                         <xf:output value="'Script'">
@@ -665,7 +665,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@transliteration]">
+                            <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
                                     <xf:label>
                                         <xf:output value="'Transliteration'">
@@ -678,7 +678,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@xml:lang]">
+                            <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
                                         <xf:output value="'xml:lang'">
@@ -692,7 +692,7 @@
                                 </xf:select1>
                             </xf:group>
                             <br/>
-                            <xf:group class="textarea schema_3.3 schema_3.4 schema_3.5" appearance="full">
+                            <xf:group class="textarea" appearance="full">
                                 <xf:textarea ref=".">
                                     <xf:label>
                                         <xf:output value="'Title'">
@@ -704,7 +704,7 @@
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full" ref=".[mods:subTitle]">
+                <xf:group appearance="full" ref=".[mods:subTitle]">
                     <fieldset class="level-2">
                         <div class="label-box">
                             <xf:output value="'Subtitle'">
@@ -772,7 +772,7 @@
                                     </xf:case>
                                 </xf:switch>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@lang]">
+                            <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
                                         <xf:output value="'Language'">
@@ -785,7 +785,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@script]">
+                            <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
                                         <xf:output value="'Script'">
@@ -798,7 +798,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@transliteration]">
+                            <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
                                     <xf:label>
                                         <xf:output value="'Transliteration'">
@@ -811,7 +811,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@xml:lang]">
+                            <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
                                         <xf:output value="'xml:lang'">
@@ -825,7 +825,7 @@
                                 </xf:select1>
                             </xf:group>
                             <br/>
-                            <xf:group class="textarea schema_3.3 schema_3.4 schema_3.5" appearance="full">
+                            <xf:group class="textarea" appearance="full">
                                 <xf:textarea ref=".">
                                     <xf:label>
                                         <xf:output value="'Subtitle'">
@@ -837,7 +837,7 @@
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full" ref=".[mods:partNumber]">
+                <xf:group appearance="full" ref=".[mods:partNumber]">
                     <fieldset class="level-2">
                         <div class="label-box">
                             <xf:output value="'Part Number'">
@@ -905,7 +905,7 @@
                                     </xf:case>
                                 </xf:switch>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@lang]">
+                            <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
                                         <xf:output value="'Language'">
@@ -918,7 +918,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@script]">
+                            <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
                                         <xf:output value="'Script'">
@@ -931,7 +931,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@transliteration]">
+                            <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
                                     <xf:label>
                                         <xf:output value="'Transliteration'">
@@ -944,7 +944,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@xml:lang]">
+                            <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
                                         <xf:output value="'xml:lang'">
@@ -958,7 +958,7 @@
                                 </xf:select1>
                             </xf:group>
                             <br/>
-                            <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full">
+                            <xf:group appearance="full">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>
                                         <xf:output value="'Part Number'">
@@ -970,7 +970,7 @@
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
-                <xf:group class="schema_3.3 schema_3.4 schema_3.5" appearance="full" ref=".[mods:partName]">
+                <xf:group appearance="full" ref=".[mods:partName]">
                     <fieldset class="level-2">
                         <div class="label-box">
                             <xf:output value="'Part Name'">
@@ -1038,7 +1038,7 @@
                                     </xf:case>
                                 </xf:switch>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@lang]">
+                            <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
                                         <xf:output value="'Language'">
@@ -1051,7 +1051,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@script]">
+                            <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
                                         <xf:output value="'Script'">
@@ -1064,7 +1064,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@transliteration]">
+                            <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
                                     <xf:label>
                                         <xf:output value="'Transliteration'">
@@ -1077,7 +1077,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="schema_3.4 schema_3.5" appearance="full" ref=".[@xml:lang]">
+                            <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
                                         <xf:output value="'xml:lang'">
@@ -1091,7 +1091,7 @@
                                 </xf:select1>
                             </xf:group>
                             <br/>
-                            <xf:group class="textarea schema_3.3 schema_3.4 schema_3.5" appearance="full">
+                            <xf:group class="textarea" appearance="full">
                                 <xf:textarea ref=".">
                                     <xf:label>
                                         <xf:output value="'Part Name'">
