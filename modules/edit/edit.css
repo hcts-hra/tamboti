@@ -371,18 +371,8 @@ select .xforms-value {
     padding-left:.25em;
 }
 
-.add-delete-button .xforms-control button {
-    width:1.75em !important;
-    height:1.5em;
-    padding:0;
-    margin:-.2em .5em 0 .5em;
-}
-
-.add-delete-button .xforms-control button .xforms-label { /*controls "+" and "-" on buttons for adding and removing repetitions*/
-    display:inline;
-    text-align:center;
-    padding:0;
-    margin:0;
+.add-delete-button {
+    display: inline;
 }
 
 .label-box { 
@@ -392,7 +382,7 @@ select .xforms-value {
     border-width:1px;
     padding:.5em 1em .3em 1em;
     width:20em;
-    height:1.5em;
+    min-height:1.5em;
     margin-top:-2.2em; /*to make the fieldset border go through the centre of the box*/
     margin-left:1.55em;
     margin-bottom:.75em;
@@ -463,16 +453,6 @@ select .xforms-value {
 /*help, hint, alert begins*/
 /*NB: hint and help should be merged*/
 
-
-.label-box .xforms-hint { /*the hard-coded fieldset hints*/
-    margin-left:1px;
-    vertical-align:top;
-    font-style:normal;
-    font-weight:normal;
-    color:#CCCCCC;
-    cursor:help;    
-}
-
 span.xforms-hint-icon:after { /*the regular hints*/
     color:#B3B3B3;
     padding:1px;
@@ -488,12 +468,7 @@ span.opaque:after { /*the regular hints*/
 	filter:alpha(opacity=0);
 }
 
-span.xforms-hint-icon { /*negating the xsltforms.css regular hint icon*/
-    background-image:url("");
-}
-
-.xforms-help, 
-.xforms-hint 
+.xforms-help 
     {
     margin-left:.2em;
     }
@@ -603,4 +578,6 @@ div.xforms-help-value li
 /*unused stuff ends*/
 
 
+.container .xfRepeatIndex { background-color: #cccccc;}
+.container .xfRepeatIndex .xfRepeatIndex { background-color: #cccccc;}
 </css>
