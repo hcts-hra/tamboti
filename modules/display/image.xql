@@ -257,19 +257,18 @@ declare function local:get-binary-data($image-VRA as node(), $service-protocol a
 declare function local:resize-local-parameter($iiif-parameters as node()) as xs:string {
     (: resize, but resizing is not provided by that service?:)
     if ($iiif-parameters/image-request-parameters/size/full/string() = "") then
-        let $width :=
-            if ($iiif-parameters/image-request-parameters/size/x/string()) then
+        let $parameters := 
+            let $width :=
                 $iiif-parameters/image-request-parameters/size/x/string()
-            else
+            let $height :=
                 $iiif-parameters/image-request-parameters/size/y/string()
-        let $height :=
-            if ($iiif-parameters/image-request-parameters/size/y/string()) then
-                $iiif-parameters/image-request-parameters/size/y/string()
-            else
-                $iiif-parameters/image-request-parameters/size/x/string()
-        let $useless := util:log("DEBUG", "local resize " || " to w:" || $width || " h:" || $height)
+            return
+                $width || "x" || $height
+
+        let $call := "-resize " || $parameters
+        let $useless := util:log("INFO", "local resize call: " || $call)
         return
-            "-resize " || $width || "x" || $height
+            $call
     else
         ""
 };
