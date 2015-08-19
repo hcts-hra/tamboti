@@ -254,40 +254,46 @@ declare function iiif-functions:parse-format-parameter($format-string as xs:stri
 
 declare function iiif-functions:info($binary as xs:base64Binary, $iiif-parameters as node()) {
     let $uuid := $iiif-parameters//identifier/string()
-    let $id-uri := request:get-url() || "?schema=IIIF&amp;call=" || substring-before(request:get-parameter("call", ""), "/info.json")
+    let $id-uri := request:get-url() || "?schema=IIIF" || xmldb:decode("%26") || "call=" || substring-before(request:get-parameter("call", ""), "/info.json")
 
     let $metadata := contentextraction:get-metadata-and-content($binary)
     let $metadata := $metadata//xhtml:head/xhtml:meta
-    let $width := image:get-width($binary)
-    let $height := image:get-height($binary)
+    let $width := $metadata[@name="tiff:ImageWidth"]/@content/string()
+    let $height := $metadata[@name="tiff:ImageLength"]/@content/string()
 
     let $data :=
         <data context="http://iiif.io/api/image/2/context.json" id="{$id-uri}">
             <protocol>http://iiif.io/api/image</protocol>
-            <width>{$width}</width>
-            <height>{$height}</height>
+            <width json:literal="true">{$width}</width>
+            <height json:literal="true">{$height}</height>
             <sizes>
-                <width>150</width>
-                <height>150</height>
+                <width json:literal="true">150</width>
+                <height json:literal="true">150</height>
             </sizes>
             <sizes>
-                <width>600</width>
-                <height>600</height>
+                <width json:literal="true">600</width>
+                <height json:literal="true">600</height>
             </sizes>
             <sizes>
-                <width>3000</width>
-                <height>3000</height>
+                <width json:literal="true">1200</width>
+                <height json:literal="true">1200</height>
             </sizes>
             <tiles json:array="true">
-                <width>512</width>
-                <scaleFactors>1</scaleFactors>
-                <scaleFactors>2</scaleFactors>
-                <scaleFactors>4</scaleFactors>
+                <width json:literal="true">512</width>
+                <height json:literal="true">512</height>
+                <scaleFactors json:literal="true">1</scaleFactors>
+                <scaleFactors json:literal="true">2</scaleFactors>
+                <scaleFactors json:literal="true">4</scaleFactors>
                 <scaleFactors>8</scaleFactors>
             </tiles>
-            <metadata>
-                {$metadata}
-            </metadata>
+            <profile>http://iiif.io/api/image/2/level1.json</profile>
+            <profile>
+                <formats json:array="true">jpg</formats>
+                <qualities json:array="true">native</qualities>
+                <supports>sizeByWh</supports>
+                <supports>sizeAboveFull</supports>
+                <supports>rotationBy90s</supports>
+            </profile>
         </data>
     return
 (:        $data:)
