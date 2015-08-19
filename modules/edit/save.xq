@@ -311,6 +311,7 @@ let $action := request:get-parameter('action', 'save')
 let $incoming-id := $item/@ID/string()
 let $user := session:get-attribute($security:SESSION_USER_ATTRIBUTE)
 let $last-modified := xmldb:last-modified($config:mods-temp-collection, concat($incoming-id,'.xml'))
+let $log := util:log("INFO", "$last-modified = " || $last-modified)
 (:There is no way to store the user name in MODS, therefore it is stored in extension.:)
 let $last-modified-extension :=
     <ext:modified>
@@ -385,22 +386,12 @@ return
 (:                        xmldb:store($target-collection, $file-to-update, $doc):)
                         xmldb:store($target-collection, $file-to-update, $doc)
                         ,
-                        security:apply-parent-collection-permissions($record-path)
-                        ,
-                        sm:chown($record-path, xmldb:get-owner($target-collection))
-                        ,
-                        sm:chgrp($record-path, $config:biblio-users-group)
-                        ,
-                        sm:chmod($record-path, $config:resource-mode)
-                        ,                        
                         (:Remove the $doc record from temp if store in target was successful.:)
-                        if (doc($record-path)) then
-                            xmldb:remove($config:mods-temp-collection, $file-to-update) 
-                        else 
-                            ()
-                        ,
+                        if (doc($record-path)) then xmldb:remove($config:mods-temp-collection, $file-to-update) 
+                        else ()
                         (:Set the same permissions on the moved file that the parent collection has.:)
-                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],security:apply-parent-collection-permissions($record-path))
+                        ,
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], security:apply-parent-collection-permissions($record-path))                      
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
