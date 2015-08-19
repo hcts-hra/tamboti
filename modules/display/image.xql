@@ -156,6 +156,7 @@ declare function local:get-info($image-VRA as node(), $iiif-parameters as node()
             let $response := http:send-request(<http:request method="GET"/>, $info-url)
             let $media-type := $response[1]/http:body/@media-type/string()
             let $header := response:set-header("Content-Type", $media-type)
+            let $header := response:set-header("Content-Disposition", "inline; filename=""info.json""")
             let $json-response-string := util:binary-to-string($response[2])
         
             return
@@ -165,11 +166,11 @@ declare function local:get-info($image-VRA as node(), $iiif-parameters as node()
             let $parameters :=     
                 <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
                     <output:method value="json"/>
-                    <output:media-type value="text/javascript"/>
+                    <output:media-type value="application/json"/>
                     <output:prefix-attributes value="yes"/>
                 </output:serialization-parameters>
 (:            let $useless := util:log("DEBUG", $self-id-url || " " || $remote-id-url):)
-            let $header := response:set-header("Content-Type", "application/json")
+(:            let $header := response:set-header("Content-Type", "application/json"):)
             let $uuid := $iiif-parameters//identifier/string()
             let $iiif-parameters := iiif-functions:parse-iiif-call("/" || $uuid || "/full/full/0/default.jpg")
             let $binary := local:get-binary-data($image-VRA, $service-protocol, $iiif-parameters, $image-server)
@@ -177,6 +178,7 @@ declare function local:get-info($image-VRA as node(), $iiif-parameters as node()
 (:            let $log := util:log("INFO", $iiif-info-xml):)
 
             let $header := response:set-header("Content-Type", "application/json")
+            let $header := response:set-header("Content-Disposition", "inline; filename=""info.json""")
 
             return 
                 serialize($iiif-info-xml, $parameters)
