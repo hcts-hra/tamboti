@@ -7,6 +7,8 @@ import module namespace iiif-functions = "http://hra.uni-heidelberg.de/ns/iiif-f
 
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
+declare option exist:serialize "method=text media-type=text/plain omit-xml-declaration=yes";
+
 declare variable $services := doc("../configuration/services.xml");
 declare variable $mime-to-convert := ("image/tiff");
 
@@ -168,14 +170,15 @@ declare function local:get-info($image-VRA as node(), $iiif-parameters as node()
                 </output:serialization-parameters>
 (:            let $useless := util:log("DEBUG", $self-id-url || " " || $remote-id-url):)
             let $header := response:set-header("Content-Type", "application/json")
-(:            return:)
             let $uuid := $iiif-parameters//identifier/string()
             let $iiif-parameters := iiif-functions:parse-iiif-call("/" || $uuid || "/full/full/0/default.jpg")
             let $binary := local:get-binary-data($image-VRA, $service-protocol, $iiif-parameters, $image-server)
             let $iiif-info-xml := iiif-functions:info($binary, $iiif-parameters)
+(:            let $log := util:log("INFO", $iiif-info-xml):)
+
+            let $header := response:set-header("Content-Type", "application/json")
 
             return 
-(:                $iiif-parameters:)
                 serialize($iiif-info-xml, $parameters)
 
 };
@@ -407,44 +410,46 @@ return
         return
             if (root($iiif-parameters)/iiif-info/identifier) then
                 let $useless := util:log("DEBUG", "GETTING INFO")
+                let $iiif-info := local:get-info($image-VRA, $iiif-parameters, $service-protocol, $image-server)
                 return
-                    local:get-info($image-VRA, $iiif-parameters, $service-protocol, $image-server)
+                    $iiif-info
+                    
             (: else get the binary:)
-        else
-            let $useless := util:log("DEBUG", "GETTING BINARY DATA")
-            let $binary-data := local:get-binary-data($image-VRA, $service-protocol, $iiif-parameters, $image-server)
-
-            let $metadata := contentextraction:get-metadata($binary-data)
+            else
+                let $useless := util:log("DEBUG", "GETTING BINARY DATA")
+                let $binary-data := local:get-binary-data($image-VRA, $service-protocol, $iiif-parameters, $image-server)
     
-            (: What is the content type after all? :)
-            let $mime-type := $metadata//xhtml:meta[@name="Content-Type"]/@content/string()
-    
-            (: if format listed in $mime-to-convert, convert into jpg :)
-            let $binary-data :=
-                if($mime-type = $mime-to-convert) then
-                    let $useless := util:log("DEBUG", "convert")
-                    return
-                        im4xquery:convert2jpg($binary-data)
-                else
-                    $binary-data
-    
-            let $useless := util:log("DEBUG", "mime-before: " || $mime-type)
-    
-            let $mime-type :=
-                if($mime-type = $mime-to-convert) then
-                    "image/jpeg"
-                else
-                    $mime-type
-    
-            let $useless := util:log("DEBUG", "mime: " || $mime-type)
-    
-            return
-
-                if (not(empty($binary-data))) then
-                    let $header := response:set-status-code(200)
+                let $metadata := contentextraction:get-metadata($binary-data)
+        
+                (: What is the content type after all? :)
+                let $mime-type := $metadata//xhtml:meta[@name="Content-Type"]/@content/string()
+        
+                (: if format listed in $mime-to-convert, convert into jpg :)
+                let $binary-data :=
+                    if($mime-type = $mime-to-convert) then
+                        let $useless := util:log("DEBUG", "convert")
                         return
-                            response:stream-binary($binary-data, $mime-type, functx:substring-before-last($filename, ".") || "." || functx:substring-after-last($mime-type, "/"))
-                else
-                    let $header := response:set-status-code(400)
-                    return
-                        <div>error! {empty($binary-data)}</div>
+                            im4xquery:convert2jpg($binary-data)
+                    else
+                        $binary-data
+        
+                let $useless := util:log("DEBUG", "mime-before: " || $mime-type)
+        
+                let $mime-type :=
+                    if($mime-type = $mime-to-convert) then
+                        "image/jpeg"
+                    else
+                        $mime-type
+        
+                let $useless := util:log("DEBUG", "mime: " || $mime-type)
+        
+                return
+    
+                    if (not(empty($binary-data))) then
+                        let $header := response:set-status-code(200)
+                            return
+                                response:stream-binary($binary-data, $mime-type, functx:substring-before-last($filename, ".") || "." || functx:substring-after-last($mime-type, "/"))
+                    else
+                        let $header := response:set-status-code(400)
+                        return
+                            <div>error! {empty($binary-data)}</div>
