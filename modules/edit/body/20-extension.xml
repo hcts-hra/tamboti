@@ -3,13 +3,9 @@
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
-                <span class="legend">Extension</span>
-                <span class="xforms-hint">
-                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                    <div class="xforms-help-value">
-                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_extension',instance('code-tables'))/help"/>
-                    </div>
-                </span>
+                <xf:output value="'Extension'">
+                    <xf:hint ref="id('hint-code_extension', instance('code-tables'))/help"/>
+                </xf:output>
             </div>
             <xf:repeat nodeset="instance('save-data')/mods:extension" id="extension-repeat">
                 <xf:group appearance="full" ref=".[not(ext:template)] | .[not(ext:transliterationOfResource)]">
@@ -54,12 +50,10 @@
                 </xf:group>
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:template">
-                        <xf:label>Tamboti Template<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_template',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+			                <xf:output value="'Tamboti Template'">
+			                    <xf:hint ref="id('hint-code_template', instance('code-tables'))/help"/>
+			                </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='document-type-code']/items/item">
                             <xf:label ref="label"/>
@@ -69,12 +63,10 @@
                 </xf:group>
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:transliterationOfResource">
-                        <xf:label>Transliteration Of Resource<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliterationOfResource',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+			                <xf:output value="'Transliteration Of Resource'">
+			                    <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/help"/>
+			                </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
                             <xf:label ref="label"/>
@@ -84,12 +76,10 @@
                 </xf:group>
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:catalogingStage">
-                        <xf:label>Cataloging Stage<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_cataloging-stage',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+			                <xf:output value="'Cataloging Stage'">
+			                    <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/help"/>
+			                </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='cataloging-stage-code']/items/item">
                             <xf:label ref="label"/>
