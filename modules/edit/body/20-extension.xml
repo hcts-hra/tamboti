@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--node insertions: insertion and deletion does not work, but this does not matter, since elements are inserted in edit.xq--><!--missing element insertion: does not work, but this does not matter, since elements are inserted in edit.xq--><!--hints moved to code-table: OK--><!--hints linked with id: OK--><!--hints checked: OK--><!--saving of all nodes: OK--><!--schema instantiated: n/a--><!--schema notations added: n/a-->
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001f/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="extension block-form" tab-id="extension">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001f/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="extension block-form" tab-id="extension">
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
@@ -51,9 +52,9 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:template">
                         <xf:label>
-			                <xf:output value="'Tamboti Template'">
-			                    <xf:hint ref="id('hint-code_template', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Tamboti Template'">
+                                <xf:hint ref="id('hint-code_template', instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='document-type-code']/items/item">
                             <xf:label ref="label"/>
@@ -64,9 +65,9 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:transliterationOfResource">
                         <xf:label>
-			                <xf:output value="'Transliteration Of Resource'">
-			                    <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Transliteration Of Resource'">
+                                <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
                             <xf:label ref="label"/>
@@ -77,9 +78,9 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:catalogingStage">
                         <xf:label>
-			                <xf:output value="'Cataloging Stage'">
-			                    <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Cataloging Stage'">
+                                <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='cataloging-stage-code']/items/item">
                             <xf:label ref="label"/>
