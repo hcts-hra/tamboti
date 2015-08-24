@@ -1,4 +1,5 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="compact block-form" tab-id="compact-b-article">
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-article">
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
@@ -11,10 +12,10 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box">
-			                <xf:output value="'Periodical Title'">
-			                    <xf:hint ref="id('hint-code_relatedItem-periodical-titleInfo-compact', instance('code-tables'))/help"/>
-			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Periodical Title'">
+                                <xf:hint ref="id('hint-code_relatedItem-periodical-titleInfo-compact', instance('code-tables'))/help"/>
+                                <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+                            </xf:output>
                         </div>
                         <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-periodical-repeat">
                             <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
@@ -25,7 +26,7 @@
                                     <xf:label>
                                         <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''">
                                             <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
-                                        </xf:output> 
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -34,17 +35,17 @@
                                     <xf:label>
                                         <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''">
                                             <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
-                                        </xf:output>                                    
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group>
                                 <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-			                        <xf:label>
-			                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
-			                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
-			                            </xf:output>                            
-			                        </xf:label>
+                                    <xf:label>
+                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
+                                            <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
                                 </xf:input>
                             </xf:group>
                         </xf:repeat>
@@ -53,10 +54,10 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box extra-wide">
-			                <xf:output value="'Institutional Editor(s) of Periodical'">
-			                    <xf:hint ref="id('hint-code_name-relatedItem-periodical-editor-compact', instance('code-tables'))/help"/>
-			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Institutional Editor(s) of Periodical'">
+                                <xf:hint ref="id('hint-code_name-relatedItem-periodical-editor-compact', instance('code-tables'))/help"/>
+                                <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
                                     <xf:label>+</xf:label>
@@ -94,12 +95,12 @@
                             <xf:group>
                                 <fieldset class="level-3">
                                     <div class="label-box">
-						                <xf:output value="'Name'">
-						                    <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact', instance('code-tables'))/help"/>
-						                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
-						                </xf:output>
+                                        <xf:output value="'Name'">
+                                            <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact', instance('code-tables'))/help"/>
+                                            <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </div>
-                                    <xf:group> </xf:group>
+                                    <xf:group/>
                                     <xf:repeat nodeset="./mods:namePart" id="relatedItem-namePart-periodical-repeat">
                                         <xf:group>
                                             <xf:input ref="." class="text_100 margin-plus">
@@ -117,9 +118,9 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box">
-			                <xf:output value="'Location of Article in Periodical'">
-			                    <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Location of Article in Periodical'">
+                                <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact', instance('code-tables'))/help"/>
+                            </xf:output>
                         </div>
                         <xf:repeat nodeset="./mods:part" id="related-item-part-periodical-repeat">
                             <xf:group ref=".[mods:detail]">
@@ -165,9 +166,9 @@
                                         <xf:group ref=".[@unit]">
                                             <xf:select1 ref="./@unit" selection="open">
                                                 <xf:label>
-									                <xf:output value="'Unit'">
-									                    <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
-									                </xf:output>
+                                                    <xf:output value="'Unit'">
+                                                        <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -194,9 +195,9 @@
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
                         <div class="label-box">
-			                <xf:output value="'Identifiers'">
-			                    <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
-			                </xf:output>
+                            <xf:output value="'Identifiers'">
+                                <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger ref=".[mods:identifier]">
                                     <xf:label>+</xf:label>

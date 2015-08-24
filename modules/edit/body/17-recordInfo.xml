@@ -1,14 +1,11 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ext="http://exist-db.org/mods/extension" class="record-info block-form" tab-id="record-info">
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="record-info block-form" tab-id="record-info">
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
-                <span class="legend">Record Information</span>
-                <span class="xforms-hint">
-                    <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                    <div class="xforms-help-value">
-                        <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordInfo',instance('code-tables'))/help"/>
-                    </div>
-                </span>
+                <xf:output value="'Record Information'">
+                    <xf:hint ref="id('hint-code_recordInfo',instance('code-tables'))/help"/>
+                </xf:output>
                 <span class="add-delete-button">
                     <xf:trigger ref=".[mods:recordInfo]">
                         <xf:label>–</xf:label>
@@ -17,10 +14,7 @@
                         </xf:action>
                     </xf:trigger>
                 </span>
-            </div>
-            <!--Attributes: lang; xml:lang; script; transliteration, displayLabel, altRepGroup-->
-            <!--Subelements: recordContentSource, recordCreationDate, recordChangeDate, recordIdentifier, recordOrigin, languageOfCataloging, descriptionStandard-->
-            <!--not repeatable-->
+            </div><!--Attributes: lang; xml:lang; script; transliteration, displayLabel, altRepGroup--><!--Subelements: recordContentSource, recordCreationDate, recordChangeDate, recordIdentifier, recordOrigin, languageOfCataloging, descriptionStandard--><!--not repeatable-->
             <xf:repeat nodeset="instance('save-data')/mods:recordInfo" id="recordInfo-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 6 or .[not(mods:recordContentSource)] or .[not(mods:recordCreationDate)] or .[not(mods:recordChangeDate)] or .[not(mods:recordIdentifier)] or .[not(mods:recordOrigin)] or .[not(mods:languageOfCataloging)] or .[not(mods:descriptionStandard)]]">
                     <xf:switch>
@@ -162,12 +156,10 @@
                 </xf:group>
                 <xf:group ref=".[@altRepGroup]">
                     <xf:select1 ref="./@altRepGroup">
-                        <xf:label>Alt. Representation Group<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'Alt. Representation Group'">
+                                <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='altRepGroup-code']/items/item">
                             <xf:label ref="label"/>
@@ -177,23 +169,19 @@
                 </xf:group>
                 <xf:group ref=".[@displayLabel]">
                     <xf:input ref="./@displayLabel" class="text_50">
-                        <xf:label>Display Label<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'Display Label'">
+                                <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                     </xf:input>
                 </xf:group>
                 <xf:group ref=".[@lang]">
                     <xf:select1 ref="./@lang">
-                        <xf:label>Language<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'Language'">
+                                <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
                             <xf:label ref="label"/>
@@ -203,12 +191,10 @@
                 </xf:group>
                 <xf:group ref=".[@script]">
                     <xf:select1 ref="./@script">
-                        <xf:label>Script<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'Script'">
+                                <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
                             <xf:label ref="label"/>
@@ -218,12 +204,10 @@
                 </xf:group>
                 <xf:group ref=".[@transliteration]">
                     <xf:select1 ref="./@transliteration" selection="open">
-                        <xf:label>Transliteration<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'Transliteration'">
+                                <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
                             <xf:label ref="label"/>
@@ -233,12 +217,10 @@
                 </xf:group>
                 <xf:group ref=".[@xml:lang]">
                     <xf:select1 ref="./@xml:lang">
-                        <xf:label>xml:lang<span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                        <xf:label>
+                            <xf:output value="'xml:lang'">
+                                <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                            </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                             <xf:label ref="label"/>
@@ -249,13 +231,9 @@
                 <xf:group appearance="full" ref=".[mods:recordContentSource]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Record Content Source</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordContentSource',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Record Content Source'">
+                                <xf:hint ref="id('hint-code_recordContentSource',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
@@ -272,9 +250,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: authority, authorityURI, lang, script, transliteration, valueURI, xml:lang-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: authority, authorityURI, lang, script, transliteration, valueURI, xml:lang--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:recordContentSource" id="record-content-source-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>
@@ -358,12 +334,10 @@
                             </xf:group>
                             <xf:group ref=".[@authority]">
                                 <xf:select1 ref="./@authority" selection="open">
-                                    <xf:label>Authority<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Authority'">
+                                            <xf:hint ref="id('hint-code_authority',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='record-content-source-authority-code']/items/item">
                                         <xf:label ref="label"/>
@@ -373,34 +347,28 @@
                             </xf:group>
                             <xf:group ref=".[@authorityURI]">
                                 <xf:input ref="./@authorityURI" class="text_50">
-                                    <xf:label>Authority URI<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Authority URI'">
+                                            <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group ref=".[@valueURI]">
                                 <xf:input ref="./@valueURI" class="text_50">
-                                    <xf:label>Value URI<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Value URI'">
+                                            <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
                                         <xf:label ref="label"/>
@@ -410,12 +378,10 @@
                             </xf:group>
                             <xf:group ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
                                         <xf:label ref="label"/>
@@ -425,12 +391,10 @@
                             </xf:group>
                             <xf:group ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration" selection="open">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
                                         <xf:label ref="label"/>
@@ -440,12 +404,10 @@
                             </xf:group>
                             <xf:group ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -456,12 +418,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_100">
-                                    <xf:label>Record Content Source <span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordContentSource',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Record Content Source'">
+                                            <xf:hint ref="id('hint-code_recordContentSource',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -471,13 +431,9 @@
                 <xf:group appearance="full" ref=".[mods:recordCreationDate]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Record Creation Date</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordCreationDate',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Record Creation Date'">
+                                <xf:hint ref="id('hint-code_recordCreationDate',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>–</xf:label>
@@ -486,9 +442,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: encoding; point; keyDate; qualifier; lang; xml:lang; script; transliteration-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: encoding; point; keyDate; qualifier; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:recordCreationDate" id="record-creation-date-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
@@ -594,12 +548,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@encoding]">
                                 <xf:select1 ref="./@encoding">
-                                    <xf:label>Encoding<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_date-encoding',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Encoding'">
+                                            <xf:hint ref="id('hint-code_date-encoding',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-code']/items/item">
                                         <xf:label ref="label"/>
@@ -609,12 +561,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@point]">
                                 <xf:select1 ref="./@point">
-                                    <xf:label>Point<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_point',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Point'">
+                                            <xf:hint ref="id('hint-code_point',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
                                         <xf:label ref="label"/>
@@ -624,12 +574,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@keyDate]">
                                 <xf:select1 ref="./@keyDate">
-                                    <xf:label>Key Date<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_keyDate',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Key Date'">
+                                            <xf:hint ref="id('hint-code_keyDate',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-keydate-code']/items/item">
                                         <xf:label ref="label"/>
@@ -639,12 +587,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@qualifier]">
                                 <xf:select1 ref="./@qualifier">
-                                    <xf:label>Qualifier<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_qualifier',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Qualifier'">
+                                            <xf:hint ref="id('hint-code_qualifier',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-qualifier-code']/items/item">
                                         <xf:label ref="label"/>
@@ -654,12 +600,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_originInfo-lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_originInfo-lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -669,12 +613,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_originInfo-script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_originInfo-script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -684,12 +626,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -699,12 +639,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -715,12 +653,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
-                                    <xf:label>Record Creation Date <span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordCreationDate',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Record Creation Date'">
+                                            <xf:hint ref="id('hint-code_recordCreationDate',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -730,13 +666,9 @@
                 <xf:group appearance="full" ref=".[mods:recordChangeDate]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Record Change Date</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordChangeDate',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Record Change Date'">
+                                <xf:hint ref="id('hint-code_recordChangeDate',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
@@ -753,9 +685,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: encoding; point; keyDate; qualifier; lang; xml:lang; script; transliteration-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: encoding; point; keyDate; qualifier; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:recordChangeDate" id="record-change-date-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
@@ -861,12 +791,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@encoding]">
                                 <xf:select1 ref="./@encoding">
-                                    <xf:label>Encoding<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_date-encoding',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Encoding'">
+                                            <xf:hint ref="id('hint-code_date-encoding',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-code']/items/item">
                                         <xf:label ref="label"/>
@@ -876,12 +804,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@point]">
                                 <xf:select1 ref="./@point">
-                                    <xf:label>Point<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_point',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Point'">
+                                            <xf:hint ref="id('hint-code_point',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
                                         <xf:label ref="label"/>
@@ -891,12 +817,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@keyDate]">
                                 <xf:select1 ref="./@keyDate">
-                                    <xf:label>Key Date<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_keyDate',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Key Date'">
+                                            <xf:hint ref="id('hint-code_keyDate',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-keydate-code']/items/item">
                                         <xf:label ref="label"/>
@@ -906,12 +830,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@qualifier]">
                                 <xf:select1 ref="./@qualifier">
-                                    <xf:label>Qualifier<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_qualifier',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Qualifier'">
+                                            <xf:hint ref="id('hint-code_qualifier',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-qualifier-code']/items/item">
                                         <xf:label ref="label"/>
@@ -921,12 +843,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_originInfo-lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_originInfo-lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -936,12 +856,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_originInfo-script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_originInfo-script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -951,12 +869,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -966,12 +882,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -982,12 +896,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
-                                    <xf:label>Record Change Date <span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordChangeDate',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Record Change Date'">
+                                            <xf:hint ref="id('hint-code_recordChangeDate',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -997,13 +909,9 @@
                 <xf:group appearance="full" ref=".[mods:recordIdentifier]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Record Identifier</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordIdentifier',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Record Identifier'">
+                                <xf:hint ref="id('hint-code_recordIdentifier',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
@@ -1020,9 +928,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: source; lang; xml:lang; script; transliteration-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: source; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:recordIdentifier" id="recordIdentifier-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 5]">
                                 <xf:switch>
@@ -1095,12 +1001,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@source]">
                                 <xf:select1 ref="./@source">
-                                    <xf:label>Source<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_record-content-source',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Source'">
+                                            <xf:hint ref="id('hint-code_record-content-source',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='record-content-source-authority-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1110,12 +1014,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1125,12 +1027,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1140,12 +1040,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1155,12 +1053,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1171,12 +1067,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
-                                    <xf:label>Record Identifier<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordIdentifier',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Record Identifier'">
+                                            <xf:hint ref="id('hint-code_recordIdentifier',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -1186,13 +1080,9 @@
                 <xf:group appearance="full" ref=".[mods:recordOrigin]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Record Origin</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordOrigin',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Record Origin'">
+                                <xf:hint ref="id('hint-code_recordOrigin',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
@@ -1209,9 +1099,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: lang; xml:lang; script; transliteration-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:recordOrigin" id="recordOrigin-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -1275,12 +1163,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1290,12 +1176,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1305,12 +1189,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1320,12 +1202,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1336,12 +1216,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
-                                    <xf:label>Record Origin<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_recordOrigin',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Record Origin'">
+                                            <xf:hint ref="id('hint-code_recordOrigin',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -1351,14 +1229,9 @@
                 <xf:group appearance="full" ref=".[mods:languageOfCataloging]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Cataloging Language</span>
-                            <span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_languageOfCataloging',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
-                            <!--<span class="add-delete-button">
+                            <xf:output value="'Cataloging Language'">
+                                <xf:hint ref="id('hint-code_languageOfCataloging',instance('code-tables'))/help"/>
+                            </xf:output><!--<span class="add-delete-button">
                     <xf:trigger ref=".[mods:languageOfCataloging]">
                         <xf:label>+</xf:label>
                         <xf:action ev:event="DOMActivate">
@@ -1374,9 +1247,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: objectPart, displayLabel, usage, altRepGroup-->
-                        <!--Subelements: languageTerm, scriptTerm-->
+                        </div><!--Attributes: objectPart, displayLabel, usage, altRepGroup--><!--Subelements: languageTerm, scriptTerm-->
                         <xf:repeat nodeset="./mods:languageOfCataloging" id="languageOfCataloging-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4 or .[not(mods:languageTerm)] or .[not(mods:scriptTerm)]]">
                                 <xf:switch>
@@ -1455,12 +1326,10 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@altRepGroup]">
                                 <xf:select1 ref="./@altRepGroup">
-                                    <xf:label>Alt. Representation Group<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Alt. Representation Group'">
+                                            <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='altRepGroup-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1470,34 +1339,28 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[@displayLabel]">
                                 <xf:input ref="./@displayLabel" class="text_50">
-                                    <xf:label>Display Label<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Display Label'">
+                                            <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group appearance="full" ref=".[@objectPart]">
                                 <xf:input ref="./@objectPart" class="text_50">
-                                    <xf:label>Object Part<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_objectPart',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Object Part'">
+                                            <xf:hint ref="id('hint-code_objectPart',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group appearance="full" ref=".[@usage]">
                                 <xf:select1 ref="./@usage">
-                                    <xf:label>Usage<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_usage',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Usage'">
+                                            <xf:hint ref="id('hint-code_usage',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='usage-type-code']/items/item">
                                         <xf:label ref="label"/>
@@ -1508,13 +1371,9 @@
                             <xf:group appearance="full" ref=".[mods:languageTerm]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <span class="legend">Language Terms</span>
-                                        <span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                        <xf:output value="'Language Terms'">
+                                            <xf:hint ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
+                                        </xf:output>
                                         <span class="add-delete-button">
                                             <xf:trigger>
                                                 <xf:label>+</xf:label>
@@ -1531,9 +1390,7 @@
                                                 </xf:action>
                                             </xf:trigger>
                                         </span>
-                                    </div>
-                                    <!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration-->
-                                    <!--Subelements: None-->
+                                    </div><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                                     <xf:repeat nodeset="./mods:languageTerm" id="languageTerm-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                             <xf:switch>
@@ -1625,12 +1482,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@authority]">
                                             <xf:select1 ref="./@authority">
-                                                <xf:label>Authority<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Authority'">
+                                                        <xf:hint ref="id('hint-code_authority',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-authority-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1640,23 +1495,19 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@authorityURI]">
                                             <xf:input ref="./@authorityURI" class="text_50">
-                                                <xf:label>Authority URI<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Authority URI'">
+                                                        <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@type]">
                                             <xf:select1 ref="./@type">
-                                                <xf:label>Type<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_code-text',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Type'">
+                                                        <xf:hint ref="id('hint-code_code-text',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='code-text-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1666,23 +1517,19 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@valueURI]">
                                             <xf:input ref="./@valueURI" class="text_50">
-                                                <xf:label>Value URI<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Value URI'">
+                                                        <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
-                                                <xf:label>Language<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Language'">
+                                                        <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1692,12 +1539,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
-                                                <xf:label>Script<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Script'">
+                                                        <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1707,12 +1552,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration">
-                                                <xf:label>Transliteration<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Transliteration'">
+                                                        <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1722,12 +1565,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
-                                                <xf:label>xml:lang<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'xml:lang'">
+                                                        <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1738,28 +1579,23 @@
                                         <br/>
                                         <xf:group appearance="full" ref=".[@type='code']">
                                             <xf:select1 ref=".">
-                                                <xf:label>Language Term (code)<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Language Term (code)'">
+                                                        <xf:hint ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
                                                     <xf:label ref="label"/>
                                                     <xf:value ref="value"/>
                                                 </xf:itemset>
                                             </xf:select1>
-                                        </xf:group>
-                                        <!--NB: code tables for rfc3066, iso639-3 and rfc5646 could be made as well.-->
+                                        </xf:group><!--NB: code tables for rfc3066, iso639-3 and rfc5646 could be made as well.-->
                                         <xf:group appearance="full" ref=".[@type='text']">
                                             <xf:input ref=".">
-                                                <xf:label>Language Term (text)<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Language Term (text)'">
+                                                        <xf:hint ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
@@ -1769,13 +1605,9 @@
                             <xf:group appearance="full" ref=".[mods:scriptTerm]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <span class="legend">Script Terms</span>
-                                        <span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                        <xf:output value="'Script Terms'">
+                                            <xf:hint ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
+                                        </xf:output>
                                         <span class="add-delete-button">
                                             <xf:trigger>
                                                 <xf:label>+</xf:label>
@@ -1792,9 +1624,7 @@
                                                 </xf:action>
                                             </xf:trigger>
                                         </span>
-                                    </div>
-                                    <!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration-->
-                                    <!--Subelements: None-->
+                                    </div><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                                     <xf:repeat nodeset="./mods:scriptTerm" id="scriptTerm-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                             <xf:switch>
@@ -1886,12 +1716,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[mods:scriptTerm]">
                                             <xf:select1 ref="./@lang">
-                                                <xf:label>Language<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Language'">
+                                                        <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1901,12 +1729,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@authority]">
                                             <xf:select1 ref="./@authority">
-                                                <xf:label>Authority<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Authority'">
+                                                        <xf:hint ref="id('hint-code_authority',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-authority-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1916,23 +1742,19 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@authorityURI]">
                                             <xf:input ref="./@authorityURI" class="text_50">
-                                                <xf:label>Authority URI<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Authority URI'">
+                                                        <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@type]">
                                             <xf:select1 ref="./@type">
-                                                <xf:label>Type<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_code-text',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Type'">
+                                                        <xf:hint ref="id('hint-code_code-text',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='code-text-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1942,23 +1764,19 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@valueURI]">
                                             <xf:input ref="./@valueURI" class="text_50">
-                                                <xf:label>Value URI<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Value URI'">
+                                                        <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
-                                                <xf:label>Language<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Language'">
+                                                        <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1968,12 +1786,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
-                                                <xf:label>Script<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Script'">
+                                                        <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1983,12 +1799,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration">
-                                                <xf:label>Transliteration<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Transliteration'">
+                                                        <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -1998,12 +1812,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
-                                                <xf:label>xml:lang<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'xml:lang'">
+                                                        <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -2014,12 +1826,10 @@
                                         <br/>
                                         <xf:group appearance="full" ref=".[@type='code']">
                                             <xf:select1 ref=".">
-                                                <xf:label>Script Term (code)<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Script Term (code)'">
+                                                        <xf:hint ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -2029,12 +1839,10 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[@type='text']">
                                             <xf:input ref=".">
-                                                <xf:label>Script Term (text)<span class="xforms-help">
-                                                        <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                                        <div class="xforms-help-value">
-                                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
-                                                        </div>
-                                                    </span>
+                                                <xf:label>
+                                                    <xf:output value="'Script Term (text)'">
+                                                        <xf:hint ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
+                                                    </xf:output>
                                                 </xf:label>
                                             </xf:input>
                                         </xf:group>
@@ -2047,13 +1855,9 @@
                 <xf:group appearance="full" ref=".[mods:descriptionStandard]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Description Standard</span>
-                            <span class="xforms-hint">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_descriptionStandard',instance('code-tables'))/help"/>
-                                </div>
-                            </span>
+                            <xf:output value="'Description Standard'">
+                                <xf:hint ref="id('hint-code_descriptionStandard',instance('code-tables'))/help"/>
+                            </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
@@ -2070,9 +1874,7 @@
                                     </xf:action>
                                 </xf:trigger>
                             </span>
-                        </div>
-                        <!--Attributes: authority, authorityURI, lang, script, transliteration, valueURI, xml:lang-->
-                        <!--Subelements: None-->
+                        </div><!--Attributes: authority, authorityURI, lang, script, transliteration, valueURI, xml:lang--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:descriptionStandard" id="descriptionStandard-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>
@@ -2156,12 +1958,10 @@
                             </xf:group>
                             <xf:group ref=".[@authority]">
                                 <xf:select1 ref="./@authority" selection="open">
-                                    <xf:label>Authority<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Authority'">
+                                            <xf:hint ref="id('hint-code_authority',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='description-standard-authority-code']/items/item">
                                         <xf:label ref="label"/>
@@ -2171,34 +1971,28 @@
                             </xf:group>
                             <xf:group ref=".[@authorityURI]">
                                 <xf:input ref="./@authorityURI" class="text_50">
-                                    <xf:label>Authority URI<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Authority URI'">
+                                            <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group ref=".[@valueURI]">
                                 <xf:input ref="./@valueURI" class="text_50">
-                                    <xf:label>Value URI<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Value URI'">
+                                            <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
                             <xf:group ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
-                                    <xf:label>Language<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Language'">
+                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
                                         <xf:label ref="label"/>
@@ -2208,12 +2002,10 @@
                             </xf:group>
                             <xf:group ref=".[@script]">
                                 <xf:select1 ref="./@script">
-                                    <xf:label>Script<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_script',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Script'">
+                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
                                         <xf:label ref="label"/>
@@ -2223,12 +2015,10 @@
                             </xf:group>
                             <xf:group ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration" selection="open">
-                                    <xf:label>Transliteration<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Transliteration'">
+                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
                                         <xf:label ref="label"/>
@@ -2238,12 +2028,10 @@
                             </xf:group>
                             <xf:group ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
-                                    <xf:label>xml:lang<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'xml:lang'">
+                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
                                         <xf:label ref="label"/>
@@ -2254,12 +2042,10 @@
                             <br/>
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_100">
-                                    <xf:label>Description Standard<span class="xforms-help">
-                                            <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_descriptionStandard',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+                                        <xf:output value="'Description Standard'">
+                                            <xf:hint ref="id('hint-code_descriptionStandard',instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
