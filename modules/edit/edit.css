@@ -446,21 +446,14 @@ select .xforms-value {
 
 
 /*help, hint, alert begins*/
-/*NB: hint and help should be merged*/
 
-span.xforms-hint-icon:after { /*the regular hints*/
-    color:#B3B3B3;
-    padding:1px;
-    content:"?";
-    margin-left:-1.2em;
-    margin-right:.2em;
-    margin-bottom:2em;
-}
-
-span.opaque:after { /*the regular hints*/
-    opacity:0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=0)";
-	filter:alpha(opacity=0);
+div.xforms-hint-icon > span.xfValue:after {
+    color: #B3B3B3;
+    padding: 1px;
+    content: "?";
+    margin-left: .5em;
+    margin-right: .2em;
+    margin-bottom: 2em;
 }
 
 .xforms-help 
