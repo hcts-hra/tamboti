@@ -266,21 +266,19 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 then
                     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
                     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-                    let $type-label := doc($type-data)/code-table/items/item[value eq $type-request][classifier = ('stand-alone', 'related')]/label
+                    let $type-label := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request and *[local-name() = 'classifier'] = ('stand-alone', 'related')]/*[local-name() = 'label']
                     (:This is the hint text informing the user aboiut the specific document type and its options.:)
                     let $type-hint := doc($type-data)/code-table/items/item[value eq $type-request]/hint
                         return
                         (
                         'Editing record of type ', 
-                        <strong>{$type-label}</strong>
-                        ,
-                        if ($type-hint) 
-                        then
-                            <span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">{$type-hint}</div>
-                            </span>
-                        else ()
+                        <xf:output value="'{$type-label}'">
+                            {
+                                if ($type-hint) 
+                                then <xf:hint>{$type-hint}</xf:hint>
+                                else ()                                
+                            }
+                        </xf:output>                        
                         ) 
                 else 'Editing record'
                 ,
