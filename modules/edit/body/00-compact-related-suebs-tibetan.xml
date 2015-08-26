@@ -128,13 +128,14 @@
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-4">
                                     <div class="label-box">
-                                        <span class="legend">Page Extent</span>
-                                        <div class="xforms-help-value">
-                                            <p> Use this field to indicate from which page and to
+						                <xf:output value="'Page Extent'">
+						                    <xf:hint>
+												Use this field to indicate from which page and to
                                                 which page the anthology contribution you are
                                                 cataloguing occurs in the volume (if any) of the
-                                                anthology noted above. </p>
-                                        </div>
+                                                anthology noted above. 						                    
+						                    </xf:hint>
+						                </xf:output>
                                     </div><!--relatedItem/part/extent repeat begins-->
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-suebs-tibetan-repeat"><!--relatedItem/part/extent input begins--><!--relatedItem/part/extent input ends--><!--relatedItem/part/start begins-->
                                         <xf:group ref=".[mods:start]" class="margin-plus">
