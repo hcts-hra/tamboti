@@ -835,11 +835,10 @@
                                                 </xf:input>
                                             </xf:group><!--<xf:group class="" appearance="full" ref=".[not(@type='code')]">
                                 <xf:select1 ref="." selection="open">
-                                    <xf:label>Role Term (text)<span class="xforms-help">
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_roleTerm-text',instance('code-tables'))/help"/>
-                                            </div>
-                                        </span>
+                                    <xf:label>
+						                <xf:output value="'Role Term (text)'">
+						                    <xf:hint ref="id('hint-code_roleTerm-text', instance('code-tables'))/help"/>
+						                </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='role-code']/items/item">
                                         <xf:label ref="label"/>

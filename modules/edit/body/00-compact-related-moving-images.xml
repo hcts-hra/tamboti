@@ -270,33 +270,20 @@
     </xf:group><!--<xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <span class="legend">
-                    <span class="legend">Moving Images Series</span>
-                </span>
-                <span class="xforms-help">
-                    <div class="xforms-help-value">
-                        <xf:output mediatype="application/xhtml+xml" incremental="true"
-                            ref="id('hint-code_relatedItem-moving-images-compact',instance('code-tables'))/help"/>
-                        <xf:output mediatype="application/xhtml+xml" incremental="true"
-                            ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
-                    </div>
-                </span>
+                <xf:output value="'Moving Images Series'">
+                    <xf:hint ref="id('hint-code_relatedItem-moving-images-compact', instance('code-tables'))/help"/>
+                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+                </xf:output>
             </div>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem"
                 id="relatedItem-moving-images-repeat">
                 <xf:group ref=".[@type='series']">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Series Title</span>
-                            <span class="xforms-help">
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_relatedItem-moving-images-titleInfo-compact',instance('code-tables'))/help"/>
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_more-related-item',instance('code-tables'))/help"
-                                    />
-                                </div>
-                            </span>
+			                <xf:output value="'Series Title'">
+			                    <xf:hint ref="id('hint-code_relatedItem-moving-images-titleInfo-compact', instance('code-tables'))/help"/>
+			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+			                </xf:output>
                         </div>
                         <xf:repeat nodeset="./mods:titleInfo"
                             id="relatedItem-titleInfo-moving-images-repeat">
@@ -306,35 +293,20 @@
                             <xf:group>
                                 <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort<span
-                                                class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_nonSort',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[string-length(../@type) = 0]">
+							                <xf:output value="'Non Sort'">
+							                    <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]"
-                                            >Transliterated Non Sort<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_nonSort',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">
+							                <xf:output value="'Transliterated Non Sort'">
+							                    <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]"
-                                            >Translated Non Sort<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_nonSort',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and (../@lang)]">
+							                <xf:output value="'Translated Non Sort'">
+							                    <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
                                     </xf:label>
                                 </xf:input>
@@ -342,35 +314,20 @@
                             <xf:group>
                                 <xf:input ref="./mods:title" class="text_150 margin-plus">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Title<span
-                                                class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_title-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[string-length(../@type) = 0]">
+							                <xf:output value="'Title'">
+							                    <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]"
-                                            >Transliterated Title<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_title-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">
+							                <xf:output value="'Transliterated Title'">
+							                    <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]"
-                                            >Translated Title<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_title-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and (../@lang)]">
+							                <xf:output value="'Translated Title'">
+							                    <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
                                     </xf:label>
                                 </xf:input>
@@ -378,35 +335,20 @@
                             <xf:group>
                                 <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle<span
-                                                class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[string-length(../@type) = 0]">
+							                <xf:output value="'Subtitle'">
+							                    <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]"
-                                            >Transliterated Subtitle<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">
+							                <xf:output value="'Transliterated Subtitle'">
+							                    <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]"
-                                            >Translated Subtitle<span class="xforms-help">
-                                                <div class="xforms-help-value">
-                                                  <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_subTitle-compact',instance('code-tables'))/help"
-                                                  />
-                                                </div>
-                                            </span>
+                                        <xf:group ref=".[../@type='translated' and (../@lang)]">
+							                <xf:output value="'Translated Subtitle'">
+							                    <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+							                </xf:output>
                                         </xf:group>
                                     </xf:label>
                                 </xf:input>
@@ -417,16 +359,10 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box extra-wide">
-                            <span class="legend">Institutional Editor(s) of Series</span>
-                            <span class="xforms-help">
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_name-relatedItem-moving-images-editor-compact',instance('code-tables'))/help"/>
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_more-related-item',instance('code-tables'))/help"
-                                    />
-                                </div>
-                            </span>
+			                <xf:output value="'Institutional Editor(s) of Series'">
+			                    <xf:hint ref="id('hint-code_name-relatedItem-moving-images-editor-compact', instance('code-tables'))/help"/>
+			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+			                </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger
                                     ref=".[string-length(./../mods:extension/ext:transliterationOfResource) > 0]">
@@ -476,18 +412,10 @@
                             <xf:group>
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <span class="legend">Name</span>
-                                        <span class="xforms-help">
-                                            <div class="xforms-help-value">
-                                                <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_relatedItem-namePart-corporate-compact',instance('code-tables'))/help"/>
-                                                <xf:output mediatype="application/xhtml+xml"
-                                                  incremental="true"
-                                                  ref="id('hint-code_more-related-item',instance('code-tables'))/help"
-                                                />
-                                            </div>
-                                        </span>
+						                <xf:output value="'Name'">
+						                    <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact', instance('code-tables'))/help"/>
+						                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
+						                </xf:output>
                                     </div>
                                     <xf:group> </xf:group>
                                     <xf:repeat nodeset="./mods:namePart"
@@ -509,14 +437,9 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Series Location</span>
-                            <span class="xforms-help">
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_part-relatedItem-moving-images-compact',instance('code-tables'))/help"
-                                    />
-                                </div>
-                            </span>
+			                <xf:output value="'Series Location'">
+			                    <xf:hint ref="id('hint-code_part-relatedItem-moving-images-compact', instance('code-tables'))/help"/>
+			                </xf:output>
                         </div>
                         <xf:repeat nodeset="./mods:part" id="related-item-part-moving-images-repeat">
                             <xf:group ref=".[mods:date]">
@@ -581,14 +504,9 @@
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <span class="legend">Identifiers</span>
-                            <span class="xforms-help">
-                                <div class="xforms-help-value">
-                                    <xf:output mediatype="application/xhtml+xml" incremental="true"
-                                        ref="id('hint-code_identifier',instance('code-tables'))/help"
-                                    />
-                                </div>
-                            </span>
+			                <xf:output value="'Identifiers'">
+			                    <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
+			                </xf:output>
                             <span class="add-delete-button">
                                 <xf:trigger ref=".[mods:identifier]">
                                     <xf:label>+</xf:label>
