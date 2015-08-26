@@ -305,10 +305,9 @@
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <span class="legend">Page Extent</span>
-                                        <div class="xforms-help-value">
-                                            <xf:output mediatype="application/xhtml+xml" incremental="true" ref="id('hint-code_extent-compact',instance('code-tables'))/help"/>
-                                        </div>
+                                        <xf:output value="'Page Extent'">
+                                            <xf:hint ref="id('hint-code_extent-compact', instance('code-tables'))/help"/>
+                                        </xf:output>
                                     </div>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-edited-volume-repeat">
                                         <xf:group ref=".[@unit]">

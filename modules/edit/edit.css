@@ -1,8 +1,3 @@
-<css>
-
-/* empty rule to recover from parse errors */
-   empty {}
-   
 /*temporary stuff begins*/
 
 .up-down-pointer .value button {
@@ -425,47 +420,40 @@ select .xforms-value {
 
 /*size of text boxes and text areas begins*/
 
-.text_10 .xforms-value {
+.text_10 input {
     width:10em;
-    }
+}
 
-.text_50 .xforms-value {
+.text_50 input {
     width:30em;
-    }
+}
 
-.text_100 .xforms-value {
+.text_100 input {
     width:40em;
-    }
+}
 
-.text_150 .xforms-value {
+.text_150 input {
     width:50em;
-    }
+}
 
-.textarea .xforms-value  {
+.textarea .xfTextarea textarea  {
     width:40em; 
     height:3em; 
     padding-left:.2em;
-    }
+}
 
 /*size of text boxes and text areas ends*/
 
 
 /*help, hint, alert begins*/
-/*NB: hint and help should be merged*/
 
-span.xforms-hint-icon:after { /*the regular hints*/
-    color:#B3B3B3;
-    padding:1px;
-    content:"?";
-    margin-left:-1.2em;
-    margin-right:.2em;
-    margin-bottom:2em;
-}
-
-span.opaque:after { /*the regular hints*/
-    opacity:0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=0)";
-	filter:alpha(opacity=0);
+div.xforms-hint-icon > span.xfValue:after {
+    color: #B3B3B3;
+    padding: 1px;
+    content: "?";
+    margin-left: .5em;
+    margin-right: .2em;
+    margin-bottom: 2em;
 }
 
 .xforms-help 
@@ -567,17 +555,5 @@ div.xforms-help-value li
 
 /*compact ends*/
 
-/*unused stuff begins*/
-
-@media print {
-    #page-head {
-        display:none;
-    }
-}
-
-/*unused stuff ends*/
-
-
 .container .xfRepeatIndex { background-color: #cccccc;}
 .container .xfRepeatIndex .xfRepeatIndex { background-color: #cccccc;}
-</css>
