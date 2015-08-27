@@ -393,7 +393,7 @@ If type-sort is '2', it is a compact form and the Basic Input Forms should be sh
 if type-sort is 4, it is a mads record and the MADS forms should be shown; 
 otherwise it is a record not made with Tamboti and Title Information should be shown.:)
 let $type-request := replace(replace(replace($type-request, '-latin', ''), '-transliterated', ''), '-compact', '')
-let $type-sort := xs:integer(doc($type-data)/code-table/items/item[value eq $type-request]/sort)
+let $type-sort := xs:integer(doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'sort'])
 (:Get the tab-id for the upper tab to be shown. 
 If no tab is specified, default to the compact-a tab when there is a template to be used with Basic Input Forms;
 otherwise default to Title Information.:)
