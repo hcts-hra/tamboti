@@ -259,7 +259,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 else ()
                 
         return
-        <div class="content">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="content">
             <span class="info-line">
             {
                 if ($type-request)
@@ -275,7 +275,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         <xf:output value="'{$type-label}'">
                             {
                                 if ($type-hint) 
-                                then <xf:hint>{$type-hint}</xf:hint>
+                                then <xf:hint>{$type-hint/text()}</xf:hint>
                                 else ()                                
                             }
                         </xf:output>                        
@@ -439,6 +439,8 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
+    let $log := util:log("INFO", "$content")
+    let $log := util:log("INFO", $content)
 
 return 
     (:Set serialization options.:)
