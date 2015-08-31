@@ -7,6 +7,7 @@ import module namespace config="http://exist-db.org/mods/config" at "../config.x
 declare namespace xf="http://www.w3.org/2002/xforms";
 declare namespace xforms="http://www.w3.org/2002/xforms";
 declare namespace ev="http://www.w3.org/2001/xml-events";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 declare variable $mods:tabs-data := concat($config:edit-app-root, '/tab-data.xml');
 
@@ -55,19 +56,19 @@ let $top-tab-number :=
             else 1
 (: Get the tabs data. :)
 
-let $tabs-data := doc($mods:tabs-data)/tabs/tab
+let $tabs-data := doc($mods:tabs-data)/mods-editor:tabs/mods-editor:tab
 
 return
 <div class="tabs">
     <table class="top-tabs" width="100%">
         <tr>
             {
-            for $top-tab-label in distinct-values($tabs-data/top-tab-label)
+            for $top-tab-label in distinct-values($tabs-data/mods-editor:top-tab-label)
             (: Do not show the Basic Input Forms tab for records not created with Basic Input Forms. :)
             where not((not($type) or $type = ('insert-templates','new-instance')) and $top-tab-label eq 'Basic Input Forms')
             return
             <td style="{
-                if ($tabs-data[top-tab-label = $top-tab-label]/top-tab-number = $top-tab-number) 
+                if ($tabs-data[mods-editor:top-tab-label = $top-tab-label]/mods-editor:top-tab-number = $top-tab-number) 
                 then "background:white;border-bottom-color:white;" 
                 else "background:#EDEDED"
             }">
@@ -75,7 +76,7 @@ return
                 <xf:trigger appearance="minimal">
                     <xf:label>
                         <div class="label" style="{
-                            if ($tabs-data[top-tab-label = $top-tab-label]/top-tab-number = $top-tab-number) 
+                            if ($tabs-data[mods-editor:top-tab-label = $top-tab-label]/mods-editor:top-tab-number = $top-tab-number) 
                             then "font-weight:bold;color:#3681B3;" 
                             else "font-weight:bold;color:darkgray"
                         }">
@@ -86,7 +87,7 @@ return
                         <!--When clicking on the top tabs, save the record. -->
                         <xf:send submission="save-submission"/>
                         <!--When clicking on a top tab, select the first of the bottom tabs that belongs to it. -->
-                        <xf:load resource="edit.xq?tab-id={$tabs-data[top-tab-label = $top-tab-label][1]/tab-id[1]}&amp;id={$record-id}&amp;top-tab-number={$tabs-data[top-tab-label = $top-tab-label][1]/top-tab-number[1]}&amp;type={$type}&amp;collection={$data-collection}" show="replace"/>
+                        <xf:load resource="edit.xq?tab-id={$tabs-data[mods-editor:top-tab-label = $top-tab-label][1]/mods-editor:tab-id[1]}&amp;id={$record-id}&amp;top-tab-number={$tabs-data[mods-editor:top-tab-label = $top-tab-label][1]/mods-editor:top-tab-number[1]}&amp;type={$type}&amp;collection={$data-collection}" show="replace"/>
                     </xf:action>
                 </xf:trigger>                
             </td>
@@ -96,14 +97,14 @@ return
             <table class="bottom-tabs">                    
                 <tr>
                 {
-                for $tab in $tabs-data[top-tab-number = $top-tab-number]
+                for $tab in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
                 let $tab-for-type := $tab/*[local-name() = $type]/text()
-				let $tab-count := count($tabs-data[top-tab-label/text() = $tab/top-tab-label/text()])
+				let $tab-count := count($tabs-data[mods-editor:top-tab-label/text() = $tab/mods-editor:top-tab-label/text()])
                 (: There are no containers for periodicals. :)
                 where $tab-for-type != ('periodical-latin', 'periodical-transliterated', 'newspaper-latin', 'newspaper-transliterated') or $top-tab-number gt 1
                 return
                 <td style="{
-                    if ($tab-id eq $tab/tab-id) 
+                    if ($tab-id eq $tab/mods-editor:tab-id) 
                     then "background:white;border-bottom-color:white;color:#3681B3;" 
                     else "background:#EDEDED"}
                     ">
@@ -112,19 +113,19 @@ return
                     <xf:trigger appearance="minimal">
                         <xf:label>
                             <div class="label" style="{
-                                if ($tab-id eq $tab/tab-id) 
+                                if ($tab-id eq $tab/mods-editor:tab-id) 
                                 then "color:#3681B3;font-weight:bold;" 
                                 else "color:darkgray;font-weight:bold"
                             }">{
                         if ($tab-for-type) 
                         then $tab-for-type 
-                        else $tab/label
+                        else $tab/mods-editor:label
                         }</div>
                         </xf:label>
                         <xf:action ev:event="DOMActivate">
                             <xf:send submission="save-submission"/>
                             <!--When clicking on the bottom tabs, keep the top-tab-number the same. -->
-                            <xf:load resource="edit.xq?tab-id={$tab/tab-id/text()}&amp;id={$record-id}&amp;top-tab-number={$top-tab-number}&amp;type={$type}&amp;collection={$data-collection}" show="replace"/>
+                            <xf:load resource="edit.xq?tab-id={$tab/mods-editor:tab-id/text()}&amp;id={$record-id}&amp;top-tab-number={$top-tab-number}&amp;type={$type}&amp;collection={$data-collection}" show="replace"/>
                         </xf:action>
                     </xf:trigger>
                 </td>

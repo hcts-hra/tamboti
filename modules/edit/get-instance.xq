@@ -3,6 +3,7 @@ xquery version "3.0";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mads = "http://www.loc.gov/mads/";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 (: get-instance.xq - gets the instance data to load into the editor and prunes the mods record to only load the instance data that is needed for a given tab.
 Note that the instance that this script returns MUST include an ID for saving.
@@ -22,17 +23,17 @@ let $collection := $config:mods-temp-collection
 let $instance := collection($collection)//mods:mods[@ID = $id]
 
 (: Get the tab data for the tab-id. :)
-let $tab-data := doc(concat($config:edit-app-root, '/tab-data.xml'))/tabs/tab[tab-id = $tab-id]
+let $tab-data := doc(concat($config:edit-app-root, '/tab-data.xml'))/mods-editor:tabs/mods-editor:tab[mods-editor:tab-id = $tab-id]
 
 (: Get a list of all the XPath expressions to include in this instance used by the form :)
-let $paths := $tab-data/path
+let $paths := $tab-data/mods-editor:path
 
 (: build up a string of prefix:element pairs for doing an eval :)
 let $path-string := string-join($paths, ', ')
 
 (: now get the eval string ready for use :)
 let $eval-string := concat('$instance/', '(', $path-string, ')')
-(:let $log := util:log("DEBUG", ("##$eval-string): ", $eval-string)):)
+
 return
 if ($tab-id eq 'mads')
 then 

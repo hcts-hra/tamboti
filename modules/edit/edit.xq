@@ -259,28 +259,26 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 else ()
                 
         return
-        <div class="content">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="content">
             <span class="info-line">
             {
                 if ($type-request)
                 then
                     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
                     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-                    let $type-label := doc($type-data)/code-table/items/item[value eq $type-request][classifier = ('stand-alone', 'related')]/label
+                    let $type-label := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request and *[local-name() = 'classifier'] = ('stand-alone', 'related')]/*[local-name() = 'label']
                     (:This is the hint text informing the user aboiut the specific document type and its options.:)
-                    let $type-hint := doc($type-data)/code-table/items/item[value eq $type-request]/hint
+                    let $type-hint := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'hint']
                         return
                         (
                         'Editing record of type ', 
-                        <strong>{$type-label}</strong>
-                        ,
-                        if ($type-hint) 
-                        then
-                            <span class="xforms-help">
-                                <span onmouseover="XsltForms_browser.show(this, 'hint', true)" onmouseout="XsltForms_browser.show(this, 'hint', false)" class="xforms-hint-icon"/>
-                                <div class="xforms-help-value">{$type-hint}</div>
-                            </span>
-                        else ()
+                        <xf:output value="'{$type-label}'">
+                            {
+                                if ($type-hint) 
+                                then <xf:hint>{$type-hint/text()}</xf:hint>
+                                else ()                                
+                            }
+                        </xf:output>                        
                         ) 
                 else 'Editing record'
                 ,
@@ -295,7 +293,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     return
                         if ($target-collection-display eq security:get-user-credential-from-session()[1])
                         then $config:data-collection-name || '/Home'
-                        else concat($config:data-collection-name || '/', $target-collection-display)
+                        else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
             <!--Here values are passed to the URL.-->
@@ -395,7 +393,7 @@ If type-sort is '2', it is a compact form and the Basic Input Forms should be sh
 if type-sort is 4, it is a mads record and the MADS forms should be shown; 
 otherwise it is a record not made with Tamboti and Title Information should be shown.:)
 let $type-request := replace(replace(replace($type-request, '-latin', ''), '-transliterated', ''), '-compact', '')
-let $type-sort := xs:integer(doc($type-data)/code-table/items/item[value eq $type-request]/sort)
+let $type-sort := xs:integer(doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'sort'])
 (:Get the tab-id for the upper tab to be shown. 
 If no tab is specified, default to the compact-a tab when there is a template to be used with Basic Input Forms;
 otherwise default to Title Information.:)
@@ -441,6 +439,8 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
+    let $log := util:log("INFO", "$content")
+    let $log := util:log("INFO", $content)
 
 return 
     (:Set serialization options.:)
