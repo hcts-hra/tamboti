@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--node insertions: insertion and deletion does not work, but this does not matter, since elements are inserted in edit.xq--><!--missing element insertion: does not work, but this does not matter, since elements are inserted in edit.xq--><!--hints moved to code-table: OK--><!--hints linked with id: OK--><!--hints checked: OK--><!--saving of all nodes: OK--><!--schema instantiated: n/a--><!--schema notations added: n/a-->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001f/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="extension block-form" tab-id="extension">
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Extension'">
+                <xf:output value="'Extension'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_extension', instance('code-tables'))/help"/>
                 </xf:output>
             </div>
@@ -52,7 +51,7 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:template">
                         <xf:label>
-                            <xf:output value="'Tamboti Template'">
+                            <xf:output value="'Tamboti Template'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_template', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -65,7 +64,7 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:transliterationOfResource">
                         <xf:label>
-                            <xf:output value="'Transliteration Of Resource'">
+                            <xf:output value="'Transliteration Of Resource'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -78,7 +77,7 @@
                 <xf:group appearance="full">
                     <xf:select1 ref="ext:catalogingStage">
                         <xf:label>
-                            <xf:output value="'Cataloging Stage'">
+                            <xf:output value="'Cataloging Stage'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>

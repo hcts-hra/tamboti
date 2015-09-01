@@ -439,8 +439,6 @@ let $instance-id := local:get-tab-id($tab-id, $type-request)
 let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
-    let $log := util:log("INFO", "$content")
-    let $log := util:log("INFO", $content)
 
 return 
     (:Set serialization options.:)
