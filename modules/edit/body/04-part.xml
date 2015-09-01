@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="part block-form" tab-id="part">
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Parts'">
+                <xf:output value="'Parts'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_part',instance('code-tables'))/help"/>
                 </xf:output>
                 <span class="add-delete-button">
@@ -157,7 +156,7 @@
                 <xf:group appearance="full" ref=".[@altRepGroup]">
                     <xf:select1 ref="./@altRepGroup">
                         <xf:label>
-                            <xf:output value="'Alt. Representation Group'">
+                            <xf:output value="'Alt. Representation Group'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -170,7 +169,7 @@
                 <xf:group appearance="full" ref=".[@displayLabel]">
                     <xf:input ref="./@displayLabel" class="text_50">
                         <xf:label>
-                            <xf:output value="'Display Label'">
+                            <xf:output value="'Display Label'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -179,7 +178,7 @@
                 <xf:group appearance="full" ref=".[@ID]">
                     <xf:input ref="./@ID" class="text_50">
                         <xf:label>
-                            <xf:output value="'ID'">
+                            <xf:output value="'ID'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_ID',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -188,7 +187,7 @@
                 <xf:group appearance="full" ref=".[@order]">
                     <xf:input ref="./@order" class="text_50">
                         <xf:label>
-                            <xf:output value="'Order'">
+                            <xf:output value="'Order'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_part-order',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -197,7 +196,7 @@
                 <xf:group appearance="full" ref=".[@type]">
                     <xf:input ref="./@type" class="text_50">
                         <xf:label>
-                            <xf:output value="'Type'">
+                            <xf:output value="'Type'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_part-type',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -214,7 +213,7 @@
                 <xf:group appearance="full" ref=".[@lang]">
                     <xf:select1 ref="./@lang">
                         <xf:label>
-                            <xf:output value="'Language'">
+                            <xf:output value="'Language'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -227,7 +226,7 @@
                 <xf:group appearance="full" ref=".[@xml:lang]">
                     <xf:select1 ref="./@xml:lang">
                         <xf:label>
-                            <xf:output value="'xml:lang'">
+                            <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -240,7 +239,7 @@
                 <xf:group appearance="full" ref=".[@transliteration]">
                     <xf:select1 ref="./@transliteration" selection="open">
                         <xf:label>
-                            <xf:output value="'Transliteration'">
+                            <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -253,7 +252,7 @@
                 <xf:group appearance="full" ref=".[@script]">
                     <xf:select1 ref="./@script">
                         <xf:label>
-                            <xf:output value="'Script'">
+                            <xf:output value="'Script'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -267,7 +266,7 @@
                 <xf:group appearance="full" ref=".[mods:detail]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Detail'">
+                            <xf:output value="'Detail'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_part-detail',instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -390,7 +389,7 @@
                             <xf:group appearance="full" ref=".[@level]">
                                 <xf:input ref="./@level" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Level'">
+                                        <xf:output value="'Level'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-detail-level',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -399,7 +398,7 @@
                             <xf:group appearance="full" ref=".[@order]">
                                 <xf:input ref="./@order" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Order'">
+                                        <xf:output value="'Order'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-order',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -408,7 +407,7 @@
                             <xf:group appearance="full" ref=".[@type]">
                                 <xf:input ref="./@type" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Type'">
+                                        <xf:output value="'Type'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-detail-type',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -417,7 +416,7 @@
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
-                                        <xf:output value="'Language'">
+                                        <xf:output value="'Language'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -430,7 +429,7 @@
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
-                                        <xf:output value="'xml:lang'">
+                                        <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -443,7 +442,7 @@
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration" selection="open">
                                     <xf:label>
-                                        <xf:output value="'Transliteration'">
+                                        <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -456,7 +455,7 @@
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
-                                        <xf:output value="'Script'">
+                                        <xf:output value="'Script'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -469,7 +468,7 @@
                             <xf:group appearance="full" ref=".[mods:number]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'Number'">
+                                        <xf:output value="'Number'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:number]">
@@ -550,7 +549,7 @@
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
                                                 <xf:label>
-                                                    <xf:output value="'Language'">
+                                                    <xf:output value="'Language'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -563,7 +562,7 @@
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration" selection="open">
                                                 <xf:label>
-                                                    <xf:output value="'Transliteration'">
+                                                    <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -576,7 +575,7 @@
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
                                                 <xf:label>
-                                                    <xf:output value="'Script'">
+                                                    <xf:output value="'Script'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -589,7 +588,7 @@
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
                                                 <xf:label>
-                                                    <xf:output value="'xml:lang'">
+                                                    <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -603,7 +602,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'Number'">
+                                                    <xf:output value="'Number'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -615,7 +614,7 @@
                             <xf:group appearance="full" ref=".[mods:caption]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'Caption'">
+                                        <xf:output value="'Caption'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:caption]">
@@ -696,7 +695,7 @@
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
                                                 <xf:label>
-                                                    <xf:output value="'Language'">
+                                                    <xf:output value="'Language'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -709,7 +708,7 @@
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
                                                 <xf:label>
-                                                    <xf:output value="'xml:lang'">
+                                                    <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -722,7 +721,7 @@
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration" selection="open">
                                                 <xf:label>
-                                                    <xf:output value="'Transliteration'">
+                                                    <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -735,7 +734,7 @@
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
                                                 <xf:label>
-                                                    <xf:output value="'Script'">
+                                                    <xf:output value="'Script'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -749,7 +748,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'Caption'">
+                                                    <xf:output value="'Caption'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -761,7 +760,7 @@
                             <xf:group appearance="full" ref=".[mods:title]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'Title'">
+                                        <xf:output value="'Title'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-detail-title',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:title]">
@@ -786,7 +785,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'Title'">
+                                                    <xf:output value="'Title'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-detail-title',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -801,7 +800,7 @@
                 <xf:group appearance="full" ref=".[mods:extent]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Extent'">
+                            <xf:output value="'Extent'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_extent',instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -825,7 +824,7 @@
                             <xf:group ref=".[@unit]">
                                 <xf:select1 ref="./@unit" selection="open">
                                     <xf:label>
-                                        <xf:output value="'Unit'">
+                                        <xf:output value="'Unit'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -838,7 +837,7 @@
                             <xf:group appearance="full" ref=".[mods:start]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'Start'">
+                                        <xf:output value="'Start'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:start]">
@@ -919,7 +918,7 @@
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
                                                 <xf:label>
-                                                    <xf:output value="'Language'">
+                                                    <xf:output value="'Language'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -932,7 +931,7 @@
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
                                                 <xf:label>
-                                                    <xf:output value="'xml:lang'">
+                                                    <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -945,7 +944,7 @@
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration" selection="open">
                                                 <xf:label>
-                                                    <xf:output value="'Transliteration'">
+                                                    <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -958,7 +957,7 @@
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
                                                 <xf:label>
-                                                    <xf:output value="'Script'">
+                                                    <xf:output value="'Script'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -972,7 +971,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'Start'">
+                                                    <xf:output value="'Start'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -984,7 +983,7 @@
                             <xf:group appearance="full" ref=".[mods:end]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'End'">
+                                        <xf:output value="'End'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:end]">
@@ -1065,7 +1064,7 @@
                                         <xf:group appearance="full" ref=".[@lang]">
                                             <xf:select1 ref="./@lang">
                                                 <xf:label>
-                                                    <xf:output value="'Language'">
+                                                    <xf:output value="'Language'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1078,7 +1077,7 @@
                                         <xf:group appearance="full" ref=".[@xml:lang]">
                                             <xf:select1 ref="./@xml:lang">
                                                 <xf:label>
-                                                    <xf:output value="'xml:lang'">
+                                                    <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1091,7 +1090,7 @@
                                         <xf:group appearance="full" ref=".[@transliteration]">
                                             <xf:select1 ref="./@transliteration" selection="open">
                                                 <xf:label>
-                                                    <xf:output value="'Transliteration'">
+                                                    <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1104,7 +1103,7 @@
                                         <xf:group appearance="full" ref=".[@script]">
                                             <xf:select1 ref="./@script">
                                                 <xf:label>
-                                                    <xf:output value="'Script'">
+                                                    <xf:output value="'Script'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1118,7 +1117,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'End'">
+                                                    <xf:output value="'End'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1130,7 +1129,7 @@
                             <xf:group appearance="full" ref=".[mods:total]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'Total'">
+                                        <xf:output value="'Total'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-extent-total',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:total]">
@@ -1155,7 +1154,7 @@
                                         <xf:group appearance="full" ref=".">
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'Total'">
+                                                    <xf:output value="'Total'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-extent-total',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1167,7 +1166,7 @@
                             <xf:group appearance="full" ref=".[mods:list]">
                                 <fieldset class="level-3">
                                     <div class="label-box">
-                                        <xf:output value="'List'">
+                                        <xf:output value="'List'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-extent-list',instance('code-tables'))/help"/>
                                         </xf:output><!--<span class="add-delete-button">
                                 <xf:trigger ref=".[mods:list]">
@@ -1249,7 +1248,7 @@
                                             <xf:group appearance="full" ref=".[@lang]">
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
-                                                        <xf:output value="'Language'">
+                                                        <xf:output value="'Language'" class="xforms-hint-icon">
                                                             <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                                         </xf:output>
                                                     </xf:label>
@@ -1262,7 +1261,7 @@
                                             <xf:group appearance="full" ref=".[@xml:lang]">
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
-                                                        <xf:output value="'xml:lang'">
+                                                        <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                                             <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                                         </xf:output>
                                                     </xf:label>
@@ -1275,7 +1274,7 @@
                                             <xf:group appearance="full" ref=".[@transliteration]">
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
-                                                        <xf:output value="'Transliteration'">
+                                                        <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                                             <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                                         </xf:output>
                                                     </xf:label>
@@ -1288,7 +1287,7 @@
                                             <xf:group appearance="full" ref=".[@script]">
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
-                                                        <xf:output value="'Script'">
+                                                        <xf:output value="'Script'" class="xforms-hint-icon">
                                                             <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                                         </xf:output>
                                                     </xf:label>
@@ -1301,7 +1300,7 @@
                                             <br/>
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
-                                                    <xf:output value="'List'">
+                                                    <xf:output value="'List'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_part-extent-list',instance('code-tables'))/help"/>
                                                     </xf:output>
                                                 </xf:label>
@@ -1402,7 +1401,7 @@
                             <xf:group appearance="full" ref=".[@encoding]">
                                 <xf:select1 ref="./@encoding">
                                     <xf:label>
-                                        <xf:output value="'Encoding'">
+                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_date-encoding',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1415,7 +1414,7 @@
                             <xf:group appearance="full" ref=".[@point]">
                                 <xf:select1 ref="./@point">
                                     <xf:label>
-                                        <xf:output value="'Point'">
+                                        <xf:output value="'Point'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_point',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1428,7 +1427,7 @@
                             <xf:group appearance="full" ref=".[@qualifier]">
                                 <xf:select1 ref="./@qualifier">
                                     <xf:label>
-                                        <xf:output value="'Qualifier'">
+                                        <xf:output value="'Qualifier'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_qualifier',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1441,7 +1440,7 @@
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
-                                        <xf:output value="'Language'">
+                                        <xf:output value="'Language'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1454,7 +1453,7 @@
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
-                                        <xf:output value="'xml:lang'">
+                                        <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1467,7 +1466,7 @@
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration" selection="open">
                                     <xf:label>
-                                        <xf:output value="'Transliteration'">
+                                        <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1480,7 +1479,7 @@
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
-                                        <xf:output value="'Script'">
+                                        <xf:output value="'Script'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1494,7 +1493,7 @@
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Date'">
+                                        <xf:output value="'Date'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-date',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1591,7 +1590,7 @@
                             <xf:group appearance="full" ref=".[@displayLabel]">
                                 <xf:input ref="./@displayLabel" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Display Label'">
+                                        <xf:output value="'Display Label'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1600,7 +1599,7 @@
                             <xf:group appearance="full" ref=".[@type]">
                                 <xf:input ref="./@type" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Type'">
+                                        <xf:output value="'Type'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-text-type',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1609,7 +1608,7 @@
                             <xf:group appearance="full" ref=".[@xlink:href]">
                                 <xf:input ref="./@xlink:href" class="text_50">
                                     <xf:label>
-                                        <xf:output value="'XLink'">
+                                        <xf:output value="'XLink'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_xlink_href',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1618,7 +1617,7 @@
                             <xf:group appearance="full" ref=".[@lang]">
                                 <xf:select1 ref="./@lang">
                                     <xf:label>
-                                        <xf:output value="'Language'">
+                                        <xf:output value="'Language'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1631,7 +1630,7 @@
                             <xf:group appearance="full" ref=".[@xml:lang]">
                                 <xf:select1 ref="./@xml:lang">
                                     <xf:label>
-                                        <xf:output value="'xml:lang'">
+                                        <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1644,7 +1643,7 @@
                             <xf:group appearance="full" ref=".[@transliteration]">
                                 <xf:select1 ref="./@transliteration" selection="open">
                                     <xf:label>
-                                        <xf:output value="'Transliteration'">
+                                        <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1657,7 +1656,7 @@
                             <xf:group appearance="full" ref=".[@script]">
                                 <xf:select1 ref="./@script">
                                     <xf:label>
-                                        <xf:output value="'Script'">
+                                        <xf:output value="'Script'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -1671,7 +1670,7 @@
                             <xf:group appearance="full" ref=".">
                                 <xf:input ref="." class="text_50">
                                     <xf:label>
-                                        <xf:output value="'Text'">
+                                        <xf:output value="'Text'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_part-text',instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
