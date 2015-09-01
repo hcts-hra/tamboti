@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-review">
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Location of Book Review'">
+                <xf:output value="'Location of Book Review'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_book-review',instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                 </xf:output>
@@ -40,7 +39,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -49,7 +48,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:title" class="text_150 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -58,7 +57,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -70,7 +69,7 @@
                     <xf:group>
                         <fieldset class="level-2">
                             <div class="label-box extra-wide">
-                                <xf:output value="'Institutional Editor(s) of Periodical'">
+                                <xf:output value="'Institutional Editor(s) of Periodical'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_name-relatedItem-periodical-editor-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                 </xf:output>
@@ -111,7 +110,7 @@
                                 <xf:group>
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Name'">
+                                            <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -134,7 +133,7 @@
                     <xf:group>
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Location of Review in&#xA;                                                  Periodical'">
+                                <xf:output value="'Location of Review in&#xA;                                                  Periodical'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact',instance('code-tables'))/help"/>
                                 </xf:output>
                                 <span class="add-delete-button">
@@ -191,9 +190,9 @@
                                                 <xf:group ref=".[@unit]">
                                                     <xf:select1 ref="./@unit" selection="open">
                                                         <xf:label>
-											                <xf:output value="'Unit'">
-											                    <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
-											                </xf:output>
+                                                            <xf:output value="'Unit'" class="xforms-hint-icon">
+                                                                <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
+                                                            </xf:output>
                                                         </xf:label>
                                                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
                                                             <xf:label ref="label"/>
@@ -221,7 +220,7 @@
                     <xf:group ref=".[mods:identifier]">
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Periodical Identifiers'">
+                                <xf:output value="'Periodical Identifiers'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_isbn',instance('code-tables'))/help"/>
                                 </xf:output>
                                 <span class="add-delete-button">
@@ -256,7 +255,7 @@
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Book(s) Reviewed'">
+                <xf:output value="'Book(s) Reviewed'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_book-reviewed',instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                 </xf:output>
@@ -280,7 +279,7 @@
                     <xf:group>
                         <fieldset class="level-2">
                             <div class="label-box super-wide">
-                                <xf:output value="'Names and Roles Connected With Book Reviewed'">
+                                <xf:output value="'Names and Roles Connected With Book Reviewed'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_name-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                 </xf:output>
@@ -303,7 +302,7 @@
                                 <xf:group>
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Name'">
+                                            <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_namePart-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -330,7 +329,7 @@
                                 <xf:group ref=".[mods:role]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Role'">
+                                            <xf:output value="'Role'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_role-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -364,7 +363,7 @@
                     <xf:group>
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Title of Book Reviewed'">
+                                <xf:output value="'Title of Book Reviewed'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_titleInfo-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-title-information',instance('code-tables'))/help"/>
                                 </xf:output>
@@ -394,7 +393,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -403,7 +402,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:title" class="text_150 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -412,7 +411,7 @@
                                 <xf:group>
                                     <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
                                         <xf:label>
-                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''">
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:label>
@@ -424,7 +423,7 @@
                     <xf:group>
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Origin Information'">
+                                <xf:output value="'Origin Information'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_originInfo-compact',instance('code-tables'))/help"/>
                                 </xf:output>
                             </div>
@@ -435,7 +434,7 @@
                                 <xf:group ref=".[mods:place]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'City'">
+                                            <xf:output value="'City'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_place-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -463,7 +462,7 @@
                                 <xf:group ref=".[mods:publisher]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Publisher'">
+                                            <xf:output value="'Publisher'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_publisher-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -485,7 +484,7 @@
                                 <xf:group ref=".[mods:dateIssued]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Date of Issue'">
+                                            <xf:output value="'Date of Issue'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_dateIssued-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -511,7 +510,7 @@
                                 <xf:group ref=".[mods:copyrightDate]">
                                     <fieldset class="level-2">
                                         <div class="label-box">
-                                            <xf:output value="'Copyright Date'">
+                                            <xf:output value="'Copyright Date'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_copyrightDate-compact',instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                             </xf:output>
@@ -540,7 +539,7 @@
                     <xf:group ref=".[mods:physicalDescription]">
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Physical Description'">
+                                <xf:output value="'Physical Description'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_physicalDescription-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                 </xf:output>
@@ -549,7 +548,7 @@
                                 <xf:group ref=".[mods:internetMediaType]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Internet Media Type'">
+                                            <xf:output value="'Internet Media Type'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_internetMediaType-compact',instance('code-tables'))/help"/>
                                             </xf:output>
                                         </div>
@@ -569,7 +568,7 @@
                                 <xf:group ref=".[mods:extent]">
                                     <fieldset class="level-3">
                                         <div class="label-box">
-                                            <xf:output value="'Extent'">
+                                            <xf:output value="'Extent'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_extent-compact',instance('code-tables'))/help"/>
                                             </xf:output>
                                         </div>
@@ -588,7 +587,7 @@
                     <xf:group ref=".[mods:location]">
                         <fieldset class="level-1">
                             <div class="label-box">
-                                <xf:output value="'URL'">
+                                <xf:output value="'URL'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_url-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-location',instance('code-tables'))/help"/>
                                 </xf:output>
@@ -625,7 +624,7 @@
                     <xf:group ref=".[mods:identifier]">
                         <fieldset class="level-2">
                             <div class="label-box">
-                                <xf:output value="'Identifiers of Book Reviewed'">
+                                <xf:output value="'Identifiers of Book Reviewed'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_isbn',instance('code-tables'))/help"/>
                                 </xf:output>
                                 <span class="add-delete-button">

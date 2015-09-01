@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-c">
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Notes'">
+                <xf:output value="'Notes'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_note', instance('code-tables'))/help"/>
                 </xf:output>
                 <span class="add-delete-button">
@@ -39,7 +38,7 @@
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Abstracts'">
+                <xf:output value="'Abstracts'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_abstract', instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-subjects', instance('code-tables'))/help"/>
                 </xf:output>
@@ -67,7 +66,7 @@
     <xf:group>
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Subjects'">
+                <xf:output value="'Subjects'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_subject', instance('code-tables'))/help"/>
                 </xf:output>
                 <span class="add-delete-button">
@@ -83,7 +82,7 @@
                 <xf:group class="margin-plus" appearance="full" ref=".[@valueURI]">
                     <xf:input ref="./@valueURI" class="text_50">
                         <xf:label>
-                            <xf:output value="'Value URI'">
+                            <xf:output value="'Value URI'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_value-uri', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -93,7 +92,7 @@
                 <xf:group ref=".[mods:topic]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Topic'">
+                            <xf:output value="'Topic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_topic', instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -117,7 +116,7 @@
                 <xf:group ref=".[mods:geographic]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Place'">
+                            <xf:output value="'Place'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_geographic', instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -141,7 +140,7 @@
                 <xf:group ref=".[mods:temporal]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Time'">
+                            <xf:output value="'Time'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_temporal', instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -157,7 +156,7 @@
                             <xf:group ref=".[@encoding]" class="margin-plus">
                                 <xf:select1 ref="./@encoding">
                                     <xf:label>
-                                        <xf:output value="'Encoding'">
+                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_temporal-encoding', instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -170,7 +169,7 @@
                             <xf:group ref=".[@point]" class="margin-plus">
                                 <xf:select1 ref="./@point">
                                     <xf:label>
-                                        <xf:output value="'Point'">
+                                        <xf:output value="'Point'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_point', instance('code-tables'))/help"/>
                                         </xf:output>
                                     </xf:label>
@@ -194,7 +193,7 @@
                 <xf:group ref=".[mods:titleInfo]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Works as Topic'">
+                            <xf:output value="'Works as Topic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_subject-titleInfo', instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">
@@ -231,13 +230,13 @@
                 <xf:group ref=".[mods:name]">
                     <fieldset class="level-2">
                         <div class="label-box extra-wide">
-                            <xf:output value="'Persons and Institutions as Topics'">
+                            <xf:output value="'Persons and Institutions as Topics'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_subject-name', instance('code-tables'))/help"/>
                             </xf:output>
                         </div>
                         <fieldset class="level-3">
                             <div class="label-box">
-                                <xf:output value="'Person(s) as Topic'">
+                                <xf:output value="'Person(s) as Topic'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_subject-name-personal-compact', instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-subjects', instance('code-tables'))/help"/>
                                 </xf:output>
@@ -254,7 +253,7 @@
                                 <xf:group ref=".[@type = 'personal']">
                                     <fieldset class="level-4">
                                         <div class="label-box">
-                                            <xf:output value="'Name'">
+                                            <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_subject-namePart-personal-compact', instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-subjects', instance('code-tables'))/help"/>
                                             </xf:output>
@@ -277,7 +276,7 @@
                         </fieldset>
                         <fieldset class="level-3">
                             <div class="label-box">
-                                <xf:output value="'Institutions(s) as Topic'">
+                                <xf:output value="'Institutions(s) as Topic'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_subject-name-corporate-compact', instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-subjects', instance('code-tables'))/help"/>
                                 </xf:output>
@@ -300,7 +299,7 @@
                                 <xf:group ref=".[@type = 'corporate']">
                                     <fieldset class="level-4">
                                         <div class="label-box">
-                                            <xf:output value="'Name'">
+                                            <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_subject-namePart-corporate-compact', instance('code-tables'))/help"/>
                                                 <xf:hint ref="id('hint-code_more-subjects', instance('code-tables'))/help"/>
                                             </xf:output>
@@ -321,7 +320,7 @@
                 <xf:group ref=".[mods:genre]">
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Genre'">
+                            <xf:output value="'Genre'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_genre', instance('code-tables'))/help"/>
                             </xf:output>
                             <span class="add-delete-button">

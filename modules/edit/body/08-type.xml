@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="type block-form" tab-id="type">
     <xf:group appearance="full">
         <fieldset class="level-1">
             <div class="label-box">
-                <xf:output value="'Resource Types'">
+                <xf:output value="'Resource Types'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_typeOfResource', instance('code-tables'))/help"/>
                 </xf:output>
                 <span class="add-delete-button">
@@ -82,7 +81,7 @@
                 <xf:group appearance="full" ref=".[@altRepGroup]">
                     <xf:select1 ref="./@altRepGroup">
                         <xf:label>
-                            <xf:output value="'Alt. Representation Group'">
+                            <xf:output value="'Alt. Representation Group'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_altRepGroup', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -95,7 +94,7 @@
                 <xf:group appearance="full" ref=".[@collection]">
                     <xf:select1 ref="./@collection">
                         <xf:label>
-                            <xf:output value="'Collection'">
+                            <xf:output value="'Collection'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_typeOfResource-collection', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -108,7 +107,7 @@
                 <xf:group appearance="full" ref=".[@manuscript]">
                     <xf:select1 ref="./@manuscript">
                         <xf:label>
-                            <xf:output value="'Manuscript'">
+                            <xf:output value="'Manuscript'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_typeOfResource-manuscript', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -121,7 +120,7 @@
                 <xf:group appearance="full" ref=".[@displayLabel]">
                     <xf:input ref="./@displayLabel" class="text_50">
                         <xf:label>
-                            <xf:output value="'Display Label'">
+                            <xf:output value="'Display Label'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_displayLabel', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -130,7 +129,7 @@
                 <xf:group appearance="full" ref=".[@usage]">
                     <xf:select1 ref="./@usage">
                         <xf:label>
-                            <xf:output value="'Usage'">
+                            <xf:output value="'Usage'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_usage', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -144,7 +143,7 @@
                 <xf:group appearance="full" ref=".">
                     <xf:select1 ref=".">
                         <xf:label>
-                            <xf:output value="'Resource Type'">
+                            <xf:output value="'Resource Type'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_typeOfResource', instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
