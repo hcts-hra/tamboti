@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="target-audience block-form" tab-id="target-audience">
     <xf:group appearance="full">
         <fieldset class="level-1">
@@ -104,7 +103,7 @@
                 <xf:group appearance="full" ref=".[@altRepGroup]">
                     <xf:select1 ref="./@altRepGroup">
                         <xf:label>
-                            <xf:output value="'Alt. Representation Group'">
+                            <xf:output value="'Alt. Representation Group'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -117,7 +116,7 @@
                 <xf:group appearance="full" ref=".[@authority]">
                     <xf:select1 ref="./@authority">
                         <xf:label>
-                            <xf:output value="'Authority'">
+                            <xf:output value="'Authority'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_authority',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -130,7 +129,7 @@
                 <xf:group appearance="full" ref=".[@authorityURI]" class="text_100">
                     <xf:input ref="./@authorityURI" selection="open">
                         <xf:label>
-                            <xf:output value="'Authority URI'">
+                            <xf:output value="'Authority URI'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -140,7 +139,7 @@
                 <xf:group appearance="full" ref=".[@displayLabel]">
                     <xf:input ref="./@displayLabel" class="text_100">
                         <xf:label>
-                            <xf:output value="'Display Label'">
+                            <xf:output value="'Display Label'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -149,7 +148,7 @@
                 <xf:group appearance="full" ref=".[@valueURI]" class="text_100">
                     <xf:input ref="./@valueURI">
                         <xf:label>
-                            <xf:output value="'Value URI'">
+                            <xf:output value="'Value URI'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -159,7 +158,7 @@
                 <xf:group appearance="full" ref=".[@lang]">
                     <xf:select1 ref="./@lang">
                         <xf:label>
-                            <xf:output value="'Language'">
+                            <xf:output value="'Language'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_language',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -172,7 +171,7 @@
                 <xf:group appearance="full" ref=".[@script]">
                     <xf:select1 ref="./@script">
                         <xf:label>
-                            <xf:output value="'Script'">
+                            <xf:output value="'Script'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -185,7 +184,7 @@
                 <xf:group appearance="full" ref=".[@transliteration]">
                     <xf:select1 ref="./@transliteration" selection="open">
                         <xf:label>
-                            <xf:output value="'Transliteration'">
+                            <xf:output value="'Transliteration'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -198,7 +197,7 @@
                 <xf:group appearance="full" ref=".[@xml:lang]">
                     <xf:select1 ref="./@xml:lang">
                         <xf:label>
-                            <xf:output value="'xml:lang'">
+                            <xf:output value="'xml:lang'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -212,7 +211,7 @@
                 <xf:group appearance="full">
                     <xf:input ref=".[string-length(@authority)=0]" class="text_50" selection="open">
                         <xf:label>
-                            <xf:output value="'Target Audience (text input)'">
+                            <xf:output value="'Target Audience (text input)'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_targetAudience',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -221,7 +220,7 @@
                 <xf:group appearance="full">
                     <xf:select1 ref=".[@authority='marctarget']" selection="open">
                         <xf:label>
-                            <xf:output value="'Target Audience (marctarget)'">
+                            <xf:output value="'Target Audience (marctarget)'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_targetAudience',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
@@ -234,7 +233,7 @@
                 <xf:group appearance="full">
                     <xf:select1 ref=".[@authority='local']" selection="open">
                         <xf:label>
-                            <xf:output value="'Target Audience (local)'">
+                            <xf:output value="'Target Audience (local)'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_targetAudience',instance('code-tables'))/help"/>
                             </xf:output>
                         </xf:label>
