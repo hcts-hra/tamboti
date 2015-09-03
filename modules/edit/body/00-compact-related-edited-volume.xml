@@ -1,21 +1,21 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-edited-volume">
-    <xf:group>
+    <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Edited Volume'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_edited-volume-compact', instance('code-tables'))/help"/>
                 </xf:output>
-            </div>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-edited-volume-repeat">
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'XLink of Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_xlink_href', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_xlink_href-editied-volume', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
-                        <xf:group class="margin-plus hide-label">
+                        </xf:group>
+                        <xf:group class="margin-plus">
                             <xf:input ref="./@xlink:href" class="text_50">
                                 <xf:label>XLink</xf:label>
                             </xf:input>
@@ -24,11 +24,11 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Title of Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_edited-volume-titleInfo-compact', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-edited-volume-repeat">
                             <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                 <br/>
@@ -36,8 +36,7 @@
                             <xf:group class="text_10 margin-plus">
                                 <xf:input ref="./mods:nonSort">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Non
-                                                  Sort</xf:group>
+                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
                                         <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
                                         <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
                                     </xf:label>
@@ -66,33 +65,31 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Editors of Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_edited-volume-name-compact', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:group>
                             <fieldset class="level-3">
-                                <div class="label-box">
+                                <xf:group appearance="minimal" class="label-box">
                                     <xf:output value="'Persons as Editors'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                         <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                     </xf:output>
-                                    <span class="add-delete-button">
-                                        <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
-                                            <xf:label>+</xf:label>
-                                            <xf:action ev:event="DOMActivate">
-                                                <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-person-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem/mods:name[2]"/>
-                                            </xf:action>
-                                        </xf:trigger>
-                                        <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
-                                            <xf:label>+</xf:label>
-                                            <xf:action ev:event="DOMActivate">
-                                                <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[3]"/>
-                                            </xf:action>
-                                        </xf:trigger>
-                                    </span>
-                                </div>
+                                    <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
+                                        <xf:label>+</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-person-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem/mods:name[2]"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                    <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
+                                        <xf:label>+</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[3]"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                </xf:group>
                                 <xf:repeat nodeset="./mods:name" id="relatedItem-name-person-repeat">
                                     <xf:group ref=".[@type = 'personal']">
                                         <xf:repeat nodeset="./mods:namePart" id="relatedItem-name-person-namePart-repeat">
@@ -106,7 +103,7 @@
                                                         <xf:value ref="value"/>
                                                     </xf:itemset>
                                                 </xf:select1>
-                                                <xf:input ref="." class="hide-label text_100">
+                                                <xf:input ref="." class="text_100">
                                                     <xf:label/>
                                                 </xf:input>
                                             </xf:group>
@@ -120,26 +117,24 @@
                         </xf:group>
                         <xf:group>
                             <fieldset class="level-3">
-                                <div class="label-box">
+                                <xf:group appearance="minimal" class="label-box">
                                     <xf:output value="'Institutions as Editors'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_namePart-institution-compact', instance('code-tables'))/help"/>
                                         <xf:hint ref="id('hint-code_more-name-information', instance('code-tables'))/help"/>
                                     </xf:output>
-                                    <span class="add-delete-button">
-                                        <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
-                                            <xf:label>+</xf:label>
-                                            <xf:action ev:event="DOMActivate">
-                                                <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-institution-namePart-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem/mods:name[6]"/>
-                                            </xf:action>
-                                        </xf:trigger>
-                                        <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
-                                            <xf:label>+</xf:label>
-                                            <xf:action ev:event="DOMActivate">
-                                                <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-institution-namePart-repeat')" position="before" origin="instance('compact-template')/mods:name[5]"/>
-                                            </xf:action>
-                                        </xf:trigger>
-                                    </span>
-                                </div>
+                                    <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
+                                        <xf:label>+</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-institution-namePart-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem/mods:name[6]"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                    <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
+                                        <xf:label>+</xf:label>
+                                        <xf:action ev:event="DOMActivate">
+                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-institution-namePart-repeat')" position="before" origin="instance('compact-template')/mods:name[5]"/>
+                                        </xf:action>
+                                    </xf:trigger>
+                                </xf:group>
                                 <xf:repeat nodeset="./mods:name" id="relatedItem-name-institution-repeat">
                                     <xf:group ref=".[@type = 'corporate']">
                                         <xf:repeat nodeset="./mods:namePart" id="relatedItem-name-institution-namePart-repeat">
@@ -162,26 +157,26 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Edited Volume Origin Information'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_originInfo-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:originInfo" id="relatedItem-origininfo-edited-volume-repeat">
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'City Name'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_place-compact', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:place" id="relatedItem-place-edited-volume-repeat">
                                         <xf:group>
                                             <fieldset class="level-4">
                                                 <xf:repeat nodeset="./mods:placeTerm" id="relatedItem-place-term-edited-volume-repeat">
-                                                    <xf:group class="hide-label margin-plus">
+                                                    <xf:group class="margin-plus">
                                                         <xf:input ref="." class="text_100">
                                                             <xf:label>Place Term</xf:label>
                                                         </xf:input>
@@ -194,14 +189,14 @@
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Publisher'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_publisher-compact', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:publisher" id="relatedItem-publisher-edited-volume-repeat">
-                                        <xf:group class="hide-label margin-plus">
+                                        <xf:group class="margin-plus">
                                             <xf:input ref="." class="text_100">
                                                 <xf:label>Publisher</xf:label>
                                             </xf:input>
@@ -211,20 +206,18 @@
                             </xf:group>
                             <xf:group ref=".[mods:dateIssued]">
                                 <fieldset class="level-2">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Date of Issue'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_dateIssued-compact', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger>
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="mods:dateIssued" at="index('dateIssued-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:dateIssued"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div>
+                                        <xf:trigger>
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="mods:dateIssued" at="index('dateIssued-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:dateIssued"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:dateIssued" id="dateIssued-repeat">
                                         <xf:group ref=".[count(../mods:dateIssued) &gt; 1]" class="margin-plus">
                                             <xf:select1 ref="./@point">
@@ -235,7 +228,7 @@
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
-                                        <xf:input ref="." class="text_10 hide-label margin-plus">
+                                        <xf:input ref="." class="text_10 margin-plus">
                                             <xf:label>Date Issued</xf:label>
                                         </xf:input>
                                     </xf:repeat>
@@ -243,20 +236,18 @@
                             </xf:group>
                             <xf:group ref=".[mods:copyrightDate]">
                                 <fieldset class="level-2">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Copyright Date'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_copyrightDate-compact', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger>
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="mods:copyrightDate" at="index('copyrightDate-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:copyrightDate"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div>
+                                        <xf:trigger>
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="mods:copyrightDate" at="index('copyrightDate-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:copyrightDate"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:copyrightDate" id="copyrightDate-repeat">
                                         <xf:group class="margin-plus" ref=".[count(../mods:copyrightDate) &gt; 1]">
                                             <xf:select1 ref="./@point">
@@ -267,7 +258,7 @@
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
-                                        <xf:group class="text_10 hide-label margin-plus">
+                                        <xf:group class="text_10 margin-plus">
                                             <xf:input ref=".">
                                                 <xf:label>Copyright Date</xf:label>
                                             </xf:input>
@@ -280,20 +271,20 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box extra-wide">
+                        <xf:group appearance="minimal" class="label-box extra-wide">
                             <xf:output value="'Location of Contribution in Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_edited-volume-part-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:part" id="related-item-part-edited-volume-repeat">
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Volume</span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-edited-volume-repeat">
-                                        <xf:group ref=".[mods:number]" class="hide-label margin-plus">
+                                        <xf:group ref=".[mods:number]" class="margin-plus">
                                             <xf:input ref="./mods:number" class="text_10">
                                                 <xf:label>Number</xf:label>
                                             </xf:input>
@@ -303,11 +294,11 @@
                             </xf:group>
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Page Extent'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_extent-compact', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-edited-volume-repeat">
                                         <xf:group ref=".[@unit]">
                                             <xf:select1 ref="./@unit" selection="open">
@@ -340,22 +331,20 @@
                 </xf:group>
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Identifiers of Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:identifier]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-edited-volume-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger ref=".[mods:identifier]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-edited-volume-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-edited-volume-repeat">
-                            <xf:group class="hide-label margin-plus">
+                            <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
@@ -372,21 +361,21 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Monograph Series of Edited Volume'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_series-edited-volume-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:relatedItem" id="relatedItem-relatedItem-series-repeat">
                             <xf:group>
                                 <fieldset class="level-2">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'XLink of Monograph Series'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_xlink_href', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
-                                    <xf:group class="margin-plus hide-label">
+                                    </xf:group>
+                                    <xf:group class="margin-plus">
                                         <xf:input ref="./@xlink:href">
                                             <xf:label>XLink</xf:label>
                                         </xf:input>
@@ -395,12 +384,12 @@
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Series Title'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_edited-volume-series-title', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-relatedItem-relatedItem-series-repeat">
                                         <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                             <br/>
@@ -408,8 +397,7 @@
                                         <xf:group class="margin-plus">
                                             <xf:input ref="./mods:nonSort" class="text_10">
                                                 <xf:label>
-                                                    <xf:group ref=".[string-length(../@type) = 0]">Non
-                                                  Sort</xf:group>
+                                                    <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
                                                     <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
                                                     <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
                                                 </xf:label>
@@ -438,23 +426,23 @@
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box extra-wide">
+                                    <xf:group appearance="minimal" class="label-box extra-wide">
                                         <xf:output value="'Location of Edited Volume in Monograph Series'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_edited-volume-series-part', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:part" id="part-relatedItem-relatedItem-series-repeat">
                                         <xf:group ref=".[mods:detail]">
                                             <fieldset class="level-4">
-                                                <div class="label-box">
+                                                <xf:group appearance="minimal" class="label-box">
                                                     <xf:output value="'Volume'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_edited-volume-series-part', instance('code-tables'))/help"/>
                                                         <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                                     </xf:output>
-                                                </div>
+                                                </xf:group>
                                                 <xf:repeat nodeset="./mods:detail" id="detail-relatedItem-relatedItem-series-repeat">
-                                                    <xf:group ref=".[mods:number]" class="hide-label margin-plus">
+                                                    <xf:group ref=".[mods:number]" class="margin-plus">
                                                         <xf:input ref="./mods:number" class="text_10">
                                                             <xf:label>Number</xf:label>
                                                         </xf:input>

@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="language block-form" tab-id="language">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Resource Languages'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_language',instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:language]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:language" at="index('language-repeat')" position="before" origin="instance('new-instance')/mods:language"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:language]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language" at="index('language-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: objectPart, lang; xml:lang; script; transliteration, displayLabel, usage, altRepGroup--><!--Subelements: languageTerm, scriptTerm-->
+                <xf:trigger ref=".[mods:language]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:language" at="index('language-repeat')" position="before" origin="instance('new-instance')/mods:language"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:language]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language" at="index('language-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: objectPart, lang; xml:lang; script; transliteration, displayLabel, usage, altRepGroup--><!--Subelements: languageTerm, scriptTerm-->
             <xf:repeat nodeset="instance('save-data')/mods:language" id="language-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 8 or .[not(mods:languageTerm)] or .[not(mods:scriptTerm)]]">
                     <xf:switch>
@@ -229,27 +225,23 @@
                 <br/>
                 <xf:group appearance="full" ref=".[mods:languageTerm]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Language Terms'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_languageTerm',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:languageTerm" at="index('languageTerm-repeat')" position="before" origin="instance('new-instance')/mods:language/mods:languageTerm"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language/mods:languageTerm" at="index('languageTerm-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:languageTerm" at="index('languageTerm-repeat')" position="before" origin="instance('new-instance')/mods:language/mods:languageTerm"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language/mods:languageTerm" at="index('languageTerm-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:languageTerm" id="languageTerm-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
@@ -463,27 +455,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:scriptTerm]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Script Terms'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_scriptTerm',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:scriptTerm" at="index('scriptTerm-repeat')" position="before" origin="instance('new-instance')/mods:language/mods:scriptTerm"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language/mods:scriptTerm" at="index('scriptTerm-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:scriptTerm" at="index('scriptTerm-repeat')" position="before" origin="instance('new-instance')/mods:language/mods:scriptTerm"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:language/mods:scriptTerm" at="index('scriptTerm-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:scriptTerm" id="scriptTerm-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
