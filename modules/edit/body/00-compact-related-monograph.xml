@@ -10,7 +10,7 @@
                 <xf:group>
                     <fieldset class="level-2">
                         <div class="label-box">
-                            <xf:output value="'Monograph Series'" class="xforms-hint-icon">
+                            <xf:output value="'XLink of Book Series'" class="xforms-hint-icon">
                                 <xf:hint ref="id('XLink of Book Series', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_xlink_href-series', instance('code-tables'))/help"/>
                             </xf:output>
@@ -54,8 +54,7 @@
                             <xf:group>
                                 <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Non
-                                            Sort</xf:group>
+                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
                                         <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
                                         <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
                                     </xf:label>
