@@ -1,21 +1,21 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-newspaper-article">
-    <xf:group>
+    <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Newspaper'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_relatedItem-periodical-compact', instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                 </xf:output>
-            </div>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-periodical-repeat">
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Newspaper Title'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_relatedItem-periodical-titleInfo-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-periodical-repeat">
                             <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                 <br/>
@@ -52,26 +52,24 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box extra-wide">
+                        <xf:group appearance="minimal" class="label-box extra-wide">
                             <xf:output value="'Institutional Editor(s) of Newspaper'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_name-relatedItem-periodical-editor-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[6]"/>
-                                    </xf:action>
-                                </xf:trigger>
-                                <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[5]"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[6]"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[5]"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:name" id="relatedItem-name-repeat-periodical">
                             <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
                                 <xf:trigger>
@@ -93,13 +91,12 @@
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Name'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact', instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div>
-                                    <xf:group/>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:namePart" id="relatedItem-namePart-periodical-repeat">
                                         <xf:group>
                                             <xf:input ref="." class="text_100 margin-plus">
@@ -116,22 +113,22 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Location of Article in Newspaper'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:part" id="related-item-part-periodical-repeat">
                             <xf:group ref=".[mods:date]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">
                                             <span class="legend">Date of Publication</span>
                                         </span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:date" id="related-item-part-date-periodical-repeat">
                                         <div class="block-form">
-                                            <xf:group ref="." class="hide-label margin-plus">
+                                            <xf:group ref="." class="margin-plus">
                                                 <xf:input ref="." class="text_10">
                                                     <xf:label>Date</xf:label>
                                                 </xf:input>
@@ -142,9 +139,9 @@
                             </xf:group>
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Section</span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-periodical-repeat">
                                         <xf:group ref=".[mods:number]" class="margin-plus">
                                             <xf:input ref="./mods:number" class="text_10">
@@ -156,9 +153,9 @@
                             </xf:group>
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Page Extent</span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-periodical-repeat">
                                         <xf:group ref=".[@unit]">
                                             <xf:select1 ref="./@unit" selection="open">
@@ -191,21 +188,19 @@
                 </xf:group>
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Identifiers'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:identifier]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-periodical-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger ref=".[mods:identifier]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-periodical-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-periodical-repeat">
-                            <xf:group class="hide-label margin-plus">
+                            <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">

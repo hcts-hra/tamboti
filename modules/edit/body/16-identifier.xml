@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="identifier block-form" tab-id="identifier">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Identifiers'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:identifier]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:identifier" at="index('identifier-repeat')" position="before"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:identifier]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:identifier" at="index('identifier-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: altRepGroup, displayLabel, invalid, lang, script, transliteration, type, xml:lang--><!--Subelements: none-->
+                <xf:trigger ref=".[mods:identifier]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:identifier" at="index('identifier-repeat')" position="before"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:identifier]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:identifier" at="index('identifier-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: altRepGroup, displayLabel, invalid, lang, script, transliteration, type, xml:lang--><!--Subelements: none-->
             <xf:repeat nodeset="instance('save-data')/mods:identifier" id="identifier-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                     <xf:switch>
