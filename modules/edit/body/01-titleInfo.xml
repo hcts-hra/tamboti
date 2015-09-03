@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="title block-form" tab-id="title">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Title Information'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_titleInfo', instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:titleInfo]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="instance('save-data')/mods:titleInfo" at="index('titleInfo-repeat')" position="before" origin="instance('new-instance')/mods:titleInfo"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:titleInfo]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete nodeset="instance('save-data')/mods:titleInfo" at="index('titleInfo-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration; type; authority; authorityURI; valueURI; displayLabel; supplied; usage; altRepGroup; nameTitleGroup. --><!-- subelements: nonSort, title, subTitle, partNumber, partName. -->
+                <xf:trigger ref=".[mods:titleInfo]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="instance('save-data')/mods:titleInfo" at="index('titleInfo-repeat')" position="before" origin="instance('new-instance')/mods:titleInfo"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:titleInfo]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete nodeset="instance('save-data')/mods:titleInfo" at="index('titleInfo-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration; type; authority; authorityURI; valueURI; displayLabel; supplied; usage; altRepGroup; nameTitleGroup. --><!-- subelements: nonSort, title, subTitle, partNumber, partName. -->
             <xf:repeat nodeset="instance('save-data')/mods:titleInfo" id="titleInfo-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 18 or count(*) &lt; 5]">
                     <xf:switch>
@@ -448,19 +444,17 @@
                 </xf:group><!-- non-repeating --><!-- attributes: lang; xml:lang; script; transliteration. --><!-- subelements: none. -->
                 <xf:group appearance="full" ref=".[mods:nonSort]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Non Sort'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:nonSort]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:nonSort" at="index('nonSort-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                            <xf:trigger ref=".[mods:nonSort]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:nonSort" at="index('nonSort-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                         <xf:repeat nodeset="./mods:nonSort" id="nonSort-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -581,11 +575,11 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:title]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Title'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_title', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                        </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                         <xf:repeat nodeset="./mods:title" id="title-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -706,19 +700,17 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:subTitle]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Subtitle'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_subTitle', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:subTitle]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:subTitle" at="index('subTitle-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                            <xf:trigger ref=".[mods:subTitle]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:subTitle" at="index('subTitle-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                         <xf:repeat nodeset="./mods:subTitle" id="subTitle-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -839,19 +831,17 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:partNumber]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Part Number'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_partNumber', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:partNumber]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:partNumber" at="index('partNumber-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                            <xf:trigger ref=".[mods:partNumber]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:partNumber" at="index('partNumber-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                         <xf:repeat nodeset="./mods:partNumber" id="partNumber-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -972,19 +962,17 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:partName]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Part Name'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_partName', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:partName]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:partName" at="index('partName-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                            <xf:trigger ref=".[mods:partName]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:titleInfo/mods:partName" at="index('partName-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                         <xf:repeat nodeset="./mods:partName" id="partName-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>

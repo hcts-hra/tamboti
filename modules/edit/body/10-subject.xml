@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="subject block-form" tab-id="subject">
     <div class="block-form">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Subjects'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_subject',instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:subject]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:subject" at="index('subject-repeat')" position="before" origin="instance('new-instance')/mods:subject"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:subject]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject" at="index('subject-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: ID; xlink; lang; xml:lang; script; transliteration, authority, authorityURI; valueURI, displayLabel, usage, altRepGroup--><!--Subelements: topic, geographic, temporal, titleInfo, name, geographicCode, genre, hierarchicalGeographic, cartographics, occupation.-->
+                <xf:trigger ref=".[mods:subject]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:subject" at="index('subject-repeat')" position="before" origin="instance('new-instance')/mods:subject"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:subject]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject" at="index('subject-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: ID; xlink; lang; xml:lang; script; transliteration, authority, authorityURI; valueURI, displayLabel, usage, altRepGroup--><!--Subelements: topic, geographic, temporal, titleInfo, name, geographicCode, genre, hierarchicalGeographic, cartographics, occupation.-->
             <xf:repeat nodeset="instance('save-data')/mods:subject" id="subject-repeat">
                 <xf:group appearance="full" ref=".[count(@*) &lt; 12 or .[not(mods:topic)] or .[not(mods:geographic)] or .[not(mods:temporal)] or .[not(mods:titleInfo)] or .[not(mods:name)] or .[not(mods:genre)] or .[not(mods:hierarchicalGeographic)] or .[not(mods:cartographics)] or .[not(mods:geographicCode)] or .[not(mods:occupation)]]">
                     <xf:switch>
@@ -367,27 +363,23 @@
                 <br/>
                 <xf:group appearance="full" ref=".[mods:topic]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Topic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_topic',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:topic" at="index('topic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:topic"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:topic" at="index('topic-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:topic" at="index('topic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:topic"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:topic" at="index('topic-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:topic" id="topic-repeat">
                             <xf:group appearance="full" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>
@@ -569,27 +561,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:geographic]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Geographic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_geographic',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:geographic" at="index('geographic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:geographic"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:geographic" at="index('geographic-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:geographic" at="index('geographic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:geographic"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:geographic" at="index('geographic-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
                             <xf:group appearance="full" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>
@@ -771,27 +759,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:temporal]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Temporal'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_temporal',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:temporal" at="index('temporal-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:temporal"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:temporal" at="index('temporal-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration, encoding; point; keyDate; qualifier--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:temporal" at="index('temporal-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:temporal"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:temporal" at="index('temporal-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration, encoding; point; keyDate; qualifier--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:temporal" id="temporal-repeat">
                             <xf:group appearance="full" ref=".[count(@*) &lt; 11]">
                                 <xf:switch>
@@ -1057,25 +1041,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:titleInfo]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Title Information'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_titleInfo',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:titleInfo]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:titleInfo" at="index('titleInfo-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:titleInfo"/>
-                                    </xf:action>
-                                </xf:trigger>
-                                <xf:trigger ref=".[mods:titleInfo]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete nodeset="instance('save-data')/mods:subject/mods:titleInfo" at="index('titleInfo-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration, type, authority, displayLabel, authorityURI, valueURI. --><!-- subelements: nonSort, title, subTitle, partNumber, partName. -->
+                            <xf:trigger ref=".[mods:titleInfo]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:titleInfo" at="index('titleInfo-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:titleInfo"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:titleInfo]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete nodeset="instance('save-data')/mods:subject/mods:titleInfo" at="index('titleInfo-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration, type, authority, displayLabel, authorityURI, valueURI. --><!-- subelements: nonSort, title, subTitle, partNumber, partName. -->
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 11 or count(*) &lt; 5]">
                                 <xf:switch>
@@ -1386,19 +1368,17 @@
                             </xf:group><!-- non-repeating --><!-- attributes: lang; xml:lang; script; transliteration. --><!-- subelements: none. -->
                             <xf:group appearance="full" ref=".[mods:nonSort]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Non Sort'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_nonSort',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:nonSort]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:nonSort" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:nonSort]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:nonSort" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:nonSort" id="nonSort-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -1519,11 +1499,11 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:title]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Title'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_title',instance('code-tables'))/help"/>
                                         </xf:output>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:title" id="title-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -1645,19 +1625,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:subTitle]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Subtitle'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_subTitle',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:subTitle]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:subTitle" at="index('subTitle-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:subTitle]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:subTitle" at="index('subTitle-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:subTitle" id="subTitle-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -1777,19 +1755,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:partNumber]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Part Number'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_partNumber',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:partNumber]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:partNumber" at="index('partNumber-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:partNumber]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:partNumber" at="index('partNumber-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:partNumber" id="partNumber-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -1910,19 +1886,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:partName]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Part Name'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_partName',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:partName]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:partName" at="index('partName-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:partName]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:titleInfo/mods:partName" at="index('partName-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:partName" id="partName-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -2045,27 +2019,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:name]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Names'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_name',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:name]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:name]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete nodeset="instance('save-data')/mods:subject/mods:name" at="index('subject-name-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration, type, authority, authorityURI; valueURI, displayLabel--><!-- subelements: namePart; role; displayForm; affiliation; description. -->
+                            <xf:trigger ref=".[mods:name]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:name]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete nodeset="instance('save-data')/mods:subject/mods:name" at="index('subject-name-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!-- attributes: ID; xlink; lang; xml:lang; script; transliteration, type, authority, authorityURI; valueURI, displayLabel--><!-- subelements: namePart; role; displayForm; affiliation; description. -->
                         <xf:repeat nodeset="./mods:name" id="subject-name-repeat">
                             <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
                                 <xf:trigger>
@@ -2384,27 +2354,23 @@
                             <br/>
                             <xf:group appearance="full" ref=".[mods:namePart]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Name Part'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_namePart',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:namePart]">
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="instance('save-data')/mods:namePart" at="index('subject-namePart-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:namePart"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:namePart]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:namePart" at="index('subject-namePart-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:namePart]">
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="instance('save-data')/mods:namePart" at="index('subject-namePart-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:namePart"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref=".[mods:namePart]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:namePart" at="index('subject-namePart-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:namePart" id="subject-namePart-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 5]">
                                             <xf:switch>
@@ -2545,27 +2511,23 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:role]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Role'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_role',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:role]">
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="instance('save-data')/mods:role" at="index('subject-role-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:role"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:role]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:role" at="index('subject-role-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: none --><!-- subelements: roleTerm. -->
+                                        <xf:trigger ref=".[mods:role]">
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="instance('save-data')/mods:role" at="index('subject-role-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:role"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref=".[mods:role]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:role" at="index('subject-role-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: none --><!-- subelements: roleTerm. -->
                                     <xf:repeat nodeset="./mods:role" id="subject-role-repeat">
                                         <xf:group appearance="full" ref=".[not(mods:roleTerm)]">
                                             <xf:switch>
@@ -2600,27 +2562,23 @@
                                         </xf:group>
                                         <xf:group appearance="full" ref=".[mods:roleTerm]">
                                             <fieldset class="level-4">
-                                                <div class="label-box">
+                                                <xf:group appearance="minimal" class="label-box">
                                                     <xf:output value="'Role Term'" class="xforms-hint-icon">
                                                         <xf:hint ref="id('hint-code_roleTerm',instance('code-tables'))/help"/>
                                                     </xf:output>
-                                                    <span class="add-delete-button">
-                                                        <xf:trigger ref=".[mods:roleTerm]">
-                                                            <xf:label>+</xf:label>
-                                                            <xf:action ev:event="DOMActivate">
-                                                                <xf:insert nodeset="instance('save-data')/mods:roleTerm" at="index('subject-roleTerm-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:role/mods:roleTerm"/>
-                                                            </xf:action>
-                                                        </xf:trigger>
-                                                    </span>
-                                                    <span class="add-delete-button">
-                                                        <xf:trigger ref=".[mods:roleTerm]">
-                                                            <xf:label>–</xf:label>
-                                                            <xf:action ev:event="DOMActivate">
-                                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:role/mods:roleTerm" at="index('subject-roleTerm-repeat')"/>
-                                                            </xf:action>
-                                                        </xf:trigger>
-                                                    </span>
-                                                </div><!-- attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration. --><!-- subelements: none -->
+                                                    <xf:trigger ref=".[mods:roleTerm]">
+                                                        <xf:label>+</xf:label>
+                                                        <xf:action ev:event="DOMActivate">
+                                                            <xf:insert nodeset="instance('save-data')/mods:roleTerm" at="index('subject-roleTerm-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:role/mods:roleTerm"/>
+                                                        </xf:action>
+                                                    </xf:trigger>
+                                                    <xf:trigger ref=".[mods:roleTerm]">
+                                                        <xf:label>–</xf:label>
+                                                        <xf:action ev:event="DOMActivate">
+                                                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:role/mods:roleTerm" at="index('subject-roleTerm-repeat')"/>
+                                                        </xf:action>
+                                                    </xf:trigger>
+                                                </xf:group><!-- attributes: type; authority; authorityURI; valueURI; lang; xml:lang; script; transliteration. --><!-- subelements: none -->
                                                 <xf:repeat nodeset="./mods:roleTerm" id="subject-roleTerm-repeat">
                                                     <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                                         <xf:switch>
@@ -2854,27 +2812,23 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:displayForm]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Display Form'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_name-displayForm',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:displayForm]">
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="instance('save-data')/mods:displayForm" at="index('subject-displayForm-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:displayForm"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:displayForm]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:displayForm" at="index('subject-displayForm-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:displayForm]">
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="instance('save-data')/mods:displayForm" at="index('subject-displayForm-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:displayForm"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref=".[mods:displayForm]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:displayForm" at="index('subject-displayForm-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:displayForm" id="subject-displayForm-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -3001,27 +2955,23 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:affiliation]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Affiliation'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_affiliation',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:affiliation]">
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="instance('save-data')/mods:affiliation" at="index('subject-affiliation-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:affiliation"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:affiliation]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:affiliation" at="index('subject-name-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:affiliation]">
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="instance('save-data')/mods:affiliation" at="index('subject-affiliation-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:affiliation"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref=".[mods:affiliation]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:affiliation" at="index('subject-name-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:affiliation" id="subject-affiliation-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -3150,27 +3100,23 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:description]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Description'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_description',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:description]">
-                                                <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="mods:description" at="index('subject-description-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:description"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:description]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:description" at="index('subject-description-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:description]">
+                                            <xf:label>+</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="mods:description" at="index('subject-description-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:name/mods:description"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref=".[mods:description]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:name/mods:description" at="index('subject-description-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:description" id="subject-description-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -3301,27 +3247,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:genre]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Genre'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_genre',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:genre" at="index('subject-genre-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:genre"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:genre" at="index('subject-genre-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration, type--><!--Subelements: None-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:genre" at="index('subject-genre-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:genre"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:genre" at="index('subject-genre-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration, type--><!--Subelements: None-->
                         <xf:repeat nodeset="./mods:genre" id="subject-genre-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
@@ -3344,64 +3286,56 @@
                                             <xf:group appearance="full">
                                                 <xf:group class="add-buttons">
                                                     <xf:trigger ref=".[not(@authority)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Authority</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Authority</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@authority"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@authorityURI)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Authority URI</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Authority URI</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@authorityURI"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@lang)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Language</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Language</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@lang"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@script)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Script</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Script</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@script"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@transliteration)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Transliteration</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Transliteration</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@transliteration"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@type)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Type</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Type</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@type"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@valueURI)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  Value URI</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add Value URI</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@valueURI"/>
                                                         </xf:action>
                                                     </xf:trigger>
                                                     <xf:trigger ref=".[not(@xml:lang)]" class="add-button">
-                                                        <xf:label class="xforms-group-label-centered">Add
-                                                  xml:lang</xf:label>
+                                                        <xf:label class="xforms-group-label-centered">Add xml:lang</xf:label>
                                                         <xf:action ev:event="DOMActivate">
                                                             <xf:toggle case="subject-genre-add-node-hide" ev:event="DOMActivate"/>
                                                             <xf:insert context="." origin="instance('insert-templates')/mods:subject/mods:genre/@xml:lang"/>
@@ -3576,27 +3510,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:hierarchicalGeographic]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Hierarchical Geographic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_hierarchicalGeographic',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:hierarchicalGeographic" at="index('subject-hierarchicalGeographic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:hierarchicalGeographic"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic" at="index('subject-hierarchicalGeographic-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI--><!--Subelements:, continent, country, province, region, state, territory, county, city, island, area, extraterrestrialArea, citySection-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:hierarchicalGeographic" at="index('subject-hierarchicalGeographic-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:hierarchicalGeographic"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic" at="index('subject-hierarchicalGeographic-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI--><!--Subelements:, continent, country, province, region, state, territory, county, city, island, area, extraterrestrialArea, citySection-->
                         <xf:repeat nodeset="./mods:hierarchicalGeographic" id="subject-hierarchicalGeographic-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 3 or count(*) &lt; 12]">
                                 <xf:switch>
@@ -3781,19 +3711,17 @@
                             <br/>
                             <xf:group appearance="full" ref=".[mods:continent]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Continent'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_continent',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:continent]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:continent" at="index('continent-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:continent]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:continent" at="index('continent-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:continent" id="continent-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -3919,19 +3847,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:country]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Country'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_country',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:country]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:country" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:country]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:country" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:country" id="country-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4052,19 +3978,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:province]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Province'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_province',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:province]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:province" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:province]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:province" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:province" id="province-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4185,19 +4109,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:region]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Region'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_region',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:region]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:region" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:region]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:region" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:region" id="region-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4318,19 +4240,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:state]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'State'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_state',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:state]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:state" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:state]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:state" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:state" id="state-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4451,19 +4371,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:territory]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Territory'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_territory',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:territory]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:territory" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:territory]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:territory" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:territory" id="territory-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4584,19 +4502,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:county]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'County'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_county',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:county]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:county" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:county]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:county" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:county" id="county-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4717,19 +4633,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:city]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'City'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_city',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:city]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:city" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:city]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:city" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:city" id="city-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4850,19 +4764,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:citySection]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'City Section'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_citySection',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:citySection]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:citySection" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:citySection]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:citySection" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:citySection" id="citySection-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -4983,19 +4895,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:island]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Island'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_island',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:island]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:island" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:island]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:island" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:island" id="island-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5116,19 +5026,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:area]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Area'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_area',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:area]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:area" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:area]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:area" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:area" id="area-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5249,19 +5157,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:extraterrestrialArea]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Extraterrestrial Area'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_extraterrestrialArea',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:extraterrestrialArea]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:extraterrestrialArea" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:extraterrestrialArea]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:extraterrestrialArea" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:extraterrestrialArea" id="extraterrestrialArea-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5385,27 +5291,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:cartographics]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Cartographics'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_cartographics',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:cartographics" at="index('subject-cartographics-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:cartographics"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:cartographics" at="index('subject-cartographics-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: None--><!--Subelements: scale, projection, coordinates-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:cartographics" at="index('subject-cartographics-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:cartographics"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:cartographics" at="index('subject-cartographics-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: None--><!--Subelements: scale, projection, coordinates-->
                         <xf:repeat nodeset="./mods:cartographics" id="subject-cartographics-repeat">
                             <xf:group appearance="full" ref=".[not(mods:scale)] | .[not(mods:projection)] | .[not(mods:coordinates)]">
                                 <xf:switch>
@@ -5459,19 +5361,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:scale]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Scale'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_scale',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:scale]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:scale" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:scale]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:scale" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:scale" id="scale-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5592,19 +5492,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:projection]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Projection'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_projection',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:projection]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:projection" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:projection]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:projection" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:projection" id="projection-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5725,19 +5623,17 @@
                             </xf:group>
                             <xf:group appearance="full" ref=".[mods:coordinates]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Coordinates'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_coordinates',instance('code-tables'))/help"/>
                                         </xf:output>
-                                        <span class="add-delete-button">
-                                            <xf:trigger ref=".[mods:coordinates]">
-                                                <xf:label>–</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:coordinates" at="index('nonSort-repeat')"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </span>
-                                    </div><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
+                                        <xf:trigger ref=".[mods:coordinates]">
+                                            <xf:label>–</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:hierarchicalGeographic/mods:coordinates" at="index('nonSort-repeat')"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                    </xf:group><!-- attributes: type; lang; script; transliteration; xml:lang. --><!-- subelements: none. -->
                                     <xf:repeat nodeset="./mods:coordinates" id="coordinates-repeat">
                                         <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                             <xf:switch>
@@ -5861,27 +5757,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:geographicCode]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Geographic Code'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_geographicCode',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:geographicCode" at="index('subject-geographicCode-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:geographicCode"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:geographicCode" at="index('subject-geographicCode-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority, authorityURI; valueURI; lang; xml:lang; script; transliteration-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:geographicCode" at="index('subject-geographicCode-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:geographicCode"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:geographicCode" at="index('subject-geographicCode-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority, authorityURI; valueURI; lang; xml:lang; script; transliteration-->
                         <xf:repeat nodeset="./mods:geographicCode" id="subject-geographicCode-repeat">
                             <xf:group appearance="full" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>
@@ -6059,27 +5951,23 @@
                 </xf:group>
                 <xf:group appearance="full" ref=".[mods:occupation]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Occupation'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_occupation',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:occupation" at="index('subject-occupation-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:occupation"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:occupation" at="index('subject-occupation-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration-->
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:occupation" at="index('subject-occupation-repeat')" position="before" origin="instance('new-instance')/mods:subject/mods:occupation"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger>
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:subject/mods:occupation" at="index('subject-occupation-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; lang; xml:lang; script; transliteration-->
                         <xf:repeat nodeset="./mods:occupation" id="subject-occupation-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 7]">
                                 <xf:switch>

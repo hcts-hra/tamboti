@@ -1,26 +1,24 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="physical-description block-form" tab-id="physical-description">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Physical Description'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_physicalDescription',instance('code-tables'))/help"/>
-                </xf:output><!--<span class="add-delete-button">
-                    <xf:trigger ref=".[mods:physicalDescription]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:physicalDescription" at="index('physicalDescription-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>-->
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:physicalDescription]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription" at="index('physicalDescription-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: lang; xml:lang; script; transliteration; displayLabel; altRepGroup. --><!--Subelements: form; reformattingQuality; internetMediaType; extent; digitalOrigin; note. --><!--Repeating this element is not recommended.-->
+                </xf:output><!--
+                <xf:trigger ref=".[mods:physicalDescription]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:physicalDescription" at="index('physicalDescription-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription"/>
+                    </xf:action>
+                </xf:trigger>
+            -->
+                <xf:trigger ref=".[mods:physicalDescription]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription" at="index('physicalDescription-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: lang; xml:lang; script; transliteration; displayLabel; altRepGroup. --><!--Subelements: form; reformattingQuality; internetMediaType; extent; digitalOrigin; note. --><!--Repeating this element is not recommended.-->
             <xf:repeat nodeset="instance('save-data')/mods:physicalDescription" id="physicalDescription-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 5 or .[not(mods:form)] or .[not(mods:reformattingQuality)] or .[not(mods:internetMediaType)] or .[not(mods:extent)] or .[not(mods:digitalOrigin)] or .[not(mods:note)]]">
                     <xf:switch>
@@ -203,27 +201,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:form]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Form'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_physicalDescription-form',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:form]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:form" at="index('form-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:form"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:form]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:form" at="index('form-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: authority; authorityURI; valueURI; type; lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:form]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:form" at="index('form-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:form"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:form]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:form" at="index('form-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: authority; authorityURI; valueURI; type; lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:form" id="form-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>
@@ -426,27 +420,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:reformattingQuality]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Reformatting Quality'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_reformattingQuality',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:reformattingQuality]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:reformattingQuality" at="index('reformattingQuality-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:reformattingQuality"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:reformattingQuality]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:reformattingQuality" at="index('reformattingQuality-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: None.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:reformattingQuality]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:reformattingQuality" at="index('reformattingQuality-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:reformattingQuality"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:reformattingQuality]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:reformattingQuality" at="index('reformattingQuality-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: None.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:reformattingQuality" id="reformattingQuality-repeat">
                             <xf:group ref=".">
                                 <xf:select1 ref=".">
@@ -466,27 +456,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:internetMediaType]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Internet Media Type'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_internetMediaType',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:internetMediaType]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:internetMediaType" at="index('internetMediaType-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:internetMediaType"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:internetMediaType]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:internetMediaType" at="index('internetMediaType-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:internetMediaType]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:internetMediaType" at="index('internetMediaType-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:internetMediaType"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:internetMediaType]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:internetMediaType" at="index('internetMediaType-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:internetMediaType" id="internetMediaType-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 4]">
                                 <xf:switch>
@@ -613,27 +599,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:extent]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Extent'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_extent',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:extent]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:extent" at="index('extent-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:extent"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:extent]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:extent" at="index('extent-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: supplied; unit, lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:extent]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:extent" at="index('extent-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:extent"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:extent]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:extent" at="index('extent-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: supplied; unit, lang; xml:lang; script; transliteration.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:extent" id="extent-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 6]">
                                 <xf:switch>
@@ -807,27 +789,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:digitalOrigin]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Digital Origin'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_digitalOrigin',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:digitalOrigin]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:digitalOrigin" at="index('digitalOrigin-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:digitalOrigin"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:digitalOrigin]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:digitalOrigin" at="index('digitalOrigin-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: None.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:digitalOrigin]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:digitalOrigin" at="index('digitalOrigin-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:digitalOrigin"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:digitalOrigin]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:digitalOrigin" at="index('digitalOrigin-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: None.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:digitalOrigin" id="digitalOrigin-repeat">
                             <xf:group ref=".">
                                 <xf:select1 ref=".">
@@ -847,27 +825,23 @@
                 </xf:group>
                 <xf:group ref=".[mods:note]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Notes'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_physicalDescription_note',instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:note]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="mods:note" at="index('digitalOrigin-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:note"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:note]">
-                                    <xf:label>–</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:note" at="index('physical-description-note-repeat')"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div><!--Attributes: xlink:href; lang; xml:lang; script; transliteration; displayLabel; type; ID.--><!--Subelements: None.-->
+                            <xf:trigger ref=".[mods:note]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="mods:note" at="index('digitalOrigin-repeat')" position="before" origin="instance('new-instance')/mods:physicalDescription/mods:note"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger ref=".[mods:note]">
+                                <xf:label>–</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:physicalDescription/mods:note" at="index('physical-description-note-repeat')"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group><!--Attributes: xlink:href; lang; xml:lang; script; transliteration; displayLabel; type; ID.--><!--Subelements: None.-->
                         <xf:repeat nodeset="./mods:note" id="physical-description-note-repeat">
                             <xf:group class="show-hide" ref=".[count(@*) &lt; 8]">
                                 <xf:switch>

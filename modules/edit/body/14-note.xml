@@ -1,27 +1,23 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="note block-form" tab-id="note">
-    <xf:group appearance="full">
+<div xmlns:ext="http://exist-db.org/mods/extension" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="note block-form" tab-id="note">
+    <xf:group>
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Notes'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_note',instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:note]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:note" at="index('note-repeat')" position="before"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:note]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:note" at="index('note-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: altRepGroup, displayLabel, ID, lang, script, transliteration, type, xlink:href, xml:lang--><!--Subelements: none-->
+                <xf:trigger ref=".[mods:note]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:note" at="index('note-repeat')" position="before"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:note]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:note" at="index('note-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: altRepGroup, displayLabel, ID, lang, script, transliteration, type, xlink:href, xml:lang--><!--Subelements: none-->
             <xf:repeat nodeset="instance('save-data')/mods:note" id="note-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 9]">
                     <xf:switch>
@@ -110,127 +106,129 @@
                         </xf:case>
                     </xf:switch>
                 </xf:group>
-                <xf:group ref=".[@altRepGroup]">
-                    <xf:select1 ref="./@altRepGroup">
-                        <xf:label>
-                            <xf:output value="'Alt. Representation Group'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='altRepGroup-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group ref=".[@displayLabel]">
-                    <xf:input ref="./@displayLabel" class="text_50">
-                        <xf:label>
-                            <xf:output value="'Display Label'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                    </xf:input>
-                </xf:group>
-                <xf:group ref=".[@ID]">
-                    <xf:input ref="./@ID" selection="open" class="text_50">
-                        <xf:label>
-                            <xf:output value="'ID'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_ID',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                    </xf:input>
-                </xf:group>
-                <xf:group ref=".[@type]">
-                    <xf:select1 ref="./@type" selection="open">
-                        <xf:label>
-                            <xf:output value="'Type (input by selection)'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_note-type',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                    <xf:input ref="./@type">
-                        <xf:label>
-                            <xf:output value="'Type (free-text input)'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_note-type',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                    </xf:input>
-                </xf:group>
-                <xf:group ref=".[@xlink:href]">
-                    <xf:input ref="./@xlink:href" selection="open" class="text_50">
-                        <xf:label>
-                            <xf:output value="'XLink'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_xlink_href',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                    </xf:input>
-                </xf:group>
-                <xf:group ref=".[@lang]">
-                    <xf:select1 ref="./@lang">
-                        <xf:label>
-                            <xf:output value="'Language'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group ref=".[@script]">
-                    <xf:select1 ref="./@script">
-                        <xf:label>
-                            <xf:output value="'Script'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group ref=".[@transliteration]">
-                    <xf:select1 ref="./@transliteration">
-                        <xf:label>
-                            <xf:output value="'Transliteration'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group ref=".[@xml:lang]">
-                    <xf:select1 ref="./@xml:lang">
-                        <xf:label>
-                            <xf:output value="'xml:lang'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <br/>
-                <xf:group ref=".">
-                    <xf:textarea ref="." class="textarea">
-                        <xf:label>
-                            <xf:output value="'Note'" class="xforms-hint-icon">
-                                <xf:hint ref="id('hint-code_note',instance('code-tables'))/help"/>
-                            </xf:output>
-                        </xf:label>
-                    </xf:textarea>
+                <xf:group appearance="full">
+                    <xf:group ref=".[@altRepGroup]">
+                        <xf:select1 ref="./@altRepGroup">
+                            <xf:label>
+                                <xf:output value="'Alt. Representation Group'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='altRepGroup-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                    <xf:group ref=".[@displayLabel]">
+                        <xf:input ref="./@displayLabel" class="text_50">
+                            <xf:label>
+                                <xf:output value="'Display Label'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                        </xf:input>
+                    </xf:group>
+                    <xf:group ref=".[@ID]">
+                        <xf:input ref="./@ID" selection="open" class="text_50">
+                            <xf:label>
+                                <xf:output value="'ID'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_ID',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                        </xf:input>
+                    </xf:group>
+                    <xf:group ref=".[@type]">
+                        <xf:select1 ref="./@type" selection="open">
+                            <xf:label>
+                                <xf:output value="'Type (input by selection)'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_note-type',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                        <xf:input ref="./@type">
+                            <xf:label>
+                                <xf:output value="'Type (free-text input)'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_note-type',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                        </xf:input>
+                    </xf:group>
+                    <xf:group ref=".[@xlink:href]">
+                        <xf:input ref="./@xlink:href" selection="open" class="text_50">
+                            <xf:label>
+                                <xf:output value="'XLink'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_xlink_href',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                        </xf:input>
+                    </xf:group>
+                    <xf:group ref=".[@lang]">
+                        <xf:select1 ref="./@lang">
+                            <xf:label>
+                                <xf:output value="'Language'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_lang',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                    <xf:group ref=".[@script]">
+                        <xf:select1 ref="./@script">
+                            <xf:label>
+                                <xf:output value="'Script'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_script',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                    <xf:group ref=".[@transliteration]">
+                        <xf:select1 ref="./@transliteration">
+                            <xf:label>
+                                <xf:output value="'Transliteration'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                    <xf:group ref=".[@xml:lang]">
+                        <xf:select1 ref="./@xml:lang">
+                            <xf:label>
+                                <xf:output value="'xml:lang'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-2-type-short-code']/items/item">
+                                <xf:label ref="label"/>
+                                <xf:value ref="value"/>
+                            </xf:itemset>
+                        </xf:select1>
+                    </xf:group>
+                    <br/>
+                    <xf:group ref=".">
+                        <xf:textarea ref="." class="textarea">
+                            <xf:label>
+                                <xf:output value="'Note'" class="xforms-hint-icon">
+                                    <xf:hint ref="id('hint-code_note',instance('code-tables'))/help"/>
+                                </xf:output>
+                            </xf:label>
+                        </xf:textarea>
+                    </xf:group>
                 </xf:group>
             </xf:repeat>
             <xf:group ref=".[not(mods:note)]">
