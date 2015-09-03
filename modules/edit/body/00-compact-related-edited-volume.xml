@@ -15,7 +15,7 @@
                                 <xf:hint ref="id('hint-code_xlink_href-editied-volume', instance('code-tables'))/help"/>
                             </xf:output>
                         </div>
-                        <xf:group class="margin-plus hide-label">
+                        <xf:group class="margin-plus">
                             <xf:input ref="./@xlink:href" class="text_50">
                                 <xf:label>XLink</xf:label>
                             </xf:input>
@@ -105,7 +105,7 @@
                                                         <xf:value ref="value"/>
                                                     </xf:itemset>
                                                 </xf:select1>
-                                                <xf:input ref="." class="hide-label text_100">
+                                                <xf:input ref="." class="text_100">
                                                     <xf:label/>
                                                 </xf:input>
                                             </xf:group>
@@ -180,7 +180,7 @@
                                         <xf:group>
                                             <fieldset class="level-4">
                                                 <xf:repeat nodeset="./mods:placeTerm" id="relatedItem-place-term-edited-volume-repeat">
-                                                    <xf:group class="hide-label margin-plus">
+                                                    <xf:group class="margin-plus">
                                                         <xf:input ref="." class="text_100">
                                                             <xf:label>Place Term</xf:label>
                                                         </xf:input>
@@ -200,7 +200,7 @@
                                         </xf:output>
                                     </div>
                                     <xf:repeat nodeset="./mods:publisher" id="relatedItem-publisher-edited-volume-repeat">
-                                        <xf:group class="hide-label margin-plus">
+                                        <xf:group class="margin-plus">
                                             <xf:input ref="." class="text_100">
                                                 <xf:label>Publisher</xf:label>
                                             </xf:input>
@@ -234,7 +234,7 @@
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
-                                        <xf:input ref="." class="text_10 hide-label margin-plus">
+                                        <xf:input ref="." class="text_10 margin-plus">
                                             <xf:label>Date Issued</xf:label>
                                         </xf:input>
                                     </xf:repeat>
@@ -266,7 +266,7 @@
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
-                                        <xf:group class="text_10 hide-label margin-plus">
+                                        <xf:group class="text_10 margin-plus">
                                             <xf:input ref=".">
                                                 <xf:label>Copyright Date</xf:label>
                                             </xf:input>
@@ -292,7 +292,7 @@
                                         <span class="legend">Volume</span>
                                     </div>
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-edited-volume-repeat">
-                                        <xf:group ref=".[mods:number]" class="hide-label margin-plus">
+                                        <xf:group ref=".[mods:number]" class="margin-plus">
                                             <xf:input ref="./mods:number" class="text_10">
                                                 <xf:label>Number</xf:label>
                                             </xf:input>
@@ -354,7 +354,7 @@
                             </span>
                         </div>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-edited-volume-repeat">
-                            <xf:group class="hide-label margin-plus">
+                            <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
@@ -385,7 +385,7 @@
                                             <xf:hint ref="id('hint-code_xlink_href', instance('code-tables'))/help"/>
                                         </xf:output>
                                     </div>
-                                    <xf:group class="margin-plus hide-label">
+                                    <xf:group class="margin-plus">
                                         <xf:input ref="./@xlink:href">
                                             <xf:label>XLink</xf:label>
                                         </xf:input>
@@ -452,7 +452,7 @@
                                                     </xf:output>
                                                 </div>
                                                 <xf:repeat nodeset="./mods:detail" id="detail-relatedItem-relatedItem-series-repeat">
-                                                    <xf:group ref=".[mods:number]" class="hide-label margin-plus">
+                                                    <xf:group ref=".[mods:number]" class="margin-plus">
                                                         <xf:input ref="./mods:number" class="text_10">
                                                             <xf:label>Number</xf:label>
                                                         </xf:input>

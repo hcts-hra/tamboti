@@ -129,7 +129,7 @@
                                 <xf:hint ref="id('hint-code_more-title-information', instance('code-tables'))/help"/>
                             </xf:output>
                         </div>
-                        <xf:group class="hide-label margin-plus">
+                        <xf:group class="margin-plus">
                             <xf:select1 ref="./@type">
                                 <xf:label>Type of Name</xf:label>
                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-type-code']/items/item">
@@ -189,7 +189,7 @@
                         </div>
                         <xf:repeat nodeset="./mods:role" id="role-repeat">
                             <xf:repeat nodeset="./mods:roleTerm" id="roleTerm-repeat">
-                                <xf:group class="hide-label margin-plus">
+                                <xf:group class="margin-plus">
                                     <xf:select1 ref=".">
                                         <xf:label>Role Term</xf:label>
                                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='role-short-code']/items/item">
@@ -237,7 +237,7 @@
                             <xf:group ref=".[mods:placeTerm]">
                                 <fieldset class="level-3">
                                     <xf:repeat nodeset="./mods:placeTerm" id="placeTerm-repeat">
-                                        <xf:group ref=".[not(@transliteration)]" class="margin-plus text_100 hide-label">
+                                        <xf:group ref=".[not(@transliteration)]" class="margin-plus text_100">
                                             <xf:input ref=".">
                                                 <xf:label>City Name</xf:label>
                                             </xf:input>
@@ -262,7 +262,7 @@
                             </xf:output>
                         </div>
                         <xf:repeat nodeset="./mods:publisher" id="publisher-repeat">
-                            <xf:group ref=".[not(@transliteration)]" class="text_100 hide-label margin-plus">
+                            <xf:group ref=".[not(@transliteration)]" class="text_100 margin-plus">
                                 <xf:input ref=".">
                                     <xf:label>Name of Publisher</xf:label>
                                 </xf:input>
@@ -301,7 +301,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:input ref="." class="text_10 hide-label margin-plus">
+                            <xf:input ref="." class="text_10 margin-plus">
                                 <xf:label>Date Issued</xf:label>
                             </xf:input>
                         </xf:repeat>
@@ -333,7 +333,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="text_10 hide-label margin-plus">
+                            <xf:group class="text_10 margin-plus">
                                 <xf:input ref=".">
                                     <xf:label>Copyright Date</xf:label>
                                 </xf:input>
@@ -394,7 +394,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group class="hide-label margin-plus text_10">
+                            <xf:group class="margin-plus text_10">
                                 <xf:input ref=".">
                                     <xf:label>Extent</xf:label>
                                 </xf:input>
@@ -459,7 +459,7 @@
                 </span>
             </div>
             <xf:repeat nodeset="./mods:identifier" id="identifier-repeat">
-                <xf:group class="hide-label margin-plus text_50">
+                <xf:group class="margin-plus text_50">
                     <xf:select1 ref="./@type">
                         <xf:label>Type</xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
