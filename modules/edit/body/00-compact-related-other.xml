@@ -1,5 +1,5 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-xlink">
-    <xf:group ref=".[mods:relatedItem[@type='host']]">
+    <xf:group ref=".[mods:relatedItem[@type='host']]" appearance="full">
         <fieldset class="level-1">
             <div class="label-box extra-wide">
                 <xf:output value="'Location of Article, Book Review, or Contribution'" class="xforms-hint-icon">
@@ -12,7 +12,7 @@
                         <fieldset class="level-2">
                             <xf:group ref=".[instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-latin' or instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-transliterated']">
                                 <div class="label-box">
-                                    <xf:output value="'Location of Review in&#xA;                                                  Periodical'" class="xforms-hint-icon">
+                                    <xf:output value="'Location of Review in Periodical'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact',instance('code-tables'))/help"/>
                                     </xf:output>
                                     <span class="add-delete-button">
@@ -27,7 +27,7 @@
                             </xf:group>
                             <xf:group ref=".[instance('save-data')/mods:extension/ext:template='related-article-in-periodical-latin' or instance('save-data')/mods:extension/ext:template='related-article-in-periodical-transliterated']">
                                 <div class="label-box">
-                                    <xf:output value="'Location of Article in&#xA;                                                  Periodical'" class="xforms-hint-icon">
+                                    <xf:output value="'Location of Article in Periodical'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact',instance('code-tables'))/help"/>
                                     </xf:output>
                                     <span class="add-delete-button">
@@ -42,7 +42,7 @@
                             </xf:group>
                             <xf:group ref=".[instance('save-data')/mods:extension/ext:template='related-newspaper-article-latin' or instance('save-data')/mods:extension/ext:template='related-newspaper-article-transliterated']">
                                 <div class="label-box">
-                                    <xf:output value="'Location of Article in&#xA;                                        Newspaper'" class="xforms-hint-icon">
+                                    <xf:output value="'Location of Article in Newspaper'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact',instance('code-tables'))/help"/>
                                     </xf:output>
                                     <span class="add-delete-button">
@@ -57,7 +57,7 @@
                             </xf:group>
                             <xf:group ref=".[instance('save-data')/mods:extension/ext:template='related-contribution-to-edited-volume-latin' or instance('save-data')/mods:extension/ext:template='related-contribution-to-edited-volume-transliterated']">
                                 <div class="label-box extra-wide">
-                                    <xf:output value="'Location of Contribution in&#xA;                                                  Edited Volume'" class="xforms-hint-icon">
+                                    <xf:output value="'Location of Contribution in Edited Volume'" class="xforms-hint-icon">
                                         <xf:hint ref="id('hint-code_part-relatedItem-periodical-compact',instance('code-tables'))/help"/>
                                     </xf:output>
                                     <span class="add-delete-button">
@@ -185,7 +185,7 @@
                             <xf:group>
                                 <fieldset class="level-2">
                                     <div class="label-box super-wide">
-                                        <xf:output value="'Names and Roles Connected&#xA;                                                  With Book Reviewed'" class="xforms-hint-icon">
+                                        <xf:output value="'Names and Roles Connected With Book Reviewed'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_name-compact',instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                         </xf:output>
@@ -549,7 +549,7 @@
                             <xf:group ref=".[mods:identifier]">
                                 <fieldset class="level-2">
                                     <div class="label-box">
-                                        <xf:output value="'Identifiers of Book&#xA;                                                  Reviewed'" class="xforms-hint-icon">
+                                        <xf:output value="'Identifiers of Book Reviewed'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_isbn',instance('code-tables'))/help"/>
                                         </xf:output>
                                         <span class="add-delete-button">
