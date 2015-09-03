@@ -43,16 +43,14 @@
                             <div class="node-adds">
                                 <xf:group>
                                     <xf:trigger ref=".[not(@altRepGroup)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add Alternate
-                                            Representation Group</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add Alternate Representation Group</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@altRepGroup"/>
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@displayLabel)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add Display
-                                            Label</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add Display Label</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@displayLabel"/>
@@ -66,24 +64,21 @@
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@lang)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add
-                                            Language</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add Language</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@lang"/>
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@script)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add
-                                            Script</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add Script</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@script"/>
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@transliteration)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add
-                                            Transliteration</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add Transliteration</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@transliteration"/>
@@ -97,16 +92,14 @@
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@xlink:href)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add XLink
-                                        </xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add XLink</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@xlink:href"/>
                                         </xf:action>
                                     </xf:trigger>
                                     <xf:trigger ref=".[not(@xml:lang)]" class="add-button">
-                                        <xf:label class="xforms-group-label-centered">Add
-                                            xml:lang</xf:label>
+                                        <xf:label class="xforms-group-label-centered">Add xml:lang</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="note-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mods:note/@xml:lang"/>
@@ -160,8 +153,6 @@
                             <xf:value ref="value"/>
                         </xf:itemset>
                     </xf:select1>
-                </xf:group>
-                <xf:group ref=".[@type]">
                     <xf:input ref="./@type">
                         <xf:label>
                             <xf:output value="'Type (free-text input)'" class="xforms-hint-icon">
