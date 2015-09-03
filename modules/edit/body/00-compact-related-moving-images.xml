@@ -1,22 +1,22 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-moving-images">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Moving Images Constituents'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_relatedItem-moving-images-compact',instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                 </xf:output>
-            </div>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-moving-images-constituents-repeat">
                 <xf:group ref=".[@type='constituent']">
                     <xf:group ref=".[mods:titleInfo]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Constituent Title'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_relatedItem-moving-images-titleInfo-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                 </xf:output>
-                            </div>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-moving-images-constituents-repeat">
                                 <xf:group class="level-2 margin-plus" ref=".[@supplied]">
                                     <xf:select1 ref="./@supplied">
@@ -66,19 +66,19 @@
                     </xf:group>
                     <xf:group ref=".[mods:location]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Constituent Location'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_part-relatedItem-moving-images-compact',instance('code-tables'))/help"/>
                                 </xf:output>
-                            </div>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:location" id="related-item-location-moving-images-constituents-repeat">
                                 <xf:group ref=".[mods:url]">
                                     <fieldset class="level-3">
-                                        <div class="label-box">
+                                        <xf:group appearance="minimal" class="label-box">
                                             <span class="legend">
                                                 <span class="legend">URL</span>
                                             </span>
-                                        </div>
+                                        </xf:group>
                                         <xf:repeat nodeset="./mods:url" id="related-item-part-url-moving-images-constituents-repeat">
                                             <div class="block-form">
                                                 <xf:group ref="." class="margin-plus">
@@ -100,19 +100,17 @@
                     </xf:group>
                     <xf:group ref=".[mods:identifier]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Identifiers'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
                                 </xf:output>
-                                <span class="add-delete-button">
-                                    <xf:trigger ref=".[mods:identifier]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-moving-images-constituents-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                </span>
-                            </div>
+                                <xf:trigger ref=".[mods:identifier]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-moving-images-constituents-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
+                                    </xf:action>
+                                </xf:trigger>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:identifier" id="identifier-moving-images-constituents-repeat">
                                 <xf:group class="margin-plus">
                                     <xf:select1 ref="./@type">
@@ -135,22 +133,22 @@
     </xf:group>
     <xf:group>
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Moving Images References'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_relatedItem-moving-images-compact',instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                 </xf:output>
-            </div>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-moving-images-references-repeat">
                 <xf:group ref=".[@type='isReferencedBy']">
                     <xf:group ref=".[mods:titleInfo]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Reference Title'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_relatedItem-moving-images-titleInfo-compact',instance('code-tables'))/help"/>
                                     <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                 </xf:output>
-                            </div>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-moving-images-references-repeat">
                                 <xf:group class="level-2 margin-plus" ref=".[@supplied]">
                                     <xf:select1 ref="./@supplied">
@@ -200,19 +198,19 @@
                     </xf:group>
                     <xf:group ref=".[mods:location]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Constituent Location '" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_part-relatedItem-moving-images-compact',instance('code-tables'))/help"/>
                                 </xf:output>
-                            </div>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:location" id="related-item-location-moving-images-references-repeat">
                                 <xf:group ref=".[mods:url]">
                                     <fieldset class="level-3">
-                                        <div class="label-box">
+                                        <xf:group appearance="minimal" class="label-box">
                                             <span class="legend">
                                                 <span class="legend">URL</span>
                                             </span>
-                                        </div>
+                                        </xf:group>
                                         <xf:repeat nodeset="./mods:url" id="related-item-part-url-moving-images-references-repeat">
                                             <div class="block-form">
                                                 <xf:group ref="." class="margin-plus">
@@ -234,19 +232,17 @@
                     </xf:group>
                     <xf:group ref=".[mods:identifier]">
                         <fieldset class="level-2">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Identifiers'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
                                 </xf:output>
-                                <span class="add-delete-button">
-                                    <xf:trigger ref=".[mods:identifier]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-moving-images-references-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                </span>
-                            </div>
+                                <xf:trigger ref=".[mods:identifier]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-moving-images-references-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
+                                    </xf:action>
+                                </xf:trigger>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:identifier" id="identifier-moving-images-references-repeat">
                                 <xf:group class="margin-plus">
                                     <xf:select1 ref="./@type">
@@ -268,22 +264,22 @@
         </fieldset>
     </xf:group><!--<xf:group>
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Moving Images Series'">
                     <xf:hint ref="id('hint-code_relatedItem-moving-images-compact', instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
                 </xf:output>
-            </div>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem"
                 id="relatedItem-moving-images-repeat">
                 <xf:group ref=".[@type='series']">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
 			                <xf:output value="'Series Title'">
 			                    <xf:hint ref="id('hint-code_relatedItem-moving-images-titleInfo-compact', instance('code-tables'))/help"/>
 			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
 			                </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo"
                             id="relatedItem-titleInfo-moving-images-repeat">
                             <xf:group ref=".[(@transliteration) or string-length(@lang) > 0]">
@@ -357,33 +353,31 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box extra-wide">
+                        <xf:group appearance="minimal" class="label-box extra-wide">
 			                <xf:output value="'Institutional Editor(s) of Series'">
 			                    <xf:hint ref="id('hint-code_name-relatedItem-moving-images-editor-compact', instance('code-tables'))/help"/>
 			                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
 			                </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger
-                                    ref=".[string-length(./../mods:extension/ext:transliterationOfResource) > 0]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name"
-                                            at="index('relatedItem-name-repeat-moving-images')"
-                                            position="before"
-                                            origin="instance('compact-template')/mods:name[6]"/>
-                                    </xf:action>
-                                </xf:trigger>
-                                <xf:trigger
-                                    ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name"
-                                            at="index('relatedItem-name-repeat-moving-images')"
-                                            position="before"
-                                            origin="instance('compact-template')/mods:name[5]"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
+                            <xf:trigger
+                                ref=".[string-length(./../mods:extension/ext:transliterationOfResource) > 0]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:name"
+                                        at="index('relatedItem-name-repeat-moving-images')"
+                                        position="before"
+                                        origin="instance('compact-template')/mods:name[6]"/>
+                                </xf:action>
+                            </xf:trigger>
+                            <xf:trigger
+                                ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:name"
+                                        at="index('relatedItem-name-repeat-moving-images')"
+                                        position="before"
+                                        origin="instance('compact-template')/mods:name[5]"/>
+                                </xf:action>
+                            </xf:trigger>
                         </div>
                         <xf:repeat nodeset="./mods:name" id="relatedItem-name-repeat-moving-images">
                             <xf:group ref="preceding-sibling::*[1][self::mods:name]"
@@ -410,13 +404,12 @@
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
 						                <xf:output value="'Name'">
 						                    <xf:hint ref="id('hint-code_relatedItem-namePart-corporate-compact', instance('code-tables'))/help"/>
 						                    <xf:hint ref="id('hint-code_more-related-item', instance('code-tables'))/help"/>
 						                </xf:output>
-                                    </div>
-                                    <xf:group> </xf:group>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:namePart"
                                         id="relatedItem-namePart-moving-images-repeat">
                                         <xf:group>
@@ -435,19 +428,19 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
 			                <xf:output value="'Series Location'">
 			                    <xf:hint ref="id('hint-code_part-relatedItem-moving-images-compact', instance('code-tables'))/help"/>
 			                </xf:output>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:part" id="related-item-part-moving-images-repeat">
                             <xf:group ref=".[mods:date]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">
                                             <span class="legend">Date of Publication</span>
                                         </span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:date"
                                         id="related-item-part-date-moving-images-repeat">
                                         <div class="block-form">
@@ -462,9 +455,9 @@
                             </xf:group>
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Section</span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:detail"
                                         id="related-item-part-detail-moving-images-repeat">
                                         <xf:group ref=".[mods:number]" class="margin-plus">
@@ -479,9 +472,9 @@
                             </xf:group>
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-3">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Page Extent</span>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:extent"
                                         id="related-item-extent-moving-images-repeat">
                                         <xf:group ref=".[mods:start]" class="margin-plus">
@@ -502,22 +495,20 @@
                 </xf:group>
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
 			                <xf:output value="'Identifiers'">
 			                    <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/help"/>
 			                </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger ref=".[mods:identifier]">
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:identifier"
-                                            at="index('identifier-moving-images-repeat')"
-                                            position="before"
-                                            origin="instance('compact-template')/mods:identifier"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger ref=".[mods:identifier]">
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:identifier"
+                                        at="index('identifier-moving-images-repeat')"
+                                        position="before"
+                                        origin="instance('compact-template')/mods:identifier"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-moving-images-repeat">
                             <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">

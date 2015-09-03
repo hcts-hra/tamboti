@@ -1,16 +1,16 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-suebs-tibetan">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <span class="legend">
                     <span class="legend">Related Items</span>
                 </span>
-            </div><!--relatedItem repeat begins-->
+            </xf:group><!--relatedItem repeat begins-->
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-suebs-tibetan-repeat"><!--Output: <xf:output ref="./@xlink:href"/>-->
                 <fieldset class="level-2">
-                    <div class="label-box">
+                    <xf:group appearance="minimal" class="label-box">
                         <span class="legend">Type of Related Item</span>
-                    </div>
+                    </xf:group>
                     <xf:group ref=".[@type]" class="margin-plus">
                         <xf:select1 ref="./@type">
                             <xf:label>Type</xf:label>
@@ -35,9 +35,9 @@
                     </xf:group>
                 </fieldset>
                 <fieldset class="level-2">
-                    <div class="label-box">
+                    <xf:group appearance="minimal" class="label-box">
                         <span class="legend">XLink</span>
-                    </div>
+                    </xf:group>
                     <xf:group class="margin-plus">
                         <xf:input ref="./@xlink:href" class="text_50">
                             <xf:label>XLink</xf:label>
@@ -51,9 +51,9 @@
                 </fieldset>
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <span class="legend">Identifiers</span>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-suebs-tibetan-repeat">
                             <xf:group ref=".[@type]" selection="open" class="margin-plus">
                                 <xf:select1 ref="./@type">
@@ -74,9 +74,9 @@
                 </xf:group>
                 <xf:group ref=".[mods:titleInfo/mods:title]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <span class="legend">Title</span>
-                        </div>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-suebs-tibetan-repeat">
                             <xf:group class="margin-plus">
                                 <xf:select1 ref="./@lang">
@@ -106,15 +106,15 @@
                 </xf:group>
                 <xf:group ref=".[mods:part]">
                     <fieldset class="level-3">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <span class="legend">Location of Text in Collection</span>
-                        </div><!--relatedItem/part repeat begins-->
+                        </xf:group><!--relatedItem/part repeat begins-->
                         <xf:repeat nodeset="./mods:part" id="related-item-part-suebs-tibetan-repeat"><!--relatedItem/part input begins--><!--NB 3.4 adds altRepGroup--><!--relatedItem/part input ends--><!--relatedItem/part/detail begins-->
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-4">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <span class="legend">Part</span>
-                                    </div><!--relatedItem/part/detail repeat begins-->
+                                    </xf:group><!--relatedItem/part/detail repeat begins-->
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-suebs-tibetan-repeat"><!--relatedItem/part/detail input ends--><!--relatedItem/part/detail/number begins-->
                                         <xf:group ref=".[mods:number]" class="margin-plus">
                                             <xf:input ref="./mods:number" class="text_10">
@@ -126,7 +126,7 @@
                             </xf:group><!--relatedItem/part/detail ends--><!--relatedItem/part/extent begins-->
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-4">
-                                    <div class="label-box">
+                                    <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Page Extent'" class="xforms-hint-icon">
                                             <xf:hint>
 												Use this field to indicate from which page and to
@@ -135,7 +135,7 @@
                                                 anthology noted above. 						                    
 						                    </xf:hint>
                                         </xf:output>
-                                    </div><!--relatedItem/part/extent repeat begins-->
+                                    </xf:group><!--relatedItem/part/extent repeat begins-->
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-suebs-tibetan-repeat"><!--relatedItem/part/extent input begins--><!--relatedItem/part/extent input ends--><!--relatedItem/part/start begins-->
                                         <xf:group ref=".[mods:start]" class="margin-plus">
                                             <xf:input ref="./mods:start" class="text_10">

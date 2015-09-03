@@ -2,35 +2,31 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-d">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Subjects'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_subject', instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger>
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="instance('save-data')/mods:subject" at="index('subject-repeat')" position="before" origin="instance('compact-template')/mods:subject"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div>
+                <xf:trigger>
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="instance('save-data')/mods:subject" at="index('subject-repeat')" position="before" origin="instance('compact-template')/mods:subject"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:subject" id="subject-repeat">
                 <xf:group ref=".[mods:topic]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Topic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_topic', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:topic" at="index('topic-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:topic"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:topic" at="index('topic-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:topic"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:topic" id="topic-repeat">
                             <xf:group ref="." class="margin-plus text_100">
                                 <xf:input ref=".">
@@ -42,19 +38,17 @@
                 </xf:group>
                 <xf:group ref=".[mods:geographic]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Place'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_geographic', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:geographic" at="index('geographic-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:geographic"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:geographic" at="index('geographic-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:geographic"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
                             <xf:group ref="." class="margin-plus text_100">
                                 <xf:input ref=".">
@@ -66,19 +60,17 @@
                 </xf:group>
                 <xf:group ref=".[mods:temporal]">
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Time'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_temporal', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button">
-                                <xf:trigger>
-                                    <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:temporal" at="index('temporal-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:temporal"/>
-                                    </xf:action>
-                                </xf:trigger>
-                            </span>
-                        </div>
+                            <xf:trigger>
+                                <xf:label>+</xf:label>
+                                <xf:action ev:event="DOMActivate">
+                                    <xf:insert nodeset="instance('save-data')/mods:temporal" at="index('temporal-repeat')" position="before" origin="instance('compact-template')/mods:subject/mods:temporal"/>
+                                </xf:action>
+                            </xf:trigger>
+                        </xf:group>
                         <xf:repeat nodeset="./mods:temporal" id="temporal-repeat">
                             <xf:group ref=".[@encoding]" class="margin-plus">
                                 <xf:select1 ref="./@encoding">
@@ -119,18 +111,18 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box">
+                        <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Works as Topic'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_subject-titleInfo', instance('code-tables'))/help"/>
                             </xf:output>
-                            <span class="add-delete-button"><!-- Is it possible to insert both untyped, transliteration and translation titleInfo at the same time? --><!--<xf:trigger>
+                            <!-- Is it possible to insert both untyped, transliteration and translation titleInfo at the same time? --><!--<xf:trigger>
                                     <xf:label>+</xf:label>
                                     <xf:action ev:event="DOMActivate">
                                     <xf:insert nodeset="instance('save-data')/mods:titleInfo" at="index('subject-titleInfo-repeat')" position="before"
                                             origin="instance('compact-template')/mods:titleInfo[1]"/>
                                     </xf:action>
-                                </xf:trigger>--></span>
-                        </div>
+                                </xf:trigger>-->
+                        </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="subject-titleInfo-repeat">
                             <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                 <br/>
@@ -248,31 +240,29 @@
                 </xf:group>
                 <xf:group>
                     <fieldset class="level-2">
-                        <div class="label-box extra-wide">
+                        <xf:group appearance="minimal" class="label-box extra-wide">
                             <xf:output value="'Persons and Institutions as Topics'" class="xforms-hint-icon">
                                 <xf:hint ref="id('hint-code_subject-name', instance('code-tables'))/help"/>
                             </xf:output>
-                        </div>
+                        </xf:group>
                         <fieldset class="level-3">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Person(s) as Topic'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_name-compact', instance('code-tables'))/help"/>
                                 </xf:output>
-                                <span class="add-delete-button">
-                                    <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0 and string-length(@transliteration) = 0]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[1]"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                    <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) &gt; 0 or string-length(@transliteration) &gt; 0]]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                </span>
-                            </div>
+                                <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0 and string-length(@transliteration) = 0]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[1]"/>
+                                    </xf:action>
+                                </xf:trigger>
+                                <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) &gt; 0 or string-length(@transliteration) &gt; 0]]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-person-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
+                                    </xf:action>
+                                </xf:trigger>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:name" id="subject-name-person-repeat">
                                 <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
                                     <xf:trigger>
@@ -294,11 +284,11 @@
                                 </xf:group>
                                 <xf:group ref=".[@type = 'personal']">
                                     <fieldset class="level-4">
-                                        <div class="label-box">
+                                        <xf:group appearance="minimal" class="label-box">
                                             <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                             </xf:output>
-                                        </div>
+                                        </xf:group>
                                         <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and mods:namePart/@transliteration and string-length(mods:namePart/@transliteration) &lt; 1]" class="margin-plus">
                                             <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
                                                 <xf:label>
@@ -348,33 +338,31 @@
                             </xf:repeat>
                         </fieldset>
                         <fieldset class="level-3">
-                            <div class="label-box">
+                            <xf:group appearance="minimal" class="label-box">
                                 <xf:output value="'Institutions(s) as Topic'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_name-compact', instance('code-tables'))/help"/>
                                 </xf:output>
-                                <span class="add-delete-button">
-                                    <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0 and string-length(@transliteration) = 0]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-institution-repeat')" position="before" origin="instance('compact-template')/mods:name[1]"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                    <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) &gt; 0]">
-                                        <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-institution-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                </span>
-                            </div>
+                                <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0 and string-length(@transliteration) = 0]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-institution-repeat')" position="before" origin="instance('compact-template')/mods:name[1]"/>
+                                    </xf:action>
+                                </xf:trigger>
+                                <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) &gt; 0]">
+                                    <xf:label>+</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('subject-name-institution-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
+                                    </xf:action>
+                                </xf:trigger>
+                            </xf:group>
                             <xf:repeat nodeset="./mods:name" id="subject-name-institution-repeat">
                                 <xf:group ref=".[@type = 'corporate']">
                                     <fieldset class="level-4">
-                                        <div class="label-box">
+                                        <xf:group appearance="minimal" class="label-box">
                                             <xf:output value="'Name'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                             </xf:output>
-                                        </div>
+                                        </xf:group>
                                         <xf:group class="margin-plus"/>
                                         <xf:group ref=".[mods:namePart/@script and string-length(mods:namePart/@script) &lt; 1]" class="margin-plus">
                                             <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
@@ -449,19 +437,17 @@
     </xf:group>
     <xf:group>
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Notes'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_note', instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger>
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="instance('save-data')/mods:note" at="index('note-repeat')" position="before" origin="instance('compact-template')/mods:note"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div>
+                <xf:trigger>
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="instance('save-data')/mods:note" at="index('note-repeat')" position="before" origin="instance('compact-template')/mods:note"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
             <xf:repeat nodeset="./mods:note" id="note-repeat">
                 <xf:group class="margin-plus">
                     <xf:select1 ref="./@type" selection="open">
@@ -486,19 +472,17 @@
     </xf:group>
     <xf:group>
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Abstracts'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_abstract', instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger>
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="instance('save-data')/mods:abstract" at="index('abstract-repeat')" position="before" origin="instance('compact-template')/mods:abstract"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div>
+                <xf:trigger>
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="instance('save-data')/mods:abstract" at="index('abstract-repeat')" position="before" origin="instance('compact-template')/mods:abstract"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group>
             <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
                 <xf:group class="textarea margin-plus">
                     <xf:textarea ref=".">

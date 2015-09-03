@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="classification block-form" tab-id="classification">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Classifications'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_classification',instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:classification]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:classification" at="index('classification-repeat')" position="before"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:classification]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:classification" at="index('classification-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: altRepGroup, authority, authorityURI, displayLabel, lang, script, transliteration, xml:lang, valueURI, edition, usage--><!--Subelements: none-->
+                <xf:trigger ref=".[mods:classification]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:classification" at="index('classification-repeat')" position="before"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:classification]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:classification" at="index('classification-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: altRepGroup, authority, authorityURI, displayLabel, lang, script, transliteration, xml:lang, valueURI, edition, usage--><!--Subelements: none-->
             <xf:repeat nodeset="instance('save-data')/mods:classification" id="classification-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 11]">
                     <xf:switch>

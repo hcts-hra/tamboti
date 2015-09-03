@@ -1,27 +1,23 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="type block-form" tab-id="type">
     <xf:group appearance="full">
         <fieldset class="level-1">
-            <div class="label-box">
+            <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Resource Types'" class="xforms-hint-icon">
                     <xf:hint ref="id('hint-code_typeOfResource', instance('code-tables'))/help"/>
                 </xf:output>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:typeOfResource]">
-                        <xf:label>+</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:insert nodeset="mods:typeOfResource" at="index('type-of-resource-repeat')" position="before" origin="instance('new-instance')/mods:typeOfResource"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-                <span class="add-delete-button">
-                    <xf:trigger ref=".[mods:typeOfResource]">
-                        <xf:label>–</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:typeOfResource" at="index('type-of-resource-repeat')"/>
-                        </xf:action>
-                    </xf:trigger>
-                </span>
-            </div><!--Attributes: collection, manuscript, displayLabel, usage, altRepGroup--><!--Subelements: none.-->
+                <xf:trigger ref=".[mods:typeOfResource]">
+                    <xf:label>+</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:insert nodeset="mods:typeOfResource" at="index('type-of-resource-repeat')" position="before" origin="instance('new-instance')/mods:typeOfResource"/>
+                    </xf:action>
+                </xf:trigger>
+                <xf:trigger ref=".[mods:typeOfResource]">
+                    <xf:label>–</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:typeOfResource" at="index('type-of-resource-repeat')"/>
+                    </xf:action>
+                </xf:trigger>
+            </xf:group><!--Attributes: collection, manuscript, displayLabel, usage, altRepGroup--><!--Subelements: none.-->
             <xf:repeat nodeset="instance('save-data')/mods:typeOfResource" id="type-of-resource-repeat">
                 <xf:group class="show-hide" ref=".[count(@*) &lt; 5]">
                     <xf:switch>
