@@ -131,7 +131,7 @@
                                     </div>
                                     <xf:repeat nodeset="./mods:date" id="related-item-part-date-periodical-repeat">
                                         <div class="block-form">
-                                            <xf:group ref="." class="hide-label margin-plus">
+                                            <xf:group ref="." class="margin-plus">
                                                 <xf:input ref="." class="text_10">
                                                     <xf:label>Date</xf:label>
                                                 </xf:input>
@@ -205,7 +205,7 @@
                             </span>
                         </div>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-periodical-repeat">
-                            <xf:group class="hide-label margin-plus">
+                            <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">

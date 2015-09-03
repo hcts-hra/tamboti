@@ -176,7 +176,7 @@
                                 <xf:hint ref="id('hint-code_xlink_href',instance('code-tables'))/help"/>
                             </xf:output>
                         </div>
-                        <xf:group class="margin-plus hide-label">
+                        <xf:group class="margin-plus">
                             <xf:input ref="./@xlink:href" class="text_50">
                                 <xf:label>XLink</xf:label>
                             </xf:input>
@@ -268,7 +268,7 @@
                                                 </div>
                                                 <xf:repeat nodeset="./mods:role" id="role-repeat">
                                                     <xf:repeat nodeset="./mods:roleTerm" id="roleTerm-repeat">
-                                                        <xf:group class="hide-label margin-plus">
+                                                        <xf:group class="margin-plus">
                                                             <xf:select1 ref=".">
                                                                 <xf:label>Role Term</xf:label>
                                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='role-short-code']/items/item">
@@ -368,7 +368,7 @@
                                                         <fieldset class="level-4">
                                                             <xf:repeat nodeset="./mods:placeTerm" id="place-term-repeat">
                                                                 <xf:group ref=".[not(@transliteration)]" class="margin-plus">
-                                                                    <xf:input ref="." class="text_100 hide-label">
+                                                                    <xf:input ref="." class="text_100">
                                                                         <xf:label>City Name</xf:label>
                                                                     </xf:input>
                                                                 </xf:group>
@@ -392,7 +392,7 @@
                                                     </xf:output>
                                                 </div>
                                                 <xf:repeat nodeset="./mods:publisher" id="publisher-repeat">
-                                                    <xf:group ref=".[not(@transliteration)]" class="text_100 hide-label margin-plus">
+                                                    <xf:group ref=".[not(@transliteration)]" class="text_100 margin-plus">
                                                         <xf:input ref=".">
                                                             <xf:label>Name of Publisher</xf:label>
                                                         </xf:input>
@@ -424,7 +424,7 @@
                                                         </xf:select1>
                                                     </xf:group>
                                                     <xf:group>
-                                                        <xf:input ref="." class="text_10 hide-label margin-plus">
+                                                        <xf:input ref="." class="text_10 margin-plus">
                                                             <xf:label>Date Issued</xf:label>
                                                         </xf:input>
                                                     </xf:group>
@@ -450,7 +450,7 @@
                                                             </xf:itemset>
                                                         </xf:select1>
                                                     </xf:group>
-                                                    <xf:group class="text_10 hide-label margin-plus">
+                                                    <xf:group class="text_10 margin-plus">
                                                         <xf:input ref=".">
                                                             <xf:label>Copyright Date</xf:label>
                                                         </xf:input>
@@ -498,7 +498,7 @@
                                                     </xf:output>
                                                 </div>
                                                 <xf:repeat nodeset="./mods:extent" id="extent-repeat">
-                                                    <xf:group class="hide-label margin-plus">
+                                                    <xf:group class="margin-plus">
                                                         <xf:input ref="." class="text_10">
                                                             <xf:label>Extent</xf:label>
                                                         </xf:input>
@@ -571,7 +571,7 @@
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
-                                        <xf:group class="hide-label margin-plus">
+                                        <xf:group class="margin-plus">
                                             <xf:input ref="." class="text_100">
                                                 <xf:label>Identifier</xf:label>
                                             </xf:input>

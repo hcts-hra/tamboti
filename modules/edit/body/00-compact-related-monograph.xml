@@ -15,7 +15,7 @@
                                 <xf:hint ref="id('hint-code_xlink_href-series', instance('code-tables'))/help"/>
                             </xf:output>
                         </div>
-                        <xf:group class="margin-plus hide-label">
+                        <xf:group class="margin-plus">
                             <xf:input ref="./@xlink:href" class="text_50">
                                 <xf:label>XLink</xf:label>
                             </xf:input>
@@ -51,7 +51,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group>
+                            <xf:group appearance="full">
                                 <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                     <xf:label>
                                         <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
@@ -59,8 +59,6 @@
                                         <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
                                     </xf:label>
                                 </xf:input>
-                            </xf:group>
-                            <xf:group>
                                 <xf:input ref="./mods:title" class="text_150 margin-plus">
                                     <xf:label>
                                         <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
@@ -68,8 +66,6 @@
                                         <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
                                     </xf:label>
                                 </xf:input>
-                            </xf:group>
-                            <xf:group>
                                 <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
                                     <xf:label>
                                         <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
@@ -124,7 +120,7 @@
                                                         <xf:value ref="value"/>
                                                     </xf:itemset>
                                                 </xf:select1>
-                                                <xf:input ref="." class="hide-label text_100">
+                                                <xf:input ref="." class="text_100">
                                                     <xf:label/>
                                                 </xf:input>
                                             </xf:group>
@@ -225,7 +221,7 @@
                             </span>
                         </div>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-edited-volume-repeat">
-                            <xf:group class="hide-label margin-plus">
+                            <xf:group class="margin-plus">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">

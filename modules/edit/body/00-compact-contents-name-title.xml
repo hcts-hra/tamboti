@@ -32,7 +32,7 @@
                             </span>
                         </div>
                         <xf:repeat nodeset="./mods:topic" id="topic-repeat">
-                            <xf:group ref="." class="hide-label margin-plus text_100">
+                            <xf:group ref="." class="margin-plus text_100">
                                 <xf:input ref=".">
                                     <xf:label>Topic</xf:label>
                                 </xf:input>
@@ -56,7 +56,7 @@
                             </span>
                         </div>
                         <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
-                            <xf:group ref="." class="hide-label margin-plus text_100">
+                            <xf:group ref="." class="margin-plus text_100">
                                 <xf:input ref=".">
                                     <xf:label>Geographic</xf:label>
                                 </xf:input>
@@ -106,7 +106,7 @@
                                     </xf:itemset>
                                 </xf:select1>
                             </xf:group>
-                            <xf:group ref="." class="hide-label margin-plus text_50">
+                            <xf:group ref="." class="margin-plus text_50">
                                 <xf:input ref=".">
                                     <xf:label>Date</xf:label>
                                 </xf:input>
@@ -375,7 +375,7 @@
                                                 <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </div>
-                                        <xf:group class="hide-label margin-plus"/>
+                                        <xf:group class="margin-plus"/>
                                         <xf:group ref=".[mods:namePart/@script and string-length(mods:namePart/@script) &lt; 1]" class="margin-plus">
                                             <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
                                                 <xf:label>
@@ -473,7 +473,7 @@
                         </xf:itemset>
                     </xf:select1>
                 </xf:group>
-                <xf:group class="hide-label margin-plus textarea">
+                <xf:group class="margin-plus textarea">
                     <xf:textarea ref=".">
                         <xf:label>Note</xf:label>
                     </xf:textarea>
@@ -500,7 +500,7 @@
                 </span>
             </div>
             <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
-                <xf:group class="textarea hide-label margin-plus">
+                <xf:group class="textarea margin-plus">
                     <xf:textarea ref=".">
                         <xf:label>Abstract</xf:label>
                     </xf:textarea>
