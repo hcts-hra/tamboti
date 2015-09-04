@@ -145,7 +145,7 @@
                                     <xf:group ref=".[mods:detail]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">Volume and Issue</span>
+                                                <xf:label>Volume and Issue</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-review-repeat">
                                                 <xf:group ref=".[mods:number]" class="margin-plus">
@@ -161,9 +161,7 @@
                                     <xf:group ref=".[mods:date]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">
-                                                    <span class="legend">Year of Issue</span>
-                                                </span>
+                                                <xf:label>Year of Issue</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:date" id="related-item-part-date-review-repeat">
                                                 <div class="block-form">
@@ -179,7 +177,7 @@
                                     <xf:group ref=".[mods:extent]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">Page Extent</span>
+                                                <xf:label>Page Extent</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:extent" id="related-item-extent-review-repeat">
                                                 <xf:group ref=".[@unit]">

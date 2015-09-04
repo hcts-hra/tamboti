@@ -3,14 +3,12 @@
     <xf:group appearance="full">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
-                <span class="legend">
-                    <span class="legend">Related Items</span>
-                </span>
+                <xf:label>Related Items</xf:label>
             </xf:group><!--relatedItem repeat begins-->
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-suebs-chinese-repeat"><!--Output: <xf:output ref="./@xlink:href"/>-->
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
-                        <span class="legend">Type of Related Item</span>
+                        <xf:label>Type of Related Item</xf:label>
                     </xf:group>
                     <xf:group ref=".[@type]" class="margin-plus">
                         <xf:select1 ref="./@type">
@@ -37,7 +35,7 @@
                 </fieldset>
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
-                        <span class="legend">XLink</span>
+                        <xf:label>XLink</xf:label>
                     </xf:group>
                     <xf:group class="margin-plus">
                         <xf:input ref="./@xlink:href" class="text_50">
@@ -53,7 +51,7 @@
                 <xf:group ref=".[mods:identifier]">
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
-                            <span class="legend">Identifiers</span>
+                            <xf:label>Identifiers</xf:label>
                         </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-suebs-chinese-repeat">
                             <xf:group ref=".[@type]" selection="open" class="margin-plus">
@@ -76,7 +74,7 @@
                 <xf:group ref=".[mods:titleInfo/mods:title]">
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
-                            <span class="legend">Title</span>
+                            <xf:label>Title</xf:label>
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-suebs-chinese-repeat">
                             <xf:group class="margin-plus">
@@ -108,13 +106,13 @@
                 <xf:group ref=".[mods:part]">
                     <fieldset class="level-3">
                         <xf:group appearance="minimal" class="label-box">
-                            <span class="legend">Location of Text in Collection</span>
+                            <xf:label>Location of Text in Collection</xf:label>
                         </xf:group><!--relatedItem/part repeat begins-->
                         <xf:repeat nodeset="./mods:part" id="related-item-part-suebs-chinese-repeat"><!--relatedItem/part input begins--><!--NB 3.4 adds altRepGroup--><!--relatedItem/part input ends--><!--relatedItem/part/detail begins-->
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-4">
                                     <xf:group appearance="minimal" class="label-box">
-                                        <span class="legend">Part</span>
+                                        <xf:label>Part</xf:label>
                                     </xf:group><!--relatedItem/part/detail repeat begins-->
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-suebs-chinese-repeat"><!--relatedItem/part/detail input ends--><!--relatedItem/part/detail/number begins-->
                                         <xf:group ref=".[mods:number]" class="margin-plus">

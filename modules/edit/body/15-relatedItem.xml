@@ -11694,7 +11694,7 @@
                                         <xf:group ref=".[mods:text]">
                                             <fieldset class="level-3">
                                                 <xf:group appearance="minimal" class="label-box">
-                                                    <span class="legend">
+                                                    <xf:label>
                                                         <xf:output value="'Text'" class="xforms-hint-icon">
                                                             <xf:hint ref="id('hint-code_part-text',instance('code-tables'))/help"/>
                                                         </xf:output>
@@ -11710,7 +11710,7 @@
                                                                 <xf:delete ev:event="DOMActivate" nodeset="instance('save-data')/mods:part/mods:text" at="index('secondary-part-text-repeat')"/>
                                                             </xf:action>
                                                         </xf:trigger>
-                                                    </span>
+                                                    </xf:label>
                                                 </xf:group><!--Attributes: xlink; lang; xml:lang; transliteration; script; displayLabel; type.--><!--Subelements: None.-->
                                                 <xf:repeat nodeset="./mods:text" id="secondary-part-text-repeat">
                                                     <xf:group ref=".[count(@*) &lt; 7]">
