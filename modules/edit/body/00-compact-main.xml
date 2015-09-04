@@ -87,7 +87,6 @@
                     <xf:hint ref="id('hint-code_name-compact', instance('code-tables'))/help"/>
                     <xf:hint ref="id('hint-code_more-name-information', instance('code-tables'))/help"/>
                 </xf:output>
-                <div class="add-delete-button">
                     <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0]">
                         <xf:label>+</xf:label>
                         <xf:action ev:event="DOMActivate">
@@ -100,7 +99,6 @@
                             <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
                         </xf:action>
                     </xf:trigger>
-                </div>
             </xf:group>
             <xf:repeat nodeset="./mods:name" id="compact-name-repeat">
                 <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
@@ -178,14 +176,12 @@
                                 <xf:hint ref="id('hint-code_role-compact', instance('code-tables'))/help"/>
                                 <xf:hint ref="id('hint-code_more-name-information', instance('code-tables'))/help"/>
                             </xf:output>
-                            <div class="add-delete-button">
                                 <xf:trigger>
                                     <xf:label>+</xf:label>
                                     <xf:action ev:event="DOMActivate">
                                         <xf:insert nodeset="instance('save-data')/mods:role" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[8]/mods:role"/>
                                     </xf:action>
                                 </xf:trigger>
-                            </div>
                         </xf:group>
                         <xf:repeat nodeset="./mods:role" id="role-repeat">
                             <xf:repeat nodeset="./mods:roleTerm" id="roleTerm-repeat">
