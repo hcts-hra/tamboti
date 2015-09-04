@@ -122,9 +122,7 @@
                             <xf:group ref=".[mods:date]">
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
-                                        <span class="legend">
-                                            <span class="legend">Date of Publication</span>
-                                        </span>
+                                        <xf:label>Date of Publication</xf:label>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:date" id="related-item-part-date-periodical-repeat">
                                         <div class="block-form">
@@ -140,7 +138,7 @@
                             <xf:group ref=".[mods:detail]">
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
-                                        <span class="legend">Section</span>
+                                        <xf:label>Section</xf:label>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-periodical-repeat">
                                         <xf:group ref=".[mods:number]" class="margin-plus">
@@ -154,7 +152,7 @@
                             <xf:group ref=".[mods:extent]">
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
-                                        <span class="legend">Page Extent</span>
+                                        <xf:label>Page Extent</xf:label>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-periodical-repeat">
                                         <xf:group ref=".[@unit]">
