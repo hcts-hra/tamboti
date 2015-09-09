@@ -1,5 +1,5 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-xlink">
-    <xf:group ref=".[mods:relatedItem[@type='host']]" appearance="full">
+    <xf:group ref=".[mods:relatedItem[@type='host']]">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box extra-wide">
                 <xf:output value="'Location of Article, Book Review, or Contribution'" class="xforms-hint-icon">
@@ -67,10 +67,10 @@
                                     <xf:group ref=".[mods:detail and (instance('save-data')/mods:extension/ext:template='related-article-in-periodical-latin' or instance('save-data')/mods:extension/ext:template='related-article-in-periodical-transliterated' or instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-latin'or instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-transliterated' or instance('save-data')/mods:extension/ext:template='related-newspaper-article-latin' or instance('save-data')/mods:extension/ext:template='related-newspaper-article-transliterated')]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">Volume and Issue/Section</span>
+                                                <xf:label>Volume and Issue/Section</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:detail" id="related-item-part-detail-review-repeat">
-                                                <xf:group ref=".[mods:number]" class="margin-plus">
+                                                <xf:group ref=".[mods:number]" class="margin-plus" appearance="full">
                                                     <xf:input ref="./mods:number" class="text_10">
                                                         <xf:label>
                                                             <xf:output ref="./../@type"/>
@@ -83,13 +83,11 @@
                                     <xf:group ref=".[mods:date and (instance('save-data')/mods:extension/ext:template='related-article-in-periodical-latin' or instance('save-data')/mods:extension/ext:template='related-article-in-periodical-transliterated' or instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-latin'or instance('save-data')/mods:extension/ext:template='related-book-review-in-periodical-transliterated' or instance('save-data')/mods:extension/ext:template='related-newspaper-article-latin' or instance('save-data')/mods:extension/ext:template='related-newspaper-article-transliterated')]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">
-                                                    <span class="legend">Year/Date of Issue</span>
-                                                </span>
+                                                <xf:label>Year/Date of Issue</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:date" id="related-item-part-date-review-repeat">
                                                 <div class="block-form">
-                                                    <xf:group ref="." class="margin-plus">
+                                                    <xf:group ref="." class="margin-plus" appearance="full">
                                                         <xf:input ref="." class="text_10">
                                                             <xf:label>Year</xf:label>
                                                         </xf:input>
@@ -101,31 +99,33 @@
                                     <xf:group ref=".[mods:extent]">
                                         <fieldset class="level-3">
                                             <xf:group appearance="minimal" class="label-box">
-                                                <span class="legend">Page Extent</span>
+                                                <xf:label>Page Extent</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:extent" id="related-item-extent-review-repeat">
-                                                <xf:group ref=".[@unit]">
-                                                    <xf:select1 ref="./@unit" selection="open">
-                                                        <xf:label>
-                                                            <xf:output value="'Unit'" class="xforms-hint-icon">
-                                                                <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
-                                                            </xf:output>
-                                                        </xf:label>
-                                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
-                                                            <xf:label ref="label"/>
-                                                            <xf:value ref="value"/>
-                                                        </xf:itemset>
-                                                    </xf:select1>
-                                                </xf:group>
-                                                <xf:group ref=".[mods:start]" class="margin-plus">
-                                                    <xf:input ref="./mods:start" class="text_10">
-                                                        <xf:label>Start</xf:label>
-                                                    </xf:input>
-                                                </xf:group>
-                                                <xf:group ref=".[mods:end]" class="margin-plus">
-                                                    <xf:input ref="./mods:end" class="text_10">
-                                                        <xf:label>End</xf:label>
-                                                    </xf:input>
+                                            	<xf:group appearance="full">
+	                                                <xf:group ref=".[@unit]">
+	                                                    <xf:select1 ref="./@unit" selection="open">
+	                                                        <xf:label>
+	                                                            <xf:output value="'Unit'" class="xforms-hint-icon">
+	                                                                <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
+	                                                            </xf:output>
+	                                                        </xf:label>
+	                                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
+	                                                            <xf:label ref="label"/>
+	                                                            <xf:value ref="value"/>
+	                                                        </xf:itemset>
+	                                                    </xf:select1>
+	                                                </xf:group>
+	                                                <xf:group ref=".[mods:start]" class="margin-plus">
+	                                                    <xf:input ref="./mods:start" class="text_10">
+	                                                        <xf:label>Start</xf:label>
+	                                                    </xf:input>
+	                                                </xf:group>
+	                                                <xf:group ref=".[mods:end]" class="margin-plus">
+	                                                    <xf:input ref="./mods:end" class="text_10">
+	                                                        <xf:label>End</xf:label>
+	                                                    </xf:input>
+	                                                </xf:group>
                                                 </xf:group>
                                             </xf:repeat>
                                         </fieldset>
@@ -174,7 +174,7 @@
                         <xf:group>
                             <xf:group>
                                 <fieldset class="level-2">
-                                    <div class="label-box super-wide">
+                                    <xf:group appearance="minimal" class="label-box super-wide">
                                         <xf:output value="'Names and Roles Connected With Book Reviewed'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_name-compact',instance('code-tables'))/help"/>
                                             <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
@@ -191,7 +191,7 @@
                                                 <xf:insert nodeset="instance('save-data')/mods:name" at="index('name-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[1]/mods:name[1]"/>
                                             </xf:action>
                                         </xf:trigger>
-                                    </div>
+                                    </xf:group>
                                     <xf:repeat nodeset="./mods:name" id="name-book-reviewed-repeat">
                                         <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
                                             <xf:trigger>
@@ -424,7 +424,6 @@
                                                         <xf:hint ref="id('hint-code_copyrightDate-compact',instance('code-tables'))/help"/>
                                                         <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                                                     </xf:output>
-                                                    <span class="add-delete-button"/>
                                                 </xf:group>
                                                 <xf:repeat nodeset="./mods:copyrightDate" id="copyrightDate-repeat">
                                                     <xf:group class="margin-plus" ref=".[count(../mods:copyrightDate) &gt; 1]">
