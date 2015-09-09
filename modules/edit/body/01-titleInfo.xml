@@ -477,7 +477,7 @@
 	                                            </xf:trigger>
 	                                        </div>
 	                                        <div class="node-adds">
-	                                            <xf:group appearance="full">
+	                                            <xf:group>
 	                                                <xf:trigger ref=".[not(@lang)]">
 	                                                    <xf:label>Add Language</xf:label>
 	                                                    <xf:action ev:event="DOMActivate">
@@ -511,7 +511,7 @@
 	                                    </xf:case>
 	                                </xf:switch>
 	                            </xf:group>
-	                            <xf:group appearance="full" ref=".[@lang]">
+	                            <xf:group ref=".[@lang]">
 	                                <xf:select1 ref="./@lang">
 	                                    <xf:label>
 	                                        <xf:output value="'Language'" class="xforms-hint-icon">
@@ -524,7 +524,7 @@
 	                                    </xf:itemset>
 	                                </xf:select1>
 	                            </xf:group>
-	                            <xf:group appearance="full" ref=".[@script]">
+	                            <xf:group ref=".[@script]">
 	                                <xf:select1 ref="./@script">
 	                                    <xf:label>
 	                                        <xf:output value="'Script'" class="xforms-hint-icon">
@@ -537,7 +537,7 @@
 	                                    </xf:itemset>
 	                                </xf:select1>
 	                            </xf:group>
-	                            <xf:group appearance="full" ref=".[@transliteration]">
+	                            <xf:group ref=".[@transliteration]">
 	                                <xf:select1 ref="./@transliteration">
 	                                    <xf:label>
 	                                        <xf:output value="'Transliteration'" class="xforms-hint-icon">
@@ -550,7 +550,7 @@
 	                                    </xf:itemset>
 	                                </xf:select1>
 	                            </xf:group>
-	                            <xf:group appearance="full" ref=".[@xml:lang]">
+	                            <xf:group ref=".[@xml:lang]">
 	                                <xf:select1 ref="./@xml:lang">
 	                                    <xf:label>
 	                                        <xf:output value="'xml:lang'" class="xforms-hint-icon">
@@ -564,15 +564,13 @@
 	                                </xf:select1>
 	                            </xf:group>
 	                            <br/>
-	                            <xf:group appearance="full">
-	                                <xf:input ref="." class="text_100">
-	                                    <xf:label>
-	                                        <xf:output value="'Non Sort'" class="xforms-hint-icon">
-	                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
-	                                        </xf:output>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
+                                <xf:input ref="." class="text_100">
+                                    <xf:label>
+                                        <xf:output value="'Non Sort'" class="xforms-hint-icon">
+                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
+                                </xf:input>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -604,7 +602,7 @@
 	                                            </xf:trigger>
 	                                        </div>
 	                                        <div class="node-adds">
-	                                            <xf:group appearance="full">
+	                                            <xf:group>
 	                                                <xf:trigger ref=".[not(@lang)]">
 	                                                    <xf:label>Add Language</xf:label>
 	                                                    <xf:action ev:event="DOMActivate">
@@ -737,7 +735,7 @@
 	                                            </xf:trigger>
 	                                        </div>
 	                                        <div class="node-adds">
-	                                            <xf:group appearance="full">
+	                                            <xf:group>
 	                                                <xf:trigger ref=".[not(@lang)]">
 	                                                    <xf:label>Add Language</xf:label>
 	                                                    <xf:action ev:event="DOMActivate">
@@ -824,7 +822,7 @@
 	                                </xf:select1>
 	                            </xf:group>
 	                            <br/>
-	                            <xf:group class="textarea" appearance="full">
+	                            <xf:group class="textarea">
 	                                <xf:textarea ref=".">
 	                                    <xf:label>
 	                                        <xf:output value="'Subtitle'" class="xforms-hint-icon">
@@ -837,7 +835,7 @@
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
-                <xf:group appearance="full" ref=".[mods:partNumber]">
+                <xf:group ref=".[mods:partNumber]">
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Part Number'" class="xforms-hint-icon">
@@ -870,7 +868,7 @@
 	                                            </xf:trigger>
 	                                        </div>
 	                                        <div class="node-adds">
-	                                            <xf:group appearance="full">
+	                                            <xf:group>
 	                                                <xf:trigger ref=".[not(@lang)]">
 	                                                    <xf:label>Add Language</xf:label>
 	                                                    <xf:action ev:event="DOMActivate">
@@ -1003,7 +1001,7 @@
 	                                            </xf:trigger>
 	                                        </div>
 	                                        <div class="node-adds">
-	                                            <xf:group appearance="full">
+	                                            <xf:group>
 	                                                <xf:trigger ref=".[not(@lang)]">
 	                                                    <xf:label>Add Language</xf:label>
 	                                                    <xf:action ev:event="DOMActivate">
@@ -1090,7 +1088,7 @@
 	                                </xf:select1>
 	                            </xf:group>
 	                            <br/>
-	                            <xf:group class="textarea" appearance="full">
+	                            <xf:group class="textarea">
 	                                <xf:textarea ref=".">
 	                                    <xf:label>
 	                                        <xf:output value="'Part Name'" class="xforms-hint-icon">
