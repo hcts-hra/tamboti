@@ -13,22 +13,22 @@
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:note" id="note-repeat">
-                <xf:group class="margin-plus">
-                    <xf:select1 ref="./@type" selection="open">
-                        <xf:label> Type </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group class="margin-plus">
-                    <xf:textarea ref="." class="textarea">
-                        <xf:label>Note</xf:label>
-                    </xf:textarea>
-                </xf:group>
-                <xf:group ref=".[count(../mods:note) &gt; 1]">
-                    <br/>
+            	<xf:group appearance="full">
+	                <xf:group class="margin-plus">
+	                    <xf:select1 ref="./@type" selection="open">
+	                        <xf:label> Type </xf:label>
+	                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
+	                            <xf:label ref="label"/>
+	                            <xf:value ref="value"/>
+	                        </xf:itemset>
+	                    </xf:select1>
+	                    <xf:textarea ref="." class="textarea">
+	                        <xf:label>Note</xf:label>
+	                    </xf:textarea>
+	                </xf:group>
+	                <xf:group ref=".[count(../mods:note) &gt; 1]">
+	                    <br/>
+	                </xf:group>
                 </xf:group>
             </xf:repeat>
         </fieldset>
@@ -48,13 +48,15 @@
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
-                <xf:group>
-                    <xf:textarea ref="." class="textarea margin-plus">
-                        <xf:label>Abstract</xf:label>
-                    </xf:textarea>
-                </xf:group>
-                <xf:group ref=".[count(../mods:abstract) &gt; 1]">
-                    <br/>
+            	<xf:group appearance="full">
+	                <xf:group>
+	                    <xf:textarea ref="." class="textarea margin-plus">
+	                        <xf:label>Abstract</xf:label>
+	                    </xf:textarea>
+	                </xf:group>
+	                <xf:group ref=".[count(../mods:abstract) &gt; 1]">
+	                    <br/>
+	                </xf:group>
                 </xf:group>
             </xf:repeat>
         </fieldset>
@@ -82,7 +84,6 @@
                         </xf:label>
                     </xf:input>
                 </xf:group>
-                <fieldset class="level-2"/>
                 <xf:group ref=".[mods:topic]">
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
@@ -97,7 +98,7 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:topic" id="topic-repeat">
-                            <xf:group ref="." class="margin-plus">
+                            <xf:group ref="." class="margin-plus" appearance="full">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>Topic</xf:label>
                                 </xf:input>
@@ -119,7 +120,7 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
-                            <xf:group ref="." class="margin-plus">
+                            <xf:group ref="." class="margin-plus" appearance="full">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>Geographic</xf:label>
                                 </xf:input>
@@ -141,39 +142,41 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:temporal" id="temporal-repeat">
-                            <xf:group ref=".[@encoding]" class="margin-plus">
-                                <xf:select1 ref="./@encoding">
-                                    <xf:label>
-                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_temporal-encoding', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[@point]" class="margin-plus">
-                                <xf:select1 ref="./@point">
-                                    <xf:label>
-                                        <xf:output value="'Point'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_point', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref="." class="margin-plus">
-                                <xf:input ref="." class="text_50">
-                                    <xf:label>Date</xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group ref=".[count(../mods:temporal) &gt; 1]">
-                                <br/>
+                        	<xf:group appearance="full">
+	                            <xf:group ref=".[@encoding]" class="margin-plus">
+	                                <xf:select1 ref="./@encoding">
+	                                    <xf:label>
+	                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_temporal-encoding', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[@point]" class="margin-plus">
+	                                <xf:select1 ref="./@point">
+	                                    <xf:label>
+	                                        <xf:output value="'Point'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_point', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref="." class="margin-plus">
+	                                <xf:input ref="." class="text_50">
+	                                    <xf:label>Date</xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group ref=".[count(../mods:temporal) &gt; 1]">
+	                                <br/>
+	                            </xf:group>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -192,23 +195,25 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="subject-titleInfo-repeat">
-                            <xf:group>
-                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-                                    <xf:label>Non Sort</xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group>
-                                <xf:input ref="./mods:title" class="text_150 margin-plus">
-                                    <xf:label>Title</xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group>
-                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-                                    <xf:label>Subtitle</xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group ref=".[count(../mods:titleInfo) &gt; 1]">
-                                <br/>
+                        	<xf:group appearance="full">
+	                            <xf:group>
+	                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
+	                                    <xf:label>Non Sort</xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group>
+	                                <xf:input ref="./mods:title" class="text_150 margin-plus">
+	                                    <xf:label>Title</xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group>
+	                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
+	                                    <xf:label>Subtitle</xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group ref=".[count(../mods:titleInfo) &gt; 1]">
+	                                <br/>
+	                            </xf:group>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -243,15 +248,17 @@
                                             </xf:output>
                                         </xf:group>
                                         <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
-                                            <xf:group class="margin-plus text_100" ref=".[@type = 'given']">
-                                                <xf:input ref=".">
-                                                    <xf:label>Given Name</xf:label>
-                                                </xf:input>
-                                            </xf:group>
-                                            <xf:group class="margin-plus text_100" ref=".[@type = 'family']">
-                                                <xf:input ref=".">
-                                                    <xf:label>Family Name</xf:label>
-                                                </xf:input>
+                                        	<xf:group appearance="full">
+	                                            <xf:group class="margin-plus text_100" ref=".[@type = 'given']">
+	                                                <xf:input ref=".">
+	                                                    <xf:label>Given Name</xf:label>
+	                                                </xf:input>
+	                                            </xf:group>
+	                                            <xf:group class="margin-plus text_100" ref=".[@type = 'family']">
+	                                                <xf:input ref=".">
+	                                                    <xf:label>Family Name</xf:label>
+	                                                </xf:input>
+	                                            </xf:group>
                                             </xf:group>
                                         </xf:repeat>
                                     </fieldset>
@@ -287,7 +294,7 @@
                                             </xf:output>
                                         </xf:group>
                                         <xf:repeat nodeset="./mods:namePart" id="subject-namePart-institution-repeat">
-                                            <xf:group class="margin-plus text_100">
+                                            <xf:group class="margin-plus text_100" appearance="full">
                                                 <xf:input ref=".">
                                                     <xf:label> Name Part </xf:label>
                                                 </xf:input>
@@ -313,7 +320,7 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:genre" id="genre-repeat">
-                            <xf:group ref="." class="margin-plus">
+                            <xf:group ref="." class="margin-plus" appearance="full">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>Genre</xf:label>
                                 </xf:input>
