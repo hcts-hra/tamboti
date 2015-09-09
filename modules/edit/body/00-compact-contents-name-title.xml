@@ -28,7 +28,7 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:topic" id="topic-repeat">
-                            <xf:group ref="." class="margin-plus text_100">
+                            <xf:group ref="." class="margin-plus text_100" appearance="full">
                                 <xf:input ref=".">
                                     <xf:label>Topic</xf:label>
                                 </xf:input>
@@ -50,7 +50,7 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
-                            <xf:group ref="." class="margin-plus text_100">
+                            <xf:group ref="." class="margin-plus text_100" appearance="full">
                                 <xf:input ref=".">
                                     <xf:label>Geographic</xf:label>
                                 </xf:input>
@@ -72,40 +72,42 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:temporal" id="temporal-repeat">
-                            <xf:group ref=".[@encoding]" class="margin-plus">
-                                <xf:select1 ref="./@encoding">
-                                    <xf:label>
-                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_temporal-encoding', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[@point]" class="margin-plus">
-                                <xf:select1 ref="./@point">
-                                    <xf:label>
-                                        <xf:output value="'Point'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_point', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref="." class="margin-plus text_50">
-                                <xf:input ref=".">
-                                    <xf:label>Date</xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group ref=".[count(../mods:temporal) &gt; 1]">
-                                <br/>
-                            </xf:group>
+                        	<xf:group appearance="full">
+	                            <xf:group ref=".[@encoding]" class="margin-plus">
+	                                <xf:select1 ref="./@encoding">
+	                                    <xf:label>
+	                                        <xf:output value="'Encoding'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_temporal-encoding', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-encoding-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[@point]" class="margin-plus">
+	                                <xf:select1 ref="./@point">
+	                                    <xf:label>
+	                                        <xf:output value="'Point'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_point', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref="." class="margin-plus text_50">
+	                                <xf:input ref=".">
+	                                    <xf:label>Date</xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group ref=".[count(../mods:temporal) &gt; 1]">
+	                                <br/>
+	                            </xf:group>                        	
+                        	</xf:group>
                         </xf:repeat>
                     </fieldset>
                 </xf:group>
@@ -124,116 +126,118 @@
                                 </xf:trigger>-->
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="subject-titleInfo-repeat">
-                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-                                <br/>
-                            </xf:group>
-                            <xf:group ref=".[@lang and string-length(@lang) &lt; 1]" class="text_10 margin-plus">
-                                <xf:select1 ref="/mods:mods/mods:language/mods:languageTerm">
-                                    <xf:label>
-                                        <xf:output value="'Global Language'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_lang-global-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[@lang]" class="text_10 margin-plus">
-                                <xf:select1 ref="./@lang">
-                                    <xf:label>
-                                        <xf:output value="'Local Language'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_lang-local-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and @transliteration and string-length(@transliteration) &lt; 1]" class="margin-plus">
-                                <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
-                                    <xf:label>
-                                        <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[@transliteration]" class="margin-plus">
-                                <xf:select1 ref="./@transliteration">
-                                    <xf:label>
-                                        <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[not(@type) and string-length(@script) &lt; 1]" class="margin-plus">
-                                <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
-                                    <xf:label>
-                                        <xf:output value="'Global Script'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_script-global-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group ref=".[not(@type)]" class="margin-plus">
-                                <xf:select1 ref="./@script">
-                                    <xf:label>
-                                        <xf:output value="'Local Script'" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_script-local-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
-                                        <xf:label ref="label"/>
-                                        <xf:value ref="value"/>
-                                    </xf:itemset>
-                                </xf:select1>
-                            </xf:group>
-                            <xf:group>
-                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-                                    <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
-                                    </xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group>
-                                <xf:input ref="./mods:title" class="text_150 margin-plus">
-                                    <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
-                                    </xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group>
-                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-                                    <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
-                                    </xf:label>
-                                </xf:input>
-                            </xf:group>
-                            <xf:group ref=".[count(../mods:titleInfo) &gt; 1]">
-                                <br/>
+                        	<xf:group appearance="full">
+	                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
+	                                <br/>
+	                            </xf:group>
+	                            <xf:group ref=".[@lang and string-length(@lang) &lt; 1]" class="text_10 margin-plus">
+	                                <xf:select1 ref="/mods:mods/mods:language/mods:languageTerm">
+	                                    <xf:label>
+	                                        <xf:output value="'Global Language'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_lang-global-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[@lang]" class="text_10 margin-plus">
+	                                <xf:select1 ref="./@lang">
+	                                    <xf:label>
+	                                        <xf:output value="'Local Language'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_lang-local-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and @transliteration and string-length(@transliteration) &lt; 1]" class="margin-plus">
+	                                <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+	                                    <xf:label>
+	                                        <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[@transliteration]" class="margin-plus">
+	                                <xf:select1 ref="./@transliteration">
+	                                    <xf:label>
+	                                        <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[not(@type) and string-length(@script) &lt; 1]" class="margin-plus">
+	                                <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
+	                                    <xf:label>
+	                                        <xf:output value="'Global Script'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_script-global-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group ref=".[not(@type)]" class="margin-plus">
+	                                <xf:select1 ref="./@script">
+	                                    <xf:label>
+	                                        <xf:output value="'Local Script'" class="xforms-hint-icon">
+	                                            <xf:hint ref="id('hint-code_script-local-compact', instance('code-tables'))/help"/>
+	                                        </xf:output>
+	                                    </xf:label>
+	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
+	                                        <xf:label ref="label"/>
+	                                        <xf:value ref="value"/>
+	                                    </xf:itemset>
+	                                </xf:select1>
+	                            </xf:group>
+	                            <xf:group>
+	                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
+	                                    <xf:label>
+	                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+	                                    </xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group>
+	                                <xf:input ref="./mods:title" class="text_150 margin-plus">
+	                                    <xf:label>
+	                                        <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+	                                    </xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group>
+	                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
+	                                    <xf:label>
+	                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
+	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+	                                    </xf:label>
+	                                </xf:input>
+	                            </xf:group>
+	                            <xf:group ref=".[count(../mods:titleInfo) &gt; 1]">
+	                                <br/>
+	                            </xf:group>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -264,23 +268,25 @@
                                 </xf:trigger>
                             </xf:group>
                             <xf:repeat nodeset="./mods:name" id="subject-name-person-repeat">
-                                <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
-                                    <xf:trigger>
-                                        <xf:label>∧</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
-                                            <xf:delete nodeset="following-sibling::*[1]"/>
-                                        </xf:action>
-                                    </xf:trigger>
-                                </xf:group>
-                                <xf:group ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
-                                    <xf:trigger>
-                                        <xf:label>∨</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
-                                            <xf:delete nodeset="preceding-sibling::*[1]"/>
-                                        </xf:action>
-                                    </xf:trigger>
+                            	<xf:group appearance="full">
+	                                <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
+	                                    <xf:trigger>
+	                                        <xf:label>∧</xf:label>
+	                                        <xf:action ev:event="DOMActivate">
+	                                            <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
+	                                            <xf:delete nodeset="following-sibling::*[1]"/>
+	                                        </xf:action>
+	                                    </xf:trigger>
+	                                </xf:group>
+	                                <xf:group ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
+	                                    <xf:trigger>
+	                                        <xf:label>∨</xf:label>
+	                                        <xf:action ev:event="DOMActivate">
+	                                            <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
+	                                            <xf:delete nodeset="preceding-sibling::*[1]"/>
+	                                        </xf:action>
+	                                    </xf:trigger>
+	                                </xf:group>
                                 </xf:group>
                                 <xf:group ref=".[@type = 'personal']">
                                     <fieldset class="level-4">
@@ -289,38 +295,39 @@
                                                 <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:group>
-                                        <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and mods:namePart/@transliteration and string-length(mods:namePart/@transliteration) &lt; 1]" class="margin-plus">
-                                            <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
-                                                <xf:label>
-                                                    <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
-                                        </xf:group>
-                                        <xf:group ref=".[mods:namePart/@transliteration]" class="margin-plus">
-                                            <xf:select1 ref="./mods:namePart/@transliteration">
-                                                <xf:label>
-                                                    <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
+                                        <xf:group appearance="full">
+	                                        <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and mods:namePart/@transliteration and string-length(mods:namePart/@transliteration) &lt; 1]" class="margin-plus">
+	                                            <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+	                                                <xf:label>
+	                                                    <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
+	                                        <xf:group ref=".[mods:namePart/@transliteration]" class="margin-plus">
+	                                            <xf:select1 ref="./mods:namePart/@transliteration">
+	                                                <xf:label>
+	                                                    <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
                                         </xf:group>
                                         <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
-                                            <xf:group class="margin-plus text_100">
+                                            <xf:group class="margin-plus text_100" appearance="full">
                                                 <xf:select1 ref="./@type">
                                                     <xf:label>
-                                                        <xf:group ref="../.[@script='Latn']">Transliterated
-                                                        </xf:group>
+                                                        <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
                                                         <xf:group ref="../.[not(@script='Latn')]"/>
                                                     </xf:label>
                                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
@@ -363,69 +370,70 @@
                                                 <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/help"/>
                                             </xf:output>
                                         </xf:group>
-                                        <xf:group class="margin-plus"/>
-                                        <xf:group ref=".[mods:namePart/@script and string-length(mods:namePart/@script) &lt; 1]" class="margin-plus">
-                                            <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
-                                                <xf:label>
-                                                    <xf:output value="'Global Script'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_script-global-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
+                                        <xf:group appearance="full">
+	                                        <xf:group ref=".[mods:namePart/@script and string-length(mods:namePart/@script) &lt; 1]" class="margin-plus">
+	                                            <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
+	                                                <xf:label>
+	                                                    <xf:output value="'Global Script'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_script-global-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
+	                                        <xf:group ref=".[mods:namePart/@script]" class="margin-plus">
+	                                            <xf:select1 ref="./mods:namePart/@script">
+	                                                <xf:label>
+	                                                    <xf:output value="'Local Script'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_script-local-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
+	                                        <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and mods:namePart/@transliteration and string-length(mods:namePart/@transliteration) &lt; 1]" class="margin-plus">
+	                                            <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+	                                                <xf:label>
+	                                                    <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
+	                                        <xf:group ref=".[mods:namePart/@transliteration]" class="margin-plus">
+	                                            <xf:select1 ref="./mods:namePart/@transliteration">
+	                                                <xf:label>
+	                                                    <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
+	                                                        <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
+	                                                    </xf:output>
+	                                                </xf:label>
+	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+	                                                    <xf:label ref="label"/>
+	                                                    <xf:value ref="value"/>
+	                                                </xf:itemset>
+	                                            </xf:select1>
+	                                        </xf:group>
+	                                        <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
+	                                            <xf:group class="margin-plus text_100">
+	                                                <xf:input ref=".">
+	                                                    <xf:label>
+	                                                        <xf:group ref=".[@transliteration]">Transliterated</xf:group>
+	                                                        <xf:group ref=".[@script]"/>
+	                                                    </xf:label>
+	                                                </xf:input>
+	                                            </xf:group>
+	                                        </xf:repeat>
                                         </xf:group>
-                                        <xf:group ref=".[mods:namePart/@script]" class="margin-plus">
-                                            <xf:select1 ref="./mods:namePart/@script">
-                                                <xf:label>
-                                                    <xf:output value="'Local Script'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_script-local-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='script-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
-                                        </xf:group>
-                                        <xf:group ref=".[string-length(/mods:mods/mods:extension/ext:transliterationOfResource) &gt; 0 and mods:namePart/@transliteration and string-length(mods:namePart/@transliteration) &lt; 1]" class="margin-plus">
-                                            <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
-                                                <xf:label>
-                                                    <xf:output value="'Global Transliteration'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
-                                        </xf:group>
-                                        <xf:group ref=".[mods:namePart/@transliteration]" class="margin-plus">
-                                            <xf:select1 ref="./mods:namePart/@transliteration">
-                                                <xf:label>
-                                                    <xf:output value="'Local Transliteration'" class="xforms-hint-icon">
-                                                        <xf:hint ref="id('hint-code_transliteration-local-compact', instance('code-tables'))/help"/>
-                                                    </xf:output>
-                                                </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
-                                                </xf:itemset>
-                                            </xf:select1>
-                                        </xf:group>
-                                        <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
-                                            <xf:group class="margin-plus text_100">
-                                                <xf:input ref=".">
-                                                    <xf:label>
-                                                        <xf:group ref=".[@transliteration]">Transliterated</xf:group>
-                                                        <xf:group ref=".[@script]"/>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
-                                        </xf:repeat>
                                     </fieldset>
                                 </xf:group>
                             </xf:repeat>
@@ -449,23 +457,25 @@
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:note" id="note-repeat">
-                <xf:group class="margin-plus">
-                    <xf:select1 ref="./@type" selection="open">
-                        <xf:label>Type
-                        </xf:label>
-                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
-                            <xf:label ref="label"/>
-                            <xf:value ref="value"/>
-                        </xf:itemset>
-                    </xf:select1>
-                </xf:group>
-                <xf:group class="margin-plus textarea">
-                    <xf:textarea ref=".">
-                        <xf:label>Note</xf:label>
-                    </xf:textarea>
-                </xf:group>
-                <xf:group ref=".[count(../mods:note) &gt; 1]">
-                    <br/>
+            	<xf:group appearance="full">
+	                <xf:group class="margin-plus">
+	                    <xf:select1 ref="./@type" selection="open">
+	                        <xf:label>Type
+	                        </xf:label>
+	                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='note-type-code']/items/item">
+	                            <xf:label ref="label"/>
+	                            <xf:value ref="value"/>
+	                        </xf:itemset>
+	                    </xf:select1>
+	                </xf:group>
+	                <xf:group class="margin-plus textarea">
+	                    <xf:textarea ref=".">
+	                        <xf:label>Note</xf:label>
+	                    </xf:textarea>
+	                </xf:group>
+	                <xf:group ref=".[count(../mods:note) &gt; 1]">
+	                    <br/>
+	                </xf:group>
                 </xf:group>
             </xf:repeat>
         </fieldset>
@@ -484,13 +494,15 @@
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
-                <xf:group class="textarea margin-plus">
-                    <xf:textarea ref=".">
-                        <xf:label>Abstract</xf:label>
-                    </xf:textarea>
-                </xf:group>
-                <xf:group ref=".[count(../mods:abstract) &gt; 1]">
-                    <br/>
+            	<xf:group appearance="full">
+	                <xf:group class="textarea margin-plus">
+	                    <xf:textarea ref=".">
+	                        <xf:label>Abstract</xf:label>
+	                    </xf:textarea>
+	                </xf:group>
+	                <xf:group ref=".[count(../mods:abstract) &gt; 1]">
+	                    <br/>
+	                </xf:group>
                 </xf:group>
             </xf:repeat>
         </fieldset>
