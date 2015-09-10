@@ -102,30 +102,30 @@
                                                 <xf:label>Page Extent</xf:label>
                                             </xf:group>
                                             <xf:repeat nodeset="./mods:extent" id="related-item-extent-review-repeat">
-                                            	<xf:group appearance="full">
-	                                                <xf:group ref=".[@unit]">
-	                                                    <xf:select1 ref="./@unit" selection="open">
-	                                                        <xf:label>
-	                                                            <xf:output value="'Unit'" class="xforms-hint-icon">
-	                                                                <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
-	                                                            </xf:output>
-	                                                        </xf:label>
-	                                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
-	                                                            <xf:label ref="label"/>
-	                                                            <xf:value ref="value"/>
-	                                                        </xf:itemset>
-	                                                    </xf:select1>
-	                                                </xf:group>
-	                                                <xf:group ref=".[mods:start]" class="margin-plus">
-	                                                    <xf:input ref="./mods:start" class="text_10">
-	                                                        <xf:label>Start</xf:label>
-	                                                    </xf:input>
-	                                                </xf:group>
-	                                                <xf:group ref=".[mods:end]" class="margin-plus">
-	                                                    <xf:input ref="./mods:end" class="text_10">
-	                                                        <xf:label>End</xf:label>
-	                                                    </xf:input>
-	                                                </xf:group>
+                                                <xf:group appearance="full">
+                                                    <xf:group ref=".[@unit]">
+                                                        <xf:select1 ref="./@unit" selection="open">
+                                                            <xf:label>
+                                                                <xf:output value="'Unit'" class="xforms-hint-icon">
+                                                                    <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/help"/>
+                                                                </xf:output>
+                                                            </xf:label>
+                                                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
+                                                                <xf:label ref="label"/>
+                                                                <xf:value ref="value"/>
+                                                            </xf:itemset>
+                                                        </xf:select1>
+                                                    </xf:group>
+                                                    <xf:group ref=".[mods:start]" class="margin-plus">
+                                                        <xf:input ref="./mods:start" class="text_10">
+                                                            <xf:label>Start</xf:label>
+                                                        </xf:input>
+                                                    </xf:group>
+                                                    <xf:group ref=".[mods:end]" class="margin-plus">
+                                                        <xf:input ref="./mods:end" class="text_10">
+                                                            <xf:label>End</xf:label>
+                                                        </xf:input>
+                                                    </xf:group>
                                                 </xf:group>
                                             </xf:repeat>
                                         </fieldset>
@@ -193,24 +193,20 @@
                                         </xf:trigger>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:name" id="name-book-reviewed-repeat">
-                                        <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
-                                            <xf:trigger>
-                                                <xf:label>∧</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
-                                                    <xf:delete nodeset="following-sibling::*[1]"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </xf:group>
-                                        <xf:group ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
-                                            <xf:trigger>
-                                                <xf:label>∨</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
-                                                    <xf:delete nodeset="preceding-sibling::*[1]"/>
-                                                </xf:action>
-                                            </xf:trigger>
-                                        </xf:group>
+                                        <xf:trigger ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
+                                            <xf:label>∧</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
+                                                <xf:delete nodeset="following-sibling::*[1]"/>
+                                            </xf:action>
+                                        </xf:trigger>
+                                        <xf:trigger ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
+                                            <xf:label>∨</xf:label>
+                                            <xf:action ev:event="DOMActivate">
+                                                <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
+                                                <xf:delete nodeset="preceding-sibling::*[1]"/>
+                                            </xf:action>
+                                        </xf:trigger>
                                         <xf:group>
                                             <fieldset class="level-3">
                                                 <xf:group appearance="minimal" class="label-box">
