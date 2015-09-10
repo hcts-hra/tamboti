@@ -30,37 +30,37 @@
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-edited-volume-repeat">
-                        	<xf:group appearance="full">
-	                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-	                                <br/>
-	                            </xf:group>
-	                            <xf:group class="text_10 margin-plus">
-	                                <xf:input ref="./mods:nonSort">
-	                                    <xf:label>
-	                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
-	                            <xf:group class="text_150 margin-plus">
-	                                <xf:input ref="./mods:title">
-	                                    <xf:label>
-	                                        <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
-	                            <xf:group class="text_150 margin-plus">
-	                                <xf:input ref="./mods:subTitle">
-	                                    <xf:label>
-	                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-	                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
+                            <xf:group appearance="full">
+                                <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
+                                    <br/>
+                                </xf:group>
+                                <xf:group class="text_10 margin-plus">
+                                    <xf:input ref="./mods:nonSort">
+                                        <xf:label>
+                                            <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
+                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
+                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
+                                <xf:group class="text_150 margin-plus">
+                                    <xf:input ref="./mods:title">
+                                        <xf:label>
+                                            <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
+                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
+                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
+                                <xf:group class="text_150 margin-plus">
+                                    <xf:input ref="./mods:subTitle">
+                                        <xf:label>
+                                            <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
+                                            <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
+                                            <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -221,19 +221,19 @@
                                         </xf:trigger>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:dateIssued" id="dateIssued-repeat">
-                                    	<xf:group appearance="full">
-	                                        <xf:group ref=".[count(../mods:dateIssued) &gt; 1]" class="margin-plus">
-	                                            <xf:select1 ref="./@point">
-	                                                <xf:label>Point</xf:label>
-	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
-	                                                    <xf:label ref="label"/>
-	                                                    <xf:value ref="value"/>
-	                                                </xf:itemset>
-	                                            </xf:select1>
-	                                        </xf:group>
-	                                        <xf:input ref="." class="text_10 margin-plus">
-	                                            <xf:label>Date Issued</xf:label>
-	                                        </xf:input>
+                                        <xf:group appearance="full">
+                                            <xf:group ref=".[count(../mods:dateIssued) &gt; 1]" class="margin-plus">
+                                                <xf:select1 ref="./@point">
+                                                    <xf:label>Point</xf:label>
+                                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
+                                                        <xf:label ref="label"/>
+                                                        <xf:value ref="value"/>
+                                                    </xf:itemset>
+                                                </xf:select1>
+                                            </xf:group>
+                                            <xf:input ref="." class="text_10 margin-plus">
+                                                <xf:label>Date Issued</xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -253,21 +253,21 @@
                                         </xf:trigger>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:copyrightDate" id="copyrightDate-repeat">
-                                    	<xf:group appearance="full">
-	                                        <xf:group class="margin-plus" ref=".[count(../mods:copyrightDate) &gt; 1]">
-	                                            <xf:select1 ref="./@point">
-	                                                <xf:label>Point</xf:label>
-	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
-	                                                    <xf:label ref="label"/>
-	                                                    <xf:value ref="value"/>
-	                                                </xf:itemset>
-	                                            </xf:select1>
-	                                        </xf:group>
-	                                        <xf:group class="text_10 margin-plus">
-	                                            <xf:input ref=".">
-	                                                <xf:label>Copyright Date</xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
+                                        <xf:group appearance="full">
+                                            <xf:group class="margin-plus" ref=".[count(../mods:copyrightDate) &gt; 1]">
+                                                <xf:select1 ref="./@point">
+                                                    <xf:label>Point</xf:label>
+                                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='date-point-code']/items/item">
+                                                        <xf:label ref="label"/>
+                                                        <xf:value ref="value"/>
+                                                    </xf:itemset>
+                                                </xf:select1>
+                                            </xf:group>
+                                            <xf:group class="text_10 margin-plus">
+                                                <xf:input ref=".">
+                                                    <xf:label>Copyright Date</xf:label>
+                                                </xf:input>
+                                            </xf:group>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -306,30 +306,30 @@
                                         </xf:output>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-edited-volume-repeat">
-                                    	<xf:group appearance="full">
-	                                        <xf:group ref=".[@unit]">
-	                                            <xf:select1 ref="./@unit" selection="open">
-	                                                <xf:label>
-	                                                    <xf:output value="'Unit'" class="xforms-hint-icon">
-	                                                        <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
-	                                                    </xf:output>
-	                                                </xf:label>
-	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
-	                                                    <xf:label ref="label"/>
-	                                                    <xf:value ref="value"/>
-	                                                </xf:itemset>
-	                                            </xf:select1>
-	                                        </xf:group>
-	                                        <xf:group ref=".[mods:start]" class="margin-plus">
-	                                            <xf:input ref="./mods:start" class="text_10">
-	                                                <xf:label>Start</xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
-	                                        <xf:group ref=".[mods:end]" class="margin-plus">
-	                                            <xf:input ref="./mods:end" class="text_10">
-	                                                <xf:label>End</xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
+                                        <xf:group appearance="full">
+                                            <xf:group ref=".[@unit]">
+                                                <xf:select1 ref="./@unit" selection="open">
+                                                    <xf:label>
+                                                        <xf:output value="'Unit'" class="xforms-hint-icon">
+                                                            <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
+                                                        </xf:output>
+                                                    </xf:label>
+                                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
+                                                        <xf:label ref="label"/>
+                                                        <xf:value ref="value"/>
+                                                    </xf:itemset>
+                                                </xf:select1>
+                                            </xf:group>
+                                            <xf:group ref=".[mods:start]" class="margin-plus">
+                                                <xf:input ref="./mods:start" class="text_10">
+                                                    <xf:label>Start</xf:label>
+                                                </xf:input>
+                                            </xf:group>
+                                            <xf:group ref=".[mods:end]" class="margin-plus">
+                                                <xf:input ref="./mods:end" class="text_10">
+                                                    <xf:label>End</xf:label>
+                                                </xf:input>
+                                            </xf:group>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -399,33 +399,33 @@
                                         </xf:output>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-relatedItem-relatedItem-series-repeat">
-                                    	<xf:group appearance="full">
-	                                        <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-	                                            <br/>
-	                                        </xf:group>
-	                                        <xf:group class="margin-plus">
-	                                            <xf:input ref="./mods:nonSort" class="text_10">
-	                                                <xf:label>
-	                                                    <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
-	                                                </xf:label>
-	                                            </xf:input>
-	                                            <xf:input ref="./mods:title" class="text_150">
-	                                                <xf:label>
-	                                                    <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
-	                                                </xf:label>
-	                                            </xf:input>
-	                                            <xf:input ref="./mods:subTitle" class="text_150">
-	                                                <xf:label>
-	                                                    <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-	                                                    <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
-	                                                </xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
+                                        <xf:group appearance="full">
+                                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
+                                                <br/>
+                                            </xf:group>
+                                            <xf:group class="margin-plus">
+                                                <xf:input ref="./mods:nonSort" class="text_10">
+                                                    <xf:label>
+                                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+                                                    </xf:label>
+                                                </xf:input>
+                                                <xf:input ref="./mods:title" class="text_150">
+                                                    <xf:label>
+                                                        <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+                                                    </xf:label>
+                                                </xf:input>
+                                                <xf:input ref="./mods:subTitle" class="text_150">
+                                                    <xf:label>
+                                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
+                                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+                                                    </xf:label>
+                                                </xf:input>
+                                            </xf:group>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
