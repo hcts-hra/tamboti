@@ -119,8 +119,8 @@
                             </xf:itemset>
                         </xf:select1>
                     </xf:group>
-                    <xf:group ref=".[@authorityURI]" class="text_100">
-                        <xf:input ref="./@authorityURI" selection="open">
+                    <xf:group ref=".[@authorityURI]">
+                        <xf:input ref="./@authorityURI" selection="open" class="text_100">
                             <xf:label>
                                 <xf:output value="'Authority URI'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_authority-uri',instance('code-tables'))/help"/>
@@ -138,8 +138,8 @@
                             </xf:label>
                         </xf:input>
                     </xf:group>
-                    <xf:group ref=".[@valueURI]" class="text_100">
-                        <xf:input ref="./@valueURI">
+                    <xf:group ref=".[@valueURI]">
+                        <xf:input ref="./@valueURI" class="text_100">
                             <xf:label>
                                 <xf:output value="'Value URI'" class="xforms-hint-icon">
                                     <xf:hint ref="id('hint-code_value-uri',instance('code-tables'))/help"/>
