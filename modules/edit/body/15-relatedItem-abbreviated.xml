@@ -750,15 +750,13 @@
                                                             </xf:select1>
                                                         </xf:group>
                                                         <br/>
-                                                        <xf:group ref=".">
-                                                            <xf:input ref="." class="text_50">
-                                                                <xf:label>
-                                                                    <xf:output value="'Number'" class="xforms-hint-icon">
-                                                                        <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/help"/>
-                                                                    </xf:output>
-                                                                </xf:label>
-                                                            </xf:input>
-                                                        </xf:group>
+                                                        <xf:input ref="." class="text_50">
+                                                            <xf:label>
+                                                                <xf:output value="'Number'" class="xforms-hint-icon">
+                                                                    <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/help"/>
+                                                                </xf:output>
+                                                            </xf:label>
+                                                        </xf:input>
                                                     </xf:group>
                                                 </xf:repeat>
                                             </fieldset>
@@ -877,15 +875,13 @@
                                                             </xf:select1>
                                                         </xf:group>
                                                         <br/>
-                                                        <xf:group ref=".">
-                                                            <xf:input ref="." class="text_50">
-                                                                <xf:label>
-                                                                    <xf:output value="'Caption'" class="xforms-hint-icon">
-                                                                        <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/help"/>
-                                                                    </xf:output>
-                                                                </xf:label>
-                                                            </xf:input>
-                                                        </xf:group>
+                                                        <xf:input ref="." class="text_50">
+                                                            <xf:label>
+                                                                <xf:output value="'Caption'" class="xforms-hint-icon">
+                                                                    <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/help"/>
+                                                                </xf:output>
+                                                            </xf:label>
+                                                        </xf:input>
                                                     </xf:group>
                                                 </xf:repeat>
                                             </fieldset>
@@ -898,7 +894,7 @@
                                                     </xf:output>
                                                 </xf:group><!--Attributes: None.--><!--Subelements: None.-->
                                                 <xf:repeat nodeset="./mods:title" id="part-detail-title-repeat">
-                                                    <xf:group ref="." appearance="full">
+                                                    <xf:group appearance="full">
                                                         <xf:input ref="." class="text_50">
                                                             <xf:label>
                                                                 <xf:output value="'Title'" class="xforms-hint-icon">
@@ -1060,15 +1056,13 @@
                                                             </xf:select1>
                                                         </xf:group>
                                                         <br/>
-                                                        <xf:group ref=".">
-                                                            <xf:input ref="." class="text_50">
-                                                                <xf:label>
-                                                                    <xf:output value="'Start'" class="xforms-hint-icon">
-                                                                        <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/help"/>
-                                                                    </xf:output>
-                                                                </xf:label>
-                                                            </xf:input>
-                                                        </xf:group>
+                                                        <xf:input ref="." class="text_50">
+                                                            <xf:label>
+                                                                <xf:output value="'Start'" class="xforms-hint-icon">
+                                                                    <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/help"/>
+                                                                </xf:output>
+                                                            </xf:label>
+                                                        </xf:input>
                                                     </xf:group>
                                                 </xf:repeat>
                                             </fieldset>
@@ -1187,15 +1181,13 @@
                                                             </xf:select1>
                                                         </xf:group>
                                                         <br/>
-                                                        <xf:group ref=".">
-                                                            <xf:input ref="." class="text_50">
-                                                                <xf:label>
-                                                                    <xf:output value="'End'" class="xforms-hint-icon">
-                                                                        <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/help"/>
-                                                                    </xf:output>
-                                                                </xf:label>
-                                                            </xf:input>
-                                                        </xf:group>
+                                                        <xf:input ref="." class="text_50">
+                                                            <xf:label>
+                                                                <xf:output value="'End'" class="xforms-hint-icon">
+                                                                    <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/help"/>
+                                                                </xf:output>
+                                                            </xf:label>
+                                                        </xf:input>
                                                     </xf:group>
                                                 </xf:repeat>
                                             </fieldset>
@@ -1208,7 +1200,7 @@
                                                     </xf:output>
                                                 </xf:group><!--Attributes: None.--><!--Subelements: None.-->
                                                 <xf:repeat nodeset="./mods:total" id="part-extent-total-repeat">
-                                                    <xf:group ref="." appearance="full">
+                                                    <xf:group appearance="full">
                                                         <xf:input ref="." class="text_50">
                                                             <xf:label>
                                                                 <xf:output value="'Total'" class="xforms-hint-icon">
@@ -1228,7 +1220,7 @@
                                                     </xf:output>
                                                 </xf:group><!--Attributes: None.--><!--Subelements: None.-->
                                                 <xf:repeat nodeset="./mods:list" id="part-extent-list-repeat">
-                                                    <xf:group ref="." appearance="full">
+                                                    <xf:group appearance="full">
                                                         <xf:group ref=".[count(@*) &lt; 4]">
                                                             <xf:switch>
                                                                 <xf:case id="part-extent-list-add-node-hide">
@@ -1520,15 +1512,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_50">
-                                                    <xf:label>
-                                                        <xf:output value="'Date'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_part-date',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_50">
+                                                <xf:label>
+                                                    <xf:output value="'Date'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_part-date',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -1693,15 +1683,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_50">
-                                                    <xf:label>
-                                                        <xf:output value="'Text'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_part-text',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_50">
+                                                <xf:label>
+                                                    <xf:output value="'Text'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_part-text',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -4091,19 +4079,17 @@
                                     </xf:select1>
                                 </xf:group>
                                 <br/>
-                                <xf:group ref=".">
-                                    <xf:select1 ref=".">
-                                        <xf:label>
-                                            <xf:output value="'Resource Type'" class="xforms-hint-icon">
-                                                <xf:hint ref="id('hint-code_typeOfResource',instance('code-tables'))/help"/>
-                                            </xf:output>
-                                        </xf:label>
-                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='type-of-resource-code']/items/item">
-                                            <xf:label ref="label"/>
-                                            <xf:value ref="value"/>
-                                        </xf:itemset>
-                                    </xf:select1>
-                                </xf:group>
+                                <xf:select1 ref=".">
+                                    <xf:label>
+                                        <xf:output value="'Resource Type'" class="xforms-hint-icon">
+                                            <xf:hint ref="id('hint-code_typeOfResource',instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
+                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='type-of-resource-code']/items/item">
+                                        <xf:label ref="label"/>
+                                        <xf:value ref="value"/>
+                                    </xf:itemset>
+                                </xf:select1>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -5709,15 +5695,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_10">
-                                                    <xf:label>
-                                                        <xf:output value="'Date Issued'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_dateIssued',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_10">
+                                                <xf:label>
+                                                    <xf:output value="'Date Issued'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_dateIssued',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -8170,15 +8154,13 @@
                                     </xf:select1>
                                 </xf:group>
                                 <br/>
-                                <xf:group ref=".">
-                                    <xf:textarea ref="." class="textarea">
-                                        <xf:label>
-                                            <xf:output value="'Note'" class="xforms-hint-icon">
-                                                <xf:hint ref="id('hint-code_note',instance('code-tables'))/help"/>
-                                            </xf:output>
-                                        </xf:label>
-                                    </xf:textarea>
-                                </xf:group>
+                                <xf:textarea ref="." class="textarea">
+                                    <xf:label>
+                                        <xf:output value="'Note'" class="xforms-hint-icon">
+                                            <xf:hint ref="id('hint-code_note',instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
+                                </xf:textarea>
                             </xf:group>
                         </xf:repeat>
                         <xf:trigger class="add-button" ref=".[not(mods:note)]">
@@ -8442,15 +8424,13 @@
                                     </xf:select1>
                                 </xf:group>
                                 <br/>
-                                <xf:group ref=".">
-                                    <xf:input ref="." class="text_50">
-                                        <xf:label>
-                                            <xf:output value="'Classification'" class="xforms-hint-icon">
-                                                <xf:hint ref="id('hint-code_classification',instance('code-tables'))/help"/>
-                                            </xf:output>
-                                        </xf:label>
-                                    </xf:input>
-                                </xf:group>
+                                <xf:input ref="." class="text_50">
+                                    <xf:label>
+                                        <xf:output value="'Classification'" class="xforms-hint-icon">
+                                            <xf:hint ref="id('hint-code_classification',instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
+                                </xf:input>
                             </xf:group>
                         </xf:repeat>
                         <xf:trigger class="add-button" ref=".[not(mods:classification)]">
@@ -8664,15 +8644,13 @@
                                     </xf:select1>
                                 </xf:group>
                                 <br/>
-                                <xf:group ref=".">
-                                    <xf:input ref="." class="text_100">
-                                        <xf:label>
-                                            <xf:output value="'Identifier'" class="xforms-hint-icon">
-                                                <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
-                                            </xf:output>
-                                        </xf:label>
-                                    </xf:input>
-                                </xf:group>
+                                <xf:input ref="." class="text_100">
+                                    <xf:label>
+                                        <xf:output value="'Identifier'" class="xforms-hint-icon">
+                                            <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
+                                        </xf:output>
+                                    </xf:label>
+                                </xf:input>
                             </xf:group>
                         </xf:repeat><!--identifier repeat ends-->
                         <xf:trigger class="add-button" ref=".[not(mods:identifier)]">
@@ -9102,15 +9080,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_50">
-                                                    <xf:label>
-                                                        <xf:output value="'Physical Location'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_physicalLocation',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_50">
+                                                <xf:label>
+                                                    <xf:output value="'Physical Location'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_physicalLocation',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -9241,15 +9217,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_50">
-                                                    <xf:label>
-                                                        <xf:output value="'Shelf Locator'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_shelfLocator',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_50">
+                                                <xf:label>
+                                                    <xf:output value="'Shelf Locator'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_shelfLocator',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
@@ -9388,15 +9362,13 @@
                                                 </xf:select1>
                                             </xf:group>
                                             <br/>
-                                            <xf:group ref=".">
-                                                <xf:input ref="." class="text_100">
-                                                    <xf:label>
-                                                        <xf:output value="'URL'" class="xforms-hint-icon">
-                                                            <xf:hint ref="id('hint-code_location-url',instance('code-tables'))/help"/>
-                                                        </xf:output>
-                                                    </xf:label>
-                                                </xf:input>
-                                            </xf:group>
+                                            <xf:input ref="." class="text_100">
+                                                <xf:label>
+                                                    <xf:output value="'URL'" class="xforms-hint-icon">
+                                                        <xf:hint ref="id('hint-code_location-url',instance('code-tables'))/help"/>
+                                                    </xf:output>
+                                                </xf:label>
+                                            </xf:input>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>
