@@ -129,8 +129,8 @@
                                 <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                     <br/>
                                 </xf:group>
-                                <xf:group ref=".[@lang and string-length(@lang) &lt; 1]" class="text_10 margin-plus">
-                                    <xf:select1 ref="/mods:mods/mods:language/mods:languageTerm">
+                                <xf:group ref=".[@lang and string-length(@lang) &lt; 1]" class="margin-plus">
+                                    <xf:select1 ref="/mods:mods/mods:language/mods:languageTerm" class="text_10">
                                         <xf:label>
                                             <xf:output value="'Global Language'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_lang-global-compact', instance('code-tables'))/help"/>
@@ -142,8 +142,8 @@
                                         </xf:itemset>
                                     </xf:select1>
                                 </xf:group>
-                                <xf:group ref=".[@lang]" class="text_10 margin-plus">
-                                    <xf:select1 ref="./@lang">
+                                <xf:group ref=".[@lang]" class="margin-plus">
+                                    <xf:select1 ref="./@lang" class="text_10">
                                         <xf:label>
                                             <xf:output value="'Local Language'" class="xforms-hint-icon">
                                                 <xf:hint ref="id('hint-code_lang-local-compact', instance('code-tables'))/help"/>

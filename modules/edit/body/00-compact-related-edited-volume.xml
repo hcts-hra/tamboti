@@ -34,8 +34,8 @@
                                 <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
                                     <br/>
                                 </xf:group>
-                                <xf:group class="text_10 margin-plus">
-                                    <xf:input ref="./mods:nonSort">
+                                <xf:group class="margin-plus">
+                                    <xf:input ref="./mods:nonSort" class="text_10">
                                         <xf:label>
                                             <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
                                             <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
@@ -43,8 +43,8 @@
                                         </xf:label>
                                     </xf:input>
                                 </xf:group>
-                                <xf:group class="text_150 margin-plus">
-                                    <xf:input ref="./mods:title">
+                                <xf:group class="margin-plus">
+                                    <xf:input ref="./mods:title" class="text_150">
                                         <xf:label>
                                             <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
                                             <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
@@ -52,8 +52,8 @@
                                         </xf:label>
                                     </xf:input>
                                 </xf:group>
-                                <xf:group class="text_150 margin-plus">
-                                    <xf:input ref="./mods:subTitle">
+                                <xf:group class="margin-plus">
+                                    <xf:input ref="./mods:subTitle" class="text_150">
                                         <xf:label>
                                             <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
                                             <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
@@ -263,8 +263,8 @@
                                                     </xf:itemset>
                                                 </xf:select1>
                                             </xf:group>
-                                            <xf:group class="text_10 margin-plus">
-                                                <xf:input ref=".">
+                                            <xf:group class="margin-plus">
+                                                <xf:input ref="." class="text_10">
                                                     <xf:label>Copyright Date</xf:label>
                                                 </xf:input>
                                             </xf:group>

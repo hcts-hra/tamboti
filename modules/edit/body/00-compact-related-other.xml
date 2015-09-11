@@ -374,8 +374,8 @@
                                                     </xf:output>
                                                 </xf:group>
                                                 <xf:repeat nodeset="./mods:publisher" id="publisher-repeat">
-                                                    <xf:group ref=".[not(@transliteration)]" class="text_100 margin-plus">
-                                                        <xf:input ref=".">
+                                                    <xf:group ref=".[not(@transliteration)]" class="margin-plus">
+                                                        <xf:input ref="." class="text_100">
                                                             <xf:label>Name of Publisher</xf:label>
                                                         </xf:input>
                                                     </xf:group>
@@ -431,8 +431,8 @@
                                                             </xf:itemset>
                                                         </xf:select1>
                                                     </xf:group>
-                                                    <xf:group class="text_10 margin-plus">
-                                                        <xf:input ref=".">
+                                                    <xf:group class="margin-plus">
+                                                        <xf:input ref="." class="text_10">
                                                             <xf:label>Copyright Date</xf:label>
                                                         </xf:input>
                                                     </xf:group>
@@ -507,13 +507,13 @@
                                     <xf:repeat nodeset="./mods:location" id="location-book-reviewed-repeat">
                                         <xf:repeat nodeset="./mods:url" id="url-book-reviewed-repeat">
                                             <xf:group class="margin-plus">
-                                                <xf:group class="text_10">
-                                                    <xf:input ref="./@dateLastAccessed">
+                                                <xf:group>
+                                                    <xf:input ref="./@dateLastAccessed" class="text_10">
                                                         <xf:label>Last Accessed</xf:label>
                                                     </xf:input>
                                                 </xf:group>
-                                                <xf:group class="text_150">
-                                                    <xf:input ref=".">
+                                                <xf:group>
+                                                    <xf:input ref="." class="text_150">
                                                         <xf:label>URL</xf:label>
                                                     </xf:input>
                                                 </xf:group>
