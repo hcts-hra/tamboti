@@ -201,15 +201,13 @@
                         </xf:select1>
                     </xf:group>
                     <br/>
-                    <xf:group ref=".">
-                        <xf:input ref="." class="text_100">
-                            <xf:label>
-                                <xf:output value="'Identifier'" class="xforms-hint-icon">
-                                    <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
-                                </xf:output>
-                            </xf:label>
-                        </xf:input>
-                    </xf:group>
+                    <xf:input ref="." class="text_100">
+                        <xf:label>
+                            <xf:output value="'Identifier'" class="xforms-hint-icon">
+                                <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
+                            </xf:output>
+                        </xf:label>
+                    </xf:input>
                 </xf:group>
             </xf:repeat><!--identifier repeat ends-->
             <xf:group appearance="full" ref=".[not(mods:identifier)]">

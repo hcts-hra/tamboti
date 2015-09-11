@@ -214,15 +214,13 @@
                         </xf:select1>
                     </xf:group>
                     <br/>
-                    <xf:group ref=".">
-                        <xf:textarea ref="." class="textarea">
-                            <xf:label>
-                                <xf:output value="'Table Of Contents'" class="xforms-hint-icon">
-                                    <xf:hint ref="id('hint-code_table-of-contents',instance('code-tables'))/help"/>
-                                </xf:output>
-                            </xf:label>
-                        </xf:textarea>
-                    </xf:group>
+                    <xf:textarea ref="." class="textarea">
+                        <xf:label>
+                            <xf:output value="'Table Of Contents'" class="xforms-hint-icon">
+                                <xf:hint ref="id('hint-code_table-of-contents',instance('code-tables'))/help"/>
+                            </xf:output>
+                        </xf:label>
+                    </xf:textarea>
                 </xf:group>
             </xf:repeat>
             <xf:group appearance="full" ref=".[not(mods:tableOfContents)]">

@@ -251,15 +251,13 @@
                         </xf:select1>
                     </xf:group>
                     <br/>
-                    <xf:group ref=".">
-                        <xf:input ref="." class="text_50">
-                            <xf:label>
-                                <xf:output value="'Classification'" class="xforms-hint-icon">
-                                    <xf:hint ref="id('hint-code_classification',instance('code-tables'))/help"/>
-                                </xf:output>
-                            </xf:label>
-                        </xf:input>
-                    </xf:group>
+                    <xf:input ref="." class="text_50">
+                        <xf:label>
+                            <xf:output value="'Classification'" class="xforms-hint-icon">
+                                <xf:hint ref="id('hint-code_classification',instance('code-tables'))/help"/>
+                            </xf:output>
+                        </xf:label>
+                    </xf:input>
                 </xf:group>
             </xf:repeat>
             <xf:group appearance="full" ref=".[not(mods:classification)]">
