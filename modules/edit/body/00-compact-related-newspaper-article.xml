@@ -17,37 +17,37 @@
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-periodical-repeat">
-                        	<xf:group appearance="full">
-	                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-	                                <br/>
-	                            </xf:group>
-	                            <xf:group>
-	                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-	                                    <xf:label>
-	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
-	                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
-	                                        </xf:output>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
-	                            <xf:group>
-	                                <xf:input ref="./mods:title" class="text_150 margin-plus">
-	                                    <xf:label>
-	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
-	                                            <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
-	                                        </xf:output>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
-	                            <xf:group>
-	                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-	                                    <xf:label>
-	                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
-	                                            <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
-	                                        </xf:output>
-	                                    </xf:label>
-	                                </xf:input>
-	                            </xf:group>
+                            <xf:group appearance="full">
+                                <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
+                                    <br/>
+                                </xf:group>
+                                <xf:group>
+                                    <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
+                                <xf:group>
+                                    <xf:input ref="./mods:title" class="text_150 margin-plus">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
+                                <xf:group>
+                                    <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
+                                </xf:group>
                             </xf:group>
                         </xf:repeat>
                     </fieldset>
@@ -73,25 +73,21 @@
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:name" id="relatedItem-name-repeat-periodical">
-                        	<xf:group appearance="full">
-	                            <xf:group ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
-	                                <xf:trigger>
-	                                    <xf:label>∧</xf:label>
-	                                    <xf:action ev:event="DOMActivate">
-	                                        <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
-	                                        <xf:delete nodeset="following-sibling::*[1]"/>
-	                                    </xf:action>
-	                                </xf:trigger>
-	                            </xf:group>
-	                            <xf:group ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
-	                                <xf:trigger>
-	                                    <xf:label>∨</xf:label>
-	                                    <xf:action ev:event="DOMActivate">
-	                                        <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
-	                                        <xf:delete nodeset="preceding-sibling::*[1]"/>
-	                                    </xf:action>
-	                                </xf:trigger>
-	                            </xf:group>
+                            <xf:group appearance="full">
+                                <xf:trigger ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
+                                    <xf:label>∧</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="self::*" origin="following-sibling::*[1]" position="before"/>
+                                        <xf:delete nodeset="following-sibling::*[1]"/>
+                                    </xf:action>
+                                </xf:trigger>
+                                <xf:trigger ref="following-sibling::*[1][self::mods:name]" class="up-down-pointer">
+                                    <xf:label>∨</xf:label>
+                                    <xf:action ev:event="DOMActivate">
+                                        <xf:insert nodeset="self::*" origin="preceding-sibling::*[1]" position="after"/>
+                                        <xf:delete nodeset="preceding-sibling::*[1]"/>
+                                    </xf:action>
+                                </xf:trigger>
                             </xf:group>
                             <xf:group>
                                 <fieldset class="level-3">
@@ -130,7 +126,7 @@
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:date" id="related-item-part-date-periodical-repeat">
                                         <div class="block-form">
-                                            <xf:group ref="." class="margin-plus" appearance="full">
+                                            <xf:group class="margin-plus" appearance="full">
                                                 <xf:input ref="." class="text_10">
                                                     <xf:label>Date</xf:label>
                                                 </xf:input>
@@ -159,30 +155,30 @@
                                         <xf:label>Page Extent</xf:label>
                                     </xf:group>
                                     <xf:repeat nodeset="./mods:extent" id="related-item-extent-periodical-repeat">
-                                    	<xf:group appearance="full">
-	                                        <xf:group ref=".[@unit]">
-	                                            <xf:select1 ref="./@unit" selection="open">
-	                                                <xf:label>
-	                                                    <xf:output value="'Unit'" class="xforms-hint-icon">
-	                                                        <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
-	                                                    </xf:output>
-	                                                </xf:label>
-	                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
-	                                                    <xf:label ref="label"/>
-	                                                    <xf:value ref="value"/>
-	                                                </xf:itemset>
-	                                            </xf:select1>
-	                                        </xf:group>
-	                                        <xf:group ref=".[mods:start]" class="margin-plus">
-	                                            <xf:input ref="./mods:start" class="text_10">
-	                                                <xf:label>Start</xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
-	                                        <xf:group ref=".[mods:end]" class="margin-plus">
-	                                            <xf:input ref="./mods:end" class="text_10">
-	                                                <xf:label>End</xf:label>
-	                                            </xf:input>
-	                                        </xf:group>
+                                        <xf:group appearance="full">
+                                            <xf:group ref=".[@unit]">
+                                                <xf:select1 ref="./@unit" selection="open">
+                                                    <xf:label>
+                                                        <xf:output value="'Unit'" class="xforms-hint-icon">
+                                                            <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/help"/>
+                                                        </xf:output>
+                                                    </xf:label>
+                                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
+                                                        <xf:label ref="label"/>
+                                                        <xf:value ref="value"/>
+                                                    </xf:itemset>
+                                                </xf:select1>
+                                            </xf:group>
+                                            <xf:group ref=".[mods:start]" class="margin-plus">
+                                                <xf:input ref="./mods:start" class="text_10">
+                                                    <xf:label>Start</xf:label>
+                                                </xf:input>
+                                            </xf:group>
+                                            <xf:group ref=".[mods:end]" class="margin-plus">
+                                                <xf:input ref="./mods:end" class="text_10">
+                                                    <xf:label>End</xf:label>
+                                                </xf:input>
+                                            </xf:group>
                                         </xf:group>
                                     </xf:repeat>
                                 </fieldset>

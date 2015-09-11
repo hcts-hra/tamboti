@@ -30,28 +30,28 @@
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-periodical-repeat">
-                        	<xf:group appearance="full">
-	                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-	                                <br/>
-	                            </xf:group>
-	                            <xf:group ref=".[(@transliteration)]" class="margin-plus">
-	                                <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
-	                                    <xf:label>Transliteration</xf:label>
-	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-	                                        <xf:label ref="label"/>
-	                                        <xf:value ref="value"/>
-	                                    </xf:itemset>
-	                                </xf:select1>
-	                            </xf:group>
-	                            <xf:group ref=".[string-length(@lang) &gt; 0]" class="margin-plus">
-	                                <xf:select1 ref="./@lang">
-	                                    <xf:label>Language</xf:label>
-	                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
-	                                        <xf:label ref="label"/>
-	                                        <xf:value ref="value"/>
-	                                    </xf:itemset>
-	                                </xf:select1>
-	                            </xf:group>
+                            <xf:group appearance="full">
+                                <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
+                                    <br/>
+                                </xf:group>
+                                <xf:group ref=".[(@transliteration)]" class="margin-plus">
+                                    <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+                                        <xf:label>Transliteration</xf:label>
+                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+                                            <xf:label ref="label"/>
+                                            <xf:value ref="value"/>
+                                        </xf:itemset>
+                                    </xf:select1>
+                                </xf:group>
+                                <xf:group ref=".[string-length(@lang) &gt; 0]" class="margin-plus">
+                                    <xf:select1 ref="./@lang">
+                                        <xf:label>Language</xf:label>
+                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
+                                            <xf:label ref="label"/>
+                                            <xf:value ref="value"/>
+                                        </xf:itemset>
+                                    </xf:select1>
+                                </xf:group>
                                 <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
                                     <xf:label>
                                         <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
