@@ -15,6 +15,8 @@ import module namespace functx="http://www.functx.com";
 
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
+declare variable $vra-hra-framework:ERROR := xs:QName("vra-hra-framework:error");
+
 (:The $vra-hra-framework:primary-roles values are lower-cased when compared.:)
 declare variable $vra-hra-framework:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
 
@@ -784,52 +786,93 @@ declare function vra-hra-framework:get-vra-image-records-list($work-record as el
 };
 
 declare function vra-hra-framework:move-resource($source-collection as xs:anyURI, $target-collection as xs:anyURI, $resource-id as xs:string) as element(status) {
-    let $result :=
         system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
             (
                 try {
-                    let $resource-name := util:document-name(collection($source-collection)//vra:work[@id = $resource-id][1])
+                    let $resource-name :=  util:document-name(collection($source-collection)//vra:work[@id = $resource-id][1])
                     let $log := util:log("DEBUG", "resName:" || $resource-name)
+                    let $vra-images-target-collection := xs:anyURI($target-collection || "/VRA_images")
+
                     (: create VRA_images collection, if needed :)
-                    let $create-VRA-image-collection := tamboti-utils:create-vra-image-collection($target-collection)
+                    let $create-VRA-collection :=
+                        if (xmldb:collection-available($vra-images-target-collection)) then
+                            ()
+                        else
+                            (
+                                util:log("DEBUG", "create: " || $target-collection || "/VRA_images"),
+                                xmldb:create-collection($target-collection, "/VRA_images"),
+                                sm:chmod($vra-images-target-collection, $config:collection-mode),
+                                sm:chgrp($vra-images-target-collection, $config:biblio-users-group),
+                                security:duplicate-acl($target-collection, $vra-images-target-collection),
+                                sm:chown($vra-images-target-collection, xmldb:get-owner($target-collection))
+                            )
+
+(:                    let $create-VRA-image-collection := tamboti-utils:create-vra-image-collection($target-collection):)
                     let $relations := collection($source-collection)//vra:work[@id = $resource-id][1]/vra:relationSet//vra:relation[@type="imageIs"]
-                    let $vra-images-target-collection := $target-collection || "/VRA_images"
 
                     (: move each image record :)
                     let $move-images := 
                         for $relation in $relations
                             let $image-uuid := data($relation/@relids)
                             let $image-vra := collection($source-collection)//vra:image[@id = $image-uuid]
-                            let $image-resource-name := util:document-name($image-vra)
+                            let $image-resource-name := util:document-name(root($image-vra))
                             let $binary-name := data($image-vra/@href)
                             let $vra-images-source-collection := util:collection-name($image-vra)
-                            return
+                            let $move-image := 
                                 (
                                     (: if binary available, move it as well :)
                                     if(util:binary-doc-available($vra-images-source-collection || "/" || $binary-name)) then
-                                        security:move-resource-to-tamboti-collection($vra-images-source-collection, $binary-name, $vra-images-target-collection)
+                                        let $log := util:log("DEBUG", "moveBinary: " || $vra-images-source-collection || "/" || $binary-name || " to " || $vra-images-target-collection)
+                                        return
+                                            vra-hra-framework:move-xmldb-resource($vra-images-source-collection, xs:anyURI($vra-images-target-collection), $binary-name)
                                     else
                                         util:log("DEBUG", "not available: " || $vra-images-source-collection || "/" || $binary-name)
                                     ,
                                     (: move image record :)
-                                    security:move-resource-to-tamboti-collection($vra-images-source-collection, $image-resource-name, $vra-images-target-collection)
+                                        let $log := util:log("DEBUG", "moveImageRecord: " || $vra-images-source-collection || "/" || $image-resource-name || " to " || $vra-images-target-collection)
+                                        return
+                                            vra-hra-framework:move-xmldb-resource($vra-images-source-collection, $vra-images-target-collection, $image-resource-name)
                                 )
-                    let $useless := util:log("ERROR", "Error: move resource failed: " ||  $err:code || ": " || $err:description)
-                    let $move-work-record := security:move-resource-to-tamboti-collection($source-collection, $resource-name, $target-collection)
+                            return 
+                                true()
+                    let $log := util:log("DEBUG", "moveWorkRecord: " ||  $source-collection || "/" || $resource-name || " to: " || $target-collection)
+
+                    let $move-work-record := vra-hra-framework:move-xmldb-resource($source-collection, $target-collection, $resource-name)
                     return
-                        $resource-name
+                        <status moved="{$resource-id}" from="{$source-collection}" to="{$target-collection}">{$target-collection}</status>
+
                 } catch * {
-                    util:log("DEBUG", "Error: move resource failed: " ||  $err:code || ": " || $err:description),
-                    false()
+                    let $log := util:log("INFO", "Error: move resource failed: " ||  $err:code || ": " || $err:description)
+                    return
+                        <status id="error">Error trying to move</status>
+
                 }
             )
         )
+};
 
-    return
-        if($result) then
-            <status moved="{$resource-id}" from="{$source-collection}" to="{$target-collection}">{$target-collection}</status>
-        else
-            <status id="error">Error trying to move</status>
+declare function vra-hra-framework:move-xmldb-resource($source-collection as xs:anyURI, $target-collection as xs:anyURI, $resource-id as xs:string) {
+    try {
+        let $move-resource :=  xmldb:move($source-collection, $target-collection, $resource-id)
+        let $change-permissions :=
+            (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
+            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+                (
+                    security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource-id))
+                    ,
+                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource-id))
+                )
+            else
+                (
+                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, xs:anyURI($target-collection || "/" || $resource-id))
+                    ,
+                    security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource-id))
+                )
+        return 
+            ()
+        } catch * {
+            error($vra-hra-framework:ERROR, "Error moving resource. " || $err:code || " " || $err:description || " " || $err:value)
+        }
 };
 
 declare function vra-hra-framework:remove-resource($document-uri as xs:anyURI){
