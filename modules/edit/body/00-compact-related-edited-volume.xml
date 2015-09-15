@@ -33,23 +33,17 @@
                         </xf:group>
                         <xf:input ref="./mods:nonSort" class="text_10">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''"/>
                             </xf:label>
                         </xf:input>
                         <xf:input ref="./mods:title" class="text_150">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''"/>
                             </xf:label>
                         </xf:input>
                         <xf:input ref="./mods:subTitle" class="text_150">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''"/>
                             </xf:label>
                         </xf:input>
                     </xf:group>
@@ -86,7 +80,7 @@
                                 <xf:group class="margin-plus">
                                     <xf:select1 ref="./@type">
                                         <xf:label>
-                                            <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
+                                            <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                         </xf:label>
                                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                             <xf:label ref="label"/>
@@ -129,7 +123,7 @@
                                 <xf:group class="margin-plus">
                                     <xf:input ref="." class="text_100">
                                         <xf:label>
-                                            <xf:group ref=".[@script='Latn']">Transliterated</xf:group>
+                                            <xf:output value="if (.[@script='Latn']) then 'Transliterated' else ''"/>
                                         </xf:label>
                                     </xf:input>
                                 </xf:group>
@@ -375,23 +369,17 @@
                                 </xf:group>
                                 <xf:input ref="./mods:nonSort" class="text_10">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''"/>
                                     </xf:label>
                                 </xf:input>
                                 <xf:input ref="./mods:title" class="text_150">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''"/>
                                     </xf:label>
                                 </xf:input>
                                 <xf:input ref="./mods:subTitle" class="text_150">
                                     <xf:label>
-                                        <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-                                        <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-                                        <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''"/>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>

@@ -108,7 +108,7 @@
                             <xf:group appearance="full" class="margin-plus">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>
-                                        <xf:group ref=".[@script='Latn']">Transliterated</xf:group>
+                                        <xf:output value="if (.[@script='Latn']) then 'Transliterated' else ''"/>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>
@@ -282,8 +282,7 @@
                                 <xf:group class="margin-plus" appearance="full">
                                     <xf:select1 ref="./@type">
                                         <xf:label>
-                                            <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
-                                            <xf:group ref="../.[not(@script='Latn')]"/>
+                                            <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                         </xf:label>
                                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                             <xf:label ref="label"/>
