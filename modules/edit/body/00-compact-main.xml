@@ -146,8 +146,7 @@
                             <xf:repeat nodeset="./mods:namePart">
                                 <xf:select1 ref="./@type">
                                     <xf:label>
-                                        <xf:group ref="../.[@script='Latn']">Transliterated
-	                                        </xf:group>
+                                        <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
                                         <xf:group ref="../.[not(@script='Latn')]"/>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
@@ -442,15 +441,15 @@
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:identifier" id="identifier-repeat">
-                <xf:group class="margin-plus text_50" appearance="full">
-                    <xf:select1 ref="./@type">
+                <xf:group class="margin-plus" appearance="full">
+                    <xf:select1 ref="./@type" class="text_50">
                         <xf:label>Type</xf:label>
                         <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
                             <xf:label ref="label"/>
                             <xf:value ref="value"/>
                         </xf:itemset>
                     </xf:select1>
-                    <xf:input ref=".">
+                    <xf:input ref="." class="text_50">
                         <xf:label/>
                     </xf:input>
                 </xf:group>

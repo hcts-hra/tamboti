@@ -28,8 +28,8 @@
                         </xf:trigger>
                     </xf:group>
                     <xf:repeat nodeset="./mods:topic" id="topic-repeat">
-                        <xf:group class="margin-plus text_100" appearance="full">
-                            <xf:input ref=".">
+                        <xf:group class="margin-plus" appearance="full">
+                            <xf:input ref="." class="text_100">
                                 <xf:label>Topic</xf:label>
                             </xf:input>
                         </xf:group>
@@ -50,8 +50,8 @@
                         </xf:trigger>
                     </xf:group>
                     <xf:repeat nodeset="./mods:geographic" id="geographic-repeat">
-                        <xf:group class="margin-plus text_100" appearance="full">
-                            <xf:input ref=".">
+                        <xf:group class="margin-plus" appearance="full">
+                            <xf:input ref="." class="text_100">
                                 <xf:label>Geographic</xf:label>
                             </xf:input>
                         </xf:group>
@@ -308,8 +308,8 @@
                                     </xf:group>
                                 </xf:group>
                                 <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
-                                    <xf:group class="margin-plus text_100" appearance="full">
-                                        <xf:select1 ref="./@type">
+                                    <xf:group class="margin-plus" appearance="full">
+                                        <xf:select1 ref="./@type" class="text_100">
                                             <xf:label>
                                                 <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
                                                 <xf:group ref="../.[not(@script='Latn')]"/>
@@ -319,7 +319,7 @@
                                                 <xf:value ref="value"/>
                                             </xf:itemset>
                                         </xf:select1>
-                                        <xf:input ref=".">
+                                        <xf:input ref="." class="text_100">
                                             <xf:label/>
                                         </xf:input>
                                     </xf:group>
