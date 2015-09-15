@@ -5,7 +5,7 @@
             //called each time the collection/folder sharing dialog is opened, and when a sharing operation occurs
             function updateSharingDialog() {
                 // reload dataTable
-                $("#collectionSharingDetails").dataTable().fnReloadAjax("sharing.xql?collection=" + escape(getCurrentCollection()));
+                $("#collectionSharingDetails").dataTable().fnReloadAjax("sharing.xql?collection=" + getCurrentCollection());
 
                 // go to the last page
                 //$('#collectionSharingDetails').dataTable().fnPageChange("last");
