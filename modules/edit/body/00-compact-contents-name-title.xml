@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--node insertions: --><!--missing element insertion: --><!--hints moved to code-table: --><!--saving of all nodes: --><!--schema instantiated: --><!--schema notations added: --><!-- insert does not work with name -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-d">
     <fieldset class="level-1">
@@ -437,11 +436,9 @@
                         <xf:value ref="value"/>
                     </xf:itemset>
                 </xf:select1>
-                <xf:group class="textarea">
-                    <xf:textarea ref=".">
-                        <xf:label>Note</xf:label>
-                    </xf:textarea>
-                </xf:group>
+                <xf:textarea ref=".">
+                    <xf:label>Note</xf:label>
+                </xf:textarea>
                 <xf:group ref=".[count(../mods:note) &gt; 1]">
                     <br/>
                 </xf:group>
@@ -462,11 +459,9 @@
         </xf:group>
         <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
             <xf:group appearance="full" class="margin-plus">
-                <xf:group class="textarea">
-                    <xf:textarea ref=".">
-                        <xf:label>Abstract</xf:label>
-                    </xf:textarea>
-                </xf:group>
+                <xf:textarea ref=".">
+                    <xf:label>Abstract</xf:label>
+                </xf:textarea>
                 <xf:group ref=".[count(../mods:abstract) &gt; 1]">
                     <br/>
                 </xf:group>
