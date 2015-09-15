@@ -91,7 +91,7 @@
                             <xf:group appearance="full" class="margin-plus">
                                 <xf:input ref="." class="text_100">
                                     <xf:label>
-                                        <xf:group ref=".[@script='Latn']">Transliterated</xf:group>
+                                        <xf:output value="if (.[@script='Latn']) then 'Transliterated' else ''"/>
                                     </xf:label>
                                 </xf:input>
                             </xf:group>

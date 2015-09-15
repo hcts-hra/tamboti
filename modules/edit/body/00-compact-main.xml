@@ -146,8 +146,7 @@
                             <xf:repeat nodeset="./mods:namePart">
                                 <xf:select1 ref="./@type">
                                     <xf:label>
-                                        <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
-                                        <xf:group ref="../.[not(@script='Latn')]"/>
+                                        <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                         <xf:label ref="label"/>
