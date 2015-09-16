@@ -39,7 +39,7 @@
                                 </xf:trigger>
                             </div>
                             <div class="node-adds">
-                                <xf:group appearance="full"><!-- A -->
+                                <xf:group appearance="full">
                                     <xf:trigger class="add-button" ref=".[not(mads:affiliation)]">
                                         <xf:label>Add Affiliation</xf:label>
                                         <xf:action ev:event="DOMActivate">
@@ -67,7 +67,7 @@
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@authorityURI"/>
                                         </xf:action>
-                                    </xf:trigger><!-- D -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(mads:description)]">
                                         <xf:label>Add Description</xf:label>
                                         <xf:action ev:event="DOMActivate">
@@ -88,21 +88,21 @@
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@displayLabel"/>
                                         </xf:action>
-                                    </xf:trigger><!-- I -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@ID)]">
                                         <xf:label>Add ID</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@ID"/>
                                         </xf:action>
-                                    </xf:trigger><!-- L -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@lang)]">
                                         <xf:label>Add Language</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@lang"/>
                                         </xf:action>
-                                    </xf:trigger><!-- N -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@nameTitleGroup)]">
                                         <xf:label>Add Name Title Group</xf:label>
                                         <xf:action ev:event="DOMActivate">
@@ -116,21 +116,21 @@
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert nodeset="mads:namePart" at="index('namePart-repeat')" position="before" origin="instance('insert-templates')/mads:name/mads:namePart"/>
                                         </xf:action>
-                                    </xf:trigger><!-- R -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(mads:role)]">
                                         <xf:label>Add Role</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert nodeset="mads:role" at="index('name-repeat')" position="before" origin="instance('insert-templates')/mads:name/mads:role"/>
                                         </xf:action>
-                                    </xf:trigger><!-- S -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@script)]">
                                         <xf:label>Add Script</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@script"/>
                                         </xf:action>
-                                    </xf:trigger><!-- T -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@transliteration)]">
                                         <xf:label>Add Transliteration</xf:label>
                                         <xf:action ev:event="DOMActivate">
@@ -144,21 +144,21 @@
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@type"/>
                                         </xf:action>
-                                    </xf:trigger><!-- U -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@usage)]">
                                         <xf:label>Add Usage</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@usage"/>
                                         </xf:action>
-                                    </xf:trigger><!-- V -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@valueURI)]">
                                         <xf:label>Add Value URI</xf:label>
                                         <xf:action ev:event="DOMActivate">
                                             <xf:toggle case="name-add-node-hide" ev:event="DOMActivate"/>
                                             <xf:insert context="." origin="instance('insert-templates')/mads:name/@valueURI"/>
                                         </xf:action>
-                                    </xf:trigger><!-- X -->
+                                    </xf:trigger>
                                     <xf:trigger class="add-button" ref=".[not(@xlink:href)]">
                                         <xf:label>Add XLink</xf:label>
                                         <xf:action ev:event="DOMActivate">
@@ -1107,7 +1107,7 @@
                                         <xf:value ref="value"/>
                                     </xf:itemset>
                                 </xf:select1>
-                                <xf:textarea ref="." class="textarea">
+                                <xf:textarea ref=".">
                                     <xf:label>
                                         <xf:output value="'Description'" class="xforms-hint-icon">
                                             <xf:hint ref="id('hint-code_description',instance('code-tables'))/help"/>
