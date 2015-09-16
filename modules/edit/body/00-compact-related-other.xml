@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-xlink">
     <xf:group ref=".[mods:relatedItem[@type='host']]">
         <fieldset class="level-1">
@@ -215,8 +214,7 @@
                                         <xf:group class="margin-plus">
                                             <xf:select1 ref="./@type">
                                                 <xf:label>
-                                                    <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
-                                                    <xf:group ref="../.[not(@script='Latn')]"/>
+                                                    <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                                 </xf:label>
                                                 <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                                     <xf:label ref="label"/>
@@ -268,48 +266,50 @@
                                 </xf:output>
                             </xf:group>
                             <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-book-reviewed-repeat">
-                                <xf:group ref=".[@transliteration or string-length(@lang) &gt; 0]">
-                                    <br/>
+                                <xf:group appearance="full" class="margin-plus">
+                                    <xf:group ref=".[@transliteration or string-length(@lang) &gt; 0]">
+                                        <br/>
+                                    </xf:group>
+                                    <xf:group ref=".[@transliteration]">
+                                        <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+                                            <xf:label>Transliteration</xf:label>
+                                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
+                                                <xf:label ref="label"/>
+                                                <xf:value ref="value"/>
+                                            </xf:itemset>
+                                        </xf:select1>
+                                    </xf:group>
+                                    <xf:group ref=".[string-length(@lang) &gt; 0]">
+                                        <xf:select1 ref="./@lang">
+                                            <xf:label>Language</xf:label>
+                                            <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
+                                                <xf:label ref="label"/>
+                                                <xf:value ref="value"/>
+                                            </xf:itemset>
+                                        </xf:select1>
+                                    </xf:group>
+                                    <xf:input ref="./mods:nonSort" class="text_10">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
+                                    <xf:input ref="./mods:title" class="text_150">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
+                                    <xf:input ref="./mods:subTitle" class="text_150">
+                                        <xf:label>
+                                            <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
+                                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
+                                            </xf:output>
+                                        </xf:label>
+                                    </xf:input>
                                 </xf:group>
-                                <xf:group ref=".[@transliteration]" class="margin-plus">
-                                    <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
-                                        <xf:label>Transliteration</xf:label>
-                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-short-code']/items/item">
-                                            <xf:label ref="label"/>
-                                            <xf:value ref="value"/>
-                                        </xf:itemset>
-                                    </xf:select1>
-                                </xf:group>
-                                <xf:group ref=".[string-length(@lang) &gt; 0]" class="margin-plus">
-                                    <xf:select1 ref="./@lang">
-                                        <xf:label>Language</xf:label>
-                                        <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='language-3-type-sorted-short-code']/items/item">
-                                            <xf:label ref="label"/>
-                                            <xf:value ref="value"/>
-                                        </xf:itemset>
-                                    </xf:select1>
-                                </xf:group>
-                                <xf:input ref="./mods:nonSort" class="text_10 margin-plus">
-                                    <xf:label>
-                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                </xf:input>
-                                <xf:input ref="./mods:title" class="text_150 margin-plus">
-                                    <xf:label>
-                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                </xf:input>
-                                <xf:input ref="./mods:subTitle" class="text_150 margin-plus">
-                                    <xf:label>
-                                        <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="xforms-hint-icon">
-                                            <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/help"/>
-                                        </xf:output>
-                                    </xf:label>
-                                </xf:input>
                             </xf:repeat>
                         </fieldset>
                         <fieldset class="level-2">

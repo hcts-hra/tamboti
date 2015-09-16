@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--node insertions: --><!--missing element insertion: --><!--hints moved to code-table: --><!--saving of all nodes: --><!--schema instantiated: --><!--schema notations added: --><!-- insert does not work with name -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-d">
     <fieldset class="level-1">
@@ -206,23 +205,17 @@
                         </xf:group>
                         <xf:input ref="./mods:nonSort" class="text_10">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Non Sort</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Non Sort</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Non Sort</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''"/>
                             </xf:label>
                         </xf:input>
                         <xf:input ref="./mods:title" class="text_150">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Title</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Title</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Title</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''"/>
                             </xf:label>
                         </xf:input>
                         <xf:input ref="./mods:subTitle" class="text_150">
                             <xf:label>
-                                <xf:group ref=".[string-length(../@type) = 0]">Subtitle</xf:group>
-                                <xf:group ref=".[../@type='translated' and not(../@lang)]">Transliterated Subtitle</xf:group>
-                                <xf:group ref=".[../@type='translated' and (../@lang)]">Translated Subtitle</xf:group>
+                                <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''"/>
                             </xf:label>
                         </xf:input>
                         <xf:group ref=".[count(../mods:titleInfo) &gt; 1]">
@@ -311,8 +304,7 @@
                                     <xf:group class="margin-plus" appearance="full">
                                         <xf:select1 ref="./@type" class="text_100">
                                             <xf:label>
-                                                <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
-                                                <xf:group ref="../.[not(@script='Latn')]"/>
+                                                <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                             </xf:label>
                                             <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                                 <xf:label ref="label"/>
@@ -410,8 +402,7 @@
                                     <xf:repeat nodeset="./mods:namePart" id="subject-namePart-person-repeat">
                                         <xf:input ref="." class="text_100">
                                             <xf:label>
-                                                <xf:group ref=".[@transliteration]">Transliterated</xf:group>
-                                                <xf:group ref=".[@script]"/>
+                                                <xf:output value="if (.[@transliteration]) then 'Transliterated' else ''"/>
                                             </xf:label>
                                         </xf:input>
                                     </xf:repeat>
@@ -445,11 +436,9 @@
                         <xf:value ref="value"/>
                     </xf:itemset>
                 </xf:select1>
-                <xf:group class="textarea">
-                    <xf:textarea ref=".">
-                        <xf:label>Note</xf:label>
-                    </xf:textarea>
-                </xf:group>
+                <xf:textarea ref=".">
+                    <xf:label>Note</xf:label>
+                </xf:textarea>
                 <xf:group ref=".[count(../mods:note) &gt; 1]">
                     <br/>
                 </xf:group>
@@ -470,11 +459,9 @@
         </xf:group>
         <xf:repeat nodeset="./mods:abstract" id="abstract-repeat">
             <xf:group appearance="full" class="margin-plus">
-                <xf:group class="textarea">
-                    <xf:textarea ref=".">
-                        <xf:label>Abstract</xf:label>
-                    </xf:textarea>
-                </xf:group>
+                <xf:textarea ref=".">
+                    <xf:label>Abstract</xf:label>
+                </xf:textarea>
                 <xf:group ref=".[count(../mods:abstract) &gt; 1]">
                     <br/>
                 </xf:group>

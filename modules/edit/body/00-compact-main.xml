@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns:ext="http://exist-db.org/mods/extension" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-a">
     <xf:group ref=".[mods:titleInfo]">
         <fieldset class="level-1">
@@ -146,8 +145,7 @@
                             <xf:repeat nodeset="./mods:namePart">
                                 <xf:select1 ref="./@type">
                                     <xf:label>
-                                        <xf:group ref="../.[@script='Latn']">Transliterated</xf:group>
-                                        <xf:group ref="../.[not(@script='Latn')]"/>
+                                        <xf:output value="if (../.[@script='Latn']) then 'Transliterated' else ''"/>
                                     </xf:label>
                                     <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='name-part-type-compact-code']/items/item">
                                         <xf:label ref="label"/>
