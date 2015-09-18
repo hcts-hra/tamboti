@@ -56,16 +56,6 @@ hr {
 	margin-bottom:1em;
 }
 
-.xforms-repeat-item-selected,
-#subject-repeat .xforms-repeat-item-selected,
-#related-item-part-repeat .xforms-repeat-item-selected,
-#relatedItem-reviewed-repeat .xforms-repeat-item-selected,
-#relatedItem-suebs-tibetan-repeat .xforms-repeat-item-selected,
-#relatedItem-suebs-chinese-repeat .xforms-repeat-item-selected
-{
-    background-color:#FCFCFC;
-}
-
 /*temporary stuff ends*/
 
 /*main page elements begin*/
@@ -253,29 +243,29 @@ button {
     text-align:center;
     }
 
-.node-adds .xforms-group .xforms-group-content
+.node-adds .xfGroup .xforms-group-content
 {
     display:inline !important;
 }
 
-.node-adds .xforms-group {
+.node-adds .xfGroup {
     display:inline;
 }
 
-.node-adds .xforms-group button {
+.node-adds .xfGroup button {
     width:15em;
 }
 
 fieldset,
-.xforms-repeat-item,
-.xforms-repeat-item-selected
+.xfRepeatItem,
+.xfRepeatIndex
 {
-    border-color:#CCCCCC;
+    border-color: #cccccc;
 }
 
 fieldset,
-.block-form .xforms-repeat-item,
-.block-form .xforms-repeat-item-selected,
+.block-form .xfRepeatIndex,
+.block-form .xfRepeatIndex,
 .node-adds
     {
     font-size:inherit !important;
@@ -462,13 +452,13 @@ div.xforms-help-value li
 
 /*compact begins*/
 
-.compact .xforms-repeat-item-selected
+.compact .xfRepeatIndex
 {
     background-color:#FFFFFF;
 }
 
-.compact .xforms-group .xforms-repeat-item,
-.compact .xforms-group .xforms-repeat-item-selected
+.compact .xforms-group .xfRepeatIndex,
+.compact .xforms-group .xfRepeatIndex
     {
     border:0;
     margin:0 !important;
@@ -508,5 +498,5 @@ div.xforms-help-value li
 
 /*compact ends*/
 
-.container .xfRepeatIndex { background-color: #cccccc;}
-.container .xfRepeatIndex .xfRepeatIndex { background-color: #cccccc;}
+.xfRepeatIndex { background-color: #fcfcfc;}
+.xfRepeatIndex .xfRepeatIndex { background-color: #fcfcfc;}
