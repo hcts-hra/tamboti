@@ -51,7 +51,6 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     
     (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
     let $doc-name := concat($id, '.xml')
-    
     let $stored := xmldb:store($config:mods-temp-collection, $doc-name, $template)   
 
     (:Make the record accessible to the user alone in the temp collection.:)
@@ -432,6 +431,7 @@ let $create-new-from-template :=
         (:Otherwise copy the old record to temp.:)
         then xmldb:copy($target-collection, $config:mods-temp-collection, concat($id, '.xml'))
         else ()
+    let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode)
 
 (:For a compact-b form, determine which subform to serve, based on the template.:)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
