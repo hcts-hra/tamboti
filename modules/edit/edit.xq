@@ -5,18 +5,19 @@ xquery version "3.0";
 (:TODO: Code related to MADS files.:)
 (:TODO move code into security module:)
 
-import module namespace mods = "http://www.loc.gov/mods/v3" at "tabs.xqm";
-import module namespace mods-common = "http://exist-db.org/mods/common" at "../mods-common.xql";
-import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (:TODO move security module up one level:)
-import module namespace functx = "http://www.functx.com";
-
 declare default element namespace "http://www.w3.org/1999/xhtml";
 declare namespace xf="http://www.w3.org/2002/xforms";
 declare namespace ev="http://www.w3.org/2001/xml-events";
 declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace ext="http://exist-db.org/mods/extension";
 declare namespace mads="http://www.loc.gov/mads/";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
+
+import module namespace mods = "http://www.loc.gov/mods/v3" at "tabs.xqm";
+import module namespace mods-common = "http://exist-db.org/mods/common" at "../mods-common.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (:TODO move security module up one level:)
+import module namespace functx = "http://www.functx.com";
 
 (:The following variables are used for a kind of dynamic theming.:)
 declare variable $theme := substring-before(substring-after(request:get-url(), "/apps/"), "/modules/edit/edit.xq");
@@ -222,7 +223,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
     the label for the template chosen (if any) and the hint belonging to it (if any). :)
     let $hint-data := concat($config:edit-app-root, '/code-tables/hint-codes.xml')
     (:Get the hint text about saving.:)
-    let $save-hint := doc($hint-data)/id('hint-code_save')/help
+    let $save-hint := doc($hint-data)/id('hint-code_save')/mods-editor:help
     
     (:Get the time of the last save to the temp collection and parse it.:)
     let $last-modified := xmldb:last-modified($config:mods-temp-collection, concat($id,'.xml'))
@@ -305,11 +306,14 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     <xf:label>Save</xf:label>
                 </xf:submit>-->
                  <xf:trigger>
-                    <xf:label>Finish Editing</xf:label>
+                    <xf:label>
+                        <xf:output value="'Finish Editing'">
+                            <xf:hint>{$save-hint}</xf:hint>
+                        </xf:output>
+                    </xf:label>
                     <xf:action ev:event="DOMActivate">
                         <xf:send submission="save-and-close-submission" />
                     </xf:action>
-                    <xf:hint>{$save-hint}</xf:hint>                    
                 </xf:trigger>
                 <span class="related-title">
                         {$related-publication-title}
