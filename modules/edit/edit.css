@@ -1,6 +1,6 @@
 /*temporary stuff begins*/
 
-.up-down-pointer .value button {
+.up-down-pointer button {
     float:right;
     height: 1.5em;
     margin-bottom: 0;
@@ -14,30 +14,14 @@
     width: 1.75em !important;    
 }
 
-.up-down-pointer .value button .xforms-label {
-    width:1.5em;
-    display: inline;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
-    text-align: center;
+#name-repeat .up-down-pointer button,
+#subject-name-repeat .up-down-pointer button {
+    margin-top:-3em;
 }
 
-#name-repeat .up-down-pointer .value button,
-#subject-name-repeat .up-down-pointer .value button 
-{
-    margin-top:-3em;
-    }
-
-#compact-name-repeat .up-down-pointer .value button 
-{
+#compact-name-repeat .up-down-pointer button {
     margin-top:-2em;
-    }
+}
 
 hr {
     color:#fafafa;
@@ -48,20 +32,12 @@ hr {
 #dateIssued-repeat {
     margin-left:0;
 }
-.label {
-	padding:.2em;
-	}
-
-.xforms-repeat {
-	margin-bottom:1em;
-}
 
 /*temporary stuff ends*/
 
 /*main page elements begin*/
 
-body
-    {
+body {
   border-color:#3681B3;
   font-size:75%;
   font-family:Arial, Helvetica, sans-serif;
@@ -148,36 +124,36 @@ table, td, th {
 
 /*other top elements begin*/
 
-.save-buttons {
+.save-buttons-top {
     margin-bottom:2em;
+    background-color: red !important;
 }
 
-.save-buttons .related-title {
+.save-buttons-top .related-title {
     font-family: Arial,Helvetica,sans-serif;
     margin-left:5em;
     }
     
-.save-buttons .related-title a {
+.save-buttons-top .related-title a {
     text-decoration:none;
     color:#3681B3;
     font-weight:600;
 }
 
-.save-buttons .related-title .intro {
+.save-buttons-top .related-title .intro {
     color:#4d4d4d;
     font-weight:400;
 }
 
-.save-buttons .xforms-help-value {
+.save-buttons-top .xforms-help-value {
     font-weight:normal;
 }
 
-.save-buttons button {
+.save-buttons-top button {
     height:2.5em;
 }
 
-.save-buttons .xforms-label
-    {
+.save-buttons-top .xfLabel {
     margin:.75em !important;
     font-weight:bold;
     font-size:12px;
@@ -243,7 +219,7 @@ button {
     text-align:center;
     }
 
-.node-adds .xfGroup .xforms-group-content
+.node-adds .xfGroup .xfGroup-content
 {
     display:inline !important;
 }
@@ -309,7 +285,7 @@ select
     padding:.2em; /*to give a little less cramped input field*/
 }
 
-.block-form .xforms-group-label-centered { /*button text*/
+.block-form .xfGroup-label-centered { /*button text*/
     display:inline-block;
     text-align:center;
     padding:0;
@@ -322,7 +298,7 @@ select
     margin-top:auto;
 }
 
-.xforms-group-content {
+.xfGroup-content {
     vertical-align:top;
     margin-bottom:0;    
 }
@@ -457,8 +433,8 @@ div.xforms-help-value li
     background-color:#FFFFFF;
 }
 
-.compact .xforms-group .xfRepeatIndex,
-.compact .xforms-group .xfRepeatIndex
+.compact .xfGroup .xfRepeatIndex,
+.compact .xfGroup .xfRepeatIndex
     {
     border:0;
     margin:0 !important;
