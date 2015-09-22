@@ -391,7 +391,13 @@ return
                         else ()
                         (:Set the same permissions on the moved file that the parent collection has.:)
                         ,
-                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], security:apply-parent-collection-permissions($record-path))                      
+                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                            (
+                                security:apply-parent-collection-permissions($record-path)
+                                ,
+                                sm:chmod($record-path, $config:resource-mode)
+                            )
+                        )
                     )
                 (:If action is 'save' (the default action):)
                 (:Update $doc (the document in temp) with $item (the new edits).:)
