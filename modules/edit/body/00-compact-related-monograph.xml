@@ -1,14 +1,14 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-b-monograph">
     <fieldset class="level-1">
         <xf:group appearance="minimal" class="label-box">
-            <xf:output value="'Monograph Series'" class="xforms-hint-icon">
+            <xf:output value="'Monograph Series'" class="hint-icon">
                 <xf:hint ref="id('hint-code_series-compact', instance('code-tables'))/help"/>
             </xf:output>
         </xf:group>
         <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-series-repeat">
             <fieldset class="level-2">
                 <xf:group appearance="minimal" class="label-box">
-                    <xf:output value="'XLink of Book Series'" class="xforms-hint-icon">
+                    <xf:output value="'XLink of Book Series'" class="hint-icon">
                         <xf:hint ref="id('XLink of Book Series', instance('code-tables'))/help"/>
                         <xf:hint ref="id('hint-code_xlink_href-series', instance('code-tables'))/help"/>
                     </xf:output>
@@ -21,7 +21,7 @@
             </fieldset>
             <fieldset class="level-2">
                 <xf:group appearance="minimal" class="label-box">
-                    <xf:output value="'Series Title'" class="xforms-hint-icon">
+                    <xf:output value="'Series Title'" class="hint-icon">
                         <xf:hint ref="id('hint-code_series-titleInfo-compact',instance('code-tables'))/help"/>
                     </xf:output>
                 </xf:group>
@@ -68,13 +68,13 @@
             </fieldset>
             <fieldset class="level-2">
                 <xf:group appearance="minimal" class="label-box">
-                    <xf:output value="'Editors of Monograph Series'" class="xforms-hint-icon">
+                    <xf:output value="'Editors of Monograph Series'" class="hint-icon">
                         <xf:hint ref="id('hint-code_series-name-compact',instance('code-tables'))/help"/>
                     </xf:output>
                 </xf:group>
                 <fieldset class="level-3">
                     <xf:group appearance="minimal" class="label-box">
-                        <xf:output value="'Persons as Editors'" class="xforms-hint-icon">
+                        <xf:output value="'Persons as Editors'" class="hint-icon">
                             <xf:hint ref="id('hint-code_namePart-compact',instance('code-tables'))/help"/>
                             <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/help"/>
                             <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
@@ -118,7 +118,7 @@
                 </fieldset>
                 <fieldset class="level-3">
                     <xf:group appearance="minimal" class="label-box">
-                        <xf:output value="'Institutions as Editors'" class="xforms-hint-icon">
+                        <xf:output value="'Institutions as Editors'" class="hint-icon">
                             <xf:hint ref="id('hint-code_namePart-institution-compact',instance('code-tables'))/help"/>
                             <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/help"/>
                         </xf:output>
@@ -155,7 +155,7 @@
             </fieldset>
             <fieldset class="level-2">
                 <xf:group appearance="minimal" class="label-box">
-                    <xf:output value="'Location of Monograph in Series'" class="xforms-hint-icon">
+                    <xf:output value="'Location of Monograph in Series'" class="hint-icon">
                         <xf:hint ref="id('hint-code_series-part-compact',instance('code-tables'))/help"/>
                     </xf:output>
                 </xf:group>
@@ -184,7 +184,7 @@
             <xf:group ref=".[mods:identifier]">
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
-                        <xf:output value="'Identifiers of Monograph Series'" class="xforms-hint-icon">
+                        <xf:output value="'Identifiers of Monograph Series'" class="hint-icon">
                             <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/help"/>
                             <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/help"/>
                         </xf:output>
