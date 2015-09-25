@@ -101,21 +101,21 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
       (:Save the library reference, the creation date, and the language and script of cataloguing:)
       (:To simplify input, resource language and language of cataloging are identical be default.:) 
       let $recordInfo-insert :=
-          <mods:recordInfo lang="eng" script="Latn">
-              <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
-              <mods:recordCreationDate encoding="w3cdtf">
+          <recordInfo xmlns="http://www.loc.gov/mods/v3" lang="eng" script="Latn">
+              <recordContentSource authority="marcorg">DE-16-158</recordContentSource>
+              <recordCreationDate encoding="w3cdtf">
                   {current-date()}
-              </mods:recordCreationDate>
-              <mods:recordChangeDate encoding="w3cdtf"/>
-              <mods:languageOfCataloging>
-                  <mods:languageTerm authority="iso639-2b" type="code">
+              </recordCreationDate>
+              <recordChangeDate encoding="w3cdtf"/>
+              <languageOfCataloging>
+                  <languageTerm authority="iso639-2b" type="code">
                       {$languageOfResource}
-                  </mods:languageTerm>
-                  <mods:scriptTerm authority="iso15924" type="code">
+                  </languageTerm>
+                  <scriptTerm authority="iso15924" type="code">
                       {$scriptOfResource}
-              </mods:scriptTerm>
-              </mods:languageOfCataloging>
-          </mods:recordInfo>            
+              </scriptTerm>
+              </languageOfCataloging>
+          </recordInfo>             
       return
       update insert $recordInfo-insert into $doc/mods:mods
       ,
