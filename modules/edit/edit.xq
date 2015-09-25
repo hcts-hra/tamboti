@@ -87,14 +87,14 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
       (:Save the language and script of the resource.:)
       (:If namespace is not applied in the updates, the elements will be in the empty namespace.:)
       let $language-insert :=
-          <mods:language>
-              <mods:languageTerm authority="iso639-2b" type="code">
+          <language xmlns="http://www.loc.gov/mods/v3">
+              <languageTerm authority="iso639-2b" type="code">
                   {$languageOfResource}
-              </mods:languageTerm>
-              <mods:scriptTerm authority="iso15924" type="code">
+              </languageTerm>
+              <scriptTerm authority="iso15924" type="code">
                   {$scriptOfResource}
-              </mods:scriptTerm>
-          </mods:language>
+              </scriptTerm>
+          </language>
       return
       update insert $language-insert into $doc/mods:mods
       ,
