@@ -37,12 +37,12 @@ let $eval-string := concat('$instance/', '(', $path-string, ')')
 return
 if ($tab-id eq 'mads')
 then 
-    <mads:mads ID="{$id}">
+    <mads xmlns="http://www.loc.gov/mads/" ID="{$id}">
       { (: this is where we run the query that gets just the data we need for this tab :)
       util:eval($eval-string)}
-    </mads:mads>
+    </mads>
 else
-    <mods:mods ID="{$id}">
+    <mods ID="{$id}" xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
       { (: this is where we run the query that gets just the data we need for this tab :)
       util:eval($eval-string)}
-    </mods:mods>
+    </mods>
