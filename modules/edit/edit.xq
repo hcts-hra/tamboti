@@ -87,35 +87,35 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
       (:Save the language and script of the resource.:)
       (:If namespace is not applied in the updates, the elements will be in the empty namespace.:)
       let $language-insert :=
-          <mods:language>
-              <mods:languageTerm authority="iso639-2b" type="code">
+          <language xmlns="http://www.loc.gov/mods/v3">
+              <languageTerm authority="iso639-2b" type="code">
                   {$languageOfResource}
-              </mods:languageTerm>
-              <mods:scriptTerm authority="iso15924" type="code">
+              </languageTerm>
+              <scriptTerm authority="iso15924" type="code">
                   {$scriptOfResource}
-              </mods:scriptTerm>
-          </mods:language>
+              </scriptTerm>
+          </language>
       return
       update insert $language-insert into $doc/mods:mods
       ,
       (:Save the library reference, the creation date, and the language and script of cataloguing:)
       (:To simplify input, resource language and language of cataloging are identical be default.:) 
       let $recordInfo-insert :=
-          <mods:recordInfo lang="eng" script="Latn">
-              <mods:recordContentSource authority="marcorg">DE-16-158</mods:recordContentSource>
-              <mods:recordCreationDate encoding="w3cdtf">
+          <recordInfo xmlns="http://www.loc.gov/mods/v3" lang="eng" script="Latn">
+              <recordContentSource authority="marcorg">DE-16-158</recordContentSource>
+              <recordCreationDate encoding="w3cdtf">
                   {current-date()}
-              </mods:recordCreationDate>
-              <mods:recordChangeDate encoding="w3cdtf"/>
-              <mods:languageOfCataloging>
-                  <mods:languageTerm authority="iso639-2b" type="code">
+              </recordCreationDate>
+              <recordChangeDate encoding="w3cdtf"/>
+              <languageOfCataloging>
+                  <languageTerm authority="iso639-2b" type="code">
                       {$languageOfResource}
-                  </mods:languageTerm>
-                  <mods:scriptTerm authority="iso15924" type="code">
+                  </languageTerm>
+                  <scriptTerm authority="iso15924" type="code">
                       {$scriptOfResource}
-              </mods:scriptTerm>
-              </mods:languageOfCataloging>
-          </mods:recordInfo>            
+              </scriptTerm>
+              </languageOfCataloging>
+          </recordInfo>             
       return
       update insert $recordInfo-insert into $doc/mods:mods
       ,
@@ -213,6 +213,10 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={if ($host) then $host else $id}&amp;collection={$target-collection}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
+           <xf:action ev:event="save-and-close-action" ev:observer="main-content">
+               
+               <xf:send submission="save-and-close-submission" />
+           </xf:action>
         </xf:model>
 };
 
@@ -259,7 +263,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 else ()
                 
         return
-        <div xmlns="http://www.w3.org/1999/xhtml" class="content">
+        <div id="main-content" xmlns="http://www.w3.org/1999/xhtml" class="content">
             <span class="info-line">
             {
                 if ($type-request)
@@ -311,9 +315,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                             <xf:hint>{$save-hint}</xf:hint>
                         </xf:output>
                     </xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:send submission="save-and-close-submission" />
-                    </xf:action>
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
                 </xf:trigger>
                 <span class="related-title">
                         {$related-publication-title}
@@ -440,7 +442,6 @@ let $create-new-from-template :=
 (:For a compact-b form, determine which subform to serve, based on the template.:)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $style := <style type="text/css"><![CDATA[@namespace xf url(http://www.w3.org/2002/xforms);]]></style>
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
 
@@ -457,7 +458,6 @@ return
 
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
-            {$style}
             {$model}
         </head>
         <body>
