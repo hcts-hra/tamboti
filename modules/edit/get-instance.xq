@@ -32,7 +32,7 @@ let $paths := $tab-data/mods-editor:path
 let $path-string := string-join($paths, ', ')
 
 (: now get the eval string ready for use :)
-let $eval-string := concat('$instance/', '(', $path-string, ')')
+let $eval-string := '$instance'
 
 return
 if ($tab-id eq 'mads')
@@ -42,7 +42,4 @@ then
       util:eval($eval-string)}
     </mads>
 else
-    <mods ID="{$id}" xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink">
-      { (: this is where we run the query that gets just the data we need for this tab :)
-      util:eval($eval-string)}
-    </mods>
+    util:eval($eval-string)
