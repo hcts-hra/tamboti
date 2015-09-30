@@ -115,7 +115,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
                       {$scriptOfResource}
               </scriptTerm>
               </languageOfCataloging>
-          </recordInfo>             
+          </recordInfo>            
       return
       update insert $recordInfo-insert into $doc/mods:mods
       ,
@@ -145,12 +145,19 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
 
 declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string) as element(xf:model) {
     let $instance-src := concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)
+    let $ui-file-path := "'body/" || $instance-id || ".xml'"
+    
     return
         <xf:model>
            <xf:instance src="{$instance-src}" id="save-data">
-                <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" />
+                <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
-           
+
+            <xf:instance id="i-configuration">
+                <configuration xmlns="">
+                    <current-username>{xmldb:get-current-user()}</current-username>
+                </configuration>
+            </xf:instance>            
            <!--The instance insert-templates contain an almost full embodiment of the MODS schema, version 3.5; 
            It is used mainly to insert attributes and uncommon elements, 
            but it can also be chosen as a template.-->
@@ -201,8 +208,26 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 ref="instance('save-data')"
                 resource="save.xq?collection={$target-collection}&amp;action=close" replace="none">
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={$id}&amp;collection={replace($target-collection, '/db', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
-                    <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
+                    <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
+           
+           
+           <xf:submission 
+                id="save-and-close-submission2" 
+                method="put"
+                ref="instance('save-data')"
+                resource="/exist/rest{$target-collection}/text.xml" replace="none">
+                    <xf:message ev:event="xforms-submit-done" level="ephemeral">Saved.</xf:message>
+                    <xf:message ev:event="xforms-submit-error" level="modal">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
+                    <xf:header>
+                        <xf:name>username</xf:name>
+                        <xf:value>editor</xf:value>
+                    </xf:header>
+                    <xf:header>
+                        <xf:name>password</xf:name>
+                        <xf:value></xf:value>
+                    </xf:header>
+                </xf:submission>           
            
            <!--Delete from temp-->
            <xf:submission 
@@ -213,16 +238,33 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={if ($host) then $host else $id}&amp;collection={$target-collection}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
+            <xf:action ev:event="xforms-construct-done">
+                <xf:message level="modal">{$ui-file-path}</xf:message>              
+                <xf:load show="embed" targetid="user-interface-container">
+                    <xf:resource value="{$ui-file-path}" />
+                </xf:load>
+            </xf:action>
            <xf:action ev:event="save-and-close-action" ev:observer="main-content">
-               
                <xf:send submission="save-and-close-submission" />
            </xf:action>
+
+           <xf:action ev:event="save-and-close-action2" ev:observer="main-content">
+                <xf:action if="exists(instance('save-data')/mods:titleInfo)">
+                    <xf:message level="modal"><xf:output value="instance('save-data')/mods:titleInfo/mods:title"/></xf:message>
+                </xf:action>
+           
+           
+           
+           
+               
+               <xf:send submission="save-and-close-submission2" />
+           </xf:action>           
         </xf:model>
 };
 
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
     (:Get the part of the form that belongs to the active tab.:)
-    let $form-body := collection(concat($config:edit-app-root, '/body'))/*[local-name() = 'div'][@tab-id eq $instance-id]
+    let $user-interface := collection(concat($config:edit-app-root, '/body'))/*[local-name() = 'div'][@tab-id eq $instance-id]
     (:Get the relevant information to display in the info-line, 
     the label for the template chosen (if any) and the hint belonging to it (if any). :)
     let $hint-data := concat($config:edit-app-root, '/code-tables/hint-codes.xml')
@@ -306,9 +348,10 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
             <div class="save-buttons-top">    
                 <!--No save button is displayed, since saves are made every time a tab is clicked,
                 but sometimes users require a save button.-->
-                <!--<xf:submit submission="save-submission">
+                 <xf:trigger>
                     <xf:label>Save</xf:label>
-                </xf:submit>-->
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
+                </xf:trigger>                
                  <xf:trigger>
                     <xf:label>
                         <xf:output value="'Finish Editing'">
@@ -323,7 +366,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
             </div>
             
             <!-- Import the correct form body for the tab called. -->
-            {$form-body}
+             <!--{$user-interface}-->
+            <div id="user-interface-container" />
             
             <!--Displays buttons below as well.-->
             <div class="save-buttons-bottom">    
@@ -337,11 +381,12 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                     </xf:action>
                  </xf:trigger>
                  <xf:trigger>
-                    <xf:label class="xforms-group-label-centered-general">Finish Editing</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:send submission="save-and-close-submission" />
-                    </xf:action>
-                    <xf:hint>{$save-hint}</xf:hint>
+                    <xf:label>
+                        <xf:output value="'Finish Editing'">
+                            <xf:hint>{$save-hint}</xf:hint>
+                        </xf:output>
+                    </xf:label>
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
                 </xf:trigger>
             </div>
         </div>
@@ -454,8 +499,7 @@ return
         <head>
             <title>
                 {$header-title} {concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
-            </title> 
-
+            </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
             {$model}
