@@ -100,6 +100,7 @@ return
                 for $tab in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
                 let $tab-for-type := $tab/*[local-name() = $type]/text()
 				let $tab-count := count($tabs-data[mods-editor:top-tab-label/text() = $tab/mods-editor:top-tab-label/text()])
+				let $ui-file-path := "'body/" || local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', '')) || ".xml'"
                 (: There are no containers for periodicals. :)
                 where $tab-for-type != ('periodical-latin', 'periodical-transliterated', 'newspaper-latin', 'newspaper-transliterated') or $top-tab-number gt 1
                 return
@@ -122,15 +123,37 @@ return
                         else $tab/mods-editor:label
                         }</div>
                         </xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:send submission="save-submission"/>
-                            <!--When clicking on the bottom tabs, keep the top-tab-number the same. -->
-                            <xf:load resource="edit.xq?tab-id={$tab/mods-editor:tab-id/text()}&amp;id={$record-id}&amp;top-tab-number={$top-tab-number}&amp;type={$type}&amp;collection={$data-collection}" show="replace"/>
-                        </xf:action>
+                        <xf:load ev:event="DOMActivate" show="embed" targetid="user-interface-container">
+                            <xf:resource value="{$ui-file-path}" />
+                        </xf:load>
                     </xf:trigger>
                 </td>
                 }
                 </tr>
             </table>
 </div>
+};
+
+declare function local:get-tab-id($tab-id as xs:string, $type-request as xs:string) {
+    (:Remove any '-latin' and '-transliterated' appended the original type request. :)
+    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
+        return
+            if ($tab-id ne 'compact-b')
+            (:Only treat compact-b types.:)
+            then $tab-id
+            else
+                switch ($type-request) 
+                    case "article-in-periodical" return "compact-b-article"
+                    case "newspaper-article" return "compact-b-newspaper-article"
+                    case "moving-images" return "compact-b-moving-images"
+                    case "contribution-to-edited-volume" return "compact-b-edited-volume"
+                    case "monograph" return "compact-b-monograph"
+                    case "edited-volume" return "compact-b-monograph"
+                    case "book-review" return "compact-b-review"
+                    case "suebs-tibetan" return "compact-b-suebs-tibetan"
+                    case "suebs-chinese" return "compact-b-suebs-chinese"
+                    case "mads" return "mads"
+                        default return "compact-b-xlink"
+                        (:compact-b-xlink is used for records related to other records through an xlink:href.:)
+                        (:NB: Should be split up in three: article, book review and contribution.:)
 };
