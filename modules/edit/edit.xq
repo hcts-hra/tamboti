@@ -143,8 +143,24 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     )
 };
 
-declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string) as element(xf:model) {
-    let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)
+declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $type-request as xs:string) as element(xf:model) {
+    let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
+    let $data-template-name := 
+        if ($type-request = (
+                        'suebs-tibetan', 
+                        'suebs-chinese', 
+                        'insert-templates', 
+                        'new-instance', 
+                        'mads'))
+        (:These document types do not divide into latin and transliterated.:)
+        then $type-request
+        else
+            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
+            if ($transliterationOfResource) 
+            then concat($type-request, '-transliterated') 
+            else concat($type-request, '-latin') 
+
+    let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "'body/" || $instance-id || ".xml'"
     
     return
@@ -238,7 +254,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={if ($host) then $host else $id}&amp;collection={$target-collection}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
-            <xf:action ev:event="xforms-construct-done">
+            <xf:action ev:event="xforms-ready">
                 <xf:message level="modal">{$ui-file-path}</xf:message>              
                 <xf:load show="embed" targetid="user-interface-container">
                     <xf:resource value="{$ui-file-path}" />
@@ -466,7 +482,7 @@ let $new-record := xs:boolean($id-param eq '' or $id-param eq 'new')
 (:If we do not have an incoming ID (the record has been made outside Tamboti) or if the record is new (made with Tamboti), then create an ID with util:uuid().:)
 let $id :=
     if ($new-record)
-    then concat("uuid-", util:uuid())
+    then ''
     else $id-param
 
 (:If we are creating a new record, then we need to call get-data-instance.xq with new=true to tell it to get a new template and store it in temp; 
@@ -487,7 +503,7 @@ let $create-new-from-template :=
 (:For a compact-b form, determine which subform to serve, based on the template.:)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''))
+let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $type-request)
 let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
 
 return 
