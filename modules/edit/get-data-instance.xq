@@ -5,7 +5,7 @@ declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mads = "http://www.loc.gov/mads/";
 declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
-(: get-data-instance.xq - gets the instance data to load into the editor and prunes the mods record to only load the instance data that is needed for a given tab.
+(: get-instance.xq - gets the instance data to load into the editor and prunes the mods record to only load the instance data that is needed for a given tab.
 Note that the instance that this script returns MUST include an ID for saving.
 :)
 
@@ -22,24 +22,14 @@ let $collection := $config:mods-temp-collection
 (: Get the document with the parameter id in temp. :)
 let $instance := collection($collection)//mods:mods[@ID = $id]
 
-(: Get the tab data for the tab-id. :)
-let $tab-data := doc(concat($config:edit-app-root, '/tab-data.xml'))/mods-editor:tabs/mods-editor:tab[mods-editor:tab-id = $tab-id]
-
-(: Get a list of all the XPath expressions to include in this instance used by the form :)
-let $paths := $tab-data/mods-editor:path
-
-(: build up a string of prefix:element pairs for doing an eval :)
-let $path-string := string-join($paths, ', ')
-
-(: now get the eval string ready for use :)
-let $eval-string := '$instance'
 
 return
 if ($tab-id eq 'mads')
 then 
     <mads xmlns="http://www.loc.gov/mads/" ID="{$id}">
       { (: this is where we run the query that gets just the data we need for this tab :)
-      util:eval($eval-string)}
+        $instance
+      }
     </mads>
 else
-    util:eval($eval-string)
+    $instance
