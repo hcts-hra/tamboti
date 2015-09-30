@@ -144,7 +144,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
 };
 
 declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string) as element(xf:model) {
-    let $instance-src := concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)
+    let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)
     let $ui-file-path := "'body/" || $instance-id || ".xml'"
     
     return
@@ -469,7 +469,7 @@ let $id :=
     then concat("uuid-", util:uuid())
     else $id-param
 
-(:If we are creating a new record, then we need to call get-instance.xq with new=true to tell it to get a new template and store it in temp; 
+(:If we are creating a new record, then we need to call get-data-instance.xq with new=true to tell it to get a new template and store it in temp; 
 if we are editing an existing record, we copy the record from the target collection to temp, unless there is already a record in temp with the same name.:)
 (:NB: What if A edits a certain record, leaving it in temp, and B edits the same record - does B then start off where A left off?:)
 let $create-new-from-template :=
@@ -498,7 +498,7 @@ return
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">
         <head>
             <title>
-                {$header-title} {concat('get-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
+                {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
             </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        

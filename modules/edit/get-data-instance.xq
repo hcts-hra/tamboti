@@ -5,7 +5,7 @@ declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mads = "http://www.loc.gov/mads/";
 declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
-(: get-instance.xq - gets the instance data to load into the editor and prunes the mods record to only load the instance data that is needed for a given tab.
+(: get-data-instance.xq - gets the instance data to load into the editor and prunes the mods record to only load the instance data that is needed for a given tab.
 Note that the instance that this script returns MUST include an ID for saving.
 :)
 
