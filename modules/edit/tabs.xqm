@@ -59,7 +59,7 @@ let $top-tab-number :=
 let $tabs-data := doc($mods:tabs-data)/mods-editor:tabs/mods-editor:tab
 
 return
-<div class="tabs">
+<div xmlns="http://www.w3.org/1999/xhtml" class="tabs">
     <table class="top-tabs" width="100%">
         <tr>
             {
@@ -100,7 +100,7 @@ return
                 for $tab in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
                 let $tab-for-type := $tab/*[local-name() = $type]/text()
 				let $tab-count := count($tabs-data[mods-editor:top-tab-label/text() = $tab/mods-editor:top-tab-label/text()])
-				let $ui-file-path := "'body/" || local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', '')) || ".xml'"
+				let $ui-file-path := "'user-interfaces/" || local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', '')) || ".xml'"
                 (: There are no containers for periodicals. :)
                 where $tab-for-type != ('periodical-latin', 'periodical-transliterated', 'newspaper-latin', 'newspaper-transliterated') or $top-tab-number gt 1
                 return
