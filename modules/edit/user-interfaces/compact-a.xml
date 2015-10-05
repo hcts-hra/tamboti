@@ -1,5 +1,8 @@
-<div id="user-interface-container" xmlns:ext="http://exist-db.org/mods/extension" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" class="compact block-form" tab-id="compact-a">
-    <xf:group ref=".[mods:titleInfo]">
+<div id="user-interface-container" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ext="http://exist-db.org/mods/extension" class="compact block-form" tab-id="compact-a">
+    <div style="display:none">
+        <xf:model id="m-ui"/>
+    </div>
+    <xf:group model="m-main" ref="instance('save-data')/mods:titleInfo">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Title Information'" class="hint-icon">
@@ -7,12 +10,12 @@
                     <xf:hint ref="id('hint-code_more-title-information', instance('code-tables'))/help"/>
                 </xf:output>
             </xf:group>
-            <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-repeat">
+            <xf:repeat nodeset="instance('save-data')/mods:titleInfo" id="titleInfo-repeat">
                 <xf:group appearance="full" class="margin-plus">
-                    <xf:group ref=".[@transliteration or string-length(@lang) &gt; 0]">
+                    <xf:group ref="instance('save-data')/mods:titleInfo[@transliteration or string-length(@lang) &gt; 0]">
                         <br/>
                     </xf:group>
-                    <xf:group ref=".[string-length(@lang) &gt; 0]">
+                    <xf:group ref="instance('save-data')/mods:titleInfo[string-length(@lang) &gt; 0]">
                         <xf:select1 ref="./@lang" class="text_10">
                             <xf:label>
                                 <xf:output value="'Language'" class="hint-icon">
@@ -26,7 +29,7 @@
                         </xf:select1>
                     </xf:group>
                     <xf:group ref=".[@transliteration]">
-                        <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
+                        <xf:select1 ref="instance('save-data')/mods:extension/ext:transliterationOfResource">
                             <xf:label>
                                 <xf:output value="'Global Transliteration'" class="hint-icon">
                                     <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/help"/>
@@ -76,7 +79,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[mods:name]">
+    <xf:group model="m-main" ref="instance('save-data')/mods:name">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Names and Roles'" class="hint-icon">
@@ -191,7 +194,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[string(mods:extension/ext:template) = 'monograph-latin'] | .[string(mods:extension/ext:template) = 'monograph-transliterated'] | .[string(mods:extension/ext:template) = 'edited-volume-latin'] | .[string(mods:extension/ext:template) = 'edited-volume-transliterated'] | .[string(mods:extension/ext:template) = 'periodical-latin'] | .[string(mods:extension/ext:template) = 'periodical-transliterated']">
+    <xf:group model="m-main" ref="instance('save-data')/.[string(mods:extension/ext:template) = 'monograph-latin'] | instance('save-data')/.[string(mods:extension/ext:template) = 'monograph-transliterated'] | instance('save-data')/.[string(mods:extension/ext:template) = 'edited-volume-latin'] | instance('save-data')/.[string(mods:extension/ext:template) = 'edited-volume-transliterated'] | instance('save-data')/.[string(mods:extension/ext:template) = 'periodical-latin'] | instance('save-data')/.[string(mods:extension/ext:template) = 'periodical-transliterated']">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Origin Information'" class="hint-icon">
@@ -330,7 +333,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[string(mods:physicalDescription) and not(instance('save-data')/mods:extension/ext:template='newspaper-latin' or instance('save-data')/mods:extension/ext:template='newspaper-transliterated')]">
+    <xf:group model="m-main" ref="instance('save-data')/.[string(mods:physicalDescription) and not(instance('save-data')/mods:extension/ext:template='newspaper-latin' or instance('save-data')/mods:extension/ext:template='newspaper-transliterated')]">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Physical Description'" class="hint-icon">
@@ -393,7 +396,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[mods:location]">
+    <xf:group model="m-main" ref="instance('save-data')/mods:location">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'URL'" class="hint-icon">
@@ -424,7 +427,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[mods:identifier]">
+    <xf:group model="m-main" ref="instance('save-data')/mods:identifier">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Identifiers'" class="hint-icon">
@@ -453,5 +456,5 @@
                 </xf:group>
             </xf:repeat>
         </fieldset>
-    </xf:group>
+    </xf:group>    
 </div>
