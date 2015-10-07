@@ -5,6 +5,7 @@ import module namespace request = "http://exist-db.org/xquery/request";
 import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
 declare namespace xf = "http://www.w3.org/2002/xforms";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 declare option exist:serialize "method=xml media-type=text/xml indent=yes";
 
 (: codes-for-tab.xq
@@ -67,8 +68,8 @@ else
 :)
 
 let $code-table-collection := concat($config:edit-app-root, '/code-tables/')
-let $code-table-names := collection($code-table-collection)/code-table[tab-id = $tab-id]/code-table-name/text()
-let $log := util:log("DEBUG", ("##$code-table-names): ", $code-table-names))
+let $code-table-names := collection($code-table-collection)/mods-editor:code-table[mods-editor:tab-id = $tab-id]/mods-editor:code-table-name/text()
+let $log := util:log("DEBUG", ("##$code-table-names): ", $tab-id))
 
 (: generate etag :)
 let $last-modified := local:get-last-modified($code-table-collection,
@@ -92,7 +93,7 @@ let $etag := local:create-etag($last-modified) return
     ) else (
         (: no, so process the request:)
         let $count-distinct := count($code-table-names) return
-        <code-tables>
+        <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/">
         {
             if ($debug) then
                 <debug>
@@ -111,8 +112,8 @@ let $etag := local:create-etag($last-modified) return
                     <code-table-name>{$code-table-name}</code-table-name>
                     <items>
                     {
-                        for $item in $code-table//item return
-                            $item
+                        for $item in $code-table//mods-editor:item
+                        return $item
                     }
                     </items>
                  </code-table>
@@ -122,8 +123,8 @@ let $etag := local:create-etag($last-modified) return
                  <code-table>
                     <items>
                     {
-                        for $item in doc($file-path)//item[tab-id = $tab-id] return
-                            $item
+                        for $item in doc($file-path)//mods-editor:item[mods-editor:tab-id = $tab-id]
+                        return $item
                     }
                     </items>
                  </code-table>
