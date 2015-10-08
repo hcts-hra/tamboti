@@ -11,6 +11,7 @@ declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mads = "http://www.loc.gov/mads/v2";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace ext = "http://exist-db.org/mods/extension";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 declare variable $mods-common:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
 declare variable $mods-common:given-name-last-languages := ('chi', 'jpn', 'kor', 'vie'); 
@@ -278,7 +279,7 @@ let $type :=
             if ($titleInfo/@transliteration and $transliteration)
             then
                 (<br/>, 'Transliteration: ',
-                let $transliteration-label := doc(concat($config:edit-app-root, '/code-tables/transliteration-codes.xml'))/*:code-table/*:items/*:item[*:value eq $transliteration]/*:label
+                let $transliteration-label := doc(concat($config:edit-app-root, '/code-tables/transliteration-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $transliteration]/mods-editor:label
                 return
                     if ($transliteration-label)
                     then $transliteration-label
@@ -543,27 +544,27 @@ return
 :)
 declare function mods-common:get-language-label($languageTerm as xs:string) as xs:string* {
         let $language-label :=
-            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[value eq $languageTerm]/label
+            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $languageTerm]/mods-editor:label
             return
                 if ($language-label)
                 then $language-label
                 else
-                    let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[valueTwo eq $languageTerm]/label
+                    let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:valueTwo eq $languageTerm]/mods-editor:label
                     return
                         if ($language-label)
                         then $language-label
                         else
-                            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[valueTerm eq $languageTerm]/label
+                            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:valueTerm eq $languageTerm]/mods-editor:label
                             return
                                 if ($language-label)
                                 then $language-label
                                 else
-                                    let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[upper-case(label) eq upper-case($languageTerm)[1]]/label
+                                    let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq upper-case($languageTerm)[1]]/mods-editor:label
                                     return
                                         if ($language-label)
                                         then $language-label
                                         else
-                                            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[upper-case(label) eq upper-case($languageTerm)]/label
+                                            let $language-label := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq upper-case($languageTerm)]/mods-editor:label
                                             return
                                                 if ($language-label)
                                                 then $language-label
@@ -587,12 +588,12 @@ declare function mods-common:get-script-label($scriptTerm as xs:string) as xs:st
         let $scriptTerm-upper-case := upper-case($scriptTerm)
 
         let $script-label :=
-            let $script-label := doc(concat($config:edit-app-root, '/code-tables/script-codes.xml'))/code-table/items/item[upper-case(value) eq $scriptTerm-upper-case]/label
+            let $script-label := doc(concat($config:edit-app-root, '/code-tables/script-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:value) eq $scriptTerm-upper-case]/mods-editor:label
             return
                 if ($script-label)
                 then $script-label
                 else 
-                    let $script-label := doc(concat($config:edit-app-root, '/code-tables/script-codes.xml'))/code-table/items/item[upper-case(label) eq $scriptTerm-upper-case]/label
+                    let $script-label := doc(concat($config:edit-app-root, '/code-tables/script-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq $scriptTerm-upper-case]/mods-editor:label
                     return
                         if ($script-label)
                         then $script-label
@@ -1214,7 +1215,7 @@ declare function mods-common:get-name-order($namePart-language as xs:string*, $n
                     if ($global-language)
                     then $global-language
                     else ()
-    let $nameOrder := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/code-table/items/item[value eq $language]/nameOrder/text()
+    let $nameOrder := doc(concat($config:edit-app-root, '/code-tables/language-3-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $language]/mods-editor:nameOrder/text()
     return $nameOrder
 };
 
@@ -1233,24 +1234,24 @@ declare function mods-common:get-name-order($namePart-language as xs:string*, $n
 :)
 declare function mods-common:get-role-label-for-list-view($roleTerm as xs:string?) as xs:string* {
         let $roleLabel :=
-            let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[upper-case(label) eq upper-case($roleTerm)]/labelSecondary
+            let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq upper-case($roleTerm)]/mods-editor:labelSecondary
             (: Prefer labelSecondary, since it contains the form presented in the list view output, e.g. "edited by" instead of "editor". :)
             return
                 if ($roleLabel)
                 then $roleLabel
                 else
-                    let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[value eq $roleTerm]/labelSecondary
+                    let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $roleTerm]/mods-editor:labelSecondary
                     return
                         if ($roleLabel)
                         then $roleLabel
                         else
-                            let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[upper-case(label) eq upper-case($roleTerm)]/label
+                            let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq upper-case($roleTerm)]/mods-editor:label
                             (: If there is no labelSecondary, take the label. :)
                             return
                                 if ($roleLabel)
                                 then $roleLabel
                                 else
-                                    let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[value eq $roleTerm]/label
+                                    let $roleLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $roleTerm]/mods-editor:label
                                     return
                                         if ($roleLabel)
                                         then $roleLabel
@@ -1467,14 +1468,14 @@ declare function mods-common:get-role-terms-for-detail-view($role as element()*)
 declare function mods-common:get-role-term-label-for-detail-view($roleTerm as xs:string?) as xs:string* {        
         let $roleTermLabel :=
             (: Is the roleTerm itself a role label, i.e. is the full form used in the document? :)
-            let $roleTermLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[upper-case(label) eq upper-case($roleTerm)]/label
+            let $roleTermLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[upper-case(mods-editor:label) eq upper-case($roleTerm)]/mods-editor:label
             (: Prefer the label proper, since it contains the form presented in the detail view, e.g. "Editor" instead of "edited by". :)
             return
                 if ($roleTermLabel)
                 then $roleTermLabel
                 else
                     (: Is the roleTerm a coded role term? :)
-                    let $roleTermLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/code-table/items/item[value eq $roleTerm]/label
+                    let $roleTermLabel := doc(concat($config:edit-app-root, '/code-tables/role-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $roleTerm]/mods-editor:label
                     return
                         if ($roleTermLabel)
                         then $roleTermLabel
@@ -2132,10 +2133,10 @@ declare function mods-common:get-place($places as element(mods:place)*) as xs:st
                         )
                     else
                         if ($placeTerm[@authority eq 'marccountry']/text()) 
-                        then doc(concat($config:edit-app-root, '/code-tables/marc-country-codes.xml'))/code-table/items/item[value eq $placeTerm]/label
+                        then doc(concat($config:edit-app-root, '/code-tables/marc-country-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $placeTerm]/mods-editor:label
                         else 
                             if ($placeTerm[@authority eq 'iso3166']/text()) 
-                            then doc(concat($config:edit-app-root, '/code-tables/iso3166-country-codes.xml'))/code-table/items/item[value eq $placeTerm]/label
+                            then doc(concat($config:edit-app-root, '/code-tables/iso3166-country-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $placeTerm]/mods-editor:label
                             else $place/mods:placeTerm[not(@type)]/text(),
             ' ')
     , count($places)
@@ -2196,7 +2197,7 @@ return
 declare function mods-common:get-related-items($entry as element(mods:mods), $destination as xs:string, $global-language as xs:string?, $collection-short as xs:string) as element()* {
     for $item in $entry/mods:relatedItem
         let $type := string($item/@type)
-        let $type-label := doc(concat($config:edit-app-root, '/code-tables/related-item-type-codes.xml'))/*:code-table/*:items/*:item[*:value eq $type]/*:label
+        let $type-label := doc(concat($config:edit-app-root, '/code-tables/related-item-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
         let $titleInfo := $item/mods:titleInfo
         let $displayLabel := string($item/@displayLabel)
         let $label :=
