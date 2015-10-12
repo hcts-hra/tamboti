@@ -243,7 +243,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     </xf:header>
                     <xf:header>
                         <xf:name>password</xf:name>
-                        <xf:value>Mdft2012</xf:value>
+                        <xf:value></xf:value>
                     </xf:header>
                 </xf:submission>           
            
