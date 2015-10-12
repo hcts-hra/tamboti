@@ -56,7 +56,7 @@
                             <xf:hint ref="id('hint-code_template', instance('code-tables'))/*[local-name() = 'help']"/>
                         </xf:output>
                     </xf:label>
-                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='document-type-code']/items/item">
+                    <xf:itemset nodeset="id('document-type-code', instance('code-tables'))/*:items/*:item">
                         <xf:label ref="label"/>
                         <xf:value ref="value"/>
                     </xf:itemset>
@@ -67,7 +67,7 @@
                             <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/*[local-name() = 'help']"/>
                         </xf:output>
                     </xf:label>
-                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='transliteration-code']/items/item">
+                    <xf:itemset nodeset="id('transliteration-code', instance('code-tables'))/*:items/*:item">
                         <xf:label ref="label"/>
                         <xf:value ref="value"/>
                     </xf:itemset>
@@ -78,7 +78,7 @@
                             <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/*[local-name() = 'help']"/>
                         </xf:output>
                     </xf:label>
-                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='cataloging-stage-code']/items/item">
+                    <xf:itemset nodeset="id('cataloging-stage-code', instance('code-tables'))/*:items/*:item">
                         <xf:label ref="label"/>
                         <xf:value ref="value"/>
                     </xf:itemset>

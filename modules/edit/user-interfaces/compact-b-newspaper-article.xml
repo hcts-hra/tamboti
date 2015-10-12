@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="compact block-form" tab-id="compact-b-newspaper-article">
+<div xmlns:ext="http://exist-db.org/mods/extension" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="compact block-form" tab-id="compact-b-newspaper-article">
     <div style="display:none">
         <xf:model id="m-ui"/>
     </div>
@@ -148,15 +148,15 @@
                                 <xf:repeat nodeset="./mods:extent" id="related-item-extent-periodical-repeat">
                                     <xf:group appearance="full" class="margin-plus">
                                         <xf:group ref=".[@unit]">
-                                            <xf:select1 ref="./@unit" selection="open">
+                                            <xf:select1 ref="@unit" selection="open">
                                                 <xf:label>
                                                     <xf:output value="'Unit'" class="hint-icon">
                                                         <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/*[local-name() = 'help']"/>
                                                     </xf:output>
                                                 </xf:label>
-                                                <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='part-extent-unit-code']/items/item">
-                                                    <xf:label ref="label"/>
-                                                    <xf:value ref="value"/>
+                                                <xf:itemset nodeset="id('part-extent-unit-code', instance('code-tables'))/*:items/*:item">
+                                                    <xf:label ref="*:label"/>
+                                                    <xf:value ref="*:value"/>
                                                 </xf:itemset>
                                             </xf:select1>
                                         </xf:group>
@@ -193,7 +193,7 @@
                             <xf:group class="margin-plus" appearance="full">
                                 <xf:select1 ref="./@type">
                                     <xf:label>Type</xf:label>
-                                    <xf:itemset nodeset="instance('code-tables')/code-table[code-table-name='identifier-type-code']/items/item">
+                                    <xf:itemset nodeset="id('identifier-type-code', instance('code-tables'))/*:items/*:item">
                                         <xf:label ref="label"/>
                                         <xf:value ref="value"/>
                                     </xf:itemset>
