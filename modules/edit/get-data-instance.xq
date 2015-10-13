@@ -8,7 +8,7 @@ let $id := request:get-parameter('id', '')
 let $data-instance :=
     if ($id)
     then collection($config:content-root)//mods:mods[@ID = $id]
-    else doc(concat($config:edit-app-root, '/instances/', request:get-parameter('data-template-name', ''), '.xml'))
+    else doc(concat($config:edit-app-root, '/data-templates/', request:get-parameter('data-template-name', ''), '.xml'))
 
 
 return $data-instance

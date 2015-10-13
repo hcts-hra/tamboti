@@ -18,6 +18,7 @@ declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 declare namespace ext = "http://exist-db.org/mods/extension";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 declare variable $mods-hra-framework:THUMB_SIZE_FOR_GRID := 64;
 declare variable $mods-hra-framework:THUMB_SIZE_FOR_GALLERY := 128;
@@ -497,7 +498,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
         return
             mods-common:simple-row(
             (
-                let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type-codes.xml'))/*:code-table/*:items/*:item[*:value eq $internetMediaType]/*:label
+                let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $internetMediaType]/mods-editor:label
                 return
                     if ($label) 
                     then $label
@@ -511,10 +512,10 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     return   
         mods-common:simple-row(
             if ($authority eq 'local')
-                then doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
+                then doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                 else
                     if ($authority eq 'marcgt')
-                    then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
+                    then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                     else string($genre)
                 , 
                 concat(
@@ -635,7 +636,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     let $identifiers := $entry/mods:identifier
     for $identifier in $identifiers
     let $type := $identifier/@type/string()
-    let $type := doc(concat($config:edit-app-root, "/code-tables/identifier-type-codes.xml"))/*:code-table/*:items/*:item[*:value eq $type]/*:label
+    let $type := doc(concat($config:edit-app-root, "/code-tables/identifier-type-codes.xml"))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
     return 
         mods-common:simple-row
         (

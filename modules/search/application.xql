@@ -34,7 +34,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace html="http://www.w3.org/1999/xhtml";
 declare namespace svg="http://www.w3.org/2000/svg";
-
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 declare option exist:serialize "method=xhtml media-type=application/xhtml+xml omit-xml-declaration=no enforce-xhtml=yes";
 
@@ -1006,22 +1006,22 @@ declare function biblio:resource-types($node as node(), $params as element(param
     let $code-table-path := concat($config:edit-app-root, '/code-tables')
     
     let $document-type-codes-path := concat($code-table-path, '/document-type-codes.xml')
-    let $document-type-code-table := doc($document-type-codes-path)/code-table
+    let $document-type-code-table := doc($document-type-codes-path)/mods-editor:code-table
     
     let $language-type-codes-path := concat($code-table-path, '/language-3-type-codes.xml')
-    let $language-type-code-table := doc($language-type-codes-path)/code-table
+    let $language-type-code-table := doc($language-type-codes-path)/mods-editor:code-table
     let $language-options :=
                     for $item in $language-type-code-table//item[(frequencyClassifier)]
-                        let $label := $item/label/text()
-                        let $labelValue := $item/value/text()
+                        let $label := $item/mods-editor:label/text()
+                        let $labelValue := $item/mods-editor:value/text()
                         let $sortOrder :=                                  
-                            if ($item/frequencyClassifier[. = 'common']) 
+                            if ($item/mods-editor:frequencyClassifier[. = 'common']) 
                             then 'A' 
                             (: else frequencyClassifier = 'default':)
                             else ''
                         order by $sortOrder, $label
                         return
-                            <option value="{$labelValue}">{$item/label/text()}</option>
+                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
     (:to get all values:
                     for $item in $language-type-code-table//item
                         let $label := $item/label/text()
@@ -1038,29 +1038,29 @@ declare function biblio:resource-types($node as node(), $params as element(param
                             <option value="{$labelValue}">{$item/label/text()}</option>:)
                             
     let $script-codes-path := concat($code-table-path, '/script-short-codes.xml')
-    let $script-code-table := doc($script-codes-path)/code-table
+    let $script-code-table := doc($script-codes-path)/mods-editor:code-table
     let $script-options :=
-                    for $item in $script-code-table//item
-                        let $label := $item/label/text()
-                        let $labelValue := $item/value/text()
+                    for $item in $script-code-table//mods-editor:item
+                        let $label := $item/mods-editor:label/text()
+                        let $labelValue := $item/mods-editor:value/text()
                         let $sortOrder := 
-                        if (empty($item/frequencyClassifier)) 
+                        if (empty($item/mods-editor:frequencyClassifier)) 
                         then 'B' 
                         else 
-                            if ($item/frequencyClassifier[. = 'common']) 
+                            if ($item/mods-editor:frequencyClassifier[. = 'common']) 
                             then 'A'
                             else ''
                         order by $sortOrder, $label
                         return
-                            <option value="{$labelValue}">{$item/label/text()}</option>
+                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
     
     let $transliteration-codes-path := concat($code-table-path, '/transliteration-short-codes.xml')
-    let $transliteration-code-table := doc($transliteration-codes-path)/code-table
+    let $transliteration-code-table := doc($transliteration-codes-path)/mods-editor:code-table
     let $transliteration-options :=
-                    for $item in $transliteration-code-table//item
-                        let $labelValue := $item/value/text()
+                    for $item in $transliteration-code-table//mods-editor:item
+                        let $labelValue := $item/mods-editor:value/text()
                         return
-                            <option value="{$labelValue}">{$item/label/text()}</option>
+                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
                     
     
     return 
@@ -1068,11 +1068,11 @@ declare function biblio:resource-types($node as node(), $params as element(param
             <form id="{if ($classifier eq 'stand-alone') then 'new-resource-form' else 'add-related-form'}" action="../edit/edit.xq" method="GET">
                 <ul>
                 {
-                    for $item in $document-type-code-table//item[classifier = $classifier]
-                    order by $item/sort/text(), $item/label/text()
+                    for $item in $document-type-code-table//mods-editor:item[mods-editor:classifier = $classifier]
+                    order by $item/mods-editor:sort/text(), $item/mods-editor:label/text()
                     return
                         <li>
-                          <input type="radio" name="type" value="{$item/value/text()}"/><span> {$item/label/text()}</span>
+                          <input type="radio" name="type" value="{$item/mods-editor:value/text()}"/><span> {$item/mods-editor:label/text()}</span>
                         </li>
                 }
                 </ul>
