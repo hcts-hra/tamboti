@@ -48,7 +48,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
             if ($transliterationOfResource) 
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin') 
-    let $template := doc(concat($config:edit-app-root, '/instances/', $template-request, '.xml'))
+    let $template := doc(concat($config:edit-app-root, '/data-templates/', $template-request, '.xml'))
     
     (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
     let $doc-name := concat($id, '.xml')
@@ -122,7 +122,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
       (:Save the name of the template used, transliteration scheme used, 
       and an empty catalogingStage into mods:extension.:)  
       update insert
-          <extension xmlns="http://www.loc.gov/mods/v3" xmlns:e="http://exist-db.org/mods/extension">
+          <extension xmlns="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension">
               <ext:template>{$template-request}</ext:template>
               <ext:transliterationOfResource>{$transliterationOfResource}</ext:transliterationOfResource>
               <ext:catalogingStage/>
@@ -161,45 +161,47 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             else concat($type-request, '-latin') 
 
     let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection, '&amp;data-template-name=', $data-template-name)
-    let $ui-file-path := "'user-interfaces/" || $instance-id || ".xml'"
+    let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
     
     return
-        <xf:model>
-           <xf:instance src="{$instance-src}" id="save-data">
-                <mods xmlns="http://www.loc.gov/mods/v3" />
-           </xf:instance>
-
+        <xf:model id="m-main">
             <xf:instance id="i-configuration">
                 <configuration xmlns="">
                     <current-username>{xmldb:get-current-user()}</current-username>
                 </configuration>
-            </xf:instance>            
+            </xf:instance>   
+            
+           <xf:instance src="{$instance-src}" id="save-data">
+                <mods xmlns="http://www.loc.gov/mods/v3" />
+           </xf:instance>
+
+         
            <!--The instance insert-templates contain an almost full embodiment of the MODS schema, version 3.5; 
            It is used mainly to insert attributes and uncommon elements, 
            but it can also be chosen as a template.-->
-           <xf:instance xmlns:mods="http://www.loc.gov/mods/v3" src="instances/insert-templates.xml" id="insert-templates">
+           <xf:instance xmlns:mods="http://www.loc.gov/mods/v3" src="data-templates/insert-templates.xml" id="insert-templates">
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
            <!--A basic selection of elements and attributes from the MODS schema, 
            used inserting basic elements, but it can also be chosen as a template.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/new-instance.xml" id="new-instance">
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="data-templates/new-instance.xml" id="new-instance">
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
            <!--A selection of elements and attributes from the MADS schema used for default records.-->
            <!--not used at present-->
-           <!--<xf:instance xmlns="http://www.loc.gov/mads/" src="instances/mads.xml" id='mads' readonly="true"/>-->
+           <!--<xf:instance xmlns="http://www.loc.gov/mads/" src="data-templates/mads.xml" id='mads' readonly="true"/>-->
     
            <!--Elements and attributes for insertion of special configurations of elements into the compact forms.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/compact-template.xml" id="compact-template"> 
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="data-templates/compact-template.xml" id="compact-template"> 
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
            <!--Only load the code-tables that are used by the active tab.-->
            <!--Every code table must have a tab-id to ensure that it is collected into the model.-->
            <xf:instance id="code-tables" src="codes-for-tab.xq?tab-id={$instance-id}">
-                <code-tables xmlns="" />
+                <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
             </xf:instance>
            
            <!--Having binds would prevent a tab from being saved when clicking on another tab, 
@@ -241,7 +243,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     </xf:header>
                     <xf:header>
                         <xf:name>password</xf:name>
-                        <xf:value></xf:value>
+                        <xf:value>***REMOVED***</xf:value>
                     </xf:header>
                 </xf:submission>           
            
@@ -254,12 +256,18 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={if ($host) then $host else $id}&amp;collection={$target-collection}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
+           
+           <xf:submission id="s-load-first-ui" replace="embedHTML" targetid="user-interface-container" resource="{$ui-file-path}" method="get"/>
             <xf:action ev:event="xforms-ready">
-                <xf:message level="modal">{$ui-file-path}</xf:message>              
-                <xf:load show="embed" targetid="user-interface-container">
-                    <xf:resource value="{$ui-file-path}" />
+                <!--<xf:send submission="s-load-first-ui" />-->
+               <xf:load show="embed" targetid="user-interface-container">
+                    <xf:resource value="'user-interfaces/compact-a.xml'"/>
                 </xf:load>
             </xf:action>
+            
+            
+            
+            
            <xf:action ev:event="save-and-close-action" ev:observer="main-content">
                <xf:send submission="save-and-close-submission" />
            </xf:action>
@@ -459,7 +467,7 @@ If type-sort is '2', it is a compact form and the Basic Input Forms should be sh
 if type-sort is 4, it is a mads record and the MADS forms should be shown; 
 otherwise it is a record not made with Tamboti and Title Information should be shown.:)
 let $type-request := replace(replace(replace($type-request, '-latin', ''), '-transliterated', ''), '-compact', '')
-let $type-sort := xs:integer(doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'sort'])
+let $type-sort := xs:integer(doc($type-data)/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type-request]/mods-editor:sort)
 (:Get the tab-id for the upper tab to be shown. 
 If no tab is specified, default to the compact-a tab when there is a template to be used with Basic Input Forms;
 otherwise default to Title Information.:)
@@ -511,7 +519,7 @@ return
     (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
     (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension">
         <head>
             <title>
                 {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}

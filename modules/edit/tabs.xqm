@@ -111,7 +111,7 @@ return
                     ">
                     {attribute{'width'}
                     {100 div $tab-count}}
-                    <xf:trigger appearance="minimal">
+                    <xf:trigger id="trigger-{local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', ''))}" appearance="minimal">
                         <xf:label>
                             <div class="label" style="{
                                 if ($tab-id eq $tab/mods-editor:tab-id) 
@@ -121,11 +121,13 @@ return
                         if ($tab-for-type) 
                         then $tab-for-type 
                         else $tab/mods-editor:label
-                        }</div>
+                        }</div>{$ui-file-path}
                         </xf:label>
+                        <xf:load show="none" targetid="user-interface-container" />
                         <xf:load ev:event="DOMActivate" show="embed" targetid="user-interface-container">
                             <xf:resource value="{$ui-file-path}" />
                         </xf:load>
+                        <xf:refresh model="m-main"/>
                     </xf:trigger>
                 </td>
                 }

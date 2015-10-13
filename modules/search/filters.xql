@@ -13,6 +13,7 @@ import module namespace json="http://www.json.org";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
 declare option exist:serialize "method=xhtml enforce-xhtml=yes";
 
@@ -236,8 +237,8 @@ return
                                         <li>There are too many records ({$record-count}) to process without overloading the server. Please restrict the result set by performing a narrower search. The maximum number is {$local:MAX_RECORD_COUNT}.</li>
                                     else
                                         for $genre in $genres
-                                            let $label-1 := doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
-                                            let $label-2 := doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/*:code-table/*:items/*:item[*:value eq $genre]/*:label
+                                            let $label-1 := doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                                            let $label-2 := doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                                             let $label := 
                                                 if ($label-1)
                                                 then $label-1
