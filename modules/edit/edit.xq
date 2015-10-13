@@ -48,7 +48,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
             if ($transliterationOfResource) 
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin') 
-    let $template := doc(concat($config:edit-app-root, '/instances/', $template-request, '.xml'))
+    let $template := doc(concat($config:edit-app-root, '/data-templates/', $template-request, '.xml'))
     
     (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
     let $doc-name := concat($id, '.xml')
@@ -179,22 +179,22 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
            <!--The instance insert-templates contain an almost full embodiment of the MODS schema, version 3.5; 
            It is used mainly to insert attributes and uncommon elements, 
            but it can also be chosen as a template.-->
-           <xf:instance xmlns:mods="http://www.loc.gov/mods/v3" src="instances/insert-templates.xml" id="insert-templates">
+           <xf:instance xmlns:mods="http://www.loc.gov/mods/v3" src="data-templates/insert-templates.xml" id="insert-templates">
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
            <!--A basic selection of elements and attributes from the MODS schema, 
            used inserting basic elements, but it can also be chosen as a template.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/new-instance.xml" id="new-instance">
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="data-templates/new-instance.xml" id="new-instance">
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
            <!--A selection of elements and attributes from the MADS schema used for default records.-->
            <!--not used at present-->
-           <!--<xf:instance xmlns="http://www.loc.gov/mads/" src="instances/mads.xml" id='mads' readonly="true"/>-->
+           <!--<xf:instance xmlns="http://www.loc.gov/mads/" src="data-templates/mads.xml" id='mads' readonly="true"/>-->
     
            <!--Elements and attributes for insertion of special configurations of elements into the compact forms.-->
-           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="instances/compact-template.xml" id="compact-template"> 
+           <xf:instance xmlns="http://www.loc.gov/mods/v3" src="data-templates/compact-template.xml" id="compact-template"> 
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
@@ -243,7 +243,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     </xf:header>
                     <xf:header>
                         <xf:name>password</xf:name>
-                        <xf:value></xf:value>
+                        <xf:value>Mdft2012</xf:value>
                     </xf:header>
                 </xf:submission>           
            
