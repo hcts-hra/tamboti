@@ -537,6 +537,7 @@ return
             </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
             <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>  
+            <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
             <script type="text/javascript" src="editor.js">/**/</script>
             {$model}
         </head>
