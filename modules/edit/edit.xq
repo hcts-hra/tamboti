@@ -69,6 +69,8 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
     let $scriptOfResource := request:get-parameter("scriptOfResource", '')
     let $languageOfResource := request:get-parameter("languageOfResource", '')
+    let $log := util:log("INFO", "$languageOfResource = " || $languageOfResource)
+    let $log := util:log("INFO", "$scriptOfResource = " || $scriptOfResource)
     let $languageOfCataloging := request:get-parameter("languageOfCataloging", '')
     let $scriptOfCataloging := request:get-parameter("scriptOfCataloging", '')           
     (:Parameter 'host' is used when related records with type "host" are created.:)
@@ -168,6 +170,9 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             <xf:instance id="i-configuration">
                 <configuration xmlns="">
                     <current-username>{xmldb:get-current-user()}</current-username>
+                    <languageOfResource>{request:get-parameter("languageOfResource", '')}</languageOfResource>
+                    <scriptOfResource>{request:get-parameter("scriptOfResource", '')}</scriptOfResource>
+                    <template>{$data-template-name}</template>
                 </configuration>
             </xf:instance>   
             
@@ -243,7 +248,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     </xf:header>
                     <xf:header>
                         <xf:name>password</xf:name>
-                        <xf:value>Mdft2012</xf:value>
+                        <xf:value></xf:value>
                     </xf:header>
                 </xf:submission>           
            
@@ -263,6 +268,12 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                <xf:load show="embed" targetid="user-interface-container">
                     <xf:resource value="'user-interfaces/compact-a.xml'"/>
                 </xf:load>
+                <xf:setvalue ref="instance('save-data')/mods:language/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
+                <xf:setvalue ref="instance('save-data')/mods:language/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
+                <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:recordCreationDate" value="local-date()" />
+                <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
+                <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
+                <xf:setvalue ref="instance('save-data')/mods:extension/ext:template" value="instance('i-configuration')/template" />
             </xf:action>
             
             
@@ -525,7 +536,9 @@ return
                 {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
             </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
+            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>  
+            <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
+            <script type="text/javascript" src="editor.js">/**/</script>
             {$model}
         </head>
         <body>

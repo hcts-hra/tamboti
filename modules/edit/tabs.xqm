@@ -97,7 +97,7 @@ return
             <table class="bottom-tabs">                    
                 <tr>
                 {
-                for $tab in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
+                for $tab at $tab-index in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
                 let $tab-for-type := $tab/*[local-name() = $type]/text()
 				let $tab-count := count($tabs-data[mods-editor:top-tab-label/text() = $tab/mods-editor:top-tab-label/text()])
 				let $ui-file-path := "'user-interfaces/" || local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', '')) || ".xml'"
@@ -123,11 +123,20 @@ return
                         else $tab/mods-editor:label
                         }</div>{$ui-file-path}
                         </xf:label>
-                        <xf:load show="none" targetid="user-interface-container" />
-                        <xf:load ev:event="DOMActivate" show="embed" targetid="user-interface-container">
-                            <xf:resource value="{$ui-file-path}" />
-                        </xf:load>
-                        <xf:refresh model="m-main"/>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:load show="none" targetid="user-interface-container" />
+                            <xf:load show="embed" targetid="user-interface-container">
+                                <xf:resource value="{$ui-file-path}" />
+                                <xf:extension includeCSS="true" includeScript="true" />
+                            </xf:load>
+                            <xf:rebuild model="m-main"/>
+                            <xf:recalculate model="m-main"/>
+                            <xf:revalidate model="m-main"/>
+                            <xf:refresh model="m-main"/>
+                            <script type="text/javascript">
+                                activateBotttomTab({$tab-index - 1});
+                            </script>                            
+                        </xf:action>
                     </xf:trigger>
                 </td>
                 }
