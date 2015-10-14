@@ -536,7 +536,8 @@ return
                 {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
             </title>
             <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>        
+            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>  
+            <script type="text/javascript" src="editor.js">/**/</script>
             {$model}
         </head>
         <body>
