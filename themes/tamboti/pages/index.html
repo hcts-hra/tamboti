@@ -54,133 +54,133 @@
 						value="'../../components/multiple-selection-component/multiple-selection-component.xml#ddlcb-container'" />
 					<xf:extension includeCSS="true" includeScript="true" />
 				</xf:load>
-                    <script type="text/javascript">
-                        tamboti.currentUsername = $("span.username").text();
-                        fluxProcessor.dispatchEventType("main-content", "set-current-username", {
-                            "current-username": tamboti.currentUsername
-                        }); 
-                        
-                        fluxProcessor.skipshutdown=true;
+                <script type="text/javascript">
+                    tamboti.currentUsername = $("span.username").text();
+                    fluxProcessor.dispatchEventType("main-content", "set-current-username", {
+                        "current-username": tamboti.currentUsername
+                    }); 
+                    
+                    fluxProcessor.skipshutdown=true;
 
-                        // initialize the check boxes of the search list
-                        $("#results").on("click", "tr.pagination-item input.search-list-item-checkbox", function() {
-                            var $this = $(this);
-                            var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
-                            var totalSearchResultOptions = tamboti.totalSearchResultOptions;
-                            var optionId = $this.attr("data-tamboti-record-id");
-                            
-                            if ($this.is(":checked")) {
-                                selectedSearchResultOptions[optionId] = 1;
-                                fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
-                                if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
-                                    $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
-                                } else if (Object.keys(selectedSearchResultOptions).length == totalSearchResultOptions) {
-                                    $("#ddlcb-container").trigger("flag-ddlcb-full-checked");
-                                }                                
-                            } else {
-                                delete selectedSearchResultOptions[optionId];
-                                fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
-                                if (Object.keys(selectedSearchResultOptions).length === 0) {
-                                    $("#ddlcb-container").trigger("unflag-ddlcb-partial-checked");
-                                } else if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
-                                    $("#ddlcb-container").trigger("unflag-ddlcb-full-checked");
-                                    $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");                                    
-                                }
+                    // initialize the check boxes of the search list
+                    $("#results").on("click", "tr.pagination-item input.search-list-item-checkbox", function() {
+                        var $this = $(this);
+                        var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
+                        var totalSearchResultOptions = tamboti.totalSearchResultOptions;
+                        var optionId = $this.attr("data-tamboti-record-id");
+                        
+                        if ($this.is(":checked")) {
+                            selectedSearchResultOptions[optionId] = 1;
+                            fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
+                            if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
+                                $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
+                            } else if (Object.keys(selectedSearchResultOptions).length == totalSearchResultOptions) {
+                                $("#ddlcb-container").trigger("flag-ddlcb-full-checked");
+                            }                                
+                        } else {
+                            delete selectedSearchResultOptions[optionId];
+                            fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
+                            if (Object.keys(selectedSearchResultOptions).length === 0) {
+                                $("#ddlcb-container").trigger("unflag-ddlcb-partial-checked");
+                            } else if (Object.keys(selectedSearchResultOptions).length &lt; totalSearchResultOptions) {
+                                $("#ddlcb-container").trigger("unflag-ddlcb-full-checked");
+                                $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");                                    
+                            }
+                        }
+                    });
+            		$("#ddlcb-container").on("ddlcb-full-checked", function() {
+            		    var resultsTable = $("#results &gt; table");
+            		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
+            		    
+      				    $('input', resultsTable).each(
+    				        function(index) {
+    				            var $this = $(this);
+    				            $this.attr("checked", "checked");
+    				            selectedSearchResultOptions[$this.attr("data-tamboti-record-id")] = 1;
+    				        }    
+    				    );                		    
+                    
+                        $.ajax({
+                            url: "retrieve",
+                            data: { mode: "multiple-selection", start: 1, count: 20},
+                            dataType: "json",
+                            type: "POST",
+                            success: function (data) {
+                                tamboti.selectedSearchResultOptions = data;
+                                fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(tamboti.selectedSearchResultOptions).length});
                             }
                         });
-                		$("#ddlcb-container").on("ddlcb-full-checked", function() {
-                		    var resultsTable = $("#results &gt; table");
-                		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
-                		    
-          				    $('input', resultsTable).each(
-        				        function(index) {
-        				            var $this = $(this);
-        				            $this.attr("checked", "checked");
-        				            selectedSearchResultOptions[$this.attr("data-tamboti-record-id")] = 1;
-        				        }    
-        				    );                		    
-                        
-                            $.ajax({
-                                url: "retrieve",
-                                data: { mode: "multiple-selection", start: 1, count: 20},
-                                dataType: "json",
-                                type: "POST",
-                                success: function (data) {
-                                    tamboti.selectedSearchResultOptions = data;
-                                    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(tamboti.selectedSearchResultOptions).length});
-                                }
-                            });
-                		});
-                		$("#ddlcb-container").on("ddlcb-full-unchecked", function() {
-                		    var resultsTable = $("#results &gt; table");
-                		    tamboti.selectedSearchResultOptions = {};
-                		    
-          				    $('input', resultsTable).each(
-        				        function(index) {
-        				            var $this = $(this);
-        				            $this.removeAttr("checked");
-        				        }    
-        				    );
-        				    
-        				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(tamboti.selectedSearchResultOptions).length});
-                		});                		
-                        
-                		$("#ddlcb-container").on("ddlcb-partial-checked", function() {
-                		    var resultsTable = $("#results &gt; table");
-                		    if (Object.keys(tamboti.selectedSearchResultOptions).length == tamboti.totalSearchResultOptions) {
-                		        tamboti.selectedSearchResultOptions = {};
-                		    }
-                		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
-                		    
-          				    $('input', resultsTable).each(
-        				        function(index) {
-        				            var $this = $(this);
-        				            $this.attr("checked", "checked");
-        				            selectedSearchResultOptions[$this.attr("data-tamboti-record-id")] = 1;
-        				        }    
-        				    );
+            		});
+            		$("#ddlcb-container").on("ddlcb-full-unchecked", function() {
+            		    var resultsTable = $("#results &gt; table");
+            		    tamboti.selectedSearchResultOptions = {};
+            		    
+      				    $('input', resultsTable).each(
+    				        function(index) {
+    				            var $this = $(this);
+    				            $this.removeAttr("checked");
+    				        }    
+    				    );
+    				    
+    				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(tamboti.selectedSearchResultOptions).length});
+            		});                		
+                    
+            		$("#ddlcb-container").on("ddlcb-partial-checked", function() {
+            		    var resultsTable = $("#results &gt; table");
+            		    if (Object.keys(tamboti.selectedSearchResultOptions).length == tamboti.totalSearchResultOptions) {
+            		        tamboti.selectedSearchResultOptions = {};
+            		    }
+            		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
+            		    
+      				    $('input', resultsTable).each(
+    				        function(index) {
+    				            var $this = $(this);
+    				            $this.attr("checked", "checked");
+    				            selectedSearchResultOptions[$this.attr("data-tamboti-record-id")] = 1;
+    				        }    
+    				    );
 
-        				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
-                        }); 
-                		$("#ddlcb-container").on("ddlcb-partial-unchecked", function() {
-                		    var resultsTable = $("#results &gt; table");
-                		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
-                		    
-          				    $('input', resultsTable).each(
-        				        function(index) {
-        				            var $this = $(this);
-        				            $this.removeAttr("checked");
-        				            delete selectedSearchResultOptions[$this.attr("data-tamboti-record-id")];
-        				        }    
-        				    );
-        				    
-        				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
-                        }); 
-                		$("#ddlcb-container").on("ddlcb-page-changed", function() {
-                		    $("#ddlcb-container").trigger("unflag-ddlcb-partial-checked");
-                            var resultsTable = $("#results &gt; table");                                
-                            
-                            var currentPageOptions = $("input.search-list-item-checkbox", resultsTable);
-          				    currentPageOptions.each(
-        				        function(index) {
-        				            var recordId = $(this).attr("data-tamboti-record-id");
-        				            
-        				            if (tamboti.selectedSearchResultOptions[recordId] == 1) {
-        				                $("input.search-list-item-checkbox[data-tamboti-record-id = '" + recordId + "']", resultsTable).attr("checked", "checked");
-        				            }
-        				        }    
-        				    );
-        				    
-                		    if (Object.keys(tamboti.selectedSearchResultOptions).length == tamboti.totalSearchResultOptions) {
-                		        return;
-                		    }        				    
-        				    
-        				    var currentPageSelectedOptionsNumber = $("input.search-list-item-checkbox:checked", resultsTable).length;
-        				    if (currentPageSelectedOptionsNumber !== 0 &amp;&amp; currentPageSelectedOptionsNumber == currentPageOptions.length) {
-        				        $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
-        				    }
-                        });                        
-                    </script>
+    				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
+                    }); 
+            		$("#ddlcb-container").on("ddlcb-partial-unchecked", function() {
+            		    var resultsTable = $("#results &gt; table");
+            		    var selectedSearchResultOptions = tamboti.selectedSearchResultOptions;
+            		    
+      				    $('input', resultsTable).each(
+    				        function(index) {
+    				            var $this = $(this);
+    				            $this.removeAttr("checked");
+    				            delete selectedSearchResultOptions[$this.attr("data-tamboti-record-id")];
+    				        }    
+    				    );
+    				    
+    				    fluxProcessor.dispatchEventType("main-content", "set-number-of-selected-options", {"number-of-selected-options": Object.keys(selectedSearchResultOptions).length});
+                    }); 
+            		$("#ddlcb-container").on("ddlcb-page-changed", function() {
+            		    $("#ddlcb-container").trigger("unflag-ddlcb-partial-checked");
+                        var resultsTable = $("#results &gt; table");                                
+                        
+                        var currentPageOptions = $("input.search-list-item-checkbox", resultsTable);
+      				    currentPageOptions.each(
+    				        function(index) {
+    				            var recordId = $(this).attr("data-tamboti-record-id");
+    				            
+    				            if (tamboti.selectedSearchResultOptions[recordId] == 1) {
+    				                $("input.search-list-item-checkbox[data-tamboti-record-id = '" + recordId + "']", resultsTable).attr("checked", "checked");
+    				            }
+    				        }    
+    				    );
+    				    
+            		    if (Object.keys(tamboti.selectedSearchResultOptions).length == tamboti.totalSearchResultOptions) {
+            		        return;
+            		    }        				    
+    				    
+    				    var currentPageSelectedOptionsNumber = $("input.search-list-item-checkbox:checked", resultsTable).length;
+    				    if (currentPageSelectedOptionsNumber !== 0 &amp;&amp; currentPageSelectedOptionsNumber == currentPageOptions.length) {
+    				        $("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
+    				    }
+                    });                        
+                </script>
 			</xf:action>
 			<xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
 				<xf:setvalue ref="instance('i-variables')/number-of-all-options" value="event('number-of-all-options')" />
