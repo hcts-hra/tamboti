@@ -13,9 +13,6 @@
             </xf:group>
             <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-repeat">
                 <xf:group appearance="full" class="margin-plus">
-                    <xf:group ref="instance('save-data')/mods:titleInfo[@transliteration or string-length(@lang) &gt; 0]">
-                        <br/>
-                    </xf:group>
                     <xf:group ref=".[string-length(@lang) &gt; 0]">
                         <xf:select1 ref="./@lang" class="text_10">
                             <xf:label>
@@ -89,15 +86,11 @@
                 </xf:output>
                 <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0]">
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[1]"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[1]" ev:event="DOMActivate"/>
                 </xf:trigger>
                 <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) &gt; 0]">
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[2]"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[2]" ev:event="DOMActivate"/>
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:name" id="compact-name-repeat">
@@ -172,9 +165,7 @@
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
-                                <xf:action ev:event="DOMActivate">
-                                    <xf:insert nodeset="instance('save-data')/mods:role" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[8]/mods:role"/>
-                                </xf:action>
+                                <xf:insert nodeset="instance('save-data')/mods:role" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[8]/mods:role" ev:event="DOMActivate"/>
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:role" id="role-repeat">
@@ -204,9 +195,6 @@
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="./mods:originInfo" id="origininfo-repeat">
-                <xf:group ref=".[string-length(@transliteration) &gt; 0]" appearance="full">
-                    <br/>
-                </xf:group>
                 <xf:group ref=".[mods:place]">
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
@@ -216,9 +204,7 @@
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
-                                <xf:action ev:event="DOMActivate">
-                                    <xf:insert nodeset="mods:place" at="index('place-repeat')" position="before" origin="instance('compact-template')/mods:originInfo/mods:place"/>
-                                </xf:action>
+                                <xf:insert nodeset="mods:place" at="index('place-repeat')" position="before" origin="instance('compact-template')/mods:originInfo/mods:place" ev:event="DOMActivate"/>
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:place" id="place-repeat">
@@ -276,9 +262,7 @@
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
-                                <xf:action ev:event="DOMActivate">
-                                    <xf:insert nodeset="mods:dateIssued" at="index('dateIssued-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:dateIssued"/>
-                                </xf:action>
+                                <xf:insert nodeset="mods:dateIssued" at="index('dateIssued-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:dateIssued" ev:event="DOMActivate"/>
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:dateIssued" id="dateIssued-repeat">
@@ -308,9 +292,7 @@
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
-                                <xf:action ev:event="DOMActivate">
-                                    <xf:insert nodeset="mods:copyrightDate" at="index('copyrightDate-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:copyrightDate"/>
-                                </xf:action>
+                                <xf:insert nodeset="mods:copyrightDate" at="index('copyrightDate-repeat')" position="after" origin="instance('insert-templates')/mods:originInfo/mods:copyrightDate" ev:event="DOMActivate"/>
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:copyrightDate" id="copyrightDate-repeat">
@@ -406,9 +388,7 @@
                 </xf:output>
                 <xf:trigger>
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:location/mods:url" at="index('url-repeat')" position="before" origin="instance('compact-template')/mods:location/mods:url"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:location/mods:url" at="index('url-repeat')" position="before" origin="instance('compact-template')/mods:location/mods:url" ev:event="DOMActivate"/>
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:location" id="location-repeat">
@@ -420,9 +400,6 @@
                         <xf:input ref="." class="text_150">
                             <xf:label>URL</xf:label>
                         </xf:input>
-                        <xf:group ref=".[count(../mods:url) &gt; 1]">
-                            <br/>
-                        </xf:group>
                     </xf:group>
                 </xf:repeat>
             </xf:repeat>
@@ -437,9 +414,7 @@
                 </xf:output>
                 <xf:trigger ref=".[mods:identifier]">
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-repeat')" position="before" origin="instance('compact-template')/mods:identifier" ev:event="DOMActivate"/>
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="./mods:identifier" id="identifier-repeat">

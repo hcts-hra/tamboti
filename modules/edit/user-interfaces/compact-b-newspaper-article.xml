@@ -21,9 +21,6 @@
                     </xf:group>
                     <xf:repeat nodeset="./mods:titleInfo" id="relatedItem-titleInfo-periodical-repeat">
                         <xf:group appearance="full" class="margin-plus">
-                            <xf:group ref=".[(@transliteration) or string-length(@lang) &gt; 0]">
-                                <br/>
-                            </xf:group>
                             <xf:input ref="./mods:nonSort" class="text_10">
                                 <xf:label>
                                     <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="hint-icon">
@@ -56,15 +53,11 @@
                         </xf:output>
                         <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
                             <xf:label>+</xf:label>
-                            <xf:action ev:event="DOMActivate">
-                                <xf:insert nodeset="./mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[6]"/>
-                            </xf:action>
+                            <xf:insert nodeset="./mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[6]" ev:event="DOMActivate"/>
                         </xf:trigger>
                         <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) = 0]">
                             <xf:label>+</xf:label>
-                            <xf:action ev:event="DOMActivate">
-                                <xf:insert nodeset="./mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[5]"/>
-                            </xf:action>
+                            <xf:insert nodeset="./mods:name" at="index('relatedItem-name-repeat-periodical')" position="before" origin="instance('compact-template')/mods:name[5]" ev:event="DOMActivate"/>
                         </xf:trigger>
                     </xf:group>
                     <xf:repeat nodeset="./mods:name" id="relatedItem-name-repeat-periodical">
@@ -184,9 +177,7 @@
                             </xf:output>
                             <xf:trigger ref=".[mods:identifier]">
                                 <xf:label>+</xf:label>
-                                <xf:action ev:event="DOMActivate">
-                                    <xf:insert nodeset="./mods:identifier" at="index('identifier-periodical-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                </xf:action>
+                                <xf:insert nodeset="./mods:identifier" at="index('identifier-periodical-repeat')" position="before" origin="instance('compact-template')/mods:identifier" ev:event="DOMActivate"/>
                             </xf:trigger>
                         </xf:group>
                         <xf:repeat nodeset="./mods:identifier" id="identifier-periodical-repeat">
