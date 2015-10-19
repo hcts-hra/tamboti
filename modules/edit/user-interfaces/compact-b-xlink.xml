@@ -21,9 +21,7 @@
                                     </xf:output>
                                     <xf:trigger>
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                             </xf:group>
@@ -34,9 +32,7 @@
                                     </xf:output>
                                     <xf:trigger>
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                             </xf:group>
@@ -47,9 +43,7 @@
                                     </xf:output>
                                     <xf:trigger>
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                             </xf:group>
@@ -60,9 +54,7 @@
                                     </xf:output>
                                     <xf:trigger>
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:part" at="index('related-item-part-repeat')" position="before" origin="instance('compact-template')/mods:part" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                             </xf:group>
@@ -149,15 +141,11 @@
                 </xf:output>
                 <xf:trigger ref=".[string-length(../mods:extension/ext:transliterationOfResource) &gt; 0]">
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:relatedItem" at="index('relatedItem-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[2]"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:relatedItem" at="index('relatedItem-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[2]" ev:event="DOMActivate"/>
                 </xf:trigger>
                 <xf:trigger ref=".[string-length(../mods:extension/ext:transliterationOfResource) = 0]">
                     <xf:label>+</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:insert nodeset="instance('save-data')/mods:relatedItem" at="index('relatedItem-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[3]"/>
-                    </xf:action>
+                    <xf:insert nodeset="instance('save-data')/mods:relatedItem" at="index('relatedItem-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[3]" ev:event="DOMActivate"/>
                 </xf:trigger>
             </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-book-reviewed-repeat">
@@ -181,15 +169,11 @@
                                 </xf:output>
                                 <xf:trigger ref=".[string-length(../mods:extension/ext:transliterationOfResource) &gt; 0]">
                                     <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('name-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[1]/mods:name[2]"/>
-                                    </xf:action>
+                                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('name-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[1]/mods:name[2]" ev:event="DOMActivate"/>
                                 </xf:trigger>
                                 <xf:trigger ref=".[string-length(../mods:extension/ext:transliterationOfResource) = 0]">
                                     <xf:label>+</xf:label>
-                                    <xf:action ev:event="DOMActivate">
-                                        <xf:insert nodeset="instance('save-data')/mods:name" at="index('name-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[1]/mods:name[1]"/>
-                                    </xf:action>
+                                    <xf:insert nodeset="instance('save-data')/mods:name" at="index('name-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:relatedItem[1]/mods:name[1]" ev:event="DOMActivate"/>
                                 </xf:trigger>
                             </xf:group>
                             <xf:repeat nodeset="./mods:name" id="name-book-reviewed-repeat">
@@ -240,9 +224,7 @@
                                             </xf:output>
                                             <xf:trigger>
                                                 <xf:label>+</xf:label>
-                                                <xf:action ev:event="DOMActivate">
-                                                    <xf:insert nodeset="instance('save-data')/mods:role" at="index('role-repeat')" position="before" origin="instance('compact-template')/mods:name[1]/mods:role"/>
-                                                </xf:action>
+                                                <xf:insert nodeset="instance('save-data')/mods:role" at="index('role-repeat')" position="before" origin="instance('compact-template')/mods:name[1]/mods:role" ev:event="DOMActivate"/>
                                             </xf:trigger>
                                         </xf:group>
                                         <xf:repeat nodeset="./mods:role" id="role-repeat">
@@ -271,9 +253,6 @@
                             </xf:group>
                             <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-book-reviewed-repeat">
                                 <xf:group appearance="full" class="margin-plus">
-                                    <xf:group ref=".[@transliteration or string-length(@lang) &gt; 0]">
-                                        <br/>
-                                    </xf:group>
                                     <xf:group ref=".[@transliteration]">
                                         <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
                                             <xf:label>Transliteration</xf:label>
@@ -323,9 +302,6 @@
                                 </xf:output>
                             </xf:group>
                             <xf:repeat nodeset="./mods:originInfo" id="originInfo-book-reviewed-repeat">
-                                <xf:group ref=".[string-length(@transliteration) &gt; 0]">
-                                    <br/>
-                                </xf:group>
                                 <xf:group ref=".[mods:place]">
                                     <fieldset class="level-3">
                                         <xf:group appearance="minimal" class="label-box">
@@ -487,9 +463,7 @@
                                     </xf:output>
                                     <xf:trigger>
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:relatedItem/mods:location/mods:url" at="index('url-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:location/mods:url"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:relatedItem/mods:location/mods:url" at="index('url-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:location/mods:url" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                                 <xf:repeat nodeset="./mods:location" id="location-book-reviewed-repeat">
@@ -501,9 +475,6 @@
                                             <xf:input ref="." class="text_150">
                                                 <xf:label>URL</xf:label>
                                             </xf:input>
-                                        </xf:group>
-                                        <xf:group ref=".[count(../mods:url) &gt; 1]">
-                                            <br/>
                                         </xf:group>
                                     </xf:repeat>
                                 </xf:repeat>
@@ -517,9 +488,7 @@
                                     </xf:output>
                                     <xf:trigger ref=".[mods:identifier]">
                                         <xf:label>+</xf:label>
-                                        <xf:action ev:event="DOMActivate">
-                                            <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:identifier"/>
-                                        </xf:action>
+                                        <xf:insert nodeset="instance('save-data')/mods:identifier" at="index('identifier-book-reviewed-repeat')" position="before" origin="instance('compact-template')/mods:identifier" ev:event="DOMActivate"/>
                                     </xf:trigger>
                                 </xf:group>
                                 <xf:repeat nodeset="./mods:identifier" id="identifier-book-reviewed-repeat">
