@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="compact block-form" tab-id="compact-b-xlink">
     <div style="display:none">
         <xf:model id="m-ui"/>
     </div>
-    <xf:group ref=".[mods:relatedItem[@type='host']]">
+    <xf:group model="m-main" ref="instance('save-data')[mods:relatedItem[@type='host']]">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box extra-wide">
                 <xf:output value="'Location of Article, Book Review, or Contribution'" class="hint-icon">
@@ -132,7 +131,7 @@
             </xf:repeat>
         </fieldset>
     </xf:group>
-    <xf:group ref=".[mods:relatedItem[@type='references']]">
+    <xf:group model="m-main" ref="instance('save-data')[mods:relatedItem[@type='references']]">
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Book(s) Reviewed'" class="hint-icon">

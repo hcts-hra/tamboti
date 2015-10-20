@@ -124,18 +124,16 @@ return
                         }</div>{$ui-file-path}
                         </xf:label>
                         <xf:action ev:event="DOMActivate">
-                            <xf:load show="none" targetid="user-interface-container" />
                             <xf:load show="embed" targetid="user-interface-container">
                                 <xf:resource value="{$ui-file-path}" />
-                                <xf:extension includeCSS="true" includeScript="true" />
+                                <xf:extension includeCSS="false" includeScript="false" />
                             </xf:load>
-                            <xf:rebuild model="m-main"/>
-                            <xf:recalculate model="m-main"/>
-                            <xf:revalidate model="m-main"/>
                             <xf:refresh model="m-main"/>
-                            <script type="text/javascript">
-                                activateBotttomTab({$tab-index - 1});
-                            </script>                            
+                			<xf:action ev:event="xforms-model-construct-done">
+                                <script type="text/javascript">
+                                    activateBotttomTab({$tab-index - 1});
+                                </script>
+                			</xf:action>                            
                         </xf:action>
                     </xf:trigger>
                 </td>
