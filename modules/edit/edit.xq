@@ -69,8 +69,6 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
     let $scriptOfResource := request:get-parameter("scriptOfResource", '')
     let $languageOfResource := request:get-parameter("languageOfResource", '')
-    let $log := util:log("INFO", "$languageOfResource = " || $languageOfResource)
-    let $log := util:log("INFO", "$scriptOfResource = " || $scriptOfResource)
     let $languageOfCataloging := request:get-parameter("languageOfCataloging", '')
     let $scriptOfCataloging := request:get-parameter("scriptOfCataloging", '')           
     (:Parameter 'host' is used when related records with type "host" are created.:)
@@ -162,7 +160,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin') 
 
-    let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection, '&amp;data-template-name=', $data-template-name)
+    let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
     
     return
@@ -177,7 +175,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             </xf:instance>   
             
            <xf:instance src="{$instance-src}" id="save-data">
-                <mods xmlns="http://www.loc.gov/mods/v3" />
+                <mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" />
            </xf:instance>
 
          
@@ -316,7 +314,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
     display the title of this record. 
     Only the xlink on the first relatedItem with type host is processed.:)
     let $host := request:get-parameter('host', '')
-    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type eq 'host']/@xlink:href
+    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type = 'host']/@xlink:href
     let $related-publication-id := 
         if ($related-item-xlink) 
         then replace($related-item-xlink[1]/string(), '^#?(.*)$', '$1') 
@@ -530,7 +528,7 @@ return
     (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
     (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink">
         <head>
             <title>
                 {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
