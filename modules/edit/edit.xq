@@ -202,10 +202,8 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
-           <!--Only load the code-tables that are used by the active tab.-->
-           <!--Every code table must have a tab-id to ensure that it is collected into the model.-->
-           <xf:instance id="code-tables" src="codes-for-tab.xq?tab-id={$instance-id}">
-                <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
+           <xf:instance id="i-hint-codes" src="code-tables/hint-codes.xml">
+                <code-table xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
             </xf:instance>
            
            <!--Having binds would prevent a tab from being saved when clicking on another tab, 
