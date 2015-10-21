@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="origin block-form" tab-id="origin">
     <div style="display:none">
-        <xf:model id="m-ui"/>
+        <xf:model id="m-ui">
+           <xf:instance id="code-tables" src="get-code-tables.xq?code-tables=">
+                <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
+            </xf:instance>        
+        </xf:model>
     </div>
     <xf:group model="m-main" ref="instance('save-data')">
         <fieldset class="level-1">
