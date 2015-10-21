@@ -162,6 +162,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
 
     let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
+    let $log := util:log("INFO", "$instance-id = " || $instance-id)
     
     return
         <xf:model id="m-main">
@@ -433,26 +434,29 @@ The compact-c temples (in 00-compact-contents) is the same for all resource type
 the only filtering that is performed is for transliteration.:)
 declare function local:get-tab-id($tab-id as xs:string, $type-request as xs:string) {
     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
+    let $log := util:log("INFO", "$type-request = " || $type-request)
     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-        return
-            if ($tab-id ne 'compact-b')
-            (:Only treat compact-b types.:)
-            then $tab-id
-            else
-                switch ($type-request) 
-                    case "article-in-periodical" return "compact-b-article"
-                    case "newspaper-article" return "compact-b-newspaper-article"
-                    case "moving-images" return "compact-b-moving-images"
-                    case "contribution-to-edited-volume" return "compact-b-edited-volume"
-                    case "monograph" return "compact-b-monograph"
-                    case "edited-volume" return "compact-b-monograph"
-                    case "book-review" return "compact-b-review"
-                    case "suebs-tibetan" return "compact-b-suebs-tibetan"
-                    case "suebs-chinese" return "compact-b-suebs-chinese"
-                    case "mads" return "mads"
-                        default return "compact-b-xlink"
-                        (:compact-b-xlink is used for records related to other records through an xlink:href.:)
-                        (:NB: Should be split up in three: article, book review and contribution.:)
+    let $log := util:log("INFO", "$type-request = " || $type-request)
+    
+    return
+        if ($tab-id ne 'compact-b')
+        (:Only treat compact-b types.:)
+        then $tab-id
+        else
+            switch ($type-request) 
+                case "article-in-periodical" return "compact-b-article"
+                case "newspaper-article" return "compact-b-newspaper-article"
+                case "moving-images" return "compact-b-moving-images"
+                case "contribution-to-edited-volume" return "compact-b-edited-volume"
+                case "monograph" return "compact-b-monograph"
+                case "edited-volume" return "compact-b-monograph"
+                case "book-review" return "compact-b-review"
+                case "suebs-tibetan" return "compact-b-suebs-tibetan"
+                case "suebs-chinese" return "compact-b-suebs-chinese"
+                case "mads" return "mads"
+                    default return "compact-b-xlink"
+                    (:compact-b-xlink is used for records related to other records through an xlink:href.:)
+                    (:NB: Should be split up in three: article, book review and contribution.:)
 };
 
 (:Main:)
@@ -518,6 +522,7 @@ let $create-new-from-template :=
     let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode)
 
 (:For a compact-b form, determine which subform to serve, based on the template.:)
+let $log := util:log("INFO", "$tab-id = " || $tab-id)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $type-request)
@@ -538,7 +543,6 @@ return
             <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
             <script type="text/javascript" src="editor.js">/**/</script>
             {$model}
-            <xf:model id="m-ui"/>
         </head>
         <body>
     <div id="page-head">

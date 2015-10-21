@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--node insertions: insertion and deletion does not work, but this does not matter, since elements are inserted in edit.xq--><!--missing element insertion: does not work, but this does not matter, since elements are inserted in edit.xq--><!--hints moved to code-table: OK--><!--hints linked with id: OK--><!--hints checked: OK--><!--saving of all nodes: OK--><!--schema instantiated: n/a--><!--schema notations added: n/a-->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001f/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="extension block-form" tab-id="extension">
     <div style="display:none">
@@ -56,7 +57,7 @@
                                 <xf:hint ref="id('hint-code_template', instance('code-tables'))/*[local-name() = 'help']"/>
                             </xf:output>
                         </xf:label>
-                        <xf:itemset nodeset="id('document-type-code', instance('code-tables'))/*:items/*:item">
+                        <xf:itemset nodeset="id('document-type-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                             <xf:label ref="label"/>
                             <xf:value ref="value"/>
                         </xf:itemset>
@@ -67,7 +68,7 @@
                                 <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/*[local-name() = 'help']"/>
                             </xf:output>
                         </xf:label>
-                        <xf:itemset nodeset="id('transliteration-code', instance('code-tables'))/*:items/*:item">
+                        <xf:itemset nodeset="id('transliteration-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                             <xf:label ref="label"/>
                             <xf:value ref="value"/>
                         </xf:itemset>
@@ -78,7 +79,7 @@
                                 <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/*[local-name() = 'help']"/>
                             </xf:output>
                         </xf:label>
-                        <xf:itemset nodeset="id('cataloging-stage-code', instance('code-tables'))/*:items/*:item">
+                        <xf:itemset nodeset="id('cataloging-stage-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                             <xf:label ref="label"/>
                             <xf:value ref="value"/>
                         </xf:itemset>

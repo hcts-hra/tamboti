@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="abstract block-form" tab-id="abstract">
     <div style="display:none">
         <xf:model id="m-ui"/>
@@ -112,7 +113,7 @@
                                     <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('altRepGroup-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('altRepGroup-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
@@ -134,7 +135,7 @@
                                     <xf:hint ref="id('hint-code_shareable',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('no-empty-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('no-empty-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
@@ -165,7 +166,7 @@
                                     <xf:hint ref="id('hint-code_language',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('language-3-type-sorted-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('language-3-type-sorted-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
@@ -178,7 +179,7 @@
                                     <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('script-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('script-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
@@ -191,7 +192,7 @@
                                     <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('transliteration-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('transliteration-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
@@ -204,7 +205,7 @@
                                     <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
                                 </xf:output>
                             </xf:label>
-                            <xf:itemset nodeset="id('language-2-type-short-code', instance('code-tables'))/*:items/*:item">
+                            <xf:itemset nodeset="id('language-2-type-short-code', instance('code-tables'))/*:items/*:item" model="m-ui">
                                 <xf:label ref="label"/>
                                 <xf:value ref="value"/>
                             </xf:itemset>
