@@ -498,7 +498,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
         return
             mods-common:simple-row(
             (
-                let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $internetMediaType]/mods-editor:label
+                let $label := doc(concat($config:edit-app-root, '/code-tables/internet-media-type.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $internetMediaType]/mods-editor:label
                 return
                     if ($label) 
                     then $label
@@ -512,10 +512,10 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     return   
         mods-common:simple-row(
             if ($authority eq 'local')
-                then doc(concat($config:edit-app-root, '/code-tables/genre-local-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                then doc(concat($config:edit-app-root, '/code-tables/genre-local.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                 else
                     if ($authority eq 'marcgt')
-                    then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt-codes.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                    then doc(concat($config:edit-app-root, '/code-tables/genre-marcgt.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                     else string($genre)
                 , 
                 concat(
@@ -636,7 +636,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     let $identifiers := $entry/mods:identifier
     for $identifier in $identifiers
     let $type := $identifier/@type/string()
-    let $type := doc(concat($config:edit-app-root, "/code-tables/identifier-type-codes.xml"))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
+    let $type := doc(concat($config:edit-app-root, "/code-tables/identifier-type.xml"))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
     return 
         mods-common:simple-row
         (
