@@ -35,8 +35,8 @@ declare option exist:serialize "method=xml media-type=text/xml indent=yes";
 :)
 declare function local:get-last-modified($collection-path as xs:string, $resource-names as xs:string+) as xs:dateTime {
     fn:max(
-        for $resource-name in $resource-names return
-            xmldb:last-modified($collection-path, $resource-name)
+        for $resource-name in $resource-names
+        return xmldb:last-modified($collection-path, $resource-name)
     )
 };
 
@@ -51,10 +51,10 @@ let $code-tables :=
 (: generate etag :)
 let $last-modified := local:get-last-modified($code-table-collection,
     for $code-table-id in $code-table-ids
-    return concat($code-table-id, '-codes.xml')
+    return concat($code-table-id, '.xml')
 )
 
-(:NB: hint-codes.xml is not covered by etag.:)
+(:NB: hint.xml is not covered by etag.:)
 let $etag := $last-modified
 
 return
