@@ -1005,10 +1005,10 @@ declare function biblio:resource-types($node as node(), $params as element(param
     let $classifier := $classifier[2]
     let $code-table-path := concat($config:edit-app-root, '/code-tables')
     
-    let $document-type-codes-path := concat($code-table-path, '/document-type-codes.xml')
+    let $document-type-codes-path := concat($code-table-path, '/document-type.xml')
     let $document-type-code-table := doc($document-type-codes-path)/mods-editor:code-table
     
-    let $language-type-codes-path := concat($code-table-path, '/language-3-type-codes.xml')
+    let $language-type-codes-path := concat($code-table-path, '/language-3-type.xml')
     let $language-type-code-table := doc($language-type-codes-path)/mods-editor:code-table
     let $language-options :=
                     for $item in $language-type-code-table//item[(frequencyClassifier)]
@@ -1037,7 +1037,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
                         return
                             <option value="{$labelValue}">{$item/label/text()}</option>:)
                             
-    let $script-codes-path := concat($code-table-path, '/script-short-codes.xml')
+    let $script-codes-path := concat($code-table-path, '/script-short.xml')
     let $script-code-table := doc($script-codes-path)/mods-editor:code-table
     let $script-options :=
                     for $item in $script-code-table//mods-editor:item
@@ -1054,7 +1054,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
                         return
                             <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
     
-    let $transliteration-codes-path := concat($code-table-path, '/transliteration-short-codes.xml')
+    let $transliteration-codes-path := concat($code-table-path, '/transliteration-short.xml')
     let $transliteration-code-table := doc($transliteration-codes-path)/mods-editor:code-table
     let $transliteration-options :=
                     for $item in $transliteration-code-table//mods-editor:item
