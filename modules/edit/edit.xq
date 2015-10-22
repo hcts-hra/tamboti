@@ -69,8 +69,6 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:Get the remaining parameters that are to be stored, in addition to transliterationOfResource (which was fetched above).:)
     let $scriptOfResource := request:get-parameter("scriptOfResource", '')
     let $languageOfResource := request:get-parameter("languageOfResource", '')
-    let $log := util:log("INFO", "$languageOfResource = " || $languageOfResource)
-    let $log := util:log("INFO", "$scriptOfResource = " || $scriptOfResource)
     let $languageOfCataloging := request:get-parameter("languageOfCataloging", '')
     let $scriptOfCataloging := request:get-parameter("scriptOfCataloging", '')           
     (:Parameter 'host' is used when related records with type "host" are created.:)
@@ -162,8 +160,9 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin') 
 
-    let $instance-src := concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection, '&amp;data-template-name=', $data-template-name)
+    let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
+    let $log := util:log("INFO", "$instance-id = " || $instance-id)
     
     return
         <xf:model id="m-main">
@@ -177,7 +176,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
             </xf:instance>   
             
            <xf:instance src="{$instance-src}" id="save-data">
-                <mods xmlns="http://www.loc.gov/mods/v3" />
+                <mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" />
            </xf:instance>
 
          
@@ -203,10 +202,8 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
            
-           <!--Only load the code-tables that are used by the active tab.-->
-           <!--Every code table must have a tab-id to ensure that it is collected into the model.-->
-           <xf:instance id="code-tables" src="codes-for-tab.xq?tab-id={$instance-id}">
-                <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
+           <xf:instance id="i-hint-codes" src="code-tables/hint-codes.xml">
+                <code-table xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
             </xf:instance>
            
            <!--Having binds would prevent a tab from being saved when clicking on another tab, 
@@ -316,7 +313,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
     display the title of this record. 
     Only the xlink on the first relatedItem with type host is processed.:)
     let $host := request:get-parameter('host', '')
-    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type eq 'host']/@xlink:href
+    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type = 'host']/@xlink:href
     let $related-publication-id := 
         if ($related-item-xlink) 
         then replace($related-item-xlink[1]/string(), '^#?(.*)$', '$1') 
@@ -435,26 +432,29 @@ The compact-c temples (in 00-compact-contents) is the same for all resource type
 the only filtering that is performed is for transliteration.:)
 declare function local:get-tab-id($tab-id as xs:string, $type-request as xs:string) {
     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
+    let $log := util:log("INFO", "$type-request = " || $type-request)
     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-        return
-            if ($tab-id ne 'compact-b')
-            (:Only treat compact-b types.:)
-            then $tab-id
-            else
-                switch ($type-request) 
-                    case "article-in-periodical" return "compact-b-article"
-                    case "newspaper-article" return "compact-b-newspaper-article"
-                    case "moving-images" return "compact-b-moving-images"
-                    case "contribution-to-edited-volume" return "compact-b-edited-volume"
-                    case "monograph" return "compact-b-monograph"
-                    case "edited-volume" return "compact-b-monograph"
-                    case "book-review" return "compact-b-review"
-                    case "suebs-tibetan" return "compact-b-suebs-tibetan"
-                    case "suebs-chinese" return "compact-b-suebs-chinese"
-                    case "mads" return "mads"
-                        default return "compact-b-xlink"
-                        (:compact-b-xlink is used for records related to other records through an xlink:href.:)
-                        (:NB: Should be split up in three: article, book review and contribution.:)
+    let $log := util:log("INFO", "$type-request = " || $type-request)
+    
+    return
+        if ($tab-id ne 'compact-b')
+        (:Only treat compact-b types.:)
+        then $tab-id
+        else
+            switch ($type-request) 
+                case "article-in-periodical" return "compact-b-article"
+                case "newspaper-article" return "compact-b-newspaper-article"
+                case "moving-images" return "compact-b-moving-images"
+                case "contribution-to-edited-volume" return "compact-b-edited-volume"
+                case "monograph" return "compact-b-monograph"
+                case "edited-volume" return "compact-b-monograph"
+                case "book-review" return "compact-b-review"
+                case "suebs-tibetan" return "compact-b-suebs-tibetan"
+                case "suebs-chinese" return "compact-b-suebs-chinese"
+                case "mads" return "mads"
+                    default return "compact-b-xlink"
+                    (:compact-b-xlink is used for records related to other records through an xlink:href.:)
+                    (:NB: Should be split up in three: article, book review and contribution.:)
 };
 
 (:Main:)
@@ -520,6 +520,7 @@ let $create-new-from-template :=
     let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode)
 
 (:For a compact-b form, determine which subform to serve, based on the template.:)
+let $log := util:log("INFO", "$tab-id = " || $tab-id)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
 let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $type-request)
