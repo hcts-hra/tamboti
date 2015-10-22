@@ -2,7 +2,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="type block-form" tab-id="type">
     <div style="display:none">
         <xf:model id="m-ui">
-            <xf:instance id="code-tables" src="get-code-tables.xq?code-table-ids=altRepGroup%2cyes-empty%2cusage-type%2ctype-of-resource">
+            <xf:instance id="i-code-tables" src="get-code-tables.xq?code-table-ids=altRepGroup%2cyes-empty%2cusage-type%2ctype-of-resource">
                 <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/"/>
             </xf:instance>
         </xf:model>
@@ -11,7 +11,7 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Resource Types'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_typeOfResource', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_typeOfResource', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
                 <xf:trigger ref=".[mods:typeOfResource]">
                     <xf:label>+</xf:label>
@@ -78,7 +78,7 @@
                         <xf:select1 ref="./@altRepGroup">
                             <xf:label>
                                 <xf:output value="'Alt. Representation Group'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_altRepGroup', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_altRepGroup', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('altRepGroup', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -91,7 +91,7 @@
                         <xf:select1 ref="./@collection">
                             <xf:label>
                                 <xf:output value="'Collection'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_typeOfResource-collection', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_typeOfResource-collection', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('yes-empty', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -104,7 +104,7 @@
                         <xf:select1 ref="./@manuscript">
                             <xf:label>
                                 <xf:output value="'Manuscript'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_typeOfResource-manuscript', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_typeOfResource-manuscript', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('yes-empty', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -117,7 +117,7 @@
                         <xf:input ref="./@displayLabel" class="text_50">
                             <xf:label>
                                 <xf:output value="'Display Label'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_displayLabel', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_displayLabel', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                         </xf:input>
@@ -126,7 +126,7 @@
                         <xf:select1 ref="./@usage">
                             <xf:label>
                                 <xf:output value="'Usage'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_usage', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_usage', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('usage-type', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -138,7 +138,7 @@
                     <xf:select1 ref=".">
                         <xf:label>
                             <xf:output value="'Resource Type'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_typeOfResource', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_typeOfResource', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="id('type-of-resource', instance('code-tables'))/*:items/*:item" model="m-ui">

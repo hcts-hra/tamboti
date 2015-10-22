@@ -2,7 +2,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="compact block-form" tab-id="compact-b-monograph">
     <div style="display:none">
         <xf:model id="m-ui">
-            <xf:instance id="code-tables" src="get-code-tables.xq?code-table-ids=transliteration-short%2clanguage-3-type-sorted-short%2cname-part-type-compact%2cidentifier-type">
+            <xf:instance id="i-code-tables" src="get-code-tables.xq?code-table-ids=transliteration-short%2clanguage-3-type-sorted-short%2cname-part-type-compact%2cidentifier-type">
                 <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/"/>
             </xf:instance>
         </xf:model>
@@ -11,15 +11,15 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Monograph Series'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_series-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_series-compact', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:relatedItem" id="relatedItem-series-repeat">
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
                         <xf:output value="'XLink of Book Series'" class="hint-icon">
-                            <xf:hint ref="id('XLink of Book Series', instance('code-tables'))/*[local-name() = 'help']"/>
-                            <xf:hint ref="id('hint-code_xlink_href-series', instance('code-tables'))/*[local-name() = 'help']"/>
+                            <xf:hint ref="id('XLink of Book Series', instance('i-hint-codes'))/*:help"/>
+                            <xf:hint ref="id('hint-code_xlink_href-series', instance('i-hint-codes'))/*:help"/>
                         </xf:output>
                     </xf:group>
                     <xf:group class="margin-plus" appearance="full">
@@ -31,7 +31,7 @@
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
                         <xf:output value="'Series Title'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_series-titleInfo-compact',instance('code-tables'))/*[local-name() = 'help']"/>
+                            <xf:hint ref="id('hint-code_series-titleInfo-compact',instance('i-hint-codes'))/*:help"/>
                         </xf:output>
                     </xf:group>
                     <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-periodical-repeat">
@@ -75,15 +75,15 @@
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
                         <xf:output value="'Editors of Monograph Series'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_series-name-compact',instance('code-tables'))/*[local-name() = 'help']"/>
+                            <xf:hint ref="id('hint-code_series-name-compact',instance('i-hint-codes'))/*:help"/>
                         </xf:output>
                     </xf:group>
                     <fieldset class="level-3">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Persons as Editors'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_namePart-compact',instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_namePart-compact',instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-name-information',instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-related-item',instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
                                 <xf:label>+</xf:label>
@@ -118,8 +118,8 @@
                     <fieldset class="level-3">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Institutions as Editors'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_namePart-institution-compact',instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-name-information',instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_namePart-institution-compact',instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-name-information',instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger ref=".[string-length(./../mods:extension/ext:transliterationOfResource) &gt; 0]">
                                 <xf:label>+</xf:label>
@@ -148,7 +148,7 @@
                 <fieldset class="level-2">
                     <xf:group appearance="minimal" class="label-box">
                         <xf:output value="'Location of Monograph in Series'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_series-part-compact',instance('code-tables'))/*[local-name() = 'help']"/>
+                            <xf:hint ref="id('hint-code_series-part-compact',instance('i-hint-codes'))/*:help"/>
                         </xf:output>
                     </xf:group>
                     <xf:repeat nodeset="./mods:part" id="related-item-part-series-repeat">
@@ -177,8 +177,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Identifiers of Monograph Series'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_identifier',instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-related-item',instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_identifier',instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-related-item',instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger ref=".[mods:identifier]">
                                 <xf:label>+</xf:label>
