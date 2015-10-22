@@ -201,8 +201,8 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
            <xf:instance src="data-templates/compact-template.xml" id="compact-template"> 
                 <mods xmlns="http://www.loc.gov/mods/v3" />
            </xf:instance>
-           
-           <xf:instance id="i-hint-codes" src="code-tables/hint-codes.xml">
+
+           <xf:instance id="i-hint-codes" src="code-tables/hint.xml">
                 <code-table xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
             </xf:instance>
            
@@ -299,7 +299,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
     let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
     (:Get the relevant information to display in the info-line, 
     the label for the template chosen (if any) and the hint belonging to it (if any). :)
-    let $hint-data := concat($config:edit-app-root, '/code-tables/hint-codes.xml')
+    let $hint-data := concat($config:edit-app-root, '/code-tables/hint.xml')
     (:Get the hint text about saving.:)
     let $save-hint := doc($hint-data)/id('hint-code_save')/mods-editor:help
     
@@ -469,7 +469,7 @@ If a new record is being created, the template name has to be retrieved from the
 let $type-request := request:get-parameter('type', ())
 
 (:Get the path to the document containing the document type information.:)
-let $type-data := concat($config:edit-app-root, '/code-tables/document-type-codes.xml')
+let $type-data := concat($config:edit-app-root, '/code-tables/document-type.xml')
 
 (:Sorting data is retrieved from the type-data.:)
 (:Sorting is done in session.xql in order to present the different template options in an intellegible way.:)
