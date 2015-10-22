@@ -2,7 +2,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="part block-form" tab-id="part">
     <div style="display:none">
         <xf:model id="m-ui">
-            <xf:instance id="code-tables" src="get-code-tables.xq?code-table-ids=altRepGroup%2clanguage-3-type-sorted%2clanguage-2-type-short%2ctransliteration%2cscript%2cpart-extent-unit%2cdate-encoding%2cstart-end%2cdate-qualifier">
+            <xf:instance id="i-code-tables" src="get-code-tables.xq?code-table-ids=altRepGroup%2clanguage-3-type-sorted%2clanguage-2-type-short%2ctransliteration%2cscript%2cpart-extent-unit%2cdate-encoding%2cstart-end%2cdate-qualifier">
                 <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/"/>
             </xf:instance>
         </xf:model>
@@ -11,7 +11,7 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Parts'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_part',instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_part',instance('i-hint-codes'))/*:help"/>
                 </xf:output>
                 <xf:trigger ref=".[mods:part]">
                     <xf:label>+</xf:label>
@@ -144,7 +144,7 @@
                         <xf:select1 ref="./@altRepGroup">
                             <xf:label>
                                 <xf:output value="'Alt. Representation Group'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_altRepGroup',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_altRepGroup',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('altRepGroup', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -157,7 +157,7 @@
                         <xf:input ref="./@displayLabel" class="text_50">
                             <xf:label>
                                 <xf:output value="'Display Label'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_displayLabel',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                         </xf:input>
@@ -166,7 +166,7 @@
                         <xf:input ref="./@ID" class="text_50">
                             <xf:label>
                                 <xf:output value="'ID'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_ID',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_ID',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                         </xf:input>
@@ -175,7 +175,7 @@
                         <xf:input ref="./@order" class="text_50">
                             <xf:label>
                                 <xf:output value="'Order'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_part-order',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_part-order',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                         </xf:input>
@@ -184,7 +184,7 @@
                         <xf:input ref="./@type" class="text_50">
                             <xf:label>
                                 <xf:output value="'Type'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_part-type',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_part-type',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                         </xf:input>
@@ -201,7 +201,7 @@
                         <xf:select1 ref="./@lang">
                             <xf:label>
                                 <xf:output value="'Language'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -214,7 +214,7 @@
                         <xf:select1 ref="./@xml:lang">
                             <xf:label>
                                 <xf:output value="'xml:lang'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -227,7 +227,7 @@
                         <xf:select1 ref="./@transliteration" selection="open">
                             <xf:label>
                                 <xf:output value="'Transliteration'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -240,7 +240,7 @@
                         <xf:select1 ref="./@script">
                             <xf:label>
                                 <xf:output value="'Script'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -254,7 +254,7 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Detail'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_part-detail',instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_part-detail',instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger ref=".[mods:detail]">
                                 <xf:label>+</xf:label>
@@ -359,7 +359,7 @@
                                     <xf:input ref="./@level" class="text_50">
                                         <xf:label>
                                             <xf:output value="'Level'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_part-detail-level',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_part-detail-level',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -368,7 +368,7 @@
                                     <xf:input ref="./@order" class="text_50">
                                         <xf:label>
                                             <xf:output value="'Order'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_part-order',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_part-order',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -377,7 +377,7 @@
                                     <xf:input ref="./@type" class="text_50">
                                         <xf:label>
                                             <xf:output value="'Type'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_part-detail-type',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_part-detail-type',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -386,7 +386,7 @@
                                     <xf:select1 ref="./@lang">
                                         <xf:label>
                                             <xf:output value="'Language'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -399,7 +399,7 @@
                                     <xf:select1 ref="./@xml:lang">
                                         <xf:label>
                                             <xf:output value="'xml:lang'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -412,7 +412,7 @@
                                     <xf:select1 ref="./@transliteration" selection="open">
                                         <xf:label>
                                             <xf:output value="'Transliteration'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -425,7 +425,7 @@
                                     <xf:select1 ref="./@script">
                                         <xf:label>
                                             <xf:output value="'Script'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -439,7 +439,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Number'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-detail-number',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:number]">
 	                                    <xf:label>+</xf:label>
@@ -511,7 +511,7 @@
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
                                                         <xf:output value="'Language'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -524,7 +524,7 @@
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
                                                         <xf:output value="'Transliteration'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -537,7 +537,7 @@
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
                                                         <xf:output value="'Script'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -550,7 +550,7 @@
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
                                                         <xf:output value="'xml:lang'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -562,7 +562,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'Number'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-detail-number',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-detail-number',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -574,7 +574,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Caption'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-detail-caption',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:caption]">
 	                                    <xf:label>+</xf:label>
@@ -646,7 +646,7 @@
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
                                                         <xf:output value="'Language'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -659,7 +659,7 @@
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
                                                         <xf:output value="'xml:lang'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -672,7 +672,7 @@
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
                                                         <xf:output value="'Transliteration'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -685,7 +685,7 @@
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
                                                         <xf:output value="'Script'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -697,7 +697,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'Caption'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-detail-caption',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-detail-caption',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -709,7 +709,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Title'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-detail-title',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-detail-title',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:title]">
 	                                    <xf:label>+</xf:label>
@@ -730,7 +730,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'Title'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-detail-title',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-detail-title',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -745,7 +745,7 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Extent'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_extent',instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_extent',instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger ref=".[mods:extent]">
                                 <xf:label>+</xf:label>
@@ -761,7 +761,7 @@
                                 <xf:select1 ref="./@unit" selection="open">
                                     <xf:label>
                                         <xf:output value="'Unit'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-extent-unit',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-extent-unit',instance('i-hint-codes'))/*:help"/>
                                         </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="id('part-extent-unit', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -774,7 +774,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Start'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-extent-start',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:start]">
 	                                    <xf:label>+</xf:label>
@@ -848,7 +848,7 @@
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
                                                         <xf:output value="'Language'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -861,7 +861,7 @@
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
                                                         <xf:output value="'xml:lang'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -874,7 +874,7 @@
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
                                                         <xf:output value="'Transliteration'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -887,7 +887,7 @@
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
                                                         <xf:output value="'Script'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -899,7 +899,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'Start'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-extent-start',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-extent-start',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -911,7 +911,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'End'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-extent-end',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:end]">
 	                                    <xf:label>+</xf:label>
@@ -983,7 +983,7 @@
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
                                                         <xf:output value="'Language'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -996,7 +996,7 @@
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
                                                         <xf:output value="'xml:lang'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1009,7 +1009,7 @@
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
                                                         <xf:output value="'Transliteration'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1022,7 +1022,7 @@
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
                                                         <xf:output value="'Script'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1034,7 +1034,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'End'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-extent-end',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-extent-end',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -1046,7 +1046,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'Total'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-extent-total',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-extent-total',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:total]">
 	                                    <xf:label>+</xf:label>
@@ -1067,7 +1067,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'Total'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-extent-total',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-extent-total',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -1079,7 +1079,7 @@
                                 <fieldset class="level-3">
                                     <xf:group appearance="minimal" class="label-box">
                                         <xf:output value="'List'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-extent-list',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-extent-list',instance('i-hint-codes'))/*:help"/>
                                         </xf:output><!--
 	                                <xf:trigger ref=".[mods:list]">
 	                                    <xf:label>+</xf:label>
@@ -1151,7 +1151,7 @@
                                                 <xf:select1 ref="./@lang">
                                                     <xf:label>
                                                         <xf:output value="'Language'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1164,7 +1164,7 @@
                                                 <xf:select1 ref="./@xml:lang">
                                                     <xf:label>
                                                         <xf:output value="'xml:lang'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1177,7 +1177,7 @@
                                                 <xf:select1 ref="./@transliteration" selection="open">
                                                     <xf:label>
                                                         <xf:output value="'Transliteration'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1190,7 +1190,7 @@
                                                 <xf:select1 ref="./@script">
                                                     <xf:label>
                                                         <xf:output value="'Script'" class="hint-icon">
-                                                            <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                            <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                                         </xf:output>
                                                     </xf:label>
                                                     <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1202,7 +1202,7 @@
                                             <xf:input ref="." class="text_50">
                                                 <xf:label>
                                                     <xf:output value="'List'" class="hint-icon">
-                                                        <xf:hint ref="id('hint-code_part-extent-list',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                        <xf:hint ref="id('hint-code_part-extent-list',instance('i-hint-codes'))/*:help"/>
                                                     </xf:output>
                                                 </xf:label>
                                             </xf:input>
@@ -1295,7 +1295,7 @@
                                     <xf:select1 ref="./@encoding">
                                         <xf:label>
                                             <xf:output value="'Encoding'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_date-encoding',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_date-encoding',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('date-encoding', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1308,7 +1308,7 @@
                                     <xf:select1 ref="./@point">
                                         <xf:label>
                                             <xf:output value="'Point'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_point',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_point',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('start-end', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1321,7 +1321,7 @@
                                     <xf:select1 ref="./@qualifier">
                                         <xf:label>
                                             <xf:output value="'Qualifier'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_qualifier',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_qualifier',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('date-qualifier', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1334,7 +1334,7 @@
                                     <xf:select1 ref="./@lang">
                                         <xf:label>
                                             <xf:output value="'Language'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1347,7 +1347,7 @@
                                     <xf:select1 ref="./@xml:lang">
                                         <xf:label>
                                             <xf:output value="'xml:lang'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1360,7 +1360,7 @@
                                     <xf:select1 ref="./@transliteration" selection="open">
                                         <xf:label>
                                             <xf:output value="'Transliteration'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1373,7 +1373,7 @@
                                     <xf:select1 ref="./@script">
                                         <xf:label>
                                             <xf:output value="'Script'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1385,7 +1385,7 @@
                                 <xf:input ref="." class="text_50">
                                     <xf:label>
                                         <xf:output value="'Date'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-date',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-date',instance('i-hint-codes'))/*:help"/>
                                         </xf:output>
                                     </xf:label>
                                 </xf:input>
@@ -1475,7 +1475,7 @@
                                     <xf:input ref="./@displayLabel" class="text_50">
                                         <xf:label>
                                             <xf:output value="'Display Label'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_displayLabel',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_displayLabel',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -1484,7 +1484,7 @@
                                     <xf:input ref="./@type" class="text_50">
                                         <xf:label>
                                             <xf:output value="'Type'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_part-text-type',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_part-text-type',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -1493,7 +1493,7 @@
                                     <xf:input ref="./@xlink:href" class="text_50">
                                         <xf:label>
                                             <xf:output value="'XLink'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_xlink_href',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_xlink_href',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                     </xf:input>
@@ -1502,7 +1502,7 @@
                                     <xf:select1 ref="./@lang">
                                         <xf:label>
                                             <xf:output value="'Language'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-3-type-sorted', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1515,7 +1515,7 @@
                                     <xf:select1 ref="./@xml:lang">
                                         <xf:label>
                                             <xf:output value="'xml:lang'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_xml_lang',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_xml_lang',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('language-2-type-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1528,7 +1528,7 @@
                                     <xf:select1 ref="./@transliteration" selection="open">
                                         <xf:label>
                                             <xf:output value="'Transliteration'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_transliteration',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_transliteration',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1541,7 +1541,7 @@
                                     <xf:select1 ref="./@script">
                                         <xf:label>
                                             <xf:output value="'Script'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_script',instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_script',instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('script', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -1553,7 +1553,7 @@
                                 <xf:input ref="." class="text_50">
                                     <xf:label>
                                         <xf:output value="'Text'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_part-text',instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_part-text',instance('i-hint-codes'))/*:help"/>
                                         </xf:output>
                                     </xf:label>
                                 </xf:input>

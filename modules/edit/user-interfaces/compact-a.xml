@@ -2,7 +2,7 @@
 <div xmlns:ext="http://exist-db.org/mods/extension" xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="compact block-form" tab-id="compact-a">
     <div style="display:none">
         <xf:model id="m-ui">
-            <xf:instance id="code-tables" src="get-code-tables.xq?code-table-ids=language-3-type-sorted-short%2ctransliteration-short%2cscript-short%2cname-type%2cname-part-type-compact%2crole-short%2cdate-point%2cinternet-media-type%2cpart-extent-unit%2cidentifier-type">
+            <xf:instance id="i-code-tables" src="get-code-tables.xq?code-table-ids=language-3-type-sorted-short%2ctransliteration-short%2cscript-short%2cname-type%2cname-part-type-compact%2crole-short%2cdate-point%2cinternet-media-type%2cpart-extent-unit%2cidentifier-type">
                 <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/"/>
             </xf:instance>
         </xf:model>
@@ -11,8 +11,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Title Information'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_titleInfo-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-title-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_titleInfo-compact', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-title-information', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="./mods:titleInfo" id="titleInfo-repeat">
@@ -21,7 +21,7 @@
                         <xf:select1 ref="./@lang" class="text_10">
                             <xf:label>
                                 <xf:output value="'Language'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_lang', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_lang', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('language-3-type-sorted-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -34,7 +34,7 @@
                         <xf:select1 ref="instance('save-data')/mods:extension/ext:transliterationOfResource">
                             <xf:label>
                                 <xf:output value="'Global Transliteration'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_transliteration-global-compact', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('transliteration-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -47,7 +47,7 @@
                         <xf:select1 ref="/mods:mods/mods:language/mods:scriptTerm">
                             <xf:label>
                                 <xf:output value="'Script'" class="hint-icon">
-                                    <xf:hint ref="id('hint-code_script-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                    <xf:hint ref="id('hint-code_script-compact', instance('i-hint-codes'))/*:help"/>
                                 </xf:output>
                             </xf:label>
                             <xf:itemset nodeset="id('script-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -59,21 +59,21 @@
                     <xf:input ref="./mods:nonSort" class="text_10">
                         <xf:label>
                             <xf:output value="if (.[string-length(../@type) = 0]) then 'Non Sort' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Non Sort' else if (.[../@type='translated' and (../@lang)]) then 'Translated Non Sort' else ''" class="hint-icon">
-                                <xf:hint ref="id('hint-code_nonSort', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_nonSort', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                     </xf:input>
                     <xf:input ref="./mods:title" class="text_150">
                         <xf:label>
                             <xf:output value="if (.[string-length(../@type) = 0]) then 'Title' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Title' else if (.[../@type='translated' and (../@lang)]) then 'Translated Title' else ''" class="hint-icon">
-                                <xf:hint ref="id('hint-code_title-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_title-compact', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                     </xf:input>
                     <xf:input ref="./mods:subTitle" class="text_150">
                         <xf:label>
                             <xf:output value="if (.[string-length(../@type) = 0]) then 'Subtitle' else if (.[../@type='translated' and not(../@lang)]) then 'Transliterated Subtitle' else if (.[../@type='translated' and (../@lang)]) then 'Translated Subtitle' else ''" class="hint-icon">
-                                <xf:hint ref="id('hint-code_subTitle-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_subTitle-compact', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                     </xf:input>
@@ -85,8 +85,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Names and Roles'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_name-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-name-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_name-compact', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-name-information', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
                 <xf:trigger ref=".[string-length(mods:extension/ext:transliterationOfResource) = 0]">
                     <xf:label>+</xf:label>
@@ -118,8 +118,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Name'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_namePart-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-title-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_namePart-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-title-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:group>
                         <xf:group appearance="full" class="margin-plus">
@@ -134,7 +134,7 @@
                                 <xf:select1 ref="/mods:mods/mods:extension/ext:transliterationOfResource">
                                     <xf:label>
                                         <xf:output value="'Global Transliteration'" class="hint-icon">
-                                            <xf:hint ref="id('hint-code_transliteration-global-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                            <xf:hint ref="id('hint-code_transliteration-global-compact', instance('i-hint-codes'))/*:help"/>
                                         </xf:output>
                                     </xf:label>
                                     <xf:itemset nodeset="id('transliteration-short', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -164,8 +164,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Role'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_role-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-name-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_role-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-name-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
@@ -194,8 +194,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Origin Information'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_originInfo-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_originInfo-compact', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-origin-information', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="./mods:originInfo" id="origininfo-repeat">
@@ -203,8 +203,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'City'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_place-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_place-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-origin-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
@@ -237,8 +237,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Publisher'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_publisher-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_publisher-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-origin-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:publisher" id="publisher-repeat">
@@ -261,8 +261,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Date of Issue'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_dateIssued-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_dateIssued-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-origin-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
@@ -291,8 +291,8 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Copyright Date'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_copyrightDate-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                                <xf:hint ref="id('hint-code_more-origin-information', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_copyrightDate-compact', instance('i-hint-codes'))/*:help"/>
+                                <xf:hint ref="id('hint-code_more-origin-information', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                             <xf:trigger>
                                 <xf:label>+</xf:label>
@@ -324,8 +324,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Physical Description'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_physicalDescription-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-physical-description', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_physicalDescription-compact', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-physical-description', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="./mods:physicalDescription" id="physicalDescription-repeat">
@@ -333,7 +333,7 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Internet Media Type'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_internetMediaType-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_internetMediaType-compact', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:internetMediaType" id="internetMediaType-repeat">
@@ -353,7 +353,7 @@
                     <fieldset class="level-2">
                         <xf:group appearance="minimal" class="label-box">
                             <xf:output value="'Extent'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_extent-compact', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_extent-compact', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:group>
                         <xf:repeat nodeset="./mods:extent" id="extent-repeat">
@@ -362,7 +362,7 @@
                                     <xf:select1 ref="./@unit" selection="open">
                                         <xf:label>
                                             <xf:output value="'Unit'" class="hint-icon">
-                                                <xf:hint ref="id('hint-code_part-extent-unit', instance('code-tables'))/*[local-name() = 'help']"/>
+                                                <xf:hint ref="id('hint-code_part-extent-unit', instance('i-hint-codes'))/*:help"/>
                                             </xf:output>
                                         </xf:label>
                                         <xf:itemset nodeset="id('part-extent-unit', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -387,8 +387,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'URL'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_url-compact', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-location', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_url-compact', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-location', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
                 <xf:trigger>
                     <xf:label>+</xf:label>
@@ -413,8 +413,8 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Identifiers'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_identifier', instance('code-tables'))/*[local-name() = 'help']"/>
-                    <xf:hint ref="id('hint-code_more-identifier', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_identifier', instance('i-hint-codes'))/*:help"/>
+                    <xf:hint ref="id('hint-code_more-identifier', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
                 <xf:trigger ref=".[mods:identifier]">
                     <xf:label>+</xf:label>
