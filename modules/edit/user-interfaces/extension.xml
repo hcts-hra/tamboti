@@ -3,7 +3,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:ext="http://exist-db.org/mods/extension" xmlns:ev="http://www.w3.org/2001f/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:xlink="http://www.w3.org/1999/xlink" id="user-interface-container" class="extension block-form" tab-id="extension">
     <div style="display:none">
         <xf:model id="m-ui">
-            <xf:instance id="code-tables" src="get-code-tables.xq?code-table-ids=document-type%2ctransliteration%2ccataloging-stage">
+            <xf:instance id="i-code-tables" src="get-code-tables.xq?code-table-ids=document-type%2ctransliteration%2ccataloging-stage">
                 <code-tables xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/"/>
             </xf:instance>
         </xf:model>
@@ -12,7 +12,7 @@
         <fieldset class="level-1">
             <xf:group appearance="minimal" class="label-box">
                 <xf:output value="'Extension'" class="hint-icon">
-                    <xf:hint ref="id('hint-code_extension', instance('code-tables'))/*[local-name() = 'help']"/>
+                    <xf:hint ref="id('hint-code_extension', instance('i-hint-codes'))/*:help"/>
                 </xf:output>
             </xf:group>
             <xf:repeat nodeset="instance('save-data')/mods:extension" id="extension-repeat">
@@ -58,7 +58,7 @@
                     <xf:select1 ref="ext:template">
                         <xf:label>
                             <xf:output value="'Tamboti Template'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_template', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_template', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="id('document-type', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -69,7 +69,7 @@
                     <xf:select1 ref="ext:transliterationOfResource">
                         <xf:label>
                             <xf:output value="'Transliteration Of Resource'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_transliterationOfResource', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_transliterationOfResource', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="id('transliteration', instance('code-tables'))/*:items/*:item" model="m-ui">
@@ -80,7 +80,7 @@
                     <xf:select1 ref="ext:catalogingStage">
                         <xf:label>
                             <xf:output value="'Cataloging Stage'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_cataloging-stage', instance('code-tables'))/*[local-name() = 'help']"/>
+                                <xf:hint ref="id('hint-code_cataloging-stage', instance('i-hint-codes'))/*:help"/>
                             </xf:output>
                         </xf:label>
                         <xf:itemset nodeset="id('cataloging-stage', instance('code-tables'))/*:items/*:item" model="m-ui">
