@@ -297,12 +297,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
     (:Get the part of the form that belongs to the active tab.:)
     let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
-    (:Get the relevant information to display in the info-line, 
-    the label for the template chosen (if any) and the hint belonging to it (if any). :)
-    let $hint-data := concat($config:edit-app-root, '/code-tables/hint.xml')
-    (:Get the hint text about saving.:)
-    let $save-hint := doc($hint-data)/id('hint-code_save')/mods-editor:help
-    
+
     (:Get the time of the last save to the temp collection and parse it.:)
     let $last-modified := xmldb:last-modified($config:mods-temp-collection, concat($id,'.xml'))
     let $last-modified-hour := hours-from-dateTime($last-modified)
@@ -386,8 +381,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 </xf:trigger>                
                  <xf:trigger>
                     <xf:label>
-                        <xf:output value="'Finish Editing'">
-                            <xf:hint>{$save-hint}</xf:hint>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
                         </xf:output>
                     </xf:label>
                     <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
@@ -414,8 +409,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                  </xf:trigger>
                  <xf:trigger>
                     <xf:label>
-                        <xf:output value="'Finish Editing'">
-                            <xf:hint>{$save-hint}</xf:hint>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
                         </xf:output>
                     </xf:label>
                     <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
