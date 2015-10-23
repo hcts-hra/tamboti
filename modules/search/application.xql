@@ -1011,7 +1011,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
     let $language-type-codes-path := concat($code-table-path, '/language-3-type.xml')
     let $language-type-code-table := doc($language-type-codes-path)/mods-editor:code-table
     let $language-options :=
-                    for $item in $language-type-code-table//item[(frequencyClassifier)]
+                    for $item in $language-type-code-table//mods-editor:item[(mods-editor:frequencyClassifier)]
                         let $label := $item/mods-editor:label/text()
                         let $labelValue := $item/mods-editor:value/text()
                         let $sortOrder :=                                  
