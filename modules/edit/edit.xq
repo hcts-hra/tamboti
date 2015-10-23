@@ -369,50 +369,49 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
             </span>
             <!--Here values are passed to the URL.-->
             {mods:tabs($tab-id, $id, $target-collection)}
-        
-            <div class="save-buttons-top">    
-                <!--No save button is displayed, since saves are made every time a tab is clicked,
-                but sometimes users require a save button.-->
-                 <xf:trigger>
-                    <xf:label>Save</xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
-                </xf:trigger>                
-                 <xf:trigger>
-                    <xf:label>
-                        <xf:output value="'Finish Editing'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                        </xf:output>
-                    </xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                </xf:trigger>
-                <span class="related-title">
-                        {$related-publication-title}
-                </span>
-            </div>
-            
-            <!-- Import the correct form body for the tab called. -->
-             <!--{$user-interface}-->
-            <div id="user-interface-container" />
-            
-            <!--Displays buttons below as well.-->
-            <div class="save-buttons-bottom">    
-                <!--<xf:submit submission="save-submission">
-                    <xf:label>Save</xf:label>
-                </xf:submit>-->
-                <xf:trigger>
-                    <xf:label>Cancel Editing</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <xf:send submission="cancel-submission" />
-                    </xf:action>
-                 </xf:trigger>
-                 <xf:trigger>
-                    <xf:label>
-                        <xf:output value="'Finish Editing'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                        </xf:output>
-                    </xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                </xf:trigger>
+            <div id="tabs">
+                <div class="save-buttons-top">    
+                    <!--No save button is displayed, since saves are made every time a tab is clicked,
+                    but sometimes users require a save button.-->
+                     <xf:trigger>
+                        <xf:label>Save</xf:label>
+                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
+                    </xf:trigger>                
+                     <xf:trigger>
+                        <xf:label>
+                            <xf:output value="'Finish Editing'" class="hint-icon">
+                                <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
+                            </xf:output>
+                        </xf:label>
+                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+                    </xf:trigger>
+                    <span class="related-title">
+                            {$related-publication-title}
+                    </span>
+                </div>             
+                {
+                    doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")/*/*
+                
+                }
+                <div class="save-buttons-bottom">    
+                    <!--<xf:submit submission="save-submission">
+                        <xf:label>Save</xf:label>
+                    </xf:submit>-->
+                    <xf:trigger>
+                        <xf:label>Cancel Editing</xf:label>
+                        <xf:action ev:event="DOMActivate">
+                            <xf:send submission="cancel-submission" />
+                        </xf:action>
+                     </xf:trigger>
+                     <xf:trigger>
+                        <xf:label>
+                            <xf:output value="'Finish Editing'" class="hint-icon">
+                                <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
+                            </xf:output>
+                        </xf:label>
+                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+                    </xf:trigger>
+                </div>                
             </div>
         </div>
 };
@@ -529,10 +528,12 @@ return
             <title>
                 {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
             </title>
-            <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>  
             <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
+            <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
             <script type="text/javascript" src="editor.js">/**/</script>
+            <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css" />
+            <link rel="stylesheet" type="text/css" href="edit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>              
             {$model}
         </head>
         <body>
