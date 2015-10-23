@@ -259,11 +259,9 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
            
-           <xf:submission id="s-load-first-ui" replace="embedHTML" targetid="user-interface-container" resource="{$ui-file-path}" method="get"/>
             <xf:action ev:event="xforms-ready">
-                <!--<xf:send submission="s-load-first-ui" />-->
                <xf:load show="embed" targetid="user-interface-container">
-                    <xf:resource value="'user-interfaces/compact-a.xml'"/>
+                    <xf:resource value="'{$ui-file-path}'"/>
                 </xf:load>
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
