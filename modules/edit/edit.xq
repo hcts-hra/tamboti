@@ -174,6 +174,12 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <template>{$data-template-name}</template>
                 </configuration>
             </xf:instance>   
+
+            <xf:instance id="i-variables">
+                <variables xmlns="">
+                    <subform-relative-path />
+                </variables>
+            </xf:instance>            
             
            <xf:instance src="{$instance-src}" id="save-data">
                 <mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" />
@@ -259,11 +265,9 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
            </xf:submission>
            
-           <xf:submission id="s-load-first-ui" replace="embedHTML" targetid="user-interface-container" resource="{$ui-file-path}" method="get"/>
             <xf:action ev:event="xforms-ready">
-                <!--<xf:send submission="s-load-first-ui" />-->
                <xf:load show="embed" targetid="user-interface-container">
-                    <xf:resource value="'user-interfaces/compact-a.xml'"/>
+                    <xf:resource value="'{$ui-file-path}#user-interface-container'"/>
                 </xf:load>
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
@@ -272,6 +276,14 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:extension/ext:template" value="instance('i-configuration')/template" />
             </xf:action>
+            <xf:action ev:event="load-subform" ev:observer="main-content">
+                <xf:setvalue ref="instance('i-variables')/subform-relative-path" value="concat('user-interfaces/', event('subform-id'), '.xml')" />
+                <xf:load show="embed" targetid="user-interface-container">
+                    <xf:resource value="instance('i-variables')/subform-relative-path" />
+                    <xf:extension includeCSS="false" includeScript="false" />
+                </xf:load>
+                <xf:refresh model="m-main"/>                
+            </xf:action>            
             
             
             
@@ -297,12 +309,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
     (:Get the part of the form that belongs to the active tab.:)
     let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
-    (:Get the relevant information to display in the info-line, 
-    the label for the template chosen (if any) and the hint belonging to it (if any). :)
-    let $hint-data := concat($config:edit-app-root, '/code-tables/hint.xml')
-    (:Get the hint text about saving.:)
-    let $save-hint := doc($hint-data)/id('hint-code_save')/mods-editor:help
-    
+
     (:Get the time of the last save to the temp collection and parse it.:)
     let $last-modified := xmldb:last-modified($config:mods-temp-collection, concat($id,'.xml'))
     let $last-modified-hour := hours-from-dateTime($last-modified)
@@ -374,9 +381,10 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
-            <!--Here values are passed to the URL.-->
-            {mods:tabs($tab-id, $id, $target-collection)}
-        
+            {
+                doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
+            
+            }
             <div class="save-buttons-top">    
                 <!--No save button is displayed, since saves are made every time a tab is clicked,
                 but sometimes users require a save button.-->
@@ -386,8 +394,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 </xf:trigger>                
                  <xf:trigger>
                     <xf:label>
-                        <xf:output value="'Finish Editing'">
-                            <xf:hint>{$save-hint}</xf:hint>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
                         </xf:output>
                     </xf:label>
                     <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
@@ -395,13 +403,8 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 <span class="related-title">
                         {$related-publication-title}
                 </span>
-            </div>
-            
-            <!-- Import the correct form body for the tab called. -->
-             <!--{$user-interface}-->
-            <div id="user-interface-container" />
-            
-            <!--Displays buttons below as well.-->
+            </div>            
+            <div id="user-interface-container"/>
             <div class="save-buttons-bottom">    
                 <!--<xf:submit submission="save-submission">
                     <xf:label>Save</xf:label>
@@ -414,13 +417,13 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                  </xf:trigger>
                  <xf:trigger>
                     <xf:label>
-                        <xf:output value="'Finish Editing'">
-                            <xf:hint>{$save-hint}</xf:hint>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
                         </xf:output>
                     </xf:label>
                     <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
                 </xf:trigger>
-            </div>
+            </div>              
         </div>
 };
 
@@ -534,12 +537,14 @@ return
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink">
         <head>
             <title>
-                {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
+                {$header-title}
             </title>
-            <link rel="stylesheet" type="text/css" href="edit.css"/>
-            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>  
             <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
+            <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
             <script type="text/javascript" src="editor.js">/**/</script>
+            <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css" />
+            <link rel="stylesheet" type="text/css" href="edit.css"/>
+            <link rel="stylesheet" type="text/css" href="{$tamboti-css}"/>              
             {$model}
         </head>
         <body>
