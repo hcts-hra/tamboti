@@ -1,12 +1,22 @@
-$(function() {
+modsEditor = {};
 
-	// this function has to be removed when the tabs will be completely refactored
-    window.activateBotttomTab = function(tabIndex) {
-		$("table.bottom-tabs tr:first-child td").each(function() {
-		    $(this).css("background", "#ededed").css("border-bottom-color", "#bebebe");
-		});
-		$("table.bottom-tabs tr:first-child td:eq(" + tabIndex + ")").css("background", "white").
-		css("border-bottom-color", "white").css("color", "#3681B3");
-    }
-   
+$(document).ready(function() {
+    $("#tabs").tabs({
+        activate: function(ev, ui) {
+            $("div.subtabs", ui.newPanel).tabs("option", "active", 0);
+            fluxProcessor.dispatchEventType("main-content", "load-subform", {
+                "subform-id": $("div.subtabs li:first-child", ui.newPanel).attr('aria-controls')
+            }); 
+        },
+        active: 0
+    });
+    $(".subtabs").tabs({
+        activate: function(event, ui){
+            fluxProcessor.dispatchEventType("main-content", "load-subform", {
+                "subform-id": ui.newTab.attr('aria-controls')
+            });             
+        }        
+    });
+  
+  
 });
