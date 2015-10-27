@@ -94,52 +94,6 @@ return
             }
             </tr>
             </table>
-            <table class="bottom-tabs">                    
-                <tr>
-                {
-                for $tab at $tab-index in $tabs-data[mods-editor:top-tab-number = $top-tab-number]
-                let $tab-for-type := $tab/*[local-name() = $type]/text()
-				let $tab-count := count($tabs-data[mods-editor:top-tab-label/text() = $tab/mods-editor:top-tab-label/text()])
-				let $ui-file-path := "'user-interfaces/" || local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', '')) || ".xml'"
-                (: There are no containers for periodicals. :)
-                where $tab-for-type != ('periodical-latin', 'periodical-transliterated', 'newspaper-latin', 'newspaper-transliterated') or $top-tab-number gt 1
-                return
-                <td style="{
-                    if ($tab-id eq $tab/mods-editor:tab-id) 
-                    then "background:white;border-bottom-color:white;color:#3681B3;" 
-                    else "background:#EDEDED"}
-                    ">
-                    {attribute{'width'}
-                    {100 div $tab-count}}
-                    <xf:trigger id="trigger-{local:get-tab-id($tab/mods-editor:tab-id/text(), replace(replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', ''), '-compact', ''))}" appearance="minimal">
-                        <xf:label>
-                            <div class="label" style="{
-                                if ($tab-id eq $tab/mods-editor:tab-id) 
-                                then "color:#3681B3;font-weight:bold;" 
-                                else "color:darkgray;font-weight:bold"
-                            }">{
-                        if ($tab-for-type) 
-                        then $tab-for-type 
-                        else $tab/mods-editor:label
-                        }</div>{$ui-file-path}
-                        </xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:load show="embed" targetid="user-interface-container">
-                                <xf:resource value="{$ui-file-path}" />
-                                <xf:extension includeCSS="false" includeScript="false" />
-                            </xf:load>
-                            <xf:refresh model="m-main"/>
-                			<xf:action ev:event="xforms-model-construct-done">
-                                <script type="text/javascript">
-                                    activateBotttomTab({$tab-index - 1});
-                                </script>
-                			</xf:action>                            
-                        </xf:action>
-                    </xf:trigger>
-                </td>
-                }
-                </tr>
-            </table>
 </div>
 };
 

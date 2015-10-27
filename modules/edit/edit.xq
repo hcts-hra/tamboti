@@ -174,6 +174,12 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <template>{$data-template-name}</template>
                 </configuration>
             </xf:instance>   
+
+            <xf:instance id="i-variables">
+                <variables xmlns="">
+                    <subform-relative-path />
+                </variables>
+            </xf:instance>            
             
            <xf:instance src="{$instance-src}" id="save-data">
                 <mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" />
@@ -261,7 +267,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
            
             <xf:action ev:event="xforms-ready">
                <xf:load show="embed" targetid="user-interface-container">
-                    <xf:resource value="'{$ui-file-path}'"/>
+                    <xf:resource value="'{$ui-file-path}#user-interface-container'"/>
                 </xf:load>
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
@@ -270,6 +276,14 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:extension/ext:template" value="instance('i-configuration')/template" />
             </xf:action>
+            <xf:action ev:event="load-subform" ev:observer="main-content">
+                <xf:setvalue ref="instance('i-variables')/subform-relative-path" value="concat('user-interfaces/', event('subform-id'), '.xml')" />
+                <xf:load show="embed" targetid="user-interface-container">
+                    <xf:resource value="instance('i-variables')/subform-relative-path" />
+                    <xf:extension includeCSS="false" includeScript="false" />
+                </xf:load>
+                <xf:refresh model="m-main"/>                
+            </xf:action>            
             
             
             
@@ -367,52 +381,49 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
-            <!--Here values are passed to the URL.-->
-            {mods:tabs($tab-id, $id, $target-collection)}
-            <div id="tabs">
-                <div class="save-buttons-top">    
-                    <!--No save button is displayed, since saves are made every time a tab is clicked,
-                    but sometimes users require a save button.-->
-                     <xf:trigger>
-                        <xf:label>Save</xf:label>
-                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
-                    </xf:trigger>                
-                     <xf:trigger>
-                        <xf:label>
-                            <xf:output value="'Finish Editing'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                            </xf:output>
-                        </xf:label>
-                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                    </xf:trigger>
-                    <span class="related-title">
-                            {$related-publication-title}
-                    </span>
-                </div>             
-                {
-                    doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")/*/*
-                
-                }
-                <div class="save-buttons-bottom">    
-                    <!--<xf:submit submission="save-submission">
-                        <xf:label>Save</xf:label>
-                    </xf:submit>-->
-                    <xf:trigger>
-                        <xf:label>Cancel Editing</xf:label>
-                        <xf:action ev:event="DOMActivate">
-                            <xf:send submission="cancel-submission" />
-                        </xf:action>
-                     </xf:trigger>
-                     <xf:trigger>
-                        <xf:label>
-                            <xf:output value="'Finish Editing'" class="hint-icon">
-                                <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                            </xf:output>
-                        </xf:label>
-                        <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                    </xf:trigger>
-                </div>                
-            </div>
+            {
+                doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
+            
+            }
+            <div class="save-buttons-top">    
+                <!--No save button is displayed, since saves are made every time a tab is clicked,
+                but sometimes users require a save button.-->
+                 <xf:trigger>
+                    <xf:label>Save</xf:label>
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
+                </xf:trigger>                
+                 <xf:trigger>
+                    <xf:label>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
+                        </xf:output>
+                    </xf:label>
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+                </xf:trigger>
+                <span class="related-title">
+                        {$related-publication-title}
+                </span>
+            </div>            
+            <div id="user-interface-container"/>
+            <div class="save-buttons-bottom">    
+                <!--<xf:submit submission="save-submission">
+                    <xf:label>Save</xf:label>
+                </xf:submit>-->
+                <xf:trigger>
+                    <xf:label>Cancel Editing</xf:label>
+                    <xf:action ev:event="DOMActivate">
+                        <xf:send submission="cancel-submission" />
+                    </xf:action>
+                 </xf:trigger>
+                 <xf:trigger>
+                    <xf:label>
+                        <xf:output value="'Finish Editing'" class="hint-icon">
+                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
+                        </xf:output>
+                    </xf:label>
+                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+                </xf:trigger>
+            </div>              
         </div>
 };
 
@@ -526,7 +537,7 @@ return
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink">
         <head>
             <title>
-                {$header-title} {concat('get-data-instance.xq?tab-id=', $tab-id, '&amp;id=', $id, '&amp;data=', $config:mods-temp-collection)}
+                {$header-title}
             </title>
             <script type="text/javascript" src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
             <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
