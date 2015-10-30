@@ -238,24 +238,6 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
            
-           
-           <xf:submission 
-                id="save-and-close-submission2" 
-                method="put"
-                ref="instance('save-data')"
-                resource="/exist/rest{$target-collection}/text.xml" replace="none">
-                    <xf:message ev:event="xforms-submit-done" level="ephemeral">Saved.</xf:message>
-                    <xf:message ev:event="xforms-submit-error" level="modal">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
-                    <xf:header>
-                        <xf:name>username</xf:name>
-                        <xf:value>editor</xf:value>
-                    </xf:header>
-                    <xf:header>
-                        <xf:name>password</xf:name>
-                        <xf:value></xf:value>
-                    </xf:header>
-                </xf:submission>           
-           
            <!--Delete from temp-->
            <xf:submission 
                 id="cancel-submission" 
@@ -295,13 +277,6 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
            <xf:action ev:event="save-and-close-action" ev:observer="main-content">
                <xf:send submission="save-and-close-submission" />
            </xf:action>
-
-           <xf:action ev:event="save-and-close-action2" ev:observer="main-content">
-                <xf:action if="exists(instance('save-data')/mods:titleInfo)">
-                    <xf:message level="modal"><xf:output value="instance('save-data')/mods:titleInfo/mods:title"/></xf:message>
-                </xf:action>
-               <xf:send submission="save-and-close-submission2" />
-           </xf:action>           
         </xf:model>
 };
 
@@ -386,12 +361,6 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
             
             }
             <div class="save-buttons-top">    
-                <!--No save button is displayed, since saves are made every time a tab is clicked,
-                but sometimes users require a save button.-->
-                 <xf:trigger>
-                    <xf:label>Save</xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action2" targetid="main-content"/>
-                </xf:trigger>                
                  <xf:trigger>
                     <xf:label>
                         <xf:output value="'Finish Editing'" class="hint-icon">
