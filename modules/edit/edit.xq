@@ -234,7 +234,11 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 method="post"
                 ref="instance('save-data')"
                 resource="save.xq?collection={$target-collection}&amp;action=close" replace="none">
-                    <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={$id}&amp;collection={replace($target-collection, '/db', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
+                    <xf:action ev:event="xforms-submit-done">
+                        <script type="text/javascript">
+                            window.close();
+                        </script>
+                    </xf:action>
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
 
