@@ -237,17 +237,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={$id}&amp;collection={replace($target-collection, '/db', '')}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
                     <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
-           
-           <!--Delete from temp-->
-           <xf:submission 
-                id="cancel-submission" 
-                method="post"
-                ref="instance('save-data')"
-                resource="save.xq?collection={$config:mods-temp-collection}&amp;action=cancel" replace="none">
-                    <xf:load ev:event="xforms-submit-done" resource="../../modules/search/index.html?search-field=ID&amp;value={if ($host) then $host else $id}&amp;collection={$target-collection}&amp;query-tabs=advanced-search-form&amp;default-operator=and" show="replace" />
-                    <xf:message ev:event="xforms-submit-error" level="ephemeral">An error occurred.</xf:message>
-           </xf:submission>
-           
+
             <xf:action ev:event="xforms-ready">
                <xf:load show="embed" targetid="user-interface-container">
                     <xf:resource value="'{$ui-file-path}#user-interface-container'"/>
@@ -270,10 +260,6 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 </xf:load>
                 <xf:refresh model="m-main"/>                
             </xf:action>            
-            
-            
-            
-            
            <xf:action ev:event="save-and-close-action" ev:observer="main-content">
                <xf:send submission="save-and-close-submission" />
            </xf:action>
@@ -381,7 +367,9 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 <xf:trigger>
                     <xf:label>Cancel Editing</xf:label>
                     <xf:action ev:event="DOMActivate">
-                        <xf:send submission="cancel-submission" />
+                        <script type="text/javascript">
+                            window.close();
+                        </script>
                     </xf:action>
                  </xf:trigger>
                  <xf:trigger>
