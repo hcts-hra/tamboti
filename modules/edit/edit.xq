@@ -172,6 +172,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     <languageOfResource>{request:get-parameter("languageOfResource", '')}</languageOfResource>
                     <scriptOfResource>{request:get-parameter("scriptOfResource", '')}</scriptOfResource>
                     <template>{$data-template-name}</template>
+                    <host>{request:get-parameter('host', '')}</host>
                 </configuration>
             </xf:instance>   
 
@@ -275,6 +276,9 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:extension/ext:template" value="instance('i-configuration')/template" />
+                <xf:action if="string-length(instance('i-configuration')/host) > 0">
+                    <xf:setvalue ref="instance('save-data')/mods:relatedItem[@type eq 'host'][1]/@xlink:href" value="concat('#', instance('i-configuration')/host)" />                
+                </xf:action>
             </xf:action>
             <xf:action ev:event="load-subform" ev:observer="main-content">
                 <xf:setvalue ref="instance('i-variables')/subform-relative-path" value="concat('user-interfaces/', event('subform-id'), '.xml')" />
@@ -296,11 +300,6 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                 <xf:action if="exists(instance('save-data')/mods:titleInfo)">
                     <xf:message level="modal"><xf:output value="instance('save-data')/mods:titleInfo/mods:title"/></xf:message>
                 </xf:action>
-           
-           
-           
-           
-               
                <xf:send submission="save-and-close-submission2" />
            </xf:action>           
         </xf:model>
