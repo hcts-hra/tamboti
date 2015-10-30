@@ -251,7 +251,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                     </xf:header>
                     <xf:header>
                         <xf:name>password</xf:name>
-                        <xf:value></xf:value>
+                        <xf:value>***REMOVED***</xf:value>
                     </xf:header>
                 </xf:submission>           
            
@@ -320,7 +320,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
     display the title of this record. 
     Only the xlink on the first relatedItem with type host is processed.:)
     let $host := request:get-parameter('host', '')
-    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type = 'host']/@xlink:href
+    let $related-item-xlink := doc($record-data)/mods:mods/mods:relatedItem[@type = 'host'][1]/@xlink:href
     let $related-publication-id := 
         if ($related-item-xlink) 
         then replace($related-item-xlink[1]/string(), '^#?(.*)$', '$1') 
@@ -381,6 +381,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
+            {mods:tabs($tab-id, $id, $target-collection)}
             {
                 doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
             
@@ -510,17 +511,17 @@ let $id :=
 (:If we are creating a new record, then we need to call get-data-instance.xq with new=true to tell it to get a new template and store it in temp; 
 if we are editing an existing record, we copy the record from the target collection to temp, unless there is already a record in temp with the same name.:)
 (:NB: What if A edits a certain record, leaving it in temp, and B edits the same record - does B then start off where A left off?:)
-let $create-new-from-template :=
-    if ($new-record) 
-    (:Create a new record, knows its type and target-collection (but store it for the time being in temp.:)
-    then local:create-new-record($id, $type-request, $target-collection)
-    else
-        (:If it is an old record and the document is not in temp already, copy it there.:)
-        if (not(doc-available(concat($config:mods-temp-collection, '/', $id, '.xml'))))
-        (:Otherwise copy the old record to temp.:)
-        then xmldb:copy($target-collection, $config:mods-temp-collection, concat($id, '.xml'))
-        else ()
-    let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode)
+(:let $create-new-from-template :=:)
+(:    if ($new-record) :)
+(:    (:Create a new record, knows its type and target-collection (but store it for the time being in temp.:):)
+(:    then local:create-new-record($id, $type-request, $target-collection):)
+(:    else:)
+(:        (:If it is an old record and the document is not in temp already, copy it there.:):)
+(:        if (not(doc-available(concat($config:mods-temp-collection, '/', $id, '.xml')))):)
+(:        (:Otherwise copy the old record to temp.:):)
+(:        then xmldb:copy($target-collection, $config:mods-temp-collection, concat($id, '.xml')):)
+(:        else ():)
+(:    let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode):)
 
 (:For a compact-b form, determine which subform to serve, based on the template.:)
 let $log := util:log("INFO", "$tab-id = " || $tab-id)
