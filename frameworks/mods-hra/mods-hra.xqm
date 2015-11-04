@@ -683,12 +683,13 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
             mods-common:simple-row(functx:substring-before-last-match($last-modified[count(.)], 'T'), 'Record Last Modified')
         else ()
     ,
-    let $stable-link-href := replace(request:get-url(), '/retrieve', '/index.html') || '?search-field=ID&amp;value=' || $ID
-    let $stable-link-node :=
+        let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
+        let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
+        let $stable-link-node :=
             <tr>
                 <td class="collection-label">Stable link to this record</td>
                 <td>
-                    <a href="{$stable-link-href}" target="_blank">{$stable-link-href}</a>
+                    <a href="{$stable-link-href}" target="_blank">{$server || $stable-link-href}</a>
                 </td>
             </tr>
     return $stable-link-node
