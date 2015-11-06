@@ -7,7 +7,7 @@ let $cluster-publications-db-path := xmldb:encode-uri($config:mods-commons || "/
 
 let $http-headers :=
     <headers>
-        <header name="Authorization" value="Basic {util:string-to-binary("editor:Mdft2012")}"/>
+        <header name="Authorization" value="Basic {util:string-to-binary("editor:editor")}"/>
         <header name="X-resource-path" value="{$cluster-publications-db-path}/headers.xml"/>
     </headers>
     
