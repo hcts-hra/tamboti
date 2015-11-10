@@ -33,13 +33,13 @@ declare function local:get-item($controller as xs:string, $root as xs:string, $p
                     <set-attribute name="exist:prefix" value="{$prefix}"/>
                     
                     <add-parameter name="id" value="{$item-id}"/>
-        		</forward>
-        	</view>
-    	</dispatch>
-    	(:
-    	<add-parameter name="filter" value="ID"/>
+                </forward>
+            </view>
+        </dispatch>
+        (:
+        <add-parameter name="filter" value="ID"/>
         <add-parameter name="value" value="{$item-id}"/>
-    	:)
+        :)
 };
 
 declare function local:set-user($username as xs:string?, $password as xs:string?) {
@@ -66,37 +66,68 @@ let
         else()
     ,
     $password := request:get-parameter("password",())
+
 return
     
     if ($exist:path eq '') then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{concat(request:get-uri(), '/')}"/>
         </dispatch>
-     else if ($exist:path = ('/bib')) then
+     else if (contains($exist:path, "/api/")) then
+         let $method := request:get-method()
+         
+         return
+             switch($method)
+                case "PUT"
+                return
+                    let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
+                    
+                    return
+                        if (not(xmldb:collection-available($target-collection)))
+                        then
+                            (
+                                response:set-status-code(404)
+                                ,
+                                <error>The target collection '{$target-collection}' does not exist!</error>
+                            )
+                        else
+                            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                                <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
+                            </dispatch>
+                case "DELETE"
+                return
+                    (
+                        util:log("INFO", "DELETE X-resource-path = " || request:get-header("X-resource-path"))
+                        ,
+                    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                        <forward url="/rest/db{request:get-header("X-resource-path")}" absolute="yes"/>
+                    </dispatch>                    )
+                default return ()
+    else if ($exist:path = ('/bib')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-    		<redirect url="modules/search/bib.html"/>
-    	</dispatch>
+            <redirect url="modules/search/bib.html"/>
+        </dispatch>
      else if ($exist:path = ('/database','/databases')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-    		<redirect url="modules/search/databases.html"/>
-    	</dispatch>
+            <redirect url="modules/search/databases.html"/>
+        </dispatch>
         
      else if ($exist:path eq '/') then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-    		<redirect url="modules/search/index.html"/>
-    	</dispatch>
+            <redirect url="modules/search/index.html"/>
+        </dispatch>
 
      else if ($exist:resource eq 'retrieve') then
 
         (:  Retrieve an item from the query results stored in the HTTP session. The
-    	   format of the URL will be /sandbox/results/X, where X is the number of the
-    	   item in the result set :)
+           format of the URL will be /sandbox/results/X, where X is the number of the
+           item in the result set :)
 
-	   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-	       { local:set-user($username, $password) }
-		  <forward url="../modules/search/session.xql">
-		  </forward>
-	   </dispatch>
+       <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+           { local:set-user($username, $password) }
+          <forward url="../modules/search/session.xql">
+          </forward>
+       </dispatch>
 
     else if (contains($exist:path, "/$shared/")) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

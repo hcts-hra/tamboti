@@ -2,50 +2,70 @@
     <script type="text/javascript">
         $(function() {
             var actions = {};
-            actions["keywords"] = loadIndexTerms; actions["name"] = "filters.xql?type=name"; actions["date"] = "filters.xql?type=date"; actions["subject"] = "filters.xql?type=subject"; actions["language"] = "filters.xql?type=language"; actions["genre"] = "filters.xql?type=genre";
+            actions["keywords"] = loadIndexTerms;
+            actions["name"] = "filters.xql?type=name";
+            actions["date"] = "filters.xql?type=date";
+            actions["subject"] = "filters.xql?type=subject";
+            actions["language"] = "filters.xql?type=language";
+            actions["genre"] = "filters.xql?type=genre";
             $('#facets').accordion({
                 autoHeight: false,
                 fillSpace: false,
                 collapsible: true,
                 active: false,
-                change: function (event, ui) {
+                activate: function (event, ui) {
                     var id = ui.newHeader.attr('id');
                     var panel = ui.newHeader.next();
                     var action = actions[id];
-                    if (typeof action == "function")
+                    if (typeof action == "function") {
                         action.call();
-                    else
+                    }
+                    else {
                         panel.load(action);
+                    }
                 }});
         });    
     </script>
     <div id="facets">
-        <h3 id="keywords"><a href="#">Title Words</a></h3>
+        <h3 id="keywords">
+            <a href="#">Title Words</a>
+        </h3>
         <div>
             <div class="keyword-prefix">
                 <form id="keyword-form">
-                    <input type="text" name="input-keyword-prefix" size="8" value="a" title="Enter one or more characters to view title words that begin with them."/>
+                    <input type="text" name="input-keyword-prefix" size="8" value="" title="Enter one or more characters to view title words that begin with them."/>
                     <input type="submit" value="Show"/>
                 </form>
-            </div>        
+            </div>
+            <div id="keywords-result"/>
         </div>
-        <h3 id="name"><a href="#">Names</a></h3>
+        <h3 id="name">
+            <a href="#">Names</a>
+        </h3>
         <div>
             <p>Loading ...</p>
         </div>
-        <h3 id="date"><a href="#">Dates</a></h3>
+        <h3 id="date">
+            <a href="#">Dates</a>
+        </h3>
         <div>
             <p>Loading ...</p>
         </div>
-        <h3 id="subject"><a href="#">Subjects</a></h3>
+        <h3 id="subject">
+            <a href="#">Subjects</a>
+        </h3>
         <div>
             <p>Loading ...</p>
         </div>
-        <h3 id="language"><a href="#">Languages</a></h3>
+        <h3 id="language">
+            <a href="#">Languages</a>
+        </h3>
         <div>
             <p>Loading ...</p>
         </div>
-        <h3 id="genre"><a href="#">Genres</a></h3>
+        <h3 id="genre">
+            <a href="#">Genres</a>
+        </h3>
         <div>
             <p>Loading ...</p>
         </div>
