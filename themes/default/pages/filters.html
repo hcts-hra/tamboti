@@ -13,14 +13,16 @@
                 fillSpace: false,
                 collapsible: true,
                 active: false,
-                change: function (event, ui) {
+                activate: function (event, ui) {
                     var id = ui.newHeader.attr('id');
                     var panel = ui.newHeader.next();
                     var action = actions[id];
-                    if (typeof action == "function")
+                    if (typeof action == "function") {
                         action.call();
-                    else
+                    }
+                    else {
                         panel.load(action);
+                    }
                 }});
         });    
     </script>
@@ -35,7 +37,7 @@
                     <input type="submit" value="Show"/>
                 </form>
             </div>
-            <div id="keywords-result" />
+            <div id="keywords-result"/>
         </div>
         <h3 id="name">
             <a href="#">Names</a>
