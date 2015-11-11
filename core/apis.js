@@ -86,7 +86,7 @@ $(function() {
         $("#advanced-search-form select[name='sort-direction']").val('descending');
         $("#advanced-search-form input[name='query-tabs']").val(data['query-tabs']);
         $("#advanced-search-form input[name='collection-tree']").val('hidden');
-        $("#advanced-search-form input[name='collection']").val(collection ? collection : 'data');
+        $("#advanced-search-form input[name='collection']").val(collection ? collection : '/data');
         $("#advanced-search-form input[name='filter']").val(data['filter']);
         $("#advanced-search-form input[name='value']").val(data['value']);
         $("#advanced-search-form input[name='history']").val(data['history']);
