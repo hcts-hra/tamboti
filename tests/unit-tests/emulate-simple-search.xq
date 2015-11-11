@@ -19,7 +19,7 @@ let $start := util:system-time()
 
 let $aces-as-admin := system:as-user("admin", "Wars4Spass2$s", count(local:get-aces(xs:anyURI($config:users-collection))))
 
-let $aces-as-guest := system:as-user("editor", "***REMOVED***", count(local:get-aces(xs:anyURI($config:users-collection))))
+let $aces-as-guest := system:as-user("editor", "Mdft2012", count(local:get-aces(xs:anyURI($config:users-collection))))
 
 let $end := util:system-time()
 
