@@ -52,14 +52,6 @@ declare function mods-hra-framework:get-item-uri($item-id as xs:string) {
     )
 };
 
-
-declare function mods-hra-framework:collection-is-writable($collection as xs:string) {
-    if ($collection eq $config:groups-collection) then
-        false()
-    else
-        security:can-write-collection($collection)
-};
-
 declare function mods-hra-framework:get-UUID($item as element()) {
     $item/@ID 
 };
@@ -683,9 +675,9 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
             mods-common:simple-row(functx:substring-before-last-match($last-modified[count(.)], 'T'), 'Record Last Modified')
         else ()
     ,
-        let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
-        let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
-        let $stable-link-node :=
+    let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
+    let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
+    let $stable-link-node :=
             <tr>
                 <td class="collection-label">Stable link to this record</td>
                 <td>
@@ -700,14 +692,6 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     return
     mods-common:simple-row(
         <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Priya Paul Collection') 
-    else ()
-    ,
-    if (contains($collection-short, 'Naddara')) 
-    then 
-    let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/naddara/modules/search/index.html', '?search-field=ID&amp;value=', $ID, '&amp;query-tabs=advanced-search-form')
-    return
-    mods-common:simple-row(
-        <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Abou Naddara Collection') 
     else ()
     }
     </table>
@@ -725,7 +709,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
 
 
 declare function mods-hra-framework:detail-view-table($item as element(mods:mods), $currentPos as xs:int) {
-    let $isWritable := mods-hra-framework:collection-is-writable(util:collection-name($item))
+    let $isWritable := security:can-write-collection(util:collection-name($item))
     let $document-uri := document-uri(root($item))
     let $id := concat($document-uri, '#', util:node-id($item))
     let $stored := session:get-attribute("personal-list")

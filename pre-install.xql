@@ -105,7 +105,7 @@ installation:mkcol($db-root, $config:samples-collection-path, $config:public-col
 installation:mkcol($db-root, local:strip-prefix($config:mods-commons, fn:concat($db-root, "/")), $config:public-collection-mode)
 ,
 
-(: Create users and groups collections :)
+(: Create users collection :)
 util:log($log-level, fn:concat("Config: Creating users '", $config:users-collection, "' collections"))
 ,
 installation:mkcol($db-root, local:strip-prefix($config:users-collection, fn:concat($db-root, "/")), $config:public-collection-mode)

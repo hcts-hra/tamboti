@@ -46,13 +46,6 @@ declare function retrieve:get-item-uri($item-id as xs:string) {
     )
 };
 
-declare function retrieve:collection-is-writable($collection as xs:string) {
-    if ($collection eq $config:groups-collection) then
-        false()
-    else
-        security:can-write-collection($collection)
-};
-
 declare function local:basic-get-http($uri,$username,$password) {
   let $credentials := concat($username,":",$password)
   let $credentials := util:string-to-binary($credentials)
