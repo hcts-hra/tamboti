@@ -52,6 +52,14 @@ declare function mods-hra-framework:get-item-uri($item-id as xs:string) {
     )
 };
 
+
+declare function mods-hra-framework:collection-is-writable($collection as xs:string) {
+    if ($collection eq $config:groups-collection) then
+        false()
+    else
+        security:can-write-collection($collection)
+};
+
 declare function mods-hra-framework:get-UUID($item as element()) {
     $item/@ID 
 };
@@ -68,12 +76,12 @@ declare function mods-hra-framework:get-icon-from-folder($size as xs:int, $colle
     Get the preview icon for a linked image resource or get the thumbnail showing the resource type.
 :)
 declare function mods-hra-framework:get-icon($size as xs:int, $item, $currentPos as xs:int) {
-    let $image-url :=
-    (: NB: Refine criteria for existence of image:)
-        ( 
-            $item/mods:location/mods:url[@access="preview"]/string(), 
-            $item/mods:location/mods:url[@displayLabel="Path to Folder"]/string() 
-        )[1]
+(:    let $image-url :=:)
+(:    (: NB: Refine criteria for existence of image:):)
+(:        ( :)
+(:            $item/mods:location/mods:url[@access="preview"]/string(), :)
+(:            $item/mods:location/mods:url[@displayLabel="Path to Folder"]/string() :)
+(:        )[1]:)
     let $type := $item/mods:typeOfResource[1]/string()
     let $hint := 
         if ($type)
@@ -82,20 +90,20 @@ declare function mods-hra-framework:get-icon($size as xs:int, $item, $currentPos
             if (in-scope-prefixes($item) = 'xml')
             then 'Unknown Type'
             else 'Extracted Text'
-    return
-        if (string-length($image-url)) 
-        (: Only run if there actually is a URL:)
-        (: NB: It should be checked if the URL leads to an image described in the record:)
-        then
-            let $image-path := concat(util:collection-name($item), "/", $image-url)
-            return
-                if (collection($image-path)) 
-                then mods-hra-framework:get-icon-from-folder($size, $image-path)
-                else
-                    let $imgLink := concat(substring-after(util:collection-name($item), "/db"), "/", $image-url)
-                    return
-                        <img title="{$hint}" src="images/{$imgLink}?s={$size}"/>        
-        else
+(:    return:)
+(:        if (string-length($image-url)) :)
+(:        (: Only run if there actually is a URL:):)
+(:        (: NB: It should be checked if the URL leads to an image described in the record:):)
+(:        then:)
+(:            let $image-path := concat(util:collection-name($item), $image-url):)
+(:            return:)
+(:                if (collection($image-path)) :)
+(:                then mods-hra-framework:get-icon-from-folder($size, $image-path):)
+(:                else:)
+(:                    let $imgLink := concat(substring-after(util:collection-name($item), "/db"), "/", $image-url):)
+(:                    return:)
+(:                        <img title="{$hint}" src="images/{$imgLink}?s={$size}"/>        :)
+(:        else:)
         (: For non-image records:)
             let $type := 
                 (: If there is a typeOfResource, render the icon for it. :)
