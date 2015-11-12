@@ -62,8 +62,6 @@ declare variable $config:edit-app-root := concat($config:app-root, "/modules/edi
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
-declare variable $config:groups-collection := fn:concat($config:mods-root, "/groups");
-
 declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
 

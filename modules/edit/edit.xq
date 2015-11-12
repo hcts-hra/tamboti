@@ -35,19 +35,22 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     (:First, get the right template, based on the type-request and the presence or absence of transliteration.:)
     let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
     let $template-request := 
-        if ($type-request = (
+        if ($type-request = '')
+        then 'insert-templates'
+        else
+            if ($type-request = (
                         'suebs-tibetan', 
                         'suebs-chinese', 
                         'insert-templates', 
                         'new-instance', 
                         'mads'))
-        (:These document types do not divide into latin and transliterated.:)
-        then $type-request
-        else
-            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
-            if ($transliterationOfResource) 
-            then concat($type-request, '-transliterated') 
-            else concat($type-request, '-latin') 
+            (:These document types do not divide into latin and transliterated.:)
+            then $type-request
+            else
+                (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
+                if ($transliterationOfResource) 
+                then concat($type-request, '-transliterated') 
+                else concat($type-request, '-latin') 
     let $template := doc(concat($config:edit-app-root, '/data-templates/', $template-request, '.xml'))
     
     (:Then give it a name based on a uuid, store it in the temp collection and set restrictive permissions on it.:)
@@ -143,26 +146,11 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     )
 };
 
-declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $type-request as xs:string) as element(xf:model) {
+declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
     let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
-    let $data-template-name := 
-        if ($type-request = (
-                        'suebs-tibetan', 
-                        'suebs-chinese', 
-                        'insert-templates', 
-                        'new-instance', 
-                        'mads'))
-        (:These document types do not divide into latin and transliterated.:)
-        then $type-request
-        else
-            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
-            if ($transliterationOfResource) 
-            then concat($type-request, '-transliterated') 
-            else concat($type-request, '-latin') 
-
     let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
-    let $log := util:log("INFO", "$instance-id = " || $instance-id)
+    let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
     
     return
         <xf:model id="m-main">
@@ -345,7 +333,6 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
-            {mods:tabs($tab-id, $id, $target-collection)}
             {
                 doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
             
@@ -484,11 +471,30 @@ if we are editing an existing record, we copy the record from the target collect
 (:    let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode):)
 
 (:For a compact-b form, determine which subform to serve, based on the template.:)
+
+let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
+let $data-template-name := 
+    if ($type-request = '')
+    then 'insert-templates'
+    else
+        if ($type-request = (
+                    'suebs-tibetan', 
+                    'suebs-chinese', 
+                    'insert-templates', 
+                    'new-instance', 
+                    'mads'))
+        (:These document types do not divide into latin and transliterated.:)
+        then $type-request
+        else
+            (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
+            if ($transliterationOfResource) 
+            then concat($type-request, '-transliterated') 
+            else concat($type-request, '-latin')    
 let $log := util:log("INFO", "$tab-id = " || $tab-id)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $type-request)
-let $content := local:create-page-content($id, $tab-id, $type-request, $target-collection, $instance-id, $temp-record-path, $type-data)
+let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
+let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $instance-id, $temp-record-path, $type-data)
 
 return 
     (:Set serialization options.:)

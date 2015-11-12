@@ -77,20 +77,32 @@ $(function() {
     	$("#query-tabs").tabs("option", "active", 1);
     	tamboti.utils.resetAdvancedSearchForm();
         var collection = data['collection'];
-        $("#advanced-search-form select[name='format']").val('MODS or TEI or VRA or Wiki');
-        $("#advanced-search-form select[name='default-operator']").val(data['default-operator']);
-        $("#advanced-search-form select[name='operator1']").val('and');
-        $("#advanced-search-form input[name='input1']").val(data['input1']);
-        $("#advanced-search-form input[name='field1']").val(data['field1']);
-        $("#advanced-search-form select[name='sort']").val('Score');
-        $("#advanced-search-form select[name='sort-direction']").val('descending');
-        $("#advanced-search-form input[name='query-tabs']").val(data['query-tabs']);
-        $("#advanced-search-form input[name='collection-tree']").val('hidden');
-        $("#advanced-search-form input[name='collection']").val(collection ? collection : '/data');
-        $("#advanced-search-form input[name='filter']").val(data['filter']);
-        $("#advanced-search-form input[name='value']").val(data['value']);
-        $("#advanced-search-form input[name='history']").val(data['history']);
-        tamboti.apis.advancedSearch();
+
+        $.ajax({
+            url: "search/",
+            data: {
+                "format": 'MODS or TEI or VRA or Wiki',
+                "default-operator": data['default-operator'],
+                "operator1": 'and',
+                "input1": data['input1'],
+                "field1": data['field1'],
+                "sort": 'Score',
+                "sort-direction": 'descending',
+                "query-tabs": data['query-tabs'],
+                "collection-tree": 'hidden',
+                "collection": $("#advanced-search-form input[name='collection']").val(),
+                "filter": data['filter'],
+                "value": data['value'],
+                "history": data['history'],
+                "search-field": "ID"
+            },
+            dataType: "html",
+            type: "POST",
+            success: function (data) {
+            	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
+            	tamboti.totalSearchResultOptions = $("#result-items-count").text();
+            }
+        });        
     };
     
     tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {

@@ -76,12 +76,12 @@ declare function mods-hra-framework:get-icon-from-folder($size as xs:int, $colle
     Get the preview icon for a linked image resource or get the thumbnail showing the resource type.
 :)
 declare function mods-hra-framework:get-icon($size as xs:int, $item, $currentPos as xs:int) {
-    let $image-url :=
-    (: NB: Refine criteria for existence of image:)
-        ( 
-            $item/mods:location/mods:url[@access="preview"]/string(), 
-            $item/mods:location/mods:url[@displayLabel="Path to Folder"]/string() 
-        )[1]
+(:    let $image-url :=:)
+(:    (: NB: Refine criteria for existence of image:):)
+(:        ( :)
+(:            $item/mods:location/mods:url[@access="preview"]/string(), :)
+(:            $item/mods:location/mods:url[@displayLabel="Path to Folder"]/string() :)
+(:        )[1]:)
     let $type := $item/mods:typeOfResource[1]/string()
     let $hint := 
         if ($type)
@@ -90,20 +90,20 @@ declare function mods-hra-framework:get-icon($size as xs:int, $item, $currentPos
             if (in-scope-prefixes($item) = 'xml')
             then 'Unknown Type'
             else 'Extracted Text'
-    return
-        if (string-length($image-url)) 
-        (: Only run if there actually is a URL:)
-        (: NB: It should be checked if the URL leads to an image described in the record:)
-        then
-            let $image-path := concat(util:collection-name($item), "/", $image-url)
-            return
-                if (collection($image-path)) 
-                then mods-hra-framework:get-icon-from-folder($size, $image-path)
-                else
-                    let $imgLink := concat(substring-after(util:collection-name($item), "/db"), "/", $image-url)
-                    return
-                        <img title="{$hint}" src="images/{$imgLink}?s={$size}"/>        
-        else
+(:    return:)
+(:        if (string-length($image-url)) :)
+(:        (: Only run if there actually is a URL:):)
+(:        (: NB: It should be checked if the URL leads to an image described in the record:):)
+(:        then:)
+(:            let $image-path := concat(util:collection-name($item), $image-url):)
+(:            return:)
+(:                if (collection($image-path)) :)
+(:                then mods-hra-framework:get-icon-from-folder($size, $image-path):)
+(:                else:)
+(:                    let $imgLink := concat(substring-after(util:collection-name($item), "/db"), "/", $image-url):)
+(:                    return:)
+(:                        <img title="{$hint}" src="images/{$imgLink}?s={$size}"/>        :)
+(:        else:)
         (: For non-image records:)
             let $type := 
                 (: If there is a typeOfResource, render the icon for it. :)
@@ -683,9 +683,9 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
             mods-common:simple-row(functx:substring-before-last-match($last-modified[count(.)], 'T'), 'Record Last Modified')
         else ()
     ,
-        let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
-        let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
-        let $stable-link-node :=
+    let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
+    let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
+    let $stable-link-node :=
             <tr>
                 <td class="collection-label">Stable link to this record</td>
                 <td>
@@ -700,14 +700,6 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
     return
     mods-common:simple-row(
         <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Priya Paul Collection') 
-    else ()
-    ,
-    if (contains($collection-short, 'Naddara')) 
-    then 
-    let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/naddara/modules/search/index.html', '?search-field=ID&amp;value=', $ID, '&amp;query-tabs=advanced-search-form')
-    return
-    mods-common:simple-row(
-        <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Abou Naddara Collection') 
     else ()
     }
     </table>
@@ -725,7 +717,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
 
 
 declare function mods-hra-framework:detail-view-table($item as element(mods:mods), $currentPos as xs:int) {
-    let $isWritable := mods-hra-framework:collection-is-writable(util:collection-name($item))
+    let $isWritable := security:can-write-collection(util:collection-name($item))
     let $document-uri := document-uri(root($item))
     let $id := concat($document-uri, '#', util:node-id($item))
     let $stored := session:get-attribute("personal-list")
