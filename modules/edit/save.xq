@@ -395,11 +395,14 @@ return
                             (
                                 xmldb:store($target-collection, $file-to-update, $item)
                                 ,
-                                update insert $last-modified-extension into doc($record-path)/ext:extension
-                                ,                                
-                                security:apply-parent-collection-permissions($record-path)
+                                security:copy-owner-and-group($target-collection, $record-path)
+                                ,
+                                security:copy-collection-ace-to-resource-apply-modechange($target-collection, $record-path)
                                 ,
                                 sm:chmod($record-path, $config:resource-mode)
+                                ,
+                                update insert $last-modified-extension into doc($record-path)/ext:extension
+                                
                             )
                         )
                     )
