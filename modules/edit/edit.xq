@@ -146,7 +146,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     )
 };
 
-declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
+declare function local:create-xf-model($id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
     let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
     let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
@@ -334,7 +334,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
             {
-                doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
+                doc("user-interfaces/tabs/" || request:get-parameter('type', ()) || "-stand-alone.xml")
             
             }
             <div class="save-buttons-top">    
@@ -490,10 +490,10 @@ let $data-template-name :=
             if ($transliterationOfResource) 
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin')    
-let $log := util:log("INFO", "$tab-id = " || $tab-id)
+let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
+let $model := local:create-xf-model($id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
 let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $instance-id, $temp-record-path, $type-data)
 
 return 
