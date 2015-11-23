@@ -52,14 +52,6 @@ declare function mods-hra-framework:get-item-uri($item-id as xs:string) {
     )
 };
 
-
-declare function mods-hra-framework:collection-is-writable($collection as xs:string) {
-    if ($collection eq $config:groups-collection) then
-        false()
-    else
-        security:can-write-collection($collection)
-};
-
 declare function mods-hra-framework:get-UUID($item as element()) {
     $item/@ID 
 };
