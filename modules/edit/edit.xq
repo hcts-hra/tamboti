@@ -334,7 +334,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
             {
-                doc("user-interfaces/tabs/" || request:get-parameter('type', ()) || "-stand-alone.xml")
+                doc("user-interfaces/tabs/" || replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', '') || "-stand-alone.xml")
             
             }
             <div class="save-buttons-top">    
