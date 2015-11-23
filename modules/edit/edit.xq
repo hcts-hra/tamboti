@@ -259,6 +259,8 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
 };
 
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
+    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
+    
     (:Get the part of the form that belongs to the active tab.:)
     let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
 
@@ -302,20 +304,20 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 if ($type-request)
                 then
                     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
-                    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-                    let $type-label := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request and *[local-name() = 'classifier'] = ('stand-alone', 'related')]/*[local-name() = 'label']
+                    let $document-types := doc($type-data)
+                    let $type-label := $document-types//mods-editor:item[mods-editor:value eq $type-request and mods-editor:classifier = ('stand-alone', 'related')]/mods-editor:label/text()
                     (:This is the hint text informing the user aboiut the specific document type and its options.:)
-                    let $type-hint := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'hint']
+                    let $type-hint := $document-types//mods-editor:item[mods-editor:value eq $type-request]/mods-editor:hint/text()
                         return
                         (
-                        'Editing record of type ', 
-                        <xf:output value="'{$type-label}'">
+                        "Editing record of type ", 
+                        <xf:output value="'{$type-label}'" class="hint-icon">
                             {
                                 if ($type-hint) 
                                 then <xf:hint>{$type-hint/text()}</xf:hint>
                                 else ()                                
                             }
-                        </xf:output>                        
+                        </xf:output>
                         ) 
                 else 'Editing record'
                 ,
@@ -334,7 +336,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
             {
-                doc("user-interfaces/tabs/" || replace(replace(request:get-parameter('type', ()), '-latin', ''), '-transliterated', '') || "-stand-alone.xml")
+                doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
             
             }
             <div class="save-buttons-top">    

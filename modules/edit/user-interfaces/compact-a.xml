@@ -97,7 +97,7 @@
                     <xf:insert nodeset="instance('save-data')/mods:name" at="index('compact-name-repeat')" position="before" origin="instance('compact-template')/mods:name[2]" ev:event="DOMActivate"/>
                 </xf:trigger>
             </xf:group>
-            <xf:repeat nodeset="./mods:name" id="compact-name-repeat">
+            <xf:repeat nodeset="." id="compact-name-repeat">
                 <xf:group appearance="full">
                     <xf:trigger ref="preceding-sibling::*[1][self::mods:name]" class="up-down-pointer">
                         <xf:label>∧</xf:label>
