@@ -227,7 +227,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                             window.close();
                         </script>
                     </xf:action>
-                    <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
+                    <xf:message ev:event="xforms-submit-error" level="modal">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
 
             <xf:action ev:event="xforms-ready">
