@@ -52,7 +52,6 @@ declare variable $config:mods-root := "/" || $config:data-collection-name;
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
 declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
 declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection);
-declare variable $config:samples-collection-path := xs:anyURI($config:mods-commons || "/Samples");
 
 declare variable $config:url-image-size := "256";
 

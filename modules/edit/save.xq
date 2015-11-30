@@ -307,6 +307,8 @@ declare function local:find-live-collection-containing-uuid($uuid as xs:string) 
 (: This is where the form "POSTS" documents to this XQuery using the POST method of a submission :)
 (:$item contains the edits for the elements attached to a single tab, not a whole MODS record.:)
 let $item := request:get-data()/element()
+let $log := util:log("DEBUG", request:get-parameter('action', 'save')) 
+let $log := util:log("DEBUG", $item) 
 let $action := request:get-parameter('action', 'save')
 let $incoming-id := $item/@ID/string()
 let $incoming-id := if ($incoming-id = "id") then ("uuid-" || util:uuid()) else $incoming-id
@@ -395,11 +397,19 @@ return
                             (
                                 xmldb:store($target-collection, $file-to-update, $item)
                                 ,
+                                update insert attribute ID {$incoming-id} into doc($record-path)//mods:mods 
+                                ,   
+                                util:log("DEBUG", "$record-path = " || $record-path) 
+                                ,                                
+                                util:log("DEBUG", sm:get-permissions($record-path))
+                                ,
                                 security:copy-owner-and-group($target-collection, $record-path)
                                 ,
                                 security:copy-collection-ace-to-resource-apply-modechange($target-collection, $record-path)
                                 ,
                                 sm:chmod($record-path, $config:resource-mode)
+                                ,
+                                util:log("DEBUG", sm:get-permissions($record-path))
                                 ,
                                 update insert $last-modified-extension into doc($record-path)/ext:extension
                                 

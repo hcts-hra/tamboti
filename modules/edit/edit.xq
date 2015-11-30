@@ -146,7 +146,7 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     )
 };
 
-declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
+declare function local:create-xf-model($id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
     let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
     let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
     let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
@@ -227,7 +227,7 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
                             window.close();
                         </script>
                     </xf:action>
-                    <xf:message ev:event="xforms-submit-error" level="ephemeral">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
+                    <xf:message ev:event="xforms-submit-error" level="modal">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
            </xf:submission>
 
             <xf:action ev:event="xforms-ready">
@@ -259,6 +259,8 @@ declare function local:create-xf-model($id as xs:string, $tab-id as xs:string, $
 };
 
 declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
+    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
+    
     (:Get the part of the form that belongs to the active tab.:)
     let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
 
@@ -302,20 +304,20 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 if ($type-request)
                 then
                     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
-                    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-                    let $type-label := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request and *[local-name() = 'classifier'] = ('stand-alone', 'related')]/*[local-name() = 'label']
+                    let $document-types := doc($type-data)
+                    let $type-label := $document-types//mods-editor:item[mods-editor:value eq $type-request and mods-editor:classifier = ('stand-alone', 'related')]/mods-editor:label/text()
                     (:This is the hint text informing the user aboiut the specific document type and its options.:)
-                    let $type-hint := doc($type-data)/*/*[3]/*[*[local-name() = 'value'] eq $type-request]/*[local-name() = 'hint']
+                    let $type-hint := $document-types//mods-editor:item[mods-editor:value eq $type-request]/mods-editor:hint/text()
                         return
                         (
-                        'Editing record of type ', 
-                        <xf:output value="'{$type-label}'">
+                        "Editing record of type ", 
+                        <xf:output value="'{$type-label}'" class="hint-icon">
                             {
                                 if ($type-hint) 
                                 then <xf:hint>{$type-hint/text()}</xf:hint>
                                 else ()                                
                             }
-                        </xf:output>                        
+                        </xf:output>
                         ) 
                 else 'Editing record'
                 ,
@@ -490,10 +492,10 @@ let $data-template-name :=
             if ($transliterationOfResource) 
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin')    
-let $log := util:log("INFO", "$tab-id = " || $tab-id)
+let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
 let $instance-id := local:get-tab-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $model := local:create-xf-model($id, $tab-id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
+let $model := local:create-xf-model($id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
 let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $instance-id, $temp-record-path, $type-data)
 
 return 

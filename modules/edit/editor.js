@@ -1,6 +1,8 @@
 modsEditor = {};
 
 $(document).ready(function() {
+    fluxProcessor.skipshutdown = true;
+    
     $("#tabs").tabs({
         activate: function(ev, ui) {
             $("div.subtabs", ui.newPanel).tabs("option", "active", 0);
