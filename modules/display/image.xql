@@ -4,6 +4,7 @@ import module namespace functx="http://www.functx.com";
 import module namespace im4xquery="http://expath.org/ns/im4xquery" at "java:org.expath.exist.im4xquery.Im4XQueryModule"; 
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
 import module namespace iiif-functions = "http://hra.uni-heidelberg.de/ns/iiif-functions" at "iiif-functions.xqm";
+import module namespace http="http://expath.org/ns/http-client";
 
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
