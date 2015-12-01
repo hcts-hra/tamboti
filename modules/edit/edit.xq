@@ -12,8 +12,8 @@ declare namespace xlink="http://www.w3.org/1999/xlink";
 declare namespace ext="http://exist-db.org/mods/extension";
 declare namespace mads="http://www.loc.gov/mads/";
 declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 
-import module namespace mods = "http://www.loc.gov/mods/v3" at "tabs.xqm";
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../mods-common.xql";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm"; (:TODO move security module up one level:)
@@ -160,6 +160,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                     <languageOfResource>{request:get-parameter("languageOfResource", '')}</languageOfResource>
                     <scriptOfResource>{request:get-parameter("scriptOfResource", '')}</scriptOfResource>
                     <template>{$data-template-name}</template>
+                    <template-test />
                     <host>{request:get-parameter('host', '')}</host>
                 </configuration>
             </xf:instance>   
@@ -167,6 +168,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
             <xf:instance id="i-variables">
                 <variables xmlns="">
                     <subform-relative-path />
+                    <compact-name-delete />
                 </variables>
             </xf:instance>            
             
@@ -207,6 +209,8 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
            <xf:bind nodeset="instance('save-data')/mods:titleInfo/mods:title" required="true()"/>       
            -->
            
+           <xf:bind id="b-compact-name" ref="instance('i-variables')/compact-name-delete" relevant="count(instance('save-data')/mods:name) &gt; 1"/>
+           
            <!--The different submission types, called by their id.-->
            <!--Save in temp-->
            <xf:submission
@@ -243,6 +247,8 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                 <xf:action if="string-length(instance('i-configuration')/host) > 0">
                     <xf:setvalue ref="instance('save-data')/mods:relatedItem[@type eq 'host'][1]/@xlink:href" value="concat('#', instance('i-configuration')/host)" />                
                 </xf:action>
+                
+                <xf:setvalue ref="instance('i-configuration')/template" value="instance('save-data')/@xsi:schemaLocation" />
             </xf:action>
             <xf:action ev:event="load-subform" ev:observer="main-content">
                 <xf:setvalue ref="instance('i-variables')/subform-relative-path" value="concat('user-interfaces/', event('subform-id'), '.xml')" />
@@ -383,7 +389,7 @@ The compact-b temples (in 00-compact-related-X) are different according to their
 the only filtering that is performed is for transliteration.
 The compact-c temples (in 00-compact-contents) is the same for all resource types; 
 the only filtering that is performed is for transliteration.:)
-declare function local:get-tab-id($tab-id as xs:string, $type-request as xs:string) {
+declare function local:get-ui-id($tab-id as xs:string, $type-request as xs:string) {
     (:Remove any '-latin' and '-transliterated' appended the original type request. :)
     let $log := util:log("INFO", "$type-request = " || $type-request)
     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
@@ -493,7 +499,7 @@ let $data-template-name :=
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin')    
 let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
-let $instance-id := local:get-tab-id($tab-id, $type-request)
+let $instance-id := local:get-ui-id($tab-id, $type-request)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
 let $model := local:create-xf-model($id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
 let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $instance-id, $temp-record-path, $type-data)
@@ -503,7 +509,7 @@ return
     (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
     (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <head>
             <title>
                 {$header-title}
