@@ -159,8 +159,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                     <current-username>{xmldb:get-current-user()}</current-username>
                     <languageOfResource>{request:get-parameter("languageOfResource", '')}</languageOfResource>
                     <scriptOfResource>{request:get-parameter("scriptOfResource", '')}</scriptOfResource>
-                    <template>{$data-template-name}</template>
-                    <template-test />
+                    <data-template-name />
                     <host>{request:get-parameter('host', '')}</host>
                 </configuration>
             </xf:instance>   
@@ -211,8 +210,6 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
            
            <xf:bind id="b-compact-name" ref="instance('i-variables')/compact-name-delete" relevant="count(instance('save-data')/mods:name) &gt; 1"/>
            
-           <!--The different submission types, called by their id.-->
-           <!--Save in temp-->
            <xf:submission
                 id="save-submission" 
                 method="post"
@@ -243,12 +240,14 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:recordCreationDate" value="local-date()" />
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
-                <xf:setvalue ref="instance('save-data')/mods:extension/ext:template" value="instance('i-configuration')/template" />
                 <xf:action if="string-length(instance('i-configuration')/host) > 0">
                     <xf:setvalue ref="instance('save-data')/mods:relatedItem[@type eq 'host'][1]/@xlink:href" value="concat('#', instance('i-configuration')/host)" />                
                 </xf:action>
-                
-                <xf:setvalue ref="instance('i-configuration')/template" value="instance('save-data')/@xsi:schemaLocation" />
+                <xf:setvalue ref="instance('i-configuration')/data-template-name" value="replace(replace(instance('save-data')/@xsi:schemaLocation, 'http://www.loc.gov/mods/v3 http://cluster-schemas.uni-hd.de/mods-', ''), '.xsd', '')" />
+                <xf:load show="embed" targetid="tabs-container">
+                    <xf:resource value="concat('user-interfaces/tabs/', replace(replace(instance('i-configuration')/data-template-name, '-latin', ''), '-transliteration', ''), '-stand-alone.xml')" />
+                    <xf:extension includeCSS="false" includeScript="false" />
+                </xf:load>                
             </xf:action>
             <xf:action ev:event="load-subform" ev:observer="main-content">
                 <xf:setvalue ref="instance('i-variables')/subform-relative-path" value="concat('user-interfaces/', event('subform-id'), '.xml')" />
@@ -341,10 +340,7 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                         else $target-collection-display
                 }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
             </span>
-            {
-                doc("user-interfaces/tabs/" || $type-request || "-stand-alone.xml")
-            
-            }
+            <div id="tabs-container"/>
             <div class="save-buttons-top">    
                  <xf:trigger>
                     <xf:label>
