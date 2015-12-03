@@ -146,11 +146,8 @@ declare function local:create-new-record($id as xs:string, $type-request as xs:s
     )
 };
 
-declare function local:create-xf-model($id as xs:string, $instance-id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
+declare function local:create-xf-model($id as xs:string, $target-collection as xs:string, $host as xs:string, $data-template-name as xs:string) as element(xf:model) {
     let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
-    let $instance-src := concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)
-    let $ui-file-path := "user-interfaces/" || $instance-id || ".xml"
-    let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
     
     return
         <xf:model id="m-main">
@@ -159,7 +156,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                     <current-username>{xmldb:get-current-user()}</current-username>
                     <languageOfResource>{request:get-parameter("languageOfResource", '')}</languageOfResource>
                     <scriptOfResource>{request:get-parameter("scriptOfResource", '')}</scriptOfResource>
-                    <data-template-name />
+                    <data-template-name>{$data-template-name}</data-template-name>
                     <host>{request:get-parameter('host', '')}</host>
                 </configuration>
             </xf:instance>   
@@ -171,10 +168,9 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
                 </variables>
             </xf:instance>            
             
-           <xf:instance src="{$instance-src}" id="save-data">
+           <xf:instance src="{concat('get-data-instance.xq?id=', $id, '&amp;data-template-name=', $data-template-name)}" id="save-data">
                 <mods xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" />
            </xf:instance>
-
          
            <!--The instance insert-templates contain an almost full embodiment of the MODS schema, version 3.5; 
            It is used mainly to insert attributes and uncommon elements, 
@@ -201,6 +197,10 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
            <xf:instance id="i-hint-codes" src="code-tables/hint.xml">
                 <code-table xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
             </xf:instance>
+            
+           <xf:instance src="{concat('get-document-type-metadata.xq?data-template-name=', replace(replace($data-template-name, '-latin', ''), '-transliteration', ''))}" id="i-document-type-metadata">
+                <code-table xmlns="http://hra.uni-heidelberg.de/ns/mods-editor/" />
+           </xf:instance>            
            
            <!--Having binds would prevent a tab from being saved when clicking on another tab, 
            so binds are not used.--> 
@@ -233,7 +233,7 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
 
             <xf:action ev:event="xforms-ready">
                <xf:load show="embed" targetid="user-interface-container">
-                    <xf:resource value="'{$ui-file-path}#user-interface-container'"/>
+                    <xf:resource value="'user-interfaces/title.xml#user-interface-container'"/>
                 </xf:load>
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:languageTerm" value="instance('i-configuration')/languageOfResource" />
                 <xf:setvalue ref="instance('save-data')/mods:language/mods:scriptTerm" value="instance('i-configuration')/scriptOfResource" />
@@ -263,11 +263,8 @@ declare function local:create-xf-model($id as xs:string, $instance-id as xs:stri
         </xf:model>
 };
 
-declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $instance-id as xs:string, $record-data as xs:string, $type-data as xs:string) as element(div) {
+declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $record-data as xs:string) as element(div) {
     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-    
-    (:Get the part of the form that belongs to the active tab.:)
-    let $user-interface := collection(concat($config:edit-app-root, '/user-interfaces'))/*[local-name() = 'div'][@tab-id eq $instance-id]
 
     (:Get the time of the last save to the temp collection and parse it.:)
     let $last-modified := xmldb:last-modified($config:mods-temp-collection, concat($id,'.xml'))
@@ -306,32 +303,20 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
         <div id="main-content" xmlns="http://www.w3.org/1999/xhtml" class="content">
             <span class="info-line">
             {
-                if ($type-request)
-                then
-                    (:Remove any '-latin' and '-transliterated' appended the original type request. :)
-                    let $document-types := doc($type-data)
-                    let $type-label := $document-types//mods-editor:item[mods-editor:value eq $type-request and mods-editor:classifier = ('stand-alone', 'related')]/mods-editor:label/text()
-                    (:This is the hint text informing the user aboiut the specific document type and its options.:)
-                    let $type-hint := $document-types//mods-editor:item[mods-editor:value eq $type-request]/mods-editor:hint/text()
-                        return
-                        (
-                        "Editing record of type ", 
-                        <xf:output value="'{$type-label}'" class="hint-icon">
-                            {
-                                if ($type-hint) 
-                                then <xf:hint>{$type-hint/text()}</xf:hint>
-                                else ()                                
-                            }
-                        </xf:output>
-                        ) 
-                else 'Editing record'
-                ,
-                let $publication-title := concat(doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:nonSort, ' ', doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:title)
-                return
-                    (:Why the space here?:)
-                    if ($publication-title ne ' ') 
-                    then (' with the title ', <strong>{$publication-title}</strong>) 
-                    else ()
+                (
+                    "Editing record of type "
+                    ,                    
+                    <xf:output value="instance('i-document-type-metadata')/mods-editor:label" class="hint-icon">
+                        <xf:hint ref="instance('i-document-type-metadata')/mods-editor:hint" />
+                    </xf:output>
+                    ,
+                    let $publication-title := concat(doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:nonSort, ' ', doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:title)
+                    return
+                        (:Why the space here?:)
+                        if ($publication-title ne ' ') 
+                        then (' with the title ', <strong>{$publication-title}</strong>) 
+                        else ()
+                )
                 }, to be saved in <strong> {
                     let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db' || $config:users-collection || '/', ''), '/db' || $config:mods-commons || '/', '')
                     return
@@ -379,40 +364,6 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
         </div>
 };
 
-(:The compact-a template (in 00-compact-main) is the same for all resource types; 
-filtering is performed inside the form to display the elements needed for a particular template.
-The compact-b temples (in 00-compact-related-X) are different according to their resource type; 
-the only filtering that is performed is for transliteration.
-The compact-c temples (in 00-compact-contents) is the same for all resource types; 
-the only filtering that is performed is for transliteration.:)
-declare function local:get-ui-id($tab-id as xs:string, $type-request as xs:string) {
-    (:Remove any '-latin' and '-transliterated' appended the original type request. :)
-    let $log := util:log("INFO", "$type-request = " || $type-request)
-    let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
-    let $log := util:log("INFO", "$type-request = " || $type-request)
-    
-    return
-        if ($tab-id ne 'compact-b')
-        (:Only treat compact-b types.:)
-        then $tab-id
-        else
-            switch ($type-request) 
-                case "article-in-periodical" return "compact-b-article"
-                case "newspaper-article" return "compact-b-newspaper-article"
-                case "moving-images" return "compact-b-moving-images"
-                case "contribution-to-edited-volume" return "compact-b-edited-volume"
-                case "monograph" return "compact-b-monograph"
-                case "edited-volume" return "compact-b-monograph"
-                case "book-review" return "compact-b-review"
-                case "suebs-tibetan" return "compact-b-suebs-tibetan"
-                case "suebs-chinese" return "compact-b-suebs-chinese"
-                case "mads" return "mads"
-                    default return "compact-b-xlink"
-                    (:compact-b-xlink is used for records related to other records through an xlink:href.:)
-                    (:NB: Should be split up in three: article, book review and contribution.:)
-};
-
-(:Main:)
 (:Find the record.:)
 let $record-id := request:get-parameter('id', '')
 let $temp-record-path := concat($config:mods-temp-collection, "/", $record-id,'.xml')
@@ -495,17 +446,18 @@ let $data-template-name :=
             then concat($type-request, '-transliterated') 
             else concat($type-request, '-latin')    
 let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
-let $instance-id := local:get-ui-id($tab-id, $type-request)
+let $document-type := replace(replace($data-template-name, '-latin', ''), '-transliterated', '')
+let $log := util:log("INFO", "$document-type = " || $document-type)
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
-let $model := local:create-xf-model($id, $instance-id, $target-collection, request:get-parameter('host', ''), $data-template-name)
-let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $instance-id, $temp-record-path, $type-data)
+let $model := local:create-xf-model($id, $target-collection, request:get-parameter('host', ''), $data-template-name)
+let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $temp-record-path)
 
 return 
     (:Set serialization options.:)
     (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
     (:Construct the editor page.:)
-    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mods-editor="http://hra.uni-heidelberg.de/ns/mods-editor/">
         <head>
             <title>
                 {$header-title}
@@ -519,19 +471,19 @@ return
             {$model}
         </head>
         <body>
-    <div id="page-head">
-        <div id="page-head-left">
-            <a href="../.." style="text-decoration: none">
-                <img src="{$img-left-src}" title="{$img-left-title}" alt="{$img-left-title}" style="border-style: none;" width="250px"/>
-            </a>
-            <div class="documentation-link"><a href="../../docs/" style="text-decoration: none" target="_blank">Help</a></div>
-        </div>
-        <div id="page-head-right">
-            <a href="{$img-right-href}" target="_blank">
-                <img src="{$img-right-src}" title="{$img-right-title}" alt="{$img-right-title}" width="{$img-right-width}" style="border-style: none"/>
-            </a>
-        </div>
-    </div>
+            <div id="page-head">
+                <div id="page-head-left">
+                    <a href="../.." style="text-decoration: none">
+                        <img src="{$img-left-src}" title="{$img-left-title}" alt="{$img-left-title}" style="border-style: none;" width="250px"/>
+                    </a>
+                    <div class="documentation-link"><a href="../../docs/" style="text-decoration: none" target="_blank">Help</a></div>
+                </div>
+                <div id="page-head-right">
+                    <a href="{$img-right-href}" target="_blank">
+                        <img src="{$img-right-src}" title="{$img-right-title}" alt="{$img-right-title}" width="{$img-right-width}" style="border-style: none"/>
+                    </a>
+                </div>
+            </div>
             <div>
             <div class="container">
                 <div>
