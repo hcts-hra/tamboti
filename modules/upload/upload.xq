@@ -17,14 +17,14 @@ declare variable $image-collection-name := 'VRA_images';
 declare function local:generate-image-record($uuid, $file-uuid, $title, $workrecord) {
     let $vra-content :=
         <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-            <image id="{$uuid}" source="Tamboti" refid="" href="{$file-uuid}">
+            <image id="{$uuid}" source="Tamboti" href="{$file-uuid}">
+                <relationSet>
+                    <relation type="imageOf" relids="{$workrecord}" source="Tamboti">attachment</relation>
+                </relationSet>
                 <titleSet>
                     <display/>
-                    <title type="descriptive">{concat('Image record ', xmldb:decode($title))}</title>
+                    <title type="other">{concat('Image record ', xmldb:decode($title))}</title>
                 </titleSet>
-                <relationSet>
-                    <relation type="imageOf" relids="{$workrecord}" refid="" source="Tamboti">attachment</relation>
-                </relationSet>
             </image>
         </vra>
 
@@ -78,12 +78,14 @@ declare function local:apply-perms($path as xs:string, $username as xs:string, $
     sm:add-user-ace(xs:anyURI($path), $username,true(), $mode)
 };
 
-declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $collection-uuid as xs:string, $image-filename as xs:string) as element() {
+(:declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $collection-uuid as xs:string, $image-filename as xs:string) as element() {:)
+declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $image-filename as xs:string) as element() {
     <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:hra="http://cluster-schemas.uni-hd.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-        <work id="{$workrecord-uuid}" source="Kurs" refid="{$collection-uuid}">
+        <work id="{$workrecord-uuid}" source="Kurs">
+            <relationSet/>
             <titleSet>
                 <display/>
-                <title type="descriptive">{concat('Work record ', $image-filename)}</title>
+                <title type="other">{concat('Work record ', $image-filename)}</title>
             </titleSet>
         </work>
     </vra>    
@@ -158,13 +160,9 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
                         "false"
                     else
                         "true"
-                let $vra_insert := <vra:relation type="imageIs" relids="{$myuuid}" source="Tamboti" pref="{$pref}">general view</vra:relation>
+                let $vra_insert := <relation xmlns="http://www.vraweb.org/vracore4.htm" type="imageIs" relids="{$myuuid}" source="Tamboti" pref="{$pref}">general view</relation>
                     return
                         let $vra-insert := $parentdoc
-                        let $insert_or_update := 
-                            if (not($relationTag)) then 
-                                update insert <vra:relationSet></vra:relationSet> into $vra-insert/vra:vra/vra:work
-                            else ()
                         let $vra-update := update insert $vra_insert into $parentdoc/vra:vra/vra:work/vra:relationSet
                         return $vra-update
             else 
@@ -178,7 +176,7 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
                             </mods:location>
                         </mods:relatedItem>
                     let $mods-insert-tag := $parentdoc
-                    let $mods-update := update insert  $mods-insert into $mods-insert-tag/mods:mods
+                    let $mods-update := update insert $mods-insert into $mods-insert-tag/mods:mods
                     return  $mods-update 
                 else  ()
                
@@ -233,18 +231,19 @@ let $result := for $x in (1 to count($data))
                             (: if the collection file exists in the file folder:)
                             (:read the collection uuid:)
                             let $collection_vra := collection($config:mods-root)//vra:collection
-                            let $collection-uuid :=  
-                                if (exists($collection_vra))
-                                then $collection_vra/@id
-                                else concat('c_', util:uuid())
+(:                            let $collection-uuid :=  :)
+(:                                if (exists($collection_vra)):)
+(:                                then $collection_vra/@id:)
+(:                                else concat('c_', util:uuid()):)
     
-                            (:generate the  work record, if collection xml exists:)
                             let $work-xml-generate :=
-                                if 
-                                    (exists($collection-uuid))
-                                then
+(:                                (:generate the work record, if collection xml exists:) :)
+(:                                if :)
+(:                                    (exists($collection-uuid)):)
+(:                                then:)
                                     let $workrecord-uuid := concat('w_', util:uuid())
-                                    let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x])
+(:                                    let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x]):)
+                                    let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $filename[$x])
                                     let $create-workrecord :=
                                         (
                                             system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
@@ -259,8 +258,8 @@ let $result := for $x in (1 to count($data))
                                         )
     
                                     return $message
-                                else
-                                    ()
+(:                                else:)
+(:                                    ():)
                                 return 
                                     concat($filename[$x], ' ', $message)
                         )
