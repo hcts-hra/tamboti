@@ -1,7 +1,7 @@
 xquery version "3.0";
 
 (:TODO: change all 'monograph' to 'book' in tabs-data.xml and compact body files:)
-(:TODO: delete all '-compact' from ext:template in records, then delete all code that removes this from type in session.xql, edit.xql, tabs.xqm.:)
+(:TODO: delete all '-compact' from ext:template in records, then delete all code that removes this from type in session.xql, edit.xql.:)
 (:TODO: Code related to MADS files.:)
 (:TODO move code into security module:)
 
@@ -263,7 +263,7 @@ declare function local:create-xf-model($id as xs:string, $target-collection as x
         </xf:model>
 };
 
-declare function local:create-page-content($id as xs:string, $tab-id as xs:string, $type-request as xs:string, $target-collection as xs:string, $record-data as xs:string) as element(div) {
+declare function local:create-page-content($id as xs:string, $type-request as xs:string, $target-collection as xs:string, $record-data as xs:string) as element(div) {
     let $type-request := replace(replace($type-request, '-latin', ''), '-transliterated', '')
 
     (:Get the time of the last save to the temp collection and parse it.:)
@@ -299,69 +299,69 @@ declare function local:create-page-content($id as xs:string, $tab-id as xs:strin
                 then (<span class="intro">The publication is included in more than one publication.</span>)
                 else ()
                 
-        return
-        <div id="main-content" xmlns="http://www.w3.org/1999/xhtml" class="content">
-            <span class="info-line">
-            {
-                (
-                    "Editing record of type "
-                    ,                    
-                    <xf:output value="instance('i-document-type-metadata')/mods-editor:label" class="hint-icon">
-                        <xf:hint ref="instance('i-document-type-metadata')/mods-editor:hint" />
+    return
+    <div id="main-content" xmlns="http://www.w3.org/1999/xhtml" class="content">
+        <span class="info-line">
+        {
+            (
+                "Editing record of type "
+                ,                    
+                <xf:output value="instance('i-document-type-metadata')/mods-editor:label" class="hint-icon">
+                    <xf:hint ref="instance('i-document-type-metadata')/mods-editor:hint" />
+                </xf:output>
+                ,
+                let $publication-title := concat(doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:nonSort, ' ', doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:title)
+                return
+                    (:Why the space here?:)
+                    if ($publication-title ne ' ') 
+                    then (' with the title ', <strong>{$publication-title}</strong>) 
+                    else ()
+            )
+            }, to be saved in <strong> {
+                let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db' || $config:users-collection || '/', ''), '/db' || $config:mods-commons || '/', '')
+                return
+                    if ($target-collection-display eq security:get-user-credential-from-session()[1])
+                    then $config:data-collection-name || '/Home'
+                    else $target-collection-display
+            }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
+        </span>
+        <div id="tabs-container"/>
+        <div class="save-buttons-top">    
+             <xf:trigger>
+                <xf:label>
+                    <xf:output value="'Finish Editing'" class="hint-icon">
+                        <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
                     </xf:output>
-                    ,
-                    let $publication-title := concat(doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:nonSort, ' ', doc($record-data)/mods:mods/mods:titleInfo[string-length(@type) eq 0][1]/mods:title)
-                    return
-                        (:Why the space here?:)
-                        if ($publication-title ne ' ') 
-                        then (' with the title ', <strong>{$publication-title}</strong>) 
-                        else ()
-                )
-                }, to be saved in <strong> {
-                    let $target-collection-display := replace(replace(xmldb:decode-uri($target-collection), '/db' || $config:users-collection || '/', ''), '/db' || $config:mods-commons || '/', '')
-                    return
-                        if ($target-collection-display eq security:get-user-credential-from-session()[1])
-                        then $config:data-collection-name || '/Home'
-                        else $target-collection-display
-                }</strong> (Last saved: {$last-modified-hour}:{$last-modified-minute}).
+                </xf:label>
+                <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+            </xf:trigger>
+            <span class="related-title">
+                    {$related-publication-title}
             </span>
-            <div id="tabs-container"/>
-            <div class="save-buttons-top">    
-                 <xf:trigger>
-                    <xf:label>
-                        <xf:output value="'Finish Editing'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                        </xf:output>
-                    </xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                </xf:trigger>
-                <span class="related-title">
-                        {$related-publication-title}
-                </span>
-            </div>            
-            <div id="user-interface-container"/>
-            <div class="save-buttons-bottom">    
-                <!--<xf:submit submission="save-submission">
-                    <xf:label>Save</xf:label>
-                </xf:submit>-->
-                <xf:trigger>
-                    <xf:label>Cancel Editing</xf:label>
-                    <xf:action ev:event="DOMActivate">
-                        <script type="text/javascript">
-                            window.close();
-                        </script>
-                    </xf:action>
-                 </xf:trigger>
-                 <xf:trigger>
-                    <xf:label>
-                        <xf:output value="'Finish Editing'" class="hint-icon">
-                            <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
-                        </xf:output>
-                    </xf:label>
-                    <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
-                </xf:trigger>
-            </div>              
-        </div>
+        </div>            
+        <div id="user-interface-container"/>
+        <div class="save-buttons-bottom">    
+            <!--<xf:submit submission="save-submission">
+                <xf:label>Save</xf:label>
+            </xf:submit>-->
+            <xf:trigger>
+                <xf:label>Cancel Editing</xf:label>
+                <xf:action ev:event="DOMActivate">
+                    <script type="text/javascript">
+                        window.close();
+                    </script>
+                </xf:action>
+             </xf:trigger>
+             <xf:trigger>
+                <xf:label>
+                    <xf:output value="'Finish Editing'" class="hint-icon">
+                        <xf:hint ref="id('hint-code_save',instance('i-hint-codes'))/*:help" />
+                    </xf:output>
+                </xf:label>
+                <xf:dispatch ev:event="DOMActivate" name="save-and-close-action" targetid="main-content"/>
+            </xf:trigger>
+        </div>              
+    </div>
 };
 
 (:Find the record.:)
@@ -374,9 +374,6 @@ If a new record is being created, the template name has to be retrieved from the
 (:Get the type parameter which shows which record template has been chosen.:) 
 let $type-request := request:get-parameter('type', ())
 
-(:Get the path to the document containing the document type information.:)
-let $type-data := concat($config:edit-app-root, '/code-tables/document-type.xml')
-
 (:Sorting data is retrieved from the type-data.:)
 (:Sorting is done in session.xql in order to present the different template options in an intellegible way.:)
 (:If type-sort is '1', it is a compact form and the Basic Input Forms should be shown;
@@ -384,19 +381,6 @@ If type-sort is '2', it is a compact form and the Basic Input Forms should be sh
 if type-sort is 4, it is a mads record and the MADS forms should be shown; 
 otherwise it is a record not made with Tamboti and Title Information should be shown.:)
 let $type-request := replace(replace(replace($type-request, '-latin', ''), '-transliterated', ''), '-compact', '')
-let $type-sort := xs:integer(doc($type-data)/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type-request]/mods-editor:sort)
-(:Get the tab-id for the upper tab to be shown. 
-If no tab is specified, default to the compact-a tab when there is a template to be used with Basic Input Forms;
-otherwise default to Title Information.:)
-let $tab-id :=
-    if ($type-sort = (1, 2))
-    then 'compact-a'
-    else
-        if ($type-sort eq 4)
-        then 'mads'
-        else 'title'        
-(:However, if a tab-id is passed, use this instead of the default.:)
-let $tab-id := request:get-parameter('tab-id', $tab-id)
 
 (:Get the chosen location for the record.:)
 let $target-collection := xmldb:encode-uri(request:get-parameter("collection", ''))
@@ -409,23 +393,6 @@ let $id :=
     if ($new-record)
     then ''
     else $id-param
-
-(:If we are creating a new record, then we need to call get-data-instance.xq with new=true to tell it to get a new template and store it in temp; 
-if we are editing an existing record, we copy the record from the target collection to temp, unless there is already a record in temp with the same name.:)
-(:NB: What if A edits a certain record, leaving it in temp, and B edits the same record - does B then start off where A left off?:)
-(:let $create-new-from-template :=:)
-(:    if ($new-record) :)
-(:    (:Create a new record, knows its type and target-collection (but store it for the time being in temp.:):)
-(:    then local:create-new-record($id, $type-request, $target-collection):)
-(:    else:)
-(:        (:If it is an old record and the document is not in temp already, copy it there.:):)
-(:        if (not(doc-available(concat($config:mods-temp-collection, '/', $id, '.xml')))):)
-(:        (:Otherwise copy the old record to temp.:):)
-(:        then xmldb:copy($target-collection, $config:mods-temp-collection, concat($id, '.xml')):)
-(:        else ():)
-(:    let $set-mode := sm:chmod(xs:anyURI($config:mods-temp-collection || "/" || $id || '.xml'), $config:resource-mode):)
-
-(:For a compact-b form, determine which subform to serve, based on the template.:)
 
 let $transliterationOfResource := request:get-parameter("transliterationOfResource", '')
 let $data-template-name := 
@@ -444,19 +411,18 @@ let $data-template-name :=
             (:Append '-transliterated' if there is transliteration, otherwise append '-latin'.:)
             if ($transliterationOfResource) 
             then concat($type-request, '-transliterated') 
-            else concat($type-request, '-latin')    
-let $log := util:log("INFO", "$data-template-name = " || $data-template-name)
+            else concat($type-request, '-latin')  
+            
 let $document-type := replace(replace($data-template-name, '-latin', ''), '-transliterated', '')
-let $log := util:log("INFO", "$document-type = " || $document-type)
+let $log := util:log("INFO", "$temp-record-path = " || $temp-record-path)
+
 (:NB: $style appears to be introduced in order to use the xf namespace in css.:)
 let $model := local:create-xf-model($id, $target-collection, request:get-parameter('host', ''), $data-template-name)
-let $content := local:create-page-content($id, $tab-id, $data-template-name, $target-collection, $temp-record-path)
+let $content := local:create-page-content($id, $data-template-name, $target-collection, $temp-record-path)
 
 return 
-    (:Set serialization options.:)
     (util:declare-option("exist:serialize", "method=xhtml5 media-type=text/html output-doctype=yes indent=yes encoding=utf-8")
     ,
-    (:Construct the editor page.:)
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ext="http://exist-db.org/mods/extension" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mods-editor="http://hra.uni-heidelberg.de/ns/mods-editor/">
         <head>
             <title>
