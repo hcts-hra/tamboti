@@ -17,13 +17,13 @@ declare variable $image-collection-name := 'VRA_images';
 declare function local:generate-image-record($uuid, $file-uuid, $title, $workrecord) {
     let $vra-content :=
         <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
-            <image id="{$uuid}" source="Tamboti" refid="" href="{$file-uuid}">
+            <image id="{$uuid}" source="Tamboti" href="{$file-uuid}">
                 <titleSet>
                     <display/>
-                    <title type="descriptive">{concat('Image record ', xmldb:decode($title))}</title>
+                    <title type="other">{concat('Image record ', xmldb:decode($title))}</title>
                 </titleSet>
                 <relationSet>
-                    <relation type="imageOf" relids="{$workrecord}" refid="" source="Tamboti">attachment</relation>
+                    <relation type="imageOf" relids="{$workrecord}" source="Tamboti">attachment</relation>
                 </relationSet>
             </image>
         </vra>
@@ -83,7 +83,7 @@ declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string
         <work id="{$workrecord-uuid}" source="Kurs" refid="{$collection-uuid}">
             <titleSet>
                 <display/>
-                <title type="descriptive">{concat('Work record ', $image-filename)}</title>
+                <title type="other">{concat('Work record ', $image-filename)}</title>
             </titleSet>
         </work>
     </vra>    
