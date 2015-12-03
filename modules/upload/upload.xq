@@ -77,7 +77,6 @@ declare function local:apply-perms($path as xs:string, $username as xs:string, $
     sm:add-user-ace(xs:anyURI($path), $username,true(), $mode)
 };
 
-(:declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $collection-uuid as xs:string, $image-filename as xs:string) as element() {:)
 declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string, $image-filename as xs:string) as element() {
     <vra xmlns="http://www.vraweb.org/vracore4.htm" xmlns:ext="http://exist-db.org/vra/extension" xmlns:hra="http://cluster-schemas.uni-hd.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vraweb.org/vracore4.htm http://cluster-schemas.uni-hd.de/vra-strictCluster.xsd">
         <work id="{$workrecord-uuid}" source="Tamboti-upload">
@@ -226,21 +225,8 @@ let $result := for $x in (1 to count($data))
                         system:as-user($config:dba-credentials[1], $config:dba-credentials[2],(
                             let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
                             let $collection-owner-username := xmldb:get-owner($collection-folder)
-                            (: if the collection file exists in the file folder:)
-                            (:read the collection uuid:)
-                            let $collection_vra := collection($config:mods-root)//vra:collection
-(:                            let $collection-uuid :=  :)
-(:                                if (exists($collection_vra)):)
-(:                                then $collection_vra/@id:)
-(:                                else concat('c_', util:uuid()):)
-    
                             let $work-xml-generate :=
-(:                                (:generate the work record, if collection xml exists:) :)
-(:                                if :)
-(:                                    (exists($collection-uuid)):)
-(:                                then:)
                                     let $workrecord-uuid := concat('w_', util:uuid())
-(:                                    let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $collection-uuid, $filename[$x]):)
                                     let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $filename[$x])
                                     let $create-workrecord :=
                                         (
@@ -256,8 +242,6 @@ let $result := for $x in (1 to count($data))
                                         )
     
                                     return $message
-(:                                else:)
-(:                                    ():)
                                 return 
                                     concat($filename[$x], ' ', $message)
                         )
