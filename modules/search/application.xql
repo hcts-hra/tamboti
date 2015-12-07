@@ -1069,7 +1069,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
                 <ul>
                 {
                     for $item in $document-type-code-table//mods-editor:item[mods-editor:classifier = $classifier]
-                    order by $item/mods-editor:sort/text(), $item/mods-editor:label/text()
+                    order by $item/mods-editor:label/text()
                     return
                         <li>
                           <input type="radio" name="type" value="{$item/mods-editor:value/text()}"/><span> {$item/mods-editor:label/text()}</span>
