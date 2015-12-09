@@ -15,8 +15,8 @@ N. B.  Maven 3.1.1+ is needed.
   
 * For production instance of tamboti, use "clean package -Pgeneral-production-build".
 * For test instance of tamboti, use "clean package -Pgeneral-test-build".
-* For Cluster Asia and Europe... production instance of tamboti, use "clean package -Ppatched-cluster-production-build".  
-* For Cluster Asia and Europe... test instance of tamboti, use "clean package -Ppatched-cluster-test-build".
+* For Cluster Asia and Europe... production instance of tamboti, use "clean package -Pcluster-production-build".  
+* For Cluster Asia and Europe... test instance of tamboti, use "clean package -Pcluster-test-build".
 
 ### Dependencies
 * eXist’s content extraction and image modules.
