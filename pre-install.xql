@@ -23,19 +23,10 @@ declare variable $db-root := "/db";
 declare variable $config-collection := fn:concat($db-root, "/system/config");
 
 (:~ Collection names :)
-declare variable $modules-collection-name := "modules";
-declare variable $editor-collection-name := "edit";
-declare variable $code-tables-collection-name := "code-tables";
-
 declare variable $temp-collection-name := "temp";
 declare variable $samples-collection-name := "Samples";
 
 (:~ Collection paths :)
-declare variable $app-collection := $target;
-declare variable $modules-collection := fn:concat($app-collection, "/", $modules-collection-name);
-declare variable $editor-collection := fn:concat($modules-collection, "/", $editor-collection-name);
-declare variable $editor-code-tables-collection := fn:concat($editor-collection, "/", $code-tables-collection-name);
-
 declare variable $resources-collection := fn:concat($db-root, "/", $config:data-collection-name);
 declare variable $temp-collection := fn:concat($resources-collection, "/", $temp-collection-name);
 
@@ -74,10 +65,6 @@ util:log($log-level, "Security: Done.")
 
 (: Load collection.xconf documents :)
 util:log($log-level, "Config: Loading collection configuration ...")
-,
-installation:mkcol($config-collection, $editor-code-tables-collection, $config:public-collection-mode)
-,
-xmldb:store-files-from-pattern(fn:concat($config-collection, $editor-code-tables-collection), $dir, "data/xconf/code-tables/*.xconf")
 ,
 installation:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
 ,
