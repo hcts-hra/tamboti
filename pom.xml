@@ -3,7 +3,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>tamboti</groupId>
+	<groupId>de.uni-hd.hra</groupId>
 	<artifactId>tamboti</artifactId>
 	<version>1.1.7</version>
 	<packaging>pom</packaging>
@@ -29,7 +29,19 @@
 
 	<developers>
 		<developer>
-			<name>claudius</name>
+			<name>Dan McCreary</name>
+			<email />
+		</developer>
+		<developer>
+			<name>Jens Petersen</name>
+			<email />
+		</developer>
+		<developer>
+			<name>Matthias Guth</name>
+			<email>guth@asia-europe.uni-heidelberg.de</email>
+		</developer>
+		<developer>
+			<name>Claudius Teodorescu</name>
 			<email>claudius.teodorescu@asia-europe.uni-heidelberg.de</email>
 		</developer>
 	</developers>
@@ -45,12 +57,12 @@
 				<plugin>
 					<groupId>ro.kuberam.maven.plugins</groupId>
 					<artifactId>kuberam-expath-plugin</artifactId>
-					<version>0.4.2</version>
+					<version>0.4.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>wagon-maven-plugin</artifactId>
-					<version>1.0-beta-4</version>
+					<version>1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>com.coderplus.maven.plugins</groupId>
@@ -218,7 +230,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>trunk-cluster-production-build</id>
+			<id>cluster-production-build</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -291,7 +303,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>trunk-cluster-test-build</id>
+			<id>cluster-test-build</id>
 			<build>
 				<plugins>
 					<plugin>
