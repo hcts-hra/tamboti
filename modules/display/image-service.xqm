@@ -3,6 +3,8 @@ xquery version "3.0";
 module namespace image-service="http://hra.uni-heidelberg.de/ns/image-service";
 
 import module namespace http="http://expath.org/ns/http-client";
+(:import module namespace httpclient="http://exist-db.org/xquery/httpclient";:)
+
 import module namespace im4xquery="http://expath.org/ns/im4xquery" at "java:org.expath.exist.im4xquery.Im4XQueryModule"; 
 import module namespace functx="http://www.functx.com";
 import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
@@ -140,7 +142,6 @@ declare function image-service:server-capabilities($service-protocol as node()?)
 declare function image-service:get-binary-data($image-VRA as node(), $service-protocol as node()?, $iiif-parameters as node(), $image-server as node()?) as xs:base64Binary{
     (: Since the IIIF calls have a defined order, the local converting "overwrites" the following steps after a missing capability :)
     (: eg. if a server is not able to crop, but the output should be a cropped image, resizing and rotating must not be done by the remote server but local :)
-
     let $server-capabilities := image-service:server-capabilities($service-protocol)
     let $binary :=
         if(empty($service-protocol)) then
@@ -164,10 +165,11 @@ declare function image-service:get-binary-data($image-VRA as node(), $service-pr
             let $service-replacement-definitions := $image-server/uri[@name="general"]/replacements
             let $binary-url := image-service:replace-url-keys($image-VRA, $iiif-parameters, $binary-url, $service-replacement-definitions)
             
-            let $useless := util:log("DEBUG", "binary-URL: " ||  $binary-url)
-            let $response := http:send-request(<http:request method="GET"/>, $binary-url)
+            let $response := httpclient:get($binary-url, true(), ())
+            let $mime := $response/httpclient:body/@mimetype/string()
             return
-              data($response[2])
+                $response/httpclient:body/data()
+                
 
     (: IIIF-Specifications on order of implementation: Region THEN Size THEN Rotation THEN Quality THEN Format:)
 
@@ -266,7 +268,6 @@ declare function image-service:rotate-local-parameter($iiif-parameters as node()
 };
 
 declare function image-service:replace-url-keys($vra-image, $iiif-parameters as item(), $url as xs:string, $replacements as node()?) {
-    let $useless := util:log("INFO", $replacements)
     let $replace-map := map:new(
         for $variable in $replacements/replace
             let $key := $variable/@key/string()
@@ -297,7 +298,6 @@ declare function image-service:replace-url-keys($vra-image, $iiif-parameters as 
 };
 
 declare function image-service:get-info($vra-image as item(), $iiif-parameters as item()) {
-    let $useless := util:log("INFO", $vra-image)
     let $image-uuid := $vra-image/@id/string()
     let $image-href := $vra-image/@href/string()
     (: get the image service name :)
@@ -320,17 +320,15 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
             let $replacement-definitions := $image-server/uri[@name="general"]/replacements
         
             let $info-url := image-service:replace-url-keys($vra-image, $iiif-parameters, $info-url, $replacement-definitions)
-        
+            let $useless := util:log("DEBUG", "info-url:" || $info-url)
             let $remote-id-url := functx:substring-before-last($info-url, "/")
             let $self-id-url := functx:substring-before-last(request:get-url() || "?" || request:get-query-string(), "/")
         
-(:            let $useless := util:log("INFO", $self-id-url || " " || $remote-id-url):)
-        
-            let $response := http:send-request(<http:request method="GET"/>, $info-url)
-            let $media-type := $response[1]/http:body/@media-type/string()
-            let $header := response:set-header("Content-Type", $media-type)
-            let $json-response-string := util:binary-to-string($response[2])
+            let $response := httpclient:get($info-url, true(), ())
 
+            let $media-type := $response/httpclient:head/httpclient:header[@name="Content-Type"]/@value/string()
+            let $json-response-string := util:binary-to-string(data($response/httpclient:body))
+            let $header := response:set-header("Content-Type", $response/httpclient:body/@mimetype/string())
             return
                 replace($json-response-string, functx:escape-for-regex($remote-id-url), $self-id-url)
 
