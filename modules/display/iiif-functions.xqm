@@ -5,6 +5,7 @@ import module namespace functx="http://www.functx.com";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 declare namespace json="http://www.json.org";
 
+declare variable $iiif-functions:ERROR := xs:QName("iiif-functions:error");
 declare variable $iiif-functions:valid-formats := map{
                                                     "jpg" := "image/jpeg",
                                                     "tif" := "image/tiff",
@@ -30,13 +31,12 @@ declare function iiif-functions:parse-iiif-call($call as xs:string) {
     let $parameters := tokenize($call, "/")
 
     return
-        (: if not at least 5 parameters the call is invalid :)
         if ($parameters[last()] = "info.json") then
             <iiif-info>
                 <prefix>
                     {
                         let $id-components := 
-                            for $p at $idx in $parameters[position() lt (count($parameters) - 1)]
+                            for $p in $parameters[position() lt (count($parameters) - 1)]
                                 return
                                     if($p) then
                                         $p
@@ -52,9 +52,9 @@ declare function iiif-functions:parse-iiif-call($call as xs:string) {
                     }
                 </identifier>
             </iiif-info>
-        else
-        if (count($parameters) lt 5) then
-            ()
+        (: if not at least 5 parameters the call is invalid :)
+        else if (count($parameters) lt 5) then
+            error($iiif-functions:ERROR, "iiif parsing error", "not a valid iiif call")
         else
             <iiif-parameters>
                 {
@@ -83,7 +83,7 @@ declare function iiif-functions:parse-iiif-call($call as xs:string) {
                         <full>
                         {
                             let $params := 
-                                for $p at $idx in $parameters[position() gt (count($parameters) - 4)]
+                                for $p in $parameters[position() gt (count($parameters) - 4)]
                                 return $p
                                 
                             return
@@ -254,12 +254,10 @@ declare function iiif-functions:parse-format-parameter($format-string as xs:stri
 
 declare function iiif-functions:info($binary as xs:base64Binary, $iiif-parameters as node()) {
     let $uuid := $iiif-parameters//identifier/string()
-    let $id-uri := request:get-url() || "?schema=IIIF" || xmldb:decode("%26") || "call=" || substring-before(request:get-parameter("call", ""), "/info.json")
-
-    let $metadata := contentextraction:get-metadata-and-content($binary)
-    let $metadata := $metadata//xhtml:head/xhtml:meta
-    let $width := $metadata[@name="tiff:ImageWidth"]/@content/string()
-    let $height := $metadata[@name="tiff:ImageLength"]/@content/string()
+    let $id-uri := functx:substring-before-last(request:get-url(), "/")
+    
+    let $width := image:get-width($binary)
+    let $height := image:get-height($binary)
 
     let $data :=
         <data context="http://iiif.io/api/image/2/context.json" id="{$id-uri}">
@@ -284,20 +282,19 @@ declare function iiif-functions:info($binary as xs:base64Binary, $iiif-parameter
                 <scaleFactors json:literal="true">1</scaleFactors>
                 <scaleFactors json:literal="true">2</scaleFactors>
                 <scaleFactors json:literal="true">4</scaleFactors>
-                <scaleFactors>8</scaleFactors>
+                <scaleFactors json:literal="true">8</scaleFactors>
             </tiles>
-            <profile>http://iiif.io/api/image/2/level1.json</profile>
             <profile>
                 <formats json:array="true">jpg</formats>
                 <qualities json:array="true">native</qualities>
                 <supports>sizeByWh</supports>
+                <supports>sizeByH</supports>
+                <supports>sizeByW</supports>
                 <supports>sizeAboveFull</supports>
                 <supports>rotationBy90s</supports>
             </profile>
         </data>
     return
-(:        $data:)
         $data
-
 
 };
