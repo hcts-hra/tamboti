@@ -162,7 +162,75 @@ return
             
     else if(fn:starts-with($exist:path, "/item/")) then
         local:get-item($exist:controller, $exist:root, $exist:prefix || "/" || $config:app-id, $exist:path, $exist:resource, $username, $password)
+
+    (: rewrite the url if image.xql (old image call) is adressed :)
+    else if(contains($exist:path, "/modules/display/image.xql") ) then
+        let $schema := request:get-parameter("schema", "local")
+        let $width := request:get-parameter("width", () )
+        let $height := request:get-parameter("height", () )
+        let $call := 
+            if($schema = "IIIF") then
+                substring-after(request:get-parameter("call", ""), "/")
+            (: no standardized protocol means 'historical' local call :)
+            else if (not($width = "" and $height = "")) then
+                let $size := 
+                    if($width or $height) then
+                        "!" || $width || "," || $height
+                    else
+                        "full"
+                    return 
+                        request:get-parameter("uuid", "") || "/full/" || $size || "/0/default.jpg"
+            (: its a genuine IIIF-Call:)
+            else 
+                substring-after($exist:path, "/iiif/")
         
+        let $call-tokens := tokenize($call, "/")
+        let $image-uuid := $call-tokens[1]
+        let $redirect-uri := "/exist" || $exist:prefix || "/iiif/" || $call
+        return
+(:            <d>:)
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <redirect url="{$redirect-uri}"/>
+                </dispatch>
+(:            </d>:)
+
+    else if(starts-with($exist:path, "/iiif/")) then
+        let $forward-url := "/modules/display/iiif.xql"
+        let $call := xmldb:decode(substring-after($exist:path, "/iiif/"))
+        let $call-tokens := tokenize($call, "/")
+        let $log := util:log("INFO", count($call-tokens))
+        return
+            if(count($call-tokens) < 3 or $call-tokens[2] = "info.json") then
+                let $image-uuid := $call-tokens[1]
+                return
+                    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                        <forward url="{$forward-url}">
+                            <add-parameter name="image-uuid" value="{$image-uuid}"/>
+                            <add-parameter name="action" value="iiif-info"/>
+                            <add-parameter name="full-iiif-call" value="{$image-uuid || "/info.json"}"/>
+                        </forward>
+                    </dispatch>
+            else if (count($call-tokens) = 5) then
+                let $image-uuid := $call-tokens[1]
+                let $qualityformat := tokenize($call-tokens[5], "\.")
+                return
+                    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                        <forward url="{$forward-url}">
+                            <add-parameter name="image-uuid" value="{$image-uuid}"/>
+                            <add-parameter name="action" value="iiif-binary"/>
+                            <add-parameter name="region" value="{$call-tokens[2]}"/>
+                            <add-parameter name="size" value="{$call-tokens[3]}"/>
+                            <add-parameter name="rotation" value="{$call-tokens[4]}"/>
+                            <add-parameter name="quality" value="{$qualityformat[1]}"/>
+                            <add-parameter name="format" value="{$qualityformat[2]}"/>
+                            <add-parameter name="full-iiif-call" value="{$call}"/>
+                        </forward>
+                    </dispatch>
+            else
+                let $header := response:set-status-code(400)
+                return
+                    <div>invalid IIIF call</div>
+
     else
         (: everything else is passed through :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
