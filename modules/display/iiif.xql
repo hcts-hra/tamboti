@@ -18,7 +18,7 @@ let $image-uuid := request:get-parameter("image-uuid", "")
 let $image-vra := security:get-resource($image-uuid)
 let $full-iiif-call := request:get-parameter("full-iiif-call", "")
 return
-(:    try {:)
+    try {
         let $iiif-parameters := iiif-functions:parse-iiif-call($full-iiif-call)
         return
             if (not($image-vra)) then
@@ -97,10 +97,4 @@ return
         let $header := response:set-status-code(400)
         return 
             <error>Caught error {$err:code}: {$err:description}. Data: {$err:value}</error>
-    }
-(:    } catch * {:)
-(:(:        let $header := response:set-status-code(400):):)
-(:(:        return :):)
-(:            <error>Caught error {$err:code}: {$err:description}. Data: {$err:value}</error>:)
-(:    }:)
-    
+    }    
