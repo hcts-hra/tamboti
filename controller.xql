@@ -198,7 +198,6 @@ return
         let $forward-url := "/modules/display/iiif.xql"
         let $call := xmldb:decode(substring-after($exist:path, "/iiif/"))
         let $call-tokens := tokenize($call, "/")
-        let $log := util:log("INFO", count($call-tokens))
         return
             if(count($call-tokens) < 3 or $call-tokens[2] = "info.json") then
                 let $image-uuid := $call-tokens[1]

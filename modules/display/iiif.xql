@@ -31,7 +31,8 @@ return
                     (: IIIF-INFO requested       :)
                     case "iiif-info" return
                             let $header := response:set-status-code(200)
-                            let $header := response:set-header("Content-Type", "application/ld+json")
+                            let $header := response:set-header("Content-Type", "text/javascript")
+(:                            let $header := response:set-header("Content-Type", "application/ld+json"):)
                             let $header := response:set-header('Content-Disposition', 'inline; filename="info.json"')
                             return
                                 image-service:get-info($image-vra, $iiif-parameters)
@@ -64,8 +65,7 @@ return
                         let $metadata := contentextraction:get-metadata($binary-data)
                         let $mime-type := $metadata//xhtml:meta[@name="Content-Type"]/@content/string()
                         (: image/jpeg   *.jpeg *.jpg *.jpe:)
-        (:                let $mime-type := "image/jpeg":)
-                
+
                         (: if format listed in $mime-to-convert, convert into jpg :)
                         let $binary-data :=
                             if($mime-type = $mime-to-convert) then
@@ -81,7 +81,6 @@ return
                             else
                                 $mime-type
                         return
-            
                             if (not(empty($binary-data))) then
                                 let $header := response:set-status-code(200)
                                     return
@@ -95,8 +94,8 @@ return
                 <div>error!</div>
         
     } catch * {
-(:        let $header := response:set-status-code(400):)
-(:        return :)
+        let $header := response:set-status-code(400)
+        return 
             <error>Caught error {$err:code}: {$err:description}. Data: {$err:value}</error>
     }
     
