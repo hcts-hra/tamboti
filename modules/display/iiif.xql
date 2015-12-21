@@ -31,7 +31,7 @@ return
                     (: IIIF-INFO requested       :)
                     case "iiif-info" return
                             let $header := response:set-status-code(200)
-                            (: let $header := response:set-header("Content-Type", "text/javascript") :)
+(:                            let $header := response:set-header("Content-Type", "text/javascript"):)
                             let $header := response:set-header("Content-Type", "application/ld+json")
                             let $header := response:set-header('Content-Disposition', 'inline; filename="info.json"')
                             return
@@ -97,4 +97,4 @@ return
         let $header := response:set-status-code(400)
         return 
             <error>Caught error {$err:code}: {$err:description}. Data: {$err:value}</error>
-    }    
+    }

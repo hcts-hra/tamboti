@@ -300,6 +300,8 @@ declare function image-service:replace-url-keys($vra-image, $iiif-parameters as 
 declare function image-service:get-info($vra-image as item(), $iiif-parameters as item()) {
     let $image-uuid := $vra-image/@id/string()
     let $image-href := $vra-image/@href/string()
+(:    let $useless := util:log("INFO", "info-url:" || $image-href):)
+
     (: get the image service name :)
     let $image-service-name :=
         if (fn:substring-before($image-href, "://") = "") then
@@ -320,21 +322,26 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
             let $replacement-definitions := $image-server/uri[@name="general"]/replacements
         
             let $info-url := image-service:replace-url-keys($vra-image, $iiif-parameters, $info-url, $replacement-definitions)
-            let $useless := util:log("DEBUG", "info-url:" || $info-url)
-            let $remote-id-url := functx:substring-before-last($info-url, "/")
-            let $self-id-url := functx:substring-before-last(request:get-url() || "?" || request:get-query-string(), "/")
-        
-            let $response := httpclient:get($info-url, true(), ())
+            let $self-id-url := functx:substring-before-last(request:get-url(), "/")
+
+            let $id-regex := '"@id"[ ]*:[ ]*"[^"]*"'
+            (: construct the new @id part:)
+            let $replace-with := '"@id" : "' || $self-id-url || '"'
+
+            let $response := httpclient:get($info-url, false(), ())
 
             let $media-type := $response/httpclient:head/httpclient:header[@name="Content-Type"]/@value/string()
             let $json-response-string := util:binary-to-string(data($response/httpclient:body))
             let $header := response:set-header("Content-Type", $response/httpclient:body/@mimetype/string())
+            
+            let $replaced := replace($json-response-string, $id-regex, $replace-with)
             return
-                replace($json-response-string, functx:escape-for-regex($remote-id-url), $self-id-url)
+                $replaced
+                
 
         else 
-            (: it's an internally modified (cropped/resized...) resource, so create an own       :)
-            let $iiif-parameters := iiif-functions:parse-iiif-call("/" || $image-uuid || "/full/full/0/default.jpg")
+            (: it's an internally modified (cropped/resized...) resource, so create an own :)
+            let $iiif-parameters := iiif-functions:parse-iiif-call(xmldb:encode-uri(xs:anyURI("/" || $image-uuid || "/full/full/0/default.jpg")))
             let $binary := image-service:get-binary-data($vra-image, $service-protocol, $iiif-parameters, $image-server)
             let $iiif-info-xml := iiif-functions:info($binary, $iiif-parameters)
             let $parameters := 
