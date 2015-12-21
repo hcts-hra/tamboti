@@ -249,11 +249,11 @@
 									<replacements>
 										<replacement>
 											<token>config:enforced-realm-id := "ldap-server.yourdomain.com"</token>
-											<value>config:enforced-realm-id := "${enforced-realm-id}"</value>
+											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
 										</replacement>
 										<replacement>
 											<token>config:dba-credentials := \("admin",""\)</token>
-											<value>config:dba-credentials := \("admin","${admin-password}"\)</value>
+											<value>config:dba-credentials := \("admin","${tamboti.admin-password}"\)</value>
 										</replacement>
 										<replacement>
 											<token>config:app-version := ""</token>
@@ -275,7 +275,7 @@
 									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<url>http://${tamboti.server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
 									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
 									<toDir>${project.build.directory}</toDir>
 								</configuration>
@@ -345,11 +345,11 @@
 									<replacements>
 										<replacement>
 											<token>config:enforced-realm-id := "ldap-server.yourdomain.com"</token>
-											<value>config:enforced-realm-id := "${enforced-realm-id}"</value>
+											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
 										</replacement>
 										<replacement>
 											<token>config:dba-credentials := \("admin",""\)</token>
-											<value>config:dba-credentials := \("admin","${admin-password}"\)</value>
+											<value>config:dba-credentials := \("admin","${test-tamboti.admin-password}"\)</value>
 										</replacement>
 										<replacement>
 											<token>config:app-version := ""</token>
@@ -371,7 +371,7 @@
 									<goal>download-single</goal>
 								</goals>
 								<configuration>
-									<url>http://${server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
+									<url>http://${tamboti.server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
 									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
 									<toDir>${project.build.directory}</toDir>
 								</configuration>
