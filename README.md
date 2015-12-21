@@ -7,7 +7,7 @@ Icon stock is from - http://www.famfamfam.com/lab/icons/silk/
 
 * Build the xar pakage according to the building section below, along with the dependencies mentioned below, and install all these xar-s in eXist.
 * Modify "modules/config.default.xqm" and "modules/configuration/services.xml" according to your needs. 
-* Access tamboti at <http://localhost:8080/exist/apps/library/> or <http://localhost:8080/exist/apps/tamboti/>.
+* Access tamboti at <http://localhost:8080/exist/apps/tamboti/>.
 
 
 ### Building with maven
