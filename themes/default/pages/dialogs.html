@@ -390,13 +390,10 @@
                 title: "Create Stand-Alone MODS Record", 
                 width: 550
             });
-            var trigger = '#collection-create-resource';
-            if (trigger != '') {
-                $(trigger).click(function() {
-                    $('#new-resource-dialog').dialog('open');
-                    return false;
-                });                
-            }
+            $("#collection-create-resource").click(function() {
+                $('#new-resource-dialog').dialog('open');
+                return false;
+            });                
 
             $('#add-related-dialog').dialog({
                 modal: true,
@@ -545,8 +542,7 @@
                             <th>Remove</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody/>
                 </table>
                 <form id="copy-acl-to">
                     <div class="messageContainer">copy sharing table to <select id="copy-acl-target-collection-list"/>
