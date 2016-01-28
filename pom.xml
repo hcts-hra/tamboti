@@ -252,14 +252,15 @@
 											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
 										</replacement>
 										<replacement>
-											<token>config:dba-credentials := \("admin",""\)</token>
-											<value>config:dba-credentials := \("admin","${tamboti.admin-password}"\)</value>
+											<token>config:dba-credentials := ("admin", "")</token>
+											<value>config:dba-credentials := ("admin","${test-tamboti.admin-password}")</value>
 										</replacement>
 										<replacement>
 											<token>config:app-version := ""</token>
 											<value>config:app-version := "${project.version}"</value>
 										</replacement>
 									</replacements>
+									<regex>false</regex>
 								</configuration>
 							</execution>
 						</executions>
@@ -348,14 +349,15 @@
 											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
 										</replacement>
 										<replacement>
-											<token>config:dba-credentials := \("admin",""\)</token>
-											<value>config:dba-credentials := \("admin","${test-tamboti.admin-password}"\)</value>
+											<token>config:dba-credentials := ("admin", "")</token>
+											<value>config:dba-credentials := ("admin","${test-tamboti.admin-password}")</value>
 										</replacement>
 										<replacement>
 											<token>config:app-version := ""</token>
 											<value>config:app-version := "${project.version}"</value>
 										</replacement>
 									</replacements>
+									<regex>false</regex>
 								</configuration>
 							</execution>
 						</executions>
