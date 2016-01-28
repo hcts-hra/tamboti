@@ -21,4 +21,3 @@ N. B.  Maven 3.1.1+ is needed.
 ### Dependencies
 * eXist’s content extraction and image modules.
 * eXist ImageMagick Plugin by ZwoBit https://github.com/zwobit/imagemagick.xq
-* MODS editor, see https://github.com/exc-asia-and-europe/mods-editor.
