@@ -431,7 +431,7 @@ function updateCollectionPaths(title, key) {
     $('span[id $= collection-path_]').text(title);
     $('input[id $= collection-path_]').val(key);
 
-    // $('#collection-create-resource').attr("href", "../edit/edit.xq?type=book-chapter&collection=" + key);
+    // $('#collection-create-resource').attr("href", "/apps/hra-mods-editor/index.xq?type=book-chapter&collection=" + key);
 }
 
 function getCurrentCollection() {

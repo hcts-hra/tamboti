@@ -57,6 +57,7 @@ declare variable $config:url-image-size := "256";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
 declare variable $config:edit-app-root := concat($config:app-root, "/modules/edit");
+declare variable $config:mods-editor-path := concat(request:get-context-path(), "/apps/hra-mods-editor/index.xq");
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";

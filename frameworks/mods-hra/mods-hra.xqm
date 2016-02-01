@@ -52,6 +52,14 @@ declare function mods-hra-framework:get-item-uri($item-id as xs:string) {
     )
 };
 
+
+declare function mods-hra-framework:collection-is-writable($collection as xs:string) {
+    if ($collection eq $config:groups-collection) then
+        false()
+    else
+        security:can-write-collection($collection)
+};
+
 declare function mods-hra-framework:get-UUID($item as element()) {
     $item/@ID 
 };
@@ -129,7 +137,7 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                 (: if the item's collection is writable, display edit/delete and move buttons :)
                 if ($isWritable) then
                     (
-                        <a href="../edit/edit.xq?id={$item/@ID}&amp;collection={util:collection-name($item)}" target="_blank">
+                        <a href="{$config:mods-editor-path}?id={$item/@ID}&amp;collection={util:collection-name($item)}" target="_blank">
                             <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
                         </a>
                         ,
