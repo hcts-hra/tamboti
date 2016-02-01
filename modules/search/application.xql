@@ -1065,7 +1065,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
     
     return 
         <div class="content">
-            <form id="{if ($classifier eq 'stand-alone') then 'new-resource-form' else 'add-related-form'}" action="../edit/edit.xq" method="GET" target="_blank">
+            <form id="{if ($classifier eq 'stand-alone') then 'new-resource-form' else 'add-related-form'}" action="{$config:mods-editor-path}" method="GET" target="_blank">
                 <ul>
                 {
                     for $item in $document-type-code-table//mods-editor:item[mods-editor:classifier = $classifier]
