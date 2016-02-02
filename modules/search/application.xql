@@ -1003,7 +1003,7 @@ declare function biblio:collection-path($node as node(), $params as element(para
 declare function biblio:resource-types($node as node(), $params as element(parameters)?, $model as item()*) {
     let $classifier := tokenize($node/@class, "\s")
     let $classifier := $classifier[2]
-    let $code-table-path := concat($config:edit-app-root, '/code-tables')
+    let $code-table-path := concat($config:mods-editor-collection, '/code-tables')
     
     let $document-type-codes-path := concat($code-table-path, '/document-type.xml')
     let $document-type-code-table := doc($document-type-codes-path)/mods-editor:code-table

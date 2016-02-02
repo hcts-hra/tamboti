@@ -2,8 +2,8 @@ xquery version "3.0";
 
 module namespace installation = "http://hra.uni-heidelberg.de/ns/tamboti/installation/";
 
-import module namespace config = "http://exist-db.org/mods/config" at "xmldb:exist:///db/apps/tamboti/modules/config.xqm";
-import module namespace security = "http://exist-db.org/mods/security" at "xmldb:exist:///db/apps/tamboti/modules/search/security.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../search/security.xqm";
 
 (:~ Functions needed for pre-install.xq of tamboti and tamboti-samples apps :)
 declare function installation:mkcol-recursive($collection, $components, $permissions as xs:string) {
