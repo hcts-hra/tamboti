@@ -74,16 +74,7 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{concat(request:get-uri(), '/')}"/>
         </dispatch>
-     else if (contains($exist:path, "/api/")) then
-         let $method := request:get-method()
-         
-         return
-             switch($method)
-                case "PUT"
-                return apis:put()
-                case "DELETE"
-                return apis:delete()
-                default return ()
+    else if (contains($exist:path, "/api/")) then apis:process()
     else if ($exist:path = ('/bib')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/bib.html"/>

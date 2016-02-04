@@ -2,6 +2,18 @@ xquery version "3.0";
 
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
 
+declare function apis:process() {
+    let $method := request:get-method()
+    
+    return
+     switch($method)
+        case "PUT"
+        return apis:put()
+        case "DELETE"
+        return apis:delete()
+        default return ()    
+};
+
 declare function apis:put() {
 	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
 	
