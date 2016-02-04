@@ -3,6 +3,7 @@ xquery version "3.0";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
 import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
+import module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/" at "../modules/apis/apis.xqm";
 
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace session="http://exist-db.org/xquery/session";
@@ -96,18 +97,8 @@ else if ($exist:resource eq 'retrieve') then
 		</forward>
 	</dispatch>
 	
-else if ($exist:path eq '/search/') then
-   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-      <forward url="/modules/search/search.xq">
-        <set-attribute name="exist:prefix" value="{$exist:prefix}"/>
-      </forward>
-   </dispatch>	
-	
-else if ($exist:path = "/history/") then
-    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <forward url="../history.xq" />
-    </dispatch> 
-
+else if ($exist:path eq '/search/') then apis:search($exist:prefix)	
+else if ($exist:path = "/history/") then apis:search-history()
 else if (contains($exist:path, "/$shared/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="/apps/shared-resources/{substring-after($exist:path, '/$shared/')}" absolute="yes"/>

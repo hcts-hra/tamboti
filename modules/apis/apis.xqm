@@ -28,3 +28,17 @@ declare function apis:delete() {
 		</dispatch>
 	)
 };
+
+declare function apis:search($exist-prefix as xs:string) {
+   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+      <forward url="/modules/search/search.xq">
+        <set-attribute name="exist:prefix" value="{$exist-prefix}"/>
+      </forward>
+   </dispatch>
+};
+
+declare function apis:search-history() {
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <forward url="../history.xq" />
+    </dispatch> 
+};
