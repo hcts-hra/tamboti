@@ -24,14 +24,14 @@ declare function apis:process() {
         default return ()    
 };
 
-declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string) {
+declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
     switch($scope)
         case "editors"
         return apis:editors($parameters)     
         default return () 
 };
 
-declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string) {
+declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
 	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
 	
 	return
@@ -48,7 +48,7 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
 	        </dispatch>
 };
 
-declare function apis:delete($method as xs:string, $scope as xs:string, $parameters as xs:string) {
+declare function apis:delete($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
 	(
 		util:log("INFO", "DELETE X-resource-path = " || request:get-header("X-resource-path"))
 		,
@@ -72,15 +72,15 @@ declare function apis:search-history() {
     </dispatch> 
 };
 
-declare function apis:editors($parameters as xs:string) {
+declare function apis:editors($parameters as xs:string*) {
     let $editor-name := $parameters[1]
     
     return
      switch($editor-name)
         case "hra-mods-editor"
         return
-           <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-              <redirect url="{$config:mods-editor-path}" />
-           </dispatch>            
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}" />
+            </dispatch>            
         default return ()     
 };
