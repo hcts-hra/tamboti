@@ -2,9 +2,10 @@ xquery version "3.0";
 
 import module namespace session ="http://exist-db.org/xquery/session";
 
-import module namespace config="http://exist-db.org/mods/config" at "modules/config.xqm";
-import module namespace security="http://exist-db.org/mods/security" at "modules/search/security.xqm";
-import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "modules/theme.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
+import module namespace theme = "http://exist-db.org/xquery/biblio/theme" at "modules/theme.xqm";
+import module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/" at "modules/apis/apis.xqm";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
 
@@ -73,36 +74,7 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{concat(request:get-uri(), '/')}"/>
         </dispatch>
-     else if (contains($exist:path, "/api/")) then
-         let $method := request:get-method()
-         
-         return
-             switch($method)
-                case "PUT"
-                return
-                    let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
-                    
-                    return
-                        if (not(xmldb:collection-available($target-collection)))
-                        then
-                            (
-                                response:set-status-code(404)
-                                ,
-                                <error>The target collection '{$target-collection}' does not exist!</error>
-                            )
-                        else
-                            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                                <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
-                            </dispatch>
-                case "DELETE"
-                return
-                    (
-                        util:log("INFO", "DELETE X-resource-path = " || request:get-header("X-resource-path"))
-                        ,
-                    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                        <forward url="/rest/db{request:get-header("X-resource-path")}" absolute="yes"/>
-                    </dispatch>                    )
-                default return ()
+    else if (contains($exist:path, "/api/")) then apis:process()
     else if ($exist:path = ('/bib')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/bib.html"/>
