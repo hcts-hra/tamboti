@@ -7,30 +7,31 @@ import module namespace config = "http://exist-db.org/mods/config" at "../config
 declare function apis:process() {
     let $method := request:get-method()
     
+    let $path := substring-after(request:get-effective-uri(), "/api/")
+    let $tokenized-path := tokenize($path, "/")
+    
+    let $scope := $tokenized-path[1]
+    let $parameters := subsequence($tokenized-path, 2)
+    
     return
      switch($method)
         case "GET"
-        return apis:get()     
+        return apis:get($method, $scope, $parameters)     
         case "PUT"
-        return apis:put()
+        return apis:put($method, $scope, $parameters)
         case "DELETE"
-        return apis:delete()
+        return apis:delete($method, $scope, $parameters)
         default return ()    
 };
 
-declare function apis:get() {
-    let $path := substring-after(request:get-effective-uri(), "/api/")
-	let $scope := replace($path, "/.*$", "")
-	let $parameters := replace(substring-after($path, $scope), "^/", "")
-	
-    return
-     switch($scope)
+declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string) {
+    switch($scope)
         case "editors"
         return apis:editors($parameters)     
         default return () 
 };
 
-declare function apis:put() {
+declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string) {
 	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
 	
 	return
@@ -47,7 +48,7 @@ declare function apis:put() {
 	        </dispatch>
 };
 
-declare function apis:delete() {
+declare function apis:delete($method as xs:string, $scope as xs:string, $parameters as xs:string) {
 	(
 		util:log("INFO", "DELETE X-resource-path = " || request:get-header("X-resource-path"))
 		,
@@ -72,15 +73,14 @@ declare function apis:search-history() {
 };
 
 declare function apis:editors($parameters as xs:string) {
-    let $editor-name := $parameters
-    let $log := util:log("INFO", "$config:mods-editor-path = " || $config:mods-editor-path)
+    let $editor-name := $parameters[1]
     
     return
      switch($editor-name)
         case "hra-mods-editor"
         return
            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-              <forward url="../../../..{$config:mods-editor-index-db-path}" />
+              <redirect url="{$config:mods-editor-path}" />
            </dispatch>            
         default return ()     
 };
