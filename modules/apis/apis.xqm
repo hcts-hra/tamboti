@@ -2,16 +2,32 @@ xquery version "3.0";
 
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
 
+import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
+
 declare function apis:process() {
     let $method := request:get-method()
     
     return
      switch($method)
+        case "GET"
+        return apis:get()     
         case "PUT"
         return apis:put()
         case "DELETE"
         return apis:delete()
         default return ()    
+};
+
+declare function apis:get() {
+    let $path := substring-after(request:get-effective-uri(), "/api/")
+	let $scope := replace($path, "/.*$", "")
+	let $parameters := replace(substring-after($path, $scope), "^/", "")
+	
+    return
+     switch($scope)
+        case "editors"
+        return apis:editors($parameters)     
+        default return () 
 };
 
 declare function apis:put() {
@@ -53,4 +69,18 @@ declare function apis:search-history() {
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="../history.xq" />
     </dispatch> 
+};
+
+declare function apis:editors($parameters as xs:string) {
+    let $editor-name := $parameters
+    let $log := util:log("INFO", "$config:mods-editor-path = " || $config:mods-editor-path)
+    
+    return
+     switch($editor-name)
+        case "hra-mods-editor"
+        return
+           <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+              <forward url="../../../..{$config:mods-editor-index-db-path}" />
+           </dispatch>            
+        default return ()     
 };
