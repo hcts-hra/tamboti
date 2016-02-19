@@ -141,6 +141,10 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                             <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
                         </a>
                         ,
+                        <a href="{$config:default-mods-editor-api}/uuid-23b9dc11-ec19-4231-8323-6775688b2704" target="_blank">
+                            <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
+                        </a>                        
+                        ,
                         <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="theme/images/delete.png"/></a>
                         ,
                         <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>
