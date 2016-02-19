@@ -56,9 +56,14 @@ declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:
 declare variable $config:url-image-size := "256";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
+
+(: APIs:)
+declare variable $config:api-base-path := request:get-context-path() || "/apps/tamboti/api";
+declare variable $config:default-mods-editor-api := $config:api-base-path || "/editors/hra-mods-editor";
+
+(: default editors :)
 declare variable $config:mods-editor-collection := "/apps/hra-mods-editor";
 declare variable $config:mods-editor-path := concat(request:get-context-path(), "/apps/hra-mods-editor/index.xq");
-declare variable $config:mods-editor-index-db-path := "/apps/hra-mods-editor/index.xq";
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
