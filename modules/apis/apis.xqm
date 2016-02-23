@@ -27,7 +27,9 @@ declare function apis:process() {
 declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
     switch($scope)
         case "editors"
-        return apis:editors($parameters)     
+        return apis:editors($parameters)
+        case "uuid"
+        return apis:uuid()        
         default return () 
 };
 
@@ -83,4 +85,8 @@ declare function apis:editors($parameters as xs:string*) {
                 <redirect url="{$config:mods-editor-path}?id={$parameters[2]}" />
             </dispatch>            
         default return ()     
+};
+
+declare function apis:uuid() {
+    "uuid-" || util:uuid()     
 };
