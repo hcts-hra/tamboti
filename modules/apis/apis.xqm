@@ -88,5 +88,5 @@ declare function apis:editors($parameters as xs:string*) {
 };
 
 declare function apis:uuid() {
-    "uuid-" || util:uuid()     
+    text {"uuid-" || util:uuid()} 
 };
