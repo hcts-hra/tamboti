@@ -94,7 +94,7 @@ declare function wiki-hra-framework:list-view-table($item as node(), $currentPos
             </td>
             }
             <td class="list-type icon magnify">
-            { wiki-hra-framework:get-icon($bs:THUMB_SIZE_FOR_GALLERY, $item, $currentPos)}
+            { wiki-hra-framework:get-icon($vra-hra-framework:THUMB_SIZE_FOR_GALLERY, $item, $currentPos)}
             </td>
             <td/>
             {
