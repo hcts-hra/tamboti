@@ -10,7 +10,7 @@ let $http-headers :=
     </headers>
     
 let $api-url := xs:anyURI("http://kjc-ws2.kjc.uni-heidelberg.de:8650/exist/apps/tamboti/api/editors/hra-mods-editor/uuid-23b9dc11-ec19-4231-8323-6775688b2704")
-let $resources := httpclient:get($api-url, false(), $http-headers)
+let $resources := httpclient:get($api-url, false(), $http-headers)/*[2]/*
 
 
 return $resources
