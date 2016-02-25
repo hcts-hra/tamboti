@@ -82,7 +82,7 @@ declare function apis:editors($parameters as xs:string*) {
         case "hra-mods-editor"
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}" />
+                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}&amp;collection={request:get-header('X-target-collection')}&amp;type={request:get-header('X-document-type')}" />
             </dispatch>            
         default return ()     
 };
