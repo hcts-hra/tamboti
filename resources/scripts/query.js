@@ -1565,6 +1565,7 @@ function newResource() {
 
     $("#new-resource-form input[name = collection]").val(collection);
     $("#new-resource-form").submit();
+    $("#new-resource-form")[0].reset();
 }
 
 function newRelatedResource() {
