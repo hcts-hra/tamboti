@@ -137,11 +137,7 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                 (: if the item's collection is writable, display edit/delete and move buttons :)
                 if ($isWritable) then
                     (
-                        <a href="{$config:mods-editor-path}?id={$item/@ID}&amp;collection={util:collection-name($item)}" target="_blank">
-                            <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
-                        </a>
-                        ,
-                        <a href="{$config:default-mods-editor-api}/uuid-23b9dc11-ec19-4231-8323-6775688b2704" target="_blank">
+                        <a href="{$config:default-mods-editor-api}/{$item/@ID}" target="_blank">
                             <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
                         </a>                        
                         ,
