@@ -251,7 +251,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
             (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
             let $list-view := 
                 system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                    collection($config:mods-root)//vra:image[@id = $relids]/..
+                    collection($config:mods-root)//vra:image[@id = $relids]
                 )
             let $list-view := vra-hra-framework:format-list-view('', $list-view, '')
             return
@@ -540,6 +540,15 @@ declare function vra-hra-framework:format-list-view($position as xs:string, $ent
         $result    
 };
 
+declare function vra-hra-framework:get-vra-image-uuid($rel as element(vra:relation)) {
+    if(starts-with(data($rel/@relids), "i_")) then
+        data($rel/@relids)
+    else 
+        if(starts-with(data($rel/@refid), "i_")) then
+            data($rel/@refid)
+        else
+            ()
+};
 
 declare function vra-hra-framework:detail-view-table($item as element(vra:vra), $currentPos as xs:int) {
     let $isWritable := security:can-write-collection(util:collection-name($item))
@@ -569,7 +578,9 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                     <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
-            <td class="detail-type" style="vertical-align:top"><img src="theme/images/image.png" title="Still Image"/></td>
+            <td class="detail-type" style="vertical-align:top">
+                <img src="theme/images/image.png" title="Still Image"/>
+            </td>
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
@@ -584,8 +595,13 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                                 else
                                     ()
                         let $image := security:get-resource($image-uuid)
+                        let $image-uuid := $image/@id
                         return
-                            <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
+                            <p>
+                                {
+                                    vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
+                                }
+                            </p>
                 }
                 </div>
             </td>            
@@ -663,9 +679,13 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
                         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
                             collection($config:mods-root)//vra:image[@id = $relids]
                         )
-
+                    let $image-uuid := $image/@id
                     return
-                        <td class="list-image">{vra-hra-framework:return-thumbnail-list-view($image)}</td>               
+                        <td class="list-image">
+                            {
+                                vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW)
+                            }
+                        </td>               
                 }
                 {
                 <td class="pagination-toggle" style="vertical-align:middle">
@@ -694,73 +714,29 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
 };
 
 
-(:declare function vra-hra-framework:return-thumbnail-detail-view($image){:)
-(:    let $image-uuid := $image/@id:)
-(:    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail"):)
-(:    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000"):)
-(:    let $image-size150-href := image-link-generator:generate-href($image-uuid, "tamboti-size150")    :)
-(:    let $image-url := :)
-(:        if (security:get-user-credential-from-session()[1] eq "guest") then:)
-(:            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>:)
-(:        else :)
-(:            <a href="{$image-size1000-href}" target="_blank">:)
-(:                <img src="{$image-size150-href}" alt="image" class="relatedImage picture zoom"/>:)
-(:            </a>:)
-(::)
-(:    return $image-url:)
-(:};:)
-(::)
-(:declare function vra-hra-framework:return-thumbnail-list-view($image){:)
-(:    let $image-uuid := $image/@id:)
-(:    let $image-thumbnail-href := image-link-generator:generate-href($image-uuid, "tamboti-thumbnail"):)
-(:    let $image-size1000-href := image-link-generator:generate-href($image-uuid, "tamboti-size1000"):)
-(:    let $image-url := :)
-(:        if (security:get-user-credential-from-session()[1] eq "guest") then:)
-(:            <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture"/>:)
-(:        else :)
-(:            <a href="{$image-size1000-href}" target="_blank">:)
-(:                <img src="{$image-thumbnail-href}" alt="image" class="relatedImage picture zoom"/>:)
-(:            </a>:)
-(::)
-(:    return $image-url:)
-(:};:)
-
-
-
-declare function vra-hra-framework:return-thumbnail-detail-view($image){
-    let $image-uuid := $image/@id
-    let $image-url := 
-        if (security:get-user-credential-from-session()[1] eq "guest") then
-            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;">
-                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
-<img src="{$config:app-http-root}/modules/display/image.xql?uuid={$image-uuid}&amp;width={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}&amp;height={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-            </span>
-        else 
-            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;">
-                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
-                    <img src="{$config:app-http-root}/modules/display/image.xql?uuid={$image-uuid}&amp;width={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}&amp;height={$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}" alt="image" class="relatedImage picture zoom" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/> 
-                </a>
-            </span>
-    return $image-url
-};
-
-declare function vra-hra-framework:return-thumbnail-list-view($image){
-    let $image-uuid := $image/@id
-    let $image-url := 
-        if (security:get-user-credential-from-session()[1] eq "guest") then
-            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;">
-                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
-                <img src="{$config:app-http-root}/modules/display/image.xql?schema=IIIF&amp;call=/{$image-uuid}/full/!{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW},{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-            </span>
-        else 
-            <span style="width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;min-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;">
-                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
-                    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                    <img src="{$config:app-http-root}/modules/display/image.xql?schema=IIIF&amp;call=/{$image-uuid}/full/!{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW},{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;max-height:{$vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW}px;display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-                </a>
-            </span>
-
-    return $image-url
+declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:string, $zoom as xs:boolean, $width as xs:int, $height as xs:int) {
+    let $height :=
+        if ($height) then
+            $height
+        else
+            $width
+    
+    return
+        <span style="width:{$width}px; min-height:{$width}px;">
+            {
+                if($zoom) then 
+                    <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
+                        <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+                        <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+                    </a>
+                else
+                    <span>
+                        <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+                        <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+                    </span>
+            }
+        </span>
+    
 };
 
 declare function vra-hra-framework:get-vra-work-record-list($work-record as element()) as xs:string+ {

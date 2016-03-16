@@ -451,8 +451,7 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                    if ($vra-work)
-                    then
+                    if ($vra-work) then
                         (: relids/refid workaround :)
                         for $rel in $vra-work/vra:relationSet/vra:relation
                             let $image-uuid := 
@@ -462,14 +461,17 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
                                     data($rel/@relids)
                             let $image := security:get-resource($image-uuid)
                             return
-                                <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
+                                <p>
+                                    {
+                                        vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)                                                                           }
+                                </p>
                     else 
                         let $image := collection($config:mods-root)//vra:image[@id=$id]
                         return
-                            <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
-                     (: 
-                     return <img src="{concat(request:get-scheme(),'://',request:get-server-name(),':',request:get-server-port(),request:get-context-path(),'/rest', util:collection-name($image),"/" ,$image-name)}"  width="200px"/>
-                     :)               
+                                <p>
+                                    {
+                                        vra-hra-framework:create-thumbnail-span($id, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)                                                                           }
+                                </p>
                 }
                 </div>
             </td>            
