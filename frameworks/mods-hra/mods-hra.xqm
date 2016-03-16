@@ -744,8 +744,13 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                             let $print-image :=
                                 if ($image-is-preview) then 
                                     let $image := collection($config:mods-root)//vra:image[@id=data($entry//mods:url)]
-                                    return 
-                                       <p>{vra-hra-framework:return-thumbnail-detail-view($image)}</p>
+                                    let $image-uuid := $image/@id
+                                    return
+                                        <p>
+                                            {
+                                                vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
+                                            }
+                                       </p>
                                 else()
                         return $print-image
                    let $elements := for $element in  $item/node()
