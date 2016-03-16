@@ -34,6 +34,15 @@ declare function vra-hra-framework:get-UUID($item as element()) {
         ()
 };
 
+(:declare function vra-hra-framework:get-annotations($work as element(vra:work)) {:)
+(:    let $relatedItems := :)
+(:    let $work-uuid := replace(/@xlink:href/string(), '^#*', ''):)
+(:    let $work := collection($naddara-config:resource-root)//vra:work[@id=$work-uuid]:)
+(:    let $image-uuid := $work/vra:relationSet/vra:relation[@type="imageIs"][1]/@relids/string():)
+(:    let $image-record := collection($naddara-config:resource-root)//vra:image[@id=$image-uuid]:)
+(::)
+(:};:)
+
 declare function vra-hra-framework:toolbar($item as element(), $isWritable as xs:boolean) {
 (:    let $useless := util:log("DEBUG", "isWritable:" || $isWritable):)
     let $collection := util:collection-name($item)
@@ -110,6 +119,8 @@ declare function vra-hra-framework:toolbar($item as element(), $isWritable as xs
 :)
 declare function vra-hra-framework:format-detail-view($position as xs:string, $entry as element(vra:vra), $collection-short as xs:string, $type as xs:string, $id as xs:string) as element(table) {
     let $main-title := $entry//vra:titleSet/vra:title[1]/text()
+    let $allRelations := $entry//vra:relationSet/vra:relation
+    let $additionalRelations := $allRelations[not(@pref="true")]
     
     let $record-location-node :=
         <tr>
@@ -234,41 +245,48 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     <td class="collection-label">Description</td>
                     <td>{$description/vra:text}</td>
                 </tr>
-    (: relation :)
+    
+    (: relations :)
     let $relation-node :=
-        for $relation in $entry//vra:relationSet/vra:relation[@type="imageIs"]
+        for $relation in $additionalRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
             let $type-label := 
                 switch ($type)
                     case 'imageIs' return
-                        'Image Record'
+                        (: display a thubnail view :)
+                        vra-hra-framework:create-thumbnail-span($relids, true(), 100, 100)
+                        
                     case 'imageOf' return
                         'Work Record'
                     default return
-                        'Collection Record'
+                        $type
             (: Elevate rights because user is not able to search whole $config:mods-root   :)
             (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
-            let $list-view := 
-                system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                    collection($config:mods-root)//vra:image[@id = $relids]
-                )
-            let $list-view := vra-hra-framework:format-list-view('', $list-view, '')
+(:            let $vra-image := :)
+(:                system:as-user($config:dba-credentials[1], $config:dba-credentials[2], :)
+(:                    collection($config:mods-root)//vra:image[@id = $relids]:)
+(:                ):)
+(:(:            let $list-view := vra-hra-framework:format-list-view('', $list-view, ''):):)
+(:            let $log := util:log("INFO", $relation):)
             return
                 <tr>
                     <td class="collection-label">{$type-label}</td>
-                    <td>{$list-view}</td>
+                    <td>
+                        <div style="font-weight:bold">{$relation/string()}</div>
+                    </td>
                 </tr>
+                
     (: relation-href :)
     let $relation-href-node :=
-        let $href-relation := $entry//vra:relationSet/vra:relation[@type="relatedTo"]
+        let $href-relation := $allRelations[@type="relatedTo"]
         for $rel in $href-relation
             return
                <tr>
                    <td class="collection-label">
                       <a href="?search-field=ID&amp;value={$rel/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $rel/@type)}</a>
                    </td>
-                   <td>Tamboti MODS Record</td>
+                   <td>Related To</td>
                </tr>
 
     let $rights-node :=
@@ -364,7 +382,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
 
     let $title := $entry//vra:titleSet/vra:title[1]/text()
     let $image-id := $entry//vra:relationSet/vra:relation[1]/@relids/string()
-    let $image-href := $config:app-http-root || "/modules/display/image.xql?uuid=" || $image-id || "&amp;width=" || $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW || "&amp;height=" || $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW
+    let $image-href :=  request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port() || $config:app-http-root || "/iiif/" || $image-id || "/full/!" || $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW || "," || $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW || "/0/default.jpg"
 
     let $image-alt := xmldb:encode-uri($title)
     let $image-embed := "<figure>&#10;&#9;<img src=&quot;" || $image-href || "&quot; alt=&quot;" || $image-alt || "&quot;/>&#10;&#9;<figcaption>" || xmldb:encode-uri($title) || "</figcaption>&#10;</figure>"
@@ -388,14 +406,22 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
             {$location-node}
             {$description-node}
             {$description-with-details-node}
-            {$relation-node}
-            {$relation-href-node}
             {$subjects-node}
             {$inscription-node}
             {$material-node}
             {$technique-node}
             {$measurement-node}
             {$rights-node}
+            {
+                if(count($additionalRelations) > 0) then
+                    <tr>
+                        <td colspan="2" style="text-align:center;"><h3>Related Items</h3></td>
+                    </tr>
+                else
+                    ()
+            }
+            {$relation-href-node}
+            {$relation-node}
             {$stable-link-node}
             {$image-embedding-node}
         </table>
@@ -569,6 +595,9 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
 
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
+    
+    let $allRelations := $item//vra:relationSet/vra:relation
+    
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
             <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{$item/vra:work/@id}"/></td>
@@ -584,24 +613,20 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                   (: relids/refid workaround :)
-                    for $rel in $item//vra:relationSet/vra:relation[@type = "imageIs"]
-                        let $image-uuid := 
-                            if(starts-with(data($rel/@relids), "i_")) then
-                                data($rel/@relids)
-                            else 
-                                if(starts-with(data($rel/@refid), "i_")) then
-                                    data($rel/@refid)
-                                else
-                                    ()
-                        let $image := security:get-resource($image-uuid)
-                        let $image-uuid := $image/@id
-                        return
-                            <p>
-                                {
-                                    vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
-                                }
-                            </p>
+                    let $main-image-rel := 
+                        (: if @pref then take this. If not then take the first one :)
+                        if ($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]) then
+                            $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
+                        else
+                            $item//vra:relationSet/vra:relation[@type="imageIs"][1]
+                    let $main-image-uuid := vra-hra-framework:get-vra-image-uuid($main-image-rel)
+                    let $main-image := security:get-resource($main-image-uuid)
+                    return
+                        <p>
+                            {
+                                vra-hra-framework:create-thumbnail-span($main-image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
+                            }
+                        </p>
                 }
                 </div>
             </td>            
@@ -657,10 +682,10 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
                 { 
                     (: relids/refid workaround :)
                     let $relations := 
-                        if (exists($item//vra:relation[@type="imageIs" and @pref="true"])) then 
-                            $item//vra:relation[@type="imageIs" and @pref="true"]
+                        if (exists($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"])) then 
+                            $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
                         else
-                            $item//vra:relation[@type="imageIs"]
+                            $item//vra:relationSet/vra:relation[@type="imageIs"]
                     let $relids :=
                         for $rel in $relations
                             let $image-uuid := 
@@ -722,21 +747,19 @@ declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:strin
             $width
     
     return
-        <span style="width:{$width}px; min-height:{$width}px;">
-            {
-                if($zoom) then 
-                    <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
-                        <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                        <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-                    </a>
-                else
-                    <span>
-                        <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                        <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-                    </span>
-            }
-        </span>
-    
+        if($zoom) then 
+            <span style="width:{$width}px; min-height:{$width}px;">
+                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
+                    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+                    <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+                </a>
+            </span>
+        else
+            <span>
+                <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+                <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+            </span>
+
 };
 
 declare function vra-hra-framework:get-vra-work-record-list($work-record as element()) as xs:string+ {
