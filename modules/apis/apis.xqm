@@ -16,7 +16,9 @@ declare function apis:process() {
     return
      switch($method)
         case "GET"
-        return apis:get($method, $scope, $parameters)     
+        return apis:get($method, $scope, $parameters)
+        case "POST"
+        return apis:post($method, $scope, $parameters)        
         case "PUT"
         return apis:put($method, $scope, $parameters)
         case "DELETE"
@@ -48,6 +50,13 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
 	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 	            <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
 	        </dispatch>
+};
+
+declare function apis:post($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
+    switch($scope)
+        case "editors"
+        return apis:editors2($parameters)
+        default return () 
 };
 
 declare function apis:delete($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
@@ -83,6 +92,24 @@ declare function apis:editors($parameters as xs:string*) {
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                 <redirect url="{$config:mods-editor-path}?id={$parameters[2]}&amp;collection={request:get-header('X-target-collection')}&amp;type={request:get-header('X-document-type')}" />
+            </dispatch>            
+        default return ()     
+};
+
+declare function apis:editors2($parameters as xs:string*) {
+    let $editor-name := $parameters[1]
+    let $log := util:log("INFO", "request:get-parameter-names()")
+    let $log := util:log("INFO", request:get-parameter-names())
+    let $log := util:log("INFO", request:get-parameter("collection", ""))
+    let $log := util:log("INFO", "$parameters[2]")
+    let $log := util:log("INFO", $parameters[2])
+    
+    return
+     switch($editor-name)
+        case "hra-mods-editor"
+        return
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}&amp;collection={request:get-parameter("collection", "")}&amp;collection={request:get-parameter("collection", "")}&amp;languageOfResource={request:get-parameter("languageOfResource", "")}&amp;transliterationOfResource={request:get-parameter("transliterationOfResource", "")}&amp;scriptOfResource={request:get-parameter("scriptOfResource", "")}&amp;host={request:get-parameter("host", "")}" />
             </dispatch>            
         default return ()     
 };
