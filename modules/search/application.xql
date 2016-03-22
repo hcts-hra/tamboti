@@ -68,6 +68,10 @@ declare variable $biblio:FIELDS :=
             atom:entry[atom:id eq '$q']
             union
             vra:vra[vra:work/@id eq '$q']
+            union
+            vra:vra[vra:work//@relids eq '$q']
+            union
+            svg:svg[@xml:id='$q']
             )
         </search-expression>
         <targets>
@@ -75,6 +79,7 @@ declare variable $biblio:FIELDS :=
             <target>vra:vra</target>
             <target>tei:TEI</target>
             <target>atom:entry</target>
+            <target>svg:svg</target>
         </targets>
     </field>
     <field name="the Date Field (MODS)" short-name="Date">
@@ -186,11 +191,13 @@ declare variable $biblio:FIELDS :=
             union
             (:vra:vra[vra:collection/@id eq '$q']
             union:)
-            vra:vra[vra:work/@id eq '$q']
+            vra:vra[vra:work/@id='$q' or vra:work//vra:relation/@relids='$q']
             union
             (:vra:vra[vra:image/@id eq '$q']
             union:)
             atom:entry[atom:id eq '$q']
+            union
+            svg:svg[@xml:id eq '$q']
             )
         </search-expression>
         <targets/>
@@ -476,7 +483,7 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
         case element(collection)
             return
                 if (not($query-as-xml/..//field)) 
-                then ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry)')
+                then ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry | svg:svg)')
                 else ()
         default return ()
         
@@ -857,7 +864,7 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
                 else
                     (:when listing collection, the Lucene-based Score has no meaning; therefore default to sorting by Title.:) 
                     for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry | svg:svg]/*
-                    order by translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')
+                    order by translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work[1]/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title[1] | svg:svg/@xml:id), '“‘«「‹‚›‟‛([""''', '') 
                     return $item
         (:~ Take the query results and store them into the HTTP session. :)
         let $null := session:set-attribute('mods:cached', $processed)
@@ -1297,6 +1304,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
             return 
                 replace(replace(replace($expression, '\sAND\s', ' '), '\sOR\s', ' '), '\sNOT\s', ' ')
     (:we first go through the outer expression, to see if there are any phrase searches, then tokenize on spaces:)
+
     let $query := 
         for $expression in $query
         return 
@@ -1318,23 +1326,14 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                 they will make the query invalid anyway, so there is actually no need to do this.:)
                 (:Since a final period is itself treated as whitespace, it is removed, since otherwise it would reseult in expressions
                 sunce as "\bW.\b" which do not highlight.:)
+                
+                let $from := ("^\-", "\{", "\}", "\[", "\]", "\^", "\(", "\)", "~", "," , "\.^")
+                let $to := (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
                 let $query := 
                     for $expression in $query
                         return 
-                            normalize-space(
-                            translate(translate(translate(translate(translate(translate(translate(translate(translate(translate(translate($expression
-                                , '^\-', ' ') (:appears to strip all hyphens:)
-                                , '\{', ' ')
-                                , '\}', ' ')
-                                , '\[', ' ')
-                                , '\]', ' ')
-                                , '\^', ' ')
-                                , '(', ' ')
-                                , ')', ' ')
-                                , '\~', ' ')
-                                , ',', ' ')
-                                , '\.^', ' ') (:appears to strip all periods:)
-                            )
+                            normalize-space(functx:replace-multi($expression, $from, $to))
+
                 (:First tokenize the expressions created by replacement by space above:)
                 let $query := tokenize($query, ' ') 
                     return
