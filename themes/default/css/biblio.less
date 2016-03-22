@@ -16,6 +16,8 @@ color scheme ends*/
 @ordinary-gray:#bbbbbb;
 @mid-gray:#777777;
 @light-gray:#f5f5f5;
+@action-overlay-color:rgba(77,77,77,0.3);
+@box-shadow-color:rgba(0, 0, 0, 0.5);
 @darker-gray:#EDEDED;
 @dark-gray:#4d4d4d;
 @radius:5px;
@@ -133,13 +135,26 @@ a:link, a:visited {
     color: @theme-color; 
 }
 
+.img-container{
+    position:relative;
+    text-align:center;
+}
+
+.img-actions-overlay{
+    display: none;
+    position:absolute; 
+    width:100%;
+    top:0;left:0;
+    background-color:@action-overlay-color;
+}
+
 img {
     border:0;
 }
 
 img.picture {
     border: 1px solid black;
-    box-shadow: 3px 3px 3px @light-gray;
+    box-shadow: 3px 3px 3px @box-shadow-color;
 }
 
 img.zoom {

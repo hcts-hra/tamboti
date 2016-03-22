@@ -107,12 +107,24 @@ a:visited {
 .biblio-full a:visited {
   color: #5db0e6;
 }
+.img-container {
+  position: relative;
+  text-align: center;
+}
+.img-actions-overlay {
+  display: none;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(77, 77, 77, 0.3);
+}
 img {
   border: 0;
 }
 img.picture {
   border: 1px solid black;
-  box-shadow: 3px 3px 3px #f5f5f5;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
 }
 img.zoom {
   cursor: -webkit-zoom-in;
