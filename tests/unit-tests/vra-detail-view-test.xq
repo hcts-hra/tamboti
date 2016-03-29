@@ -20,7 +20,7 @@ return
             <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery-utils.js">/**/</script>
             <script type="text/javascript" src="/exist/apps/tamboti/resources/scripts/qtip/jquery.qtip.min.js">/**/</script>
             <link rel="stylesheet" href="/exist/apps/tamboti/resources/scripts/qtip/jquery.qtip.min.css" type="text/css"/>
-            <script type="text/javascript" src="/exist/apps/tamboti/core/apis.js">/**/</script>
+            <script type="text/javascript" src="/exist/apps/tamboti/modules/apis/apis.js">/**/</script>
             <script type="text/javascript" src="/exist/apps/tamboti/resources/scripts/query.js">/**/</script>
             <!--<link rel="stylesheet" type="text/css" href="/exist/apps/tamboti/themes/default/css/theme.css"/>-->
             <link rel="stylesheet" type="text/css" href="/exist/apps/tamboti/themes/default/css/biblio.css"/>
