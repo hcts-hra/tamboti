@@ -10,10 +10,15 @@ let $http-headers :=
         <header name="X-target-collection" value="/apps/tamboti/tests/resources/temp"/>
         <header name="X-document-type" value="newspaper-article"/>
     </headers>
+let $form-fieds :=
+    <httpclient:fields>
+        <httpclient:field name="type" value="newspaper-article" type="string"/>
+        <httpclient:field name="collection" value="/apps/tamboti/tests/resources/temp" type="string"/>
+    </httpclient:fields>    
     
 let $record-id := util:binary-to-string(httpclient:get(xs:anyURI("http://kjc-ws2.kjc.uni-heidelberg.de:8650/exist/apps/tamboti/api/uuid"), false(), ())/*[2])
 let $api-url := xs:anyURI("http://kjc-ws2.kjc.uni-heidelberg.de:8650/exist/apps/tamboti/api/editors/hra-mods-editor/" || $record-id)
-let $resources := httpclient:get($api-url, false(), $http-headers)/*[2]/*
+let $resources := httpclient:post($api-url, $form-fieds, false(), $http-headers)/*[2]/*
 
 
 return $resources
