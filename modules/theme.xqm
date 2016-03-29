@@ -117,9 +117,9 @@ declare function theme:get-root($prefix as xs:string?) as xs:string {
     let $theme := theme:theme-for-prefix($prefix)
     return
         if ($theme eq "default") then
-            $config:mods-commons
+            $config:content-root
         else
-            $config:mods-commons || "/"
+            $config:content-root || "/"
 };
 
 (:~

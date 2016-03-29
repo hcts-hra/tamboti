@@ -65,6 +65,8 @@ declare variable $config:default-mods-editor-api := $config:api-base-path || "/e
 declare variable $config:mods-editor-collection := "/apps/hra-mods-editor";
 declare variable $config:mods-editor-path := concat(request:get-context-path(), "/apps/hra-mods-editor/index.xq");
 
+declare variable $config:canvas-editor-path := concat(request:get-context-path(), "/apps/svgedit/index.html");
+
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 

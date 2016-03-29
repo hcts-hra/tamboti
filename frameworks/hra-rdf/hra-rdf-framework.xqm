@@ -26,6 +26,7 @@ declare namespace svg="http://www.w3.org/2000/svg";
 
 
 declare variable $hra-rdf-framework:IRI-resolver-prefix := "/tamboti/api/resource/";
+declare variable $hra-rdf-framework:anno-IRI-resolver-prefix := "/tamboti/api/annotation/";
 
 (:~
 : returns rdf annotations with resource(-parts) as subject
@@ -172,18 +173,95 @@ declare function hra-rdf-framework:resolve-tamboti-iri($iri as xs:anyURI) {
  :)
 
 declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $query-string as xs:string?) as node()*{
-    let $xquery := "root(tamboti-security:get-resource(""" || $uuid || """))" || $query-string
-
-    (: preload namespaces from node   :)
-    (:    let $load-namespace := :)
-    (:        for $prefix in in-scope-prefixes($node-with-resource-element):)
-    (:        where not($prefix="xml"):)
-    (:        return:)
-    (:            util:declare-namespace($prefix, namespace-uri-for-prefix($prefix, $node-with-resource-element)):)
-     
-    (: do the query    :)
-    let $result := util:eval($xquery)
-    (: to keep the singularity of an IRI return only the first result if there are more :)
-    return 
-        $result[1]
+    let $document := tamboti-security:get-resource($uuid)
+    return
+        if($document) then
+            let $xquery := "root($document)" || $query-string
+            (: preload namespaces from document   :)
+            let $load-namespace := 
+                for $prefix in in-scope-prefixes($document)
+                where not($prefix="xml")
+                return
+                    util:declare-namespace($prefix, namespace-uri-for-prefix($prefix, $document))
+             
+            (: do the query :)
+            let $result := util:eval($xquery)
+            (: to keep the singularity of an IRI return only the first result if there are more :)
+            return 
+                $result[1]
+        else
+            ()
 };
+
+declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as document-node()) {
+    let $col := collection($tamboti-config:content-root)
+    return
+(:        try {:)
+            for $new-anno in $annotationXML/rdf:RDF/oa:Annotation
+                (: get the annotation UUID :)
+                let $anno-iri := $new-anno/@rdf:about/string()
+(:                let $log := util:log("INFO", "annoID: " || $anno-iri):)
+                (: check as dba, if annotation exists:)
+                let $existing-anno := system:as-user($tamboti-config:dba-credentials[1], $tamboti-config:dba-credentials[2], 
+                    $col//rdf:RDF/oa:Annotation[@rdf:about=$anno-iri]
+                )
+(:                let $log := util:log("INFO", $existing-anno):)
+                return
+                    (: if the annotation exists, try to update it  :)
+                    if ($existing-anno) then
+(:                        let $log := util:log("INFO", $existing-anno):)
+(:                        let $log := util:log("INFO", "try to update anno"):)
+                        let $result := update replace $existing-anno with $new-anno
+                        return
+                            <success>annotation {$anno-iri} updated successfully</success>
+                    (: Anno does not exist, so try to create it in the anno file for the body resource:)
+                    else
+                        let $log := util:log("INFO", "try to insert anno")
+                        (: annotation document's name is the same as the resource's name (without extension), appending _anno.rdf   :)
+                        let $col := collection($tamboti-config:content-root)
+                        (: if get-resource is successful, user has at least read access and though is allowed to annotate :)
+                        let $document-node := tamboti-security:get-resource($resourceUUID)
+                        (:  check if annotation document is available :)
+
+(:                        let $log := util:log("INFO", "ressource-uuid:" || $resourceUUID):)
+                        let $document-col := util:collection-name(root($document-node))
+                        let $document-name := util:document-name(root($document-node))
+(:                        let $log := util:log("INFO", "ressource-uri:" || $document-col || "/" || $document-name):)
+                        let $anno-doc-name := functx:substring-before-last($document-name, ".") || "_anno.rdf"
+                        let $anno-doc-uri := xs:anyURI($document-col || "/" || $anno-doc-name)
+                        (: if file exists: try to insert the anno, else store anno as ne resource :)
+                        let $result := 
+                            if(not(exists(doc($anno-doc-uri)/rdf:RDF))) then 
+                                let $document-node := 
+                                    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oa="http://www.w3.org/ns/oa#"/>
+                                return tamboti-security:store-resource($document-col, $anno-doc-name, $document-node)
+                            else 
+                                ()
+                        let $result := update insert $new-anno into doc($anno-doc-uri)/rdf:RDF
+
+(:                        let $log := util:log("INFO", "anno-uri:" || $anno-doc-uri):)
+(:                        let $log := util:log("INFO", $new-anno):)
+                        return
+                            <success>Annotation {$anno-iri} added successfully!</success>
+                            
+                            
+(:        } catch * {:)
+(:            let $log := util:log("DEBUG", "Error: adding annotation failed with exception: " ||  $err:code || ": " || $err:description):)
+(:            return:)
+(:                <error>Error: adding annotation failed with exception: {$err:code}: {$err:description}</error>:)
+(:        }:)
+};
+
+declare function hra-rdf-framework:get-annotation($annotation-uuid as xs:string) {
+    let $col := collection($tamboti-config:content-root)
+    let $result := $col/rdf:RDF/oa:Annotation[ends-with(@rdf:about, $annotation-uuid)]
+    return
+        if ($result) then
+            <rdf:RDF>
+                {
+                    $result
+                }
+            </rdf:RDF>
+        else
+            ()
+}; 

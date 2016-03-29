@@ -1153,3 +1153,20 @@ declare function security:copy-collection-acl($source-collection as xs:anyURI, $
   }
 
 };
+
+(:~
+: Stores a resource and applies permissions according Tamboti permissions strategy
+:
+: @param target-collection the collection in which to store resource
+: @param resource-name the resource's filename
+: @param content the data to store into the resource
+:)
+
+declare function security:store-resource($target-collection as xs:string, $resource-name as xs:string, $content as node()) {
+    let $resource := xmldb:store($target-collection, $resource-name, $content)
+    let $chmod := sm:chmod($resource, $config:resource-mode)
+    return
+        security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource)
+};
+
+
