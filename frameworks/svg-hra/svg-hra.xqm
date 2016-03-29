@@ -3,12 +3,16 @@ xquery version "3.0";
 module namespace svg-hra-framework = "http://hra.uni-heidelberg.de/ns/svg-hra-framework";
 
 import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../modules/tamboti-common.xql";
-(:import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";:)
+import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "../vra-hra/vra-hra.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
+import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../hra-rdf/hra-rdf-framework.xqm";
 
 import module namespace functx="http://www.functx.com";
 
 declare namespace svg="http://www.w3.org/2000/svg";
+declare namespace oa="http://www.w3.org/ns/oa#";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 declare variable $svg-hra-framework:THUMB_SIZE_FOR_GRID := 64;
 declare variable $svg-hra-framework:THUMB_SIZE_FOR_GALLERY := 128;
@@ -16,6 +20,9 @@ declare variable $svg-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW := 256;
 declare variable $svg-hra-framework:THUMB_SIZE_FOR_LIST_VIEW := 128;
 declare variable $svg-hra-framework:record-type := "SVG";
 
+declare variable $svg-hra-framework:motivations := map{
+    "http://www.shared-canvas.org/ns/painting" := "canvas"
+};
 
 declare function svg-hra-framework:get-UUID($item as element()) {
     $item/@xml:id
@@ -120,6 +127,7 @@ declare function svg-hra-framework:format-list-view($entry as node(), $position 
 };
 
 declare function svg-hra-framework:format-detail-view($entry as node(), $currentPos as xs:int) {
+    let $uuid := $entry/@xml:id/string()
     let $svg-viewBox := 
         if (exists($entry/@viewBox)) then
             tokenize($entry/@viewBox/string(), " ")
@@ -165,9 +173,98 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
                     <a href="{$stable-link-href}" target="_blank">{$stable-link-href}</a>
                 </td>
             </tr>
-
-
     
+    (: get annotations :)
+(:    let $log := util:log("INFO", "uuid: " || $uuid):)
+
+    let $annotations := map{
+        "is-body" := hra-rdf-framework:is-subject($uuid, "xml"),
+        "is-target" := hra-rdf-framework:is-object($uuid, "xml")
+    }
+
+    let $annotations-node :=
+        if ( count($annotations("is-body")) + count($annotations("is-target")) > 0) then
+            <tr>
+                <td colspan="2" style="text-align:center;">
+                    <h3>Annotations</h3>
+                </td>
+                {
+                    for $target in $annotations("is-target")
+                        let $bodyIRI := $target/oa:hasBody/@rdf:resource/string()
+(:                        let $log := util:log("INFO", $bodyIRI):)
+                        let $parsedIRI := hra-rdf-framework:parse-iri($bodyIRI, "xml")
+                        let $resolvedIRI := hra-rdf-framework:resolve-tamboti-iri($bodyIRI)
+                        
+                        let $motivation := $target/oa:motivatedBy/@rdf:resource/string()
+                        let $collection-name := util:collection-name(root($resolvedIRI))
+                        let $resource-name :=  util:document-name(root($resolvedIRI))
+                        let $anno-uuid := functx:substring-after-last($target/@rdf:about/string(), "/")
+(:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
+                        let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
+                        let $motivation-label := map:get($svg-hra-framework:motivations, $motivation)
+    (:                    let $resource-can-:)
+    (:                    let $permissions := sm:has-access(util:document-name(root($resolvedIRI)), "rw-"):)
+                        return
+                            <tr>
+                                <td class="collection-label">has body</td>
+                                <td>
+                                    <div>is <span class="annotation motivation">{$motivation-label}</span> for:</div>
+                                    <div>
+                                        {
+                                            (:ToDo: move handling of different xml formats to a abstract top level framework module :)
+                                            switch(namespace-uri($resolvedIRI))
+                                                case "http://www.vraweb.org/vracore4.htm" return
+                                                    switch(name($resolvedIRI))
+                                                        case "image" return
+    (:                                                        let $log := util:log("INFO", $parsedIRI/*):)
+    (:                                                        return:)
+                                                             <div class="img-container" onmouseenter="$(this).find('.img-actions-overlay').fadeIn(200);" onmouseleave="$(this).find('.img-actions-overlay').fadeOut(200);" style="max-width:128px; max-height:128px;width:128px;height:128px;">
+                                                                    <a href="?search-field=ID&amp;value={$parsedIRI/resource/string()}">
+                                                                        {vra-hra-framework:create-thumbnail-span($parsedIRI/resource/string(), false(), 128, 128)}
+                                                                    </a>
+                                                                    {
+                                                                        
+                                                                        if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
+                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $parsedIRI/resource/string() || "&amp;svg="|| $uuid || "&amp;tambotiCollection=" || encode-for-uri($record-collection) || "&amp;annotationUUID=" || $anno-uuid
+                                                                        return
+                                                                            <span class="img-actions-overlay">
+                                                                                <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
+                                                                                    <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
+                                                                                </a>
+                                                                            </span>
+                                                                        else
+                                                                            ()
+                                                                    }
+                                                                </div>
+    (:                                                            vra-hra-framework:create-thumbnail-span($parsedIRI/resource/string(), false(), 128, 128):)
+                                                        case "work" return
+                                                            "WORK"
+                                                        default return
+                                                            name($resolvedIRI)
+                                                default return
+                                                    "test"
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                    }
+                {
+                    for $body in $annotations("is-body")
+                    return
+                        <tr>
+                            <td class="collection-label">has target</td>
+                            <td>
+                                <div>motivation: <span class="annotation motivation">{$body/oa:motivatedBy/@rdf:resource/string()}</span> for:</div>
+                                <div>
+                                    <span class="annotation subject">{$body/oa:hasTarget/@rdf:resource/string()}</span>
+                                </div>
+                            </td>
+                        </tr>
+                }
+            </tr>
+        else
+            ""
+
 (:    let $filename := functx:substring-after-last($record-location, "/"):)
     let $result :=
         <table xmlns="http://www.w3.org/1999/xhtml">
@@ -190,6 +287,7 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
                             {$location-node}
                             {$record-format-node}
                             {$title-node}
+                            {$annotations-node}
                             {$stable-link-node}
                         </table>
                     </span>
@@ -230,12 +328,12 @@ declare function svg-hra-framework:move-resource($resource-fullpath as xs:anyURI
 declare function svg-hra-framework:remove-resource($document-uri as xs:anyURI) {
     let $resource := functx:substring-after-last($document-uri, "/")
     let $collection-uri := functx:substring-before-last($document-uri, "/")
-    let $useless := util:log("DEBUG", "Remove resource: " || $document-uri )
+(:    let $useless := util:log("DEBUG", "Remove resource: " || $document-uri ):)
 
     return
-        true()
+(:        true():)
 (:    let $useless := util:log("DEBUG", "Moving resource failed: Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ):)
-(:        xmldb:remove($collection-uri, $resource):)
+        xmldb:remove($collection-uri, $resource)
 };
 
 

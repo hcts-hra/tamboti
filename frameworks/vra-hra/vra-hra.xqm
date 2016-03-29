@@ -9,11 +9,15 @@ import module namespace tamboti-utils = "http://hra.uni-heidelberg.de/ns/tamboti
 import module namespace clean = "http://exist-db.org/xquery/mods/cleanup" at "../../modules/search/cleanup.xql";
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../../modules/mods-common.xql";
 import module namespace tamboti-common = "http://exist-db.org/tamboti/common" at "../../modules/tamboti-common.xql";
-(:import module namespace image-link-generator = "http://hra.uni-heidelberg.de/ns/tamboti/modules/display/image-link-generator" at "../../modules/display/image-link-generator.xqm";:)
+
+import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../hra-rdf/hra-rdf-framework.xqm";
 
 import module namespace functx="http://www.functx.com";
 
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
+(:declare namespace svg="http://www.w3.org/2000/svg";:)
+declare namespace oa="http://www.w3.org/ns/oa#";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 declare variable $vra-hra-framework:ERROR := xs:QName("vra-hra-framework:error");
 
@@ -26,6 +30,11 @@ declare variable $vra-hra-framework:THUMB_SIZE_FOR_GRID := 64;
 declare variable $vra-hra-framework:THUMB_SIZE_FOR_GALLERY := 128;
 declare variable $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW := 256;
 declare variable $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW := 128;
+
+declare variable $vra-hra-framework:motivations := map{
+    "http://www.shared-canvas.org/ns/painting" := "canvas"
+};
+
 
 declare function vra-hra-framework:get-UUID($item as element()) {
     if (exists($item/vra:work)) then
@@ -120,7 +129,7 @@ declare function vra-hra-framework:toolbar($item as element(), $isWritable as xs
 declare function vra-hra-framework:format-detail-view($position as xs:string, $entry as element(vra:vra), $collection-short as xs:string, $type as xs:string, $id as xs:string) as element(table) {
     let $main-title := $entry//vra:titleSet/vra:title[1]/text()
     let $allRelations := $entry//vra:relationSet/vra:relation
-    let $additionalRelations := $allRelations[not(@pref="true")]
+(:    let $additionalRelations := $allRelations[not(@pref="true")]:)
     
     let $record-location-node :=
         <tr>
@@ -248,19 +257,22 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
     
     (: relations :)
     let $relation-node :=
-        for $relation in $additionalRelations
+        for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
+            let $annotations := vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
             let $type-label := 
                 switch ($type)
                     case 'imageIs' return
                         (: display a thubnail view :)
-                        vra-hra-framework:create-thumbnail-span($relids, true(), 100, 100)
+                            vra-hra-framework:create-thumbnail-span($relids, true(), 100, 100)
                         
                     case 'imageOf' return
                         'Work Record'
                     default return
                         $type
+            (: get annotations for vra:image records :)
+            
             (: Elevate rights because user is not able to search whole $config:mods-root   :)
             (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
 (:            let $vra-image := :)
@@ -274,6 +286,9 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     <td class="collection-label">{$type-label}</td>
                     <td>
                         <div style="font-weight:bold">{$relation/string()}</div>
+                        <div>
+                            {$annotations}
+                        </div>
                     </td>
                 </tr>
                 
@@ -394,7 +409,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     <textarea readonly="readonly" style="padding:5px;font-size:8px;background-color: #FFFFFF; width:95%; height: 8em;" onclick="$(this).select();">{$image-embed}</textarea>
                 </td>
             </tr>
-
+    
     (: CONSTRUCT THE COMPLETE RESULT-DISPLAY   :)
     let $result :=
         <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
@@ -413,7 +428,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
             {$measurement-node}
             {$rights-node}
             {
-                if(count($additionalRelations) > 0) then
+                if(count($allRelations) > 0) then
                     <tr>
                         <td colspan="2" style="text-align:center;"><h3>Related Items</h3></td>
                     </tr>
@@ -751,13 +766,13 @@ declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:strin
             <span style="width:{$width}px; min-height:{$width}px;">
                 <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
                     <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                    <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+                    <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
                 </a>
             </span>
         else
-            <span>
-                <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                <img src="{$config:app-http-root}/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
+            <span style="width:{$width}px; min-height:{$width}px;">
+                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
+                <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
             </span>
 
 };
@@ -916,4 +931,120 @@ declare function vra-hra-framework:remove-resource($document-uri as xs:anyURI){
             let $useless := util:log("DEBUG", "counting VRA-Binaries eq 0")
             return
                 true()
+};
+
+declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:string, $collection-name as xs:string) {
+(:    let $useless := util:log("INFO", "uuid: " || $uuid):)
+    let $annotations := map{
+        "is-body" := hra-rdf-framework:is-subject($uuid, "xml"),
+        "is-target" := hra-rdf-framework:is-object($uuid, "xml")
+    }
+    let $add-anno-span :=
+        if (1=1) then
+            let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;tambotiCollection=" || encode-for-uri($collection-name)
+            return
+                <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
+                    <img src="theme/images/add.png" style="width:16px;height:16px;cursor:pointer" title="new annotation" alt="new annotation"/>
+                </a>
+        else 
+            ()
+
+    let $annotations-node :=
+        <div>
+            <div style="font-weight:bold;">Annotations: {$add-anno-span}</div>
+    {
+        if ( count($annotations("is-body")) + count($annotations("is-target")) > 0) then
+            <div>
+                {
+                    for $target in $annotations("is-target")
+                        let $bodyIRI := $target/oa:hasBody/@rdf:resource/string()
+                        let $parsedIRI := hra-rdf-framework:parse-iri($bodyIRI, "xml")
+                        let $resolvedIRI := hra-rdf-framework:resolve-tamboti-iri($bodyIRI)
+                        
+                        let $motivation := $target/oa:motivatedBy/@rdf:resource/string()
+                        let $collection-name := util:collection-name(root($resolvedIRI))
+                        let $resource-name :=  util:document-name(root($resolvedIRI))
+    
+                        let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
+                        let $collection-can-create := sm:has-access(xs:anyURI($collection-name), "wx")
+(:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
+                        let $motivation-label := map:get($vra-hra-framework:motivations, $motivation)
+
+                        return
+                            <div>
+                                <div>has body</div>
+                                <div>
+                                    <div>has <span class="annotation motivation">{$motivation-label}</span> for:</div>
+                                </div>
+                            </div>
+                }
+                {
+                    for $body in $annotations("is-body")
+                        let $motivation := $body/oa:motivatedBy/@rdf:resource/string()
+                        let $bodyIRI := $body/oa:hasTarget/@rdf:resource/string()
+                        let $parsedIRI := hra-rdf-framework:parse-iri($bodyIRI, "xml")
+                        let $resolvedIRI := hra-rdf-framework:resolve-tamboti-iri($bodyIRI)
+
+                        let $collection-name := util:collection-name(root($resolvedIRI))
+                        let $resource-name :=  util:document-name(root($resolvedIRI))
+
+                        let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
+                        let $collection-can-create := sm:has-access(xs:anyURI($collection-name), "wx")
+(:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
+(:                        let $log := util:log("INFO", "can-edit: " || $resource-can-edit):)
+
+                        let $anno-uuid := functx:substring-after-last($body/@rdf:about/string(), "/")
+
+                        let $motivation-label := map:get($vra-hra-framework:motivations, $motivation)
+                    
+                        return
+                            <div>
+                                <div>has target</div>
+                                <div>
+                                    <div>is <span class="annotation motivation">{$body/oa:motivatedBy/@rdf:resource/string()}</span> for:</div>
+                                        {
+                                            switch(namespace-uri($resolvedIRI))
+                                                case "http://www.w3.org/2000/svg" return
+                                                    let $svg-viewBox := 
+                                                        if (exists($resolvedIRI/@viewBox)) then
+                                                            tokenize($resolvedIRI/@viewBox/string(), " ")
+                                                        else
+                                                            (0, 0, $resolvedIRI/@width/string(), $resolvedIRI/@height/string())
+                                                    return
+                                                        <div style="width:128px;height:128px;border:1px solid black;" onmouseenter="$(this).find('.svg-actions-overlay').fadeIn(200);" onmouseleave="$(this).find('.svg-actions-overlay').fadeOut(200);" >
+                                                            <div style="width:128px;cursor:pointer">
+                                                                <a href="?search-field=ID&amp;value={$parsedIRI/resource/string()}">
+                                                                    <div style="float:left">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="128px" height="128px" viewBox="0 0 {$svg-viewBox[3]} {$svg-viewBox[4]}">
+                                                                            {$resolvedIRI}
+                                                                        </svg>
+                                                                    </div>
+                                                                </a>
+                                                                    {
+                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;svg="|| $parsedIRI/resource/string() || "&amp;tambotiCollection=" || encode-for-uri($collection-name) || "&amp;annotationUUID=" || $anno-uuid
+                                                                        return
+                                                                            if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
+                                                                                <div class="svg-actions-overlay" style="width:128px;">
+                                                                                    <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
+                                                                                        <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
+                                                                                    </a>
+                                                                                </div>
+                                                                            else
+                                                                                ()
+                                                                    }
+                                                            </div>
+                                                        </div>
+                                                default return
+                                                    <span class="annotation subject">{$body/oa:hasTarget/@rdf:resource/string()}</span>
+                                        }
+                                </div>
+                            </div>
+                }
+            </div>
+        else
+            ""
+        }
+    </div>
+            
+    return $annotations-node
 };
