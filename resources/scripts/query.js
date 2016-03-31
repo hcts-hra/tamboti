@@ -1556,16 +1556,17 @@ function copyCollectionACL(source, target) {
 
 
 // *****************************************************************************
-// *            RESSOURCE ACTIONS
+// *            RESOURCE ACTIONS
 // *****************************************************************************
 
-function newResource() {
+tamboti.newResource = function() {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
     var collection = fancyTree.getActiveNode().key;
+    var form = $("#new-resource-form");
 
-    $("#new-resource-form input[name = collection]").val(collection);
-    $("#new-resource-form").submit();
-    $("#new-resource-form")[0].reset();
+    $("input[name = collection]", form).val(collection);
+    form.submit();
+    form[0].reset();
 }
 
 function newRelatedResource() {

@@ -36,8 +36,6 @@ declare function apis:process() {
 
 declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string*, $query-string as xs:string?) {
     switch($scope)
-        case "editors"
-        return apis:editors($parameters)
         case "uuid"
         return apis:uuid()      
         case "resource"
@@ -72,7 +70,7 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
 declare function apis:post($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
     switch($scope)
         case "editors"
-        return apis:editors2($parameters)
+        return apis:editors($parameters)
         case "annotation" return
             let $result := hra-rdf-framework:add-annotation($parameters[1], request:get-data())
             return
@@ -109,6 +107,10 @@ declare function apis:search-history() {
     </dispatch> 
 };
 
+declare function apis:uuid() {
+    text {"uuid-" || util:uuid()} 
+};
+
 declare function apis:editors($parameters as xs:string*) {
     let $editor-name := $parameters[1]
     
@@ -117,29 +119,7 @@ declare function apis:editors($parameters as xs:string*) {
         case "hra-mods-editor"
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}&amp;collection={request:get-header('X-target-collection')}&amp;type={request:get-header('X-document-type')}" />
-            </dispatch>            
-        default return ()     
-};
-
-declare function apis:uuid() {
-    text {"uuid-" || util:uuid()} 
-};
-
-declare function apis:editors2($parameters as xs:string*) {
-    let $editor-name := $parameters[1]
-    let $log := util:log("INFO", "request:get-parameter-names()")
-    let $log := util:log("INFO", request:get-parameter-names())
-    let $log := util:log("INFO", request:get-parameter("collection", ""))
-    let $log := util:log("INFO", "$parameters[2]")
-    let $log := util:log("INFO", $parameters[2])
-    
-    return
-     switch($editor-name)
-        case "hra-mods-editor"
-        return
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <redirect url="{$config:mods-editor-path}?id={$parameters[2]}&amp;collection={request:get-parameter("collection", "")}&amp;collection={request:get-parameter("collection", "")}&amp;languageOfResource={request:get-parameter("languageOfResource", "")}&amp;transliterationOfResource={request:get-parameter("transliterationOfResource", "")}&amp;scriptOfResource={request:get-parameter("scriptOfResource", "")}&amp;host={request:get-parameter("host", "")}" />
+                <redirect url="{$config:web-path-to-mods-editor}?id={$parameters[2]}&amp;type={request:get-parameter("type", "")}&amp;collection={request:get-parameter("collection", "")}&amp;languageOfResource={request:get-parameter("languageOfResource", "")}&amp;transliterationOfResource={request:get-parameter("transliterationOfResource", "")}&amp;scriptOfResource={request:get-parameter("scriptOfResource", "")}&amp;host={request:get-parameter("host", "")}" />
             </dispatch>            
         default return ()     
 };

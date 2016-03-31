@@ -1010,7 +1010,7 @@ declare function biblio:collection-path($node as node(), $params as element(para
 declare function biblio:resource-types($node as node(), $params as element(parameters)?, $model as item()*) {
     let $classifier := tokenize($node/@class, "\s")
     let $classifier := $classifier[2]
-    let $code-table-path := concat($config:mods-editor-collection, '/code-tables')
+    let $code-table-path := concat($config:db-path-to-mods-editor-home, '/code-tables')
     
     let $document-type-codes-path := concat($code-table-path, '/document-type.xml')
     let $document-type-code-table := doc($document-type-codes-path)/mods-editor:code-table
@@ -1072,7 +1072,7 @@ declare function biblio:resource-types($node as node(), $params as element(param
     
     return 
         <div class="content">
-            <form id="{if ($classifier eq 'stand-alone') then 'new-resource-form' else 'add-related-form'}" action="{$config:mods-editor-path}" method="GET" target="_blank">
+            <form id="{if ($classifier eq 'stand-alone') then 'new-resource-form' else 'add-related-form'}" action="{$config:web-path-to-mods-editor-api}/uuid-{util:uuid()}" method="POST" target="_blank">
                 <ul>
                 {
                     for $item in $document-type-code-table//mods-editor:item[mods-editor:classifier = $classifier]
