@@ -113,17 +113,21 @@ declare function apis:uuid() {
 
 declare function apis:editors($parameters as xs:string*) {
     let $editor-name := $parameters[1]
+    let $log := util:log("INFO", "request:get-parameter-names()")
+    let $log := util:log("INFO", request:get-parameter-names())
+    let $log := util:log("INFO", "get-data")
+    let $log := util:log("INFO", request:get-parameter("type", ""))
+    let $query-string := local:generate-query-string-from-request-parameters()
     
     return
      switch($editor-name)
         case "hra-mods-editor"
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <redirect url="{$config:web-path-to-mods-editor}?id={$parameters[2]}&amp;type={request:get-parameter("type", "")}&amp;collection={request:get-parameter("collection", "")}&amp;languageOfResource={request:get-parameter("languageOfResource", "")}&amp;transliterationOfResource={request:get-parameter("transliterationOfResource", "")}&amp;scriptOfResource={request:get-parameter("scriptOfResource", "")}&amp;host={request:get-parameter("host", "")}" />
+                <redirect url="{$config:web-path-to-mods-editor}?id={$parameters[2]}&amp;{$query-string}" />
             </dispatch>            
         default return ()     
 };
-
 
 declare function apis:resource($parameters as xs:string*, $query-string as xs:string) {
     hra-rdf-framework:get-tamboti-resource($parameters[1], $query-string)
@@ -131,4 +135,13 @@ declare function apis:resource($parameters as xs:string*, $query-string as xs:st
 
 declare function apis:annotation($parameters as xs:string*) {
     hra-rdf-framework:get-annotation($parameters[1])
+};
+
+declare function local:generate-query-string-from-request-parameters() {
+    let $query-string :=
+        for $parameter-name in request:get-parameter-names()
+        return $parameter-name || "=" || request:get-parameter($parameter-name, "")
+    let $log := util:log("INFO", string-join($query-string, "&amp;"))
+        
+    return string-join($query-string, "&amp;")
 };
