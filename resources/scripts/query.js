@@ -1559,7 +1559,7 @@ function copyCollectionACL(source, target) {
 // *            RESSOURCE ACTIONS
 // *****************************************************************************
 
-function newResource() {
+tamboti.newResource = function() {
     var fancyTree = $('#collection-tree-tree').fancytree("getTree");
     var collection = fancyTree.getActiveNode().key;
 
