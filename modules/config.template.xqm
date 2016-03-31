@@ -20,11 +20,17 @@ declare variable $config:app-root :=
         substring-before($modulePath, "/modules")
 ;
 
-declare variable $config:app-id := "tamboti";
+declare variable $config:exist-context := request:get-context-path();
+declare variable $config:web-context := '/apps';
 
+declare variable $config:app-id := "tamboti";
 (: this will replace $config:app-id when theming will be solved :)
 declare variable $config:actual-app-id := "tamboti";
 declare variable $config:app-version := "";
+
+declare variable $config:db-path-to-app := concat('/apps/', $config:actual-app-id);
+declare variable $config:rest-path-to-app := $config:exist-context || "/rest/db" || $config:db-path-to-app;
+declare variable $config:web-path-to-app := $config:exist-context || $config:web-context || "/" || $config:actual-app-id;
 
 (:~ Biblio security - admin user and users group :)
 declare variable $config:biblio-admin-user := "editor";
@@ -55,20 +61,29 @@ declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:
 
 declare variable $config:url-image-size := "256";
 
+(:modules:)
+declare variable $config:db-path-to-modules := $config:db-path-to-app || "/modules";
+declare variable $config:rest-path-to-modules := $config:rest-path-to-app || "/modules";
+declare variable $config:web-path-to-modules := $config:web-path-to-app || "/modules";
+
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
 
 (: APIs:)
-declare variable $config:api-base-path := request:get-context-path() || "/apps/tamboti/api";
-declare variable $config:default-mods-editor-api := $config:api-base-path || "/editors/hra-mods-editor";
+declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
+declare variable $config:web-path-to-apis := $config:web-path-to-app || "/api";
+declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "/editors";
+declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
+declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
+declare variable $config:web-path-to-mods-editor-api := $config:web-path-to-editors-apis || "/hra-mods-editor";
 
-(: default editors :)
-declare variable $config:mods-editor-collection := "/apps/hra-mods-editor";
-declare variable $config:mods-editor-path := concat(request:get-context-path(), "/apps/hra-mods-editor/index.xq");
-
-declare variable $config:canvas-editor-path := concat(request:get-context-path(), "/apps/svgedit/index.html");
+(: DB paths to the default editors :)
+declare variable $config:db-path-to-mods-editor-home := $config:web-context || "/hra-mods-editor";
+declare variable $config:web-path-to-mods-editor-home := $config:exist-context || $config:web-context || "/hra-mods-editor";
+declare variable $config:db-path-to-mods-editor := $config:db-path-to-mods-editor-home || "/index.xq";
+declare variable $config:web-path-to-mods-editor := $config:web-path-to-mods-editor-home || "/index.xq";
+declare variable $config:canvas-editor-path := $config:exist-context || "/apps/svgedit/index.html";
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
-declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
 declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
@@ -94,7 +109,8 @@ declare variable $config:smtp-server := "smtp.yourdomain.com";
 declare variable $config:smtp-from-address := "exist@yourdomain.com";
 
 (:~ Credentials for the dba admin user :)
-declare variable $config:dba-credentials := ("admin", "");
+declare variable $config:dba-credentials := ("admin","");
+declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
 declare variable $config:allow-origin := "";
 

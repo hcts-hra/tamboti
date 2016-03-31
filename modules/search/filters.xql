@@ -237,8 +237,8 @@ return
                                         <li>There are too many records ({$record-count}) to process without overloading the server. Please restrict the result set by performing a narrower search. The maximum number is {$local:MAX_RECORD_COUNT}.</li>
                                     else
                                         for $genre in $genres
-                                            let $label-1 := doc(concat($config:mods-editor-collection, '/code-tables/genre-local.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
-                                            let $label-2 := doc(concat($config:mods-editor-collection, '/code-tables/genre-marcgt.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                                            let $label-1 := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-local.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                                            let $label-2 := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-marcgt.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
                                             let $label := 
                                                 if ($label-1)
                                                 then $label-1
