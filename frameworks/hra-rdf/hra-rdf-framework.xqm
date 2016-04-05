@@ -172,7 +172,7 @@ declare function hra-rdf-framework:resolve-tamboti-iri($iri as xs:anyURI) {
  : 
  :)
 
-declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $query-string as xs:string?) as node()*{
+declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $query-string as xs:string?){
     let $document := tamboti-security:get-resource($uuid)
     return
         if($document) then
@@ -187,10 +187,14 @@ declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $que
             (: do the query :)
             let $result := util:eval($xquery)
             (: to keep the singularity of an IRI return only the first result if there are more :)
-            return 
-                $result[1]
+            let $result := $result[1]
+            return
+                if($result instance of node()) then
+                    $result
+                else
+                    <span>{$result}</span>
         else
-            ()
+            <span />
 };
 
 declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as document-node()) {

@@ -634,7 +634,6 @@ function resultsLoaded(options) {
     $("#results li").each(function() {
         $(this).height(tallest);
     });
-    $('#filters').css('display', 'block');
     $('#filters .include-target').empty();
     $('#filters .expand').removeClass('expanded');
 
@@ -644,7 +643,7 @@ function resultsLoaded(options) {
         var num = $(this).closest(".pagination-item").find(".pagination-number").text();
         if (num) {
             galleries.open();
-            galleries.show(parseInt(num));
+            galleries.show(parseInt(num, 10));
         }
     });
 
@@ -1556,7 +1555,7 @@ function copyCollectionACL(source, target) {
 
 
 // *****************************************************************************
-// *            RESOURCE ACTIONS
+// *            RESSOURCE ACTIONS
 // *****************************************************************************
 
 tamboti.newResource = function() {
