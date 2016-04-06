@@ -199,11 +199,8 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
                         let $collection-name := util:collection-name(root($resolvedIRI))
                         let $resource-name :=  util:document-name(root($resolvedIRI))
                         let $anno-uuid := functx:substring-after-last($target/@rdf:about/string(), "/")
-(:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
                         let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
                         let $motivation-label := map:get($svg-hra-framework:motivations, $motivation)
-    (:                    let $resource-can-:)
-    (:                    let $permissions := sm:has-access(util:document-name(root($resolvedIRI)), "rw-"):)
                         return
                             <tr>
                                 <td class="collection-label">has body</td>
@@ -219,13 +216,13 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
     (:                                                        let $log := util:log("INFO", $parsedIRI/*):)
     (:                                                        return:)
                                                              <div class="img-container" onmouseenter="$(this).find('.img-actions-overlay').fadeIn(200);" onmouseleave="$(this).find('.img-actions-overlay').fadeOut(200);" style="max-width:128px; max-height:128px;width:128px;height:128px;">
-                                                                    <a href="?search-field=ID&amp;value={$parsedIRI/resource/string()}">
-                                                                        {vra-hra-framework:create-thumbnail-span($parsedIRI/resource/string(), false(), 128, 128)}
+                                                                    <a href="?search-field=ID&amp;value={$parsedIRI/hra-rdf-framework:resource/string()}">
+                                                                        {vra-hra-framework:create-thumbnail-span($parsedIRI/hra-rdf-framework:resource/string(), false(), 128, 128)}
                                                                     </a>
                                                                     {
                                                                         
                                                                         if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
-                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $parsedIRI/resource/string() || "&amp;svg="|| $uuid || "&amp;tambotiCollection=" || encode-for-uri($record-collection) || "&amp;annotationUUID=" || $anno-uuid
+                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $parsedIRI/hra-rdf-framework:resource/string() || "&amp;svg="|| $uuid || "&amp;tambotiCollection=" || encode-for-uri($record-collection) || "&amp;annotationUUID=" || $anno-uuid
                                                                         return
                                                                             <span class="img-actions-overlay">
                                                                                 <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">

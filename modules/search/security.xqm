@@ -1163,10 +1163,16 @@ declare function security:copy-collection-acl($source-collection as xs:anyURI, $
 :)
 
 declare function security:store-resource($target-collection as xs:string, $resource-name as xs:string, $content as node()) {
-    let $resource := xmldb:store($target-collection, $resource-name, $content)
-    let $chmod := sm:chmod($resource, $config:resource-mode)
-    return
-        security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource)
-};
+    try {
+        let $resource := xmldb:store($target-collection, $resource-name, $content)
+        let $chmod := sm:chmod($resource, $config:resource-mode)
+        let $copy-ace := security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource)
+        return
+            true()
+        
+    } catch * {
+        "Error: " ||  $err:code || ": " || $err:description
+    }
 
+};
 

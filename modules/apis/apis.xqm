@@ -46,25 +46,38 @@ declare function apis:get($method as xs:string, $scope as xs:string, $parameters
 };
 
 declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
-	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
-	let $target-collection :=
+    let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
+    let $resource-name := request:get-header("X-resource-name")
+    let $content := request:get-data()
+    let $target-collection :=
         if (starts-with($target-collection, "/db")) then
             substring-after($target-collection, "/db")
         else
             $target-collection
-	   
-	return
-	    if (not(xmldb:collection-available($target-collection)))
-	    then
-	        (
-	            response:set-status-code(404)
-	            ,
-	            <error>The target collection '{$target-collection}' does not exist!</error>
-	        )
-	    else
-	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-	            <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
-	        </dispatch>
+       
+    return
+        if (not(xmldb:collection-available($target-collection)))
+        then
+            (
+                response:set-status-code(404)
+                ,
+                <error>The target collection '{$target-collection}' does not exist!</error>
+            )
+        else
+            <div>
+                {
+                    let $result := tamboti-security:store-resource($target-collection, $resource-name, $content)
+                    return
+                        if($result = true()) then
+                            "success"
+                        else
+                            (
+                                response:set-status-code(500),
+                                $result
+                            )
+    
+                }
+            </div>
 };
 
 declare function apis:post($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
