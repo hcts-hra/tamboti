@@ -95,7 +95,6 @@ declare function hra-rdf-framework:get-object($anno as element(oa:Annotation)) {
 :)
 
 declare function hra-rdf-framework:parse-iri($iri as xs:string, $format as xs:string?) {
-
     let $fragment := substring-after($iri, "#")
     let $rest := functx:substring-before-if-contains($iri, "#")
     let $query := substring-after($rest, "?")
@@ -120,7 +119,7 @@ declare function hra-rdf-framework:parse-iri($iri as xs:string, $format as xs:st
                     "resource" := $resource
                 }
             default return
-                <parsedIri>
+                <parsedIri xmlns="http://hra.uni-heidelberg.de/ns/hra-rdf-framework">
                     <iri>{$iri}</iri>
                     <scheme>{$scheme}</scheme>
                     <authority>{$authority}</authority>
@@ -158,10 +157,11 @@ declare function hra-rdf-framework:parse-node($node-or-iri, $format as xs:string
 
 declare function hra-rdf-framework:resolve-tamboti-iri($iri as xs:anyURI) {
     let $parsed := hra-rdf-framework:parse-iri($iri, "xml")
-    
-    let $query := xmldb:decode($parsed/query/string())
+
+    let $query := xmldb:decode($parsed/hra-rdf-framework:query/text() )
     return
-        hra-rdf-framework:get-tamboti-resource($parsed/resource/string(), $query)
+        hra-rdf-framework:get-tamboti-resource($parsed/hra-rdf-framework:resource/string(), $query)
+        
 };
 
 (:~
@@ -200,37 +200,32 @@ declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $que
 declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as document-node()) {
     let $col := collection($tamboti-config:content-root)
     return
-(:        try {:)
+        try {
             for $new-anno in $annotationXML/rdf:RDF/oa:Annotation
                 (: get the annotation UUID :)
                 let $anno-iri := $new-anno/@rdf:about/string()
-(:                let $log := util:log("INFO", "annoID: " || $anno-iri):)
                 (: check as dba, if annotation exists:)
                 let $existing-anno := system:as-user($tamboti-config:dba-credentials[1], $tamboti-config:dba-credentials[2], 
                     $col//rdf:RDF/oa:Annotation[@rdf:about=$anno-iri]
                 )
-(:                let $log := util:log("INFO", $existing-anno):)
                 return
                     (: if the annotation exists, try to update it  :)
                     if ($existing-anno) then
-(:                        let $log := util:log("INFO", $existing-anno):)
-(:                        let $log := util:log("INFO", "try to update anno"):)
                         let $result := update replace $existing-anno with $new-anno
                         return
                             <success>annotation {$anno-iri} updated successfully</success>
                     (: Anno does not exist, so try to create it in the anno file for the body resource:)
                     else
-                        let $log := util:log("INFO", "try to insert anno")
+(:                        let $log := util:log("DEBUG", "try to insert anno"):)
                         (: annotation document's name is the same as the resource's name (without extension), appending _anno.rdf   :)
                         let $col := collection($tamboti-config:content-root)
                         (: if get-resource is successful, user has at least read access and though is allowed to annotate :)
                         let $document-node := tamboti-security:get-resource($resourceUUID)
                         (:  check if annotation document is available :)
 
-(:                        let $log := util:log("INFO", "ressource-uuid:" || $resourceUUID):)
                         let $document-col := util:collection-name(root($document-node))
                         let $document-name := util:document-name(root($document-node))
-(:                        let $log := util:log("INFO", "ressource-uri:" || $document-col || "/" || $document-name):)
+
                         let $anno-doc-name := functx:substring-before-last($document-name, ".") || "_anno.rdf"
                         let $anno-doc-uri := xs:anyURI($document-col || "/" || $anno-doc-name)
                         (: if file exists: try to insert the anno, else store anno as ne resource :)
@@ -243,17 +238,15 @@ declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $a
                                 ()
                         let $result := update insert $new-anno into doc($anno-doc-uri)/rdf:RDF
 
-(:                        let $log := util:log("INFO", "anno-uri:" || $anno-doc-uri):)
-(:                        let $log := util:log("INFO", $new-anno):)
                         return
                             <success>Annotation {$anno-iri} added successfully!</success>
                             
                             
-(:        } catch * {:)
-(:            let $log := util:log("DEBUG", "Error: adding annotation failed with exception: " ||  $err:code || ": " || $err:description):)
-(:            return:)
-(:                <error>Error: adding annotation failed with exception: {$err:code}: {$err:description}</error>:)
-(:        }:)
+        } catch * {
+            let $log := util:log("ERROR", "Error: adding annotation failed with exception: " ||  $err:code || ": " || $err:description)
+            return
+                <error>Error: adding annotation failed with exception: {$err:code}: {$err:description}</error>
+        }
 };
 
 declare function hra-rdf-framework:get-annotation($annotation-uuid as xs:string) {

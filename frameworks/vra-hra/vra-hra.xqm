@@ -653,16 +653,18 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                     let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
+                    return
                         try {
                             vra-hra-framework:format-detail-view(string($currentPos), $clean, $collection, $type, $id)
                         } catch * {
-                            util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
+                            util:log("INFO", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
                             <td class="error" colspan="2">
-                                {$config:error-message-before-link} 
+                                <div style="display:none">Error: {$err:code} Descr.: {$err:description} Value: {$err:value}</div>
+                                {$config:error-message-before-link}
                                 <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
                             </td>
-                        }                        
+                        }
                 }
             </td>
         </tr>
@@ -980,8 +982,12 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                 }
                 {
                     for $body in $annotations("is-body")
+(:                        let $useless := util:log("INFO", $body) :)
+                    
                         let $motivation := $body/oa:motivatedBy/@rdf:resource/string()
                         let $bodyIRI := $body/oa:hasTarget/@rdf:resource/string()
+(:                        let $useless := util:log("INFO", $bodyIRI) :)
+                        
                         let $parsedIRI := hra-rdf-framework:parse-iri($bodyIRI, "xml")
                         let $resolvedIRI := hra-rdf-framework:resolve-tamboti-iri($bodyIRI)
 
@@ -1013,7 +1019,7 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                                                     return
                                                         <div style="width:128px;height:128px;border:1px solid black;" onmouseenter="$(this).find('.svg-actions-overlay').fadeIn(200);" onmouseleave="$(this).find('.svg-actions-overlay').fadeOut(200);" >
                                                             <div style="width:128px;cursor:pointer">
-                                                                <a href="?search-field=ID&amp;value={$parsedIRI/resource/string()}">
+                                                                <a href="?search-field=ID&amp;value={$parsedIRI/hra-rdf-framework:resource/string()}">
                                                                     <div style="float:left">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="128px" height="128px" viewBox="0 0 {$svg-viewBox[3]} {$svg-viewBox[4]}">
                                                                             {$resolvedIRI}
@@ -1021,7 +1027,7 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                                                                     </div>
                                                                 </a>
                                                                     {
-                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;svg="|| $parsedIRI/resource/string() || "&amp;tambotiCollection=" || encode-for-uri($collection-name) || "&amp;annotationUUID=" || $anno-uuid
+                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;svg="|| $parsedIRI/hra-rdf-framework:resource/string() || "&amp;tambotiCollection=" || encode-for-uri($collection-name) || "&amp;annotationUUID=" || $anno-uuid
                                                                         return
                                                                             if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
                                                                                 <div class="svg-actions-overlay" style="width:128px;">
