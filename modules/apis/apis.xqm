@@ -3,6 +3,7 @@ xquery version "3.0";
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
 import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../../frameworks/hra-rdf/hra-rdf-framework.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
+import module namespace tamboti-security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 
 declare function apis:process() {
 (:    let $parsedIRI := hra-rdf-framework:parse-IRI(request:get-effective-uri(), "xml"):)
@@ -49,11 +50,12 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
     let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
     let $resource-name := request:get-header("X-resource-name")
     let $content := request:get-data()
-    let $target-collection :=
+    let $target-collection := xmldb:encode-uri(
         if (starts-with($target-collection, "/db")) then
             substring-after($target-collection, "/db")
         else
             $target-collection
+    )
        
     return
         if (not(xmldb:collection-available($target-collection)))
