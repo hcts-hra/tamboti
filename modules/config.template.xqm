@@ -75,6 +75,8 @@ declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "
 declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
 declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
 declare variable $config:web-path-to-mods-editor-api := $config:web-path-to-editors-apis || "/hra-mods-editor";
+declare variable $config:db-path-to-tei-editor-api := $config:db-path-to-editors-apis || "/tei-editor";
+declare variable $config:web-path-to-tei-editor-api := $config:web-path-to-editors-apis || "/tei-editor";
 
 (: DB paths to the default editors :)
 declare variable $config:db-path-to-mods-editor-home := $config:web-context || "/hra-mods-editor";
