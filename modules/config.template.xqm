@@ -81,8 +81,10 @@ declare variable $config:web-path-to-tei-editor-api := $config:web-path-to-edito
 (: DB paths to the default editors :)
 declare variable $config:db-path-to-mods-editor-home := $config:web-context || "/hra-mods-editor";
 declare variable $config:web-path-to-mods-editor-home := $config:exist-context || $config:web-context || "/hra-mods-editor";
+declare variable $config:web-path-to-tei-editor-home := $config:exist-context || $config:web-context || "/teian";
 declare variable $config:db-path-to-mods-editor := $config:db-path-to-mods-editor-home || "/index.xq";
 declare variable $config:web-path-to-mods-editor := $config:web-path-to-mods-editor-home || "/index.xq";
+declare variable $config:web-path-to-tei-editor := $config:web-path-to-tei-editor-home || "/core/teian.html";
 declare variable $config:canvas-editor-path := $config:exist-context || "/apps/svgedit/index.html";
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
