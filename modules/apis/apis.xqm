@@ -3,7 +3,6 @@ xquery version "3.0";
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
 import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../../frameworks/hra-rdf/hra-rdf-framework.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace tamboti-security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 
 declare function apis:process() {
 (:    let $parsedIRI := hra-rdf-framework:parse-IRI(request:get-effective-uri(), "xml"):)
@@ -47,39 +46,25 @@ declare function apis:get($method as xs:string, $scope as xs:string, $parameters
 };
 
 declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
-    let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
-    let $resource-name := request:get-header("X-resource-name")
-    let $content := request:get-data()
-    let $target-collection := xmldb:encode-uri(
+	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
+	let $target-collection :=
         if (starts-with($target-collection, "/db")) then
             substring-after($target-collection, "/db")
         else
             $target-collection
-    )
-       
-    return
-        if (not(xmldb:collection-available($target-collection)))
-        then
-            (
-                response:set-status-code(404)
-                ,
-                <error>The target collection '{$target-collection}' does not exist!</error>
-            )
-        else
-            <div>
-                {
-                    let $result := tamboti-security:store-resource($target-collection, $resource-name, $content)
-                    return
-                        if($result = true()) then
-                            "success"
-                        else
-                            (
-                                response:set-status-code(500),
-                                $result
-                            )
-    
-                }
-            </div>
+	   
+	return
+	    if (not(xmldb:collection-available($target-collection)))
+	    then
+	        (
+	            response:set-status-code(404)
+	            ,
+	            <error>The target collection '{$target-collection}' does not exist!</error>
+	        )
+	    else
+	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+	            <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
+	        </dispatch>
 };
 
 declare function apis:post($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
@@ -128,10 +113,6 @@ declare function apis:uuid() {
 
 declare function apis:editors($parameters as xs:string*) {
     let $editor-name := $parameters[1]
-    let $log := util:log("INFO", "request:get-parameter-names()")
-    let $log := util:log("INFO", request:get-parameter-names())
-    let $log := util:log("INFO", "get-data")
-    let $log := util:log("INFO", request:get-parameter("type", ""))
     let $query-string := local:generate-query-string-from-request-parameters()
     
     return
@@ -140,7 +121,12 @@ declare function apis:editors($parameters as xs:string*) {
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                 <redirect url="{$config:web-path-to-mods-editor}?id={$parameters[2]}&amp;{$query-string}" />
-            </dispatch>            
+            </dispatch> 
+        case "tei-editor"
+        return
+            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                <redirect url="{$config:web-path-to-tei-editor}?doc-url={$config:web-path-to-tei-hra-framework}/get-data.xq?id={$parameters[2]}" />
+            </dispatch>
         default return ()     
 };
 
