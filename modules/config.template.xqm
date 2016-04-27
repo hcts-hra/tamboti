@@ -61,12 +61,16 @@ declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:
 
 declare variable $config:url-image-size := "256";
 
-(:modules:)
+(: modules :)
 declare variable $config:db-path-to-modules := $config:db-path-to-app || "/modules";
 declare variable $config:rest-path-to-modules := $config:rest-path-to-app || "/modules";
 declare variable $config:web-path-to-modules := $config:web-path-to-app || "/modules";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
+
+(: frameworks :)
+declare variable $config:db-path-to-frameworks := $config:db-path-to-app || "/frameworks";
+declare variable $config:db-path-to-tei-hra-framework := $config:db-path-to-app || "/frameworks/tei-hra";
 
 (: APIs:)
 declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
