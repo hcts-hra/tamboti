@@ -43,8 +43,12 @@ declare function tei-hra-framework:toolbar($entry as node()) {
                 (: if the item's collection is writable, display edit/delete and move buttons :)
                 if ($isWriteable) then
                     (
-(:                        <img title="Edit TEI Record" src="theme/images/page_edit.png"/>:)
-(:                        ,:)
+                        <form id="edit-tei-record-form" method="post" action="{$config:web-path-to-tei-editor-api}/{$id}" target="_blank">
+                            <a onclick="document.getElementById('edit-tei-record-form').submit();">
+                                <img title="Edit TEI Record" src="theme/images/page_edit.png"/>
+                            </a>
+                        </form>                       
+                        ,
                         <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="theme/images/delete.png"/></a>
                         ,
                         <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>

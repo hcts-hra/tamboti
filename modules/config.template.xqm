@@ -61,12 +61,16 @@ declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:
 
 declare variable $config:url-image-size := "256";
 
-(:modules:)
+(: modules :)
 declare variable $config:db-path-to-modules := $config:db-path-to-app || "/modules";
 declare variable $config:rest-path-to-modules := $config:rest-path-to-app || "/modules";
 declare variable $config:web-path-to-modules := $config:web-path-to-app || "/modules";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
+
+(: frameworks :)
+declare variable $config:db-path-to-frameworks := $config:db-path-to-app || "/frameworks";
+declare variable $config:db-path-to-tei-hra-framework := $config:db-path-to-app || "/frameworks/tei-hra";
 
 (: APIs:)
 declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
@@ -75,12 +79,16 @@ declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "
 declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
 declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
 declare variable $config:web-path-to-mods-editor-api := $config:web-path-to-editors-apis || "/hra-mods-editor";
+declare variable $config:db-path-to-tei-editor-api := $config:db-path-to-editors-apis || "/tei-editor";
+declare variable $config:web-path-to-tei-editor-api := $config:web-path-to-editors-apis || "/tei-editor";
 
 (: DB paths to the default editors :)
 declare variable $config:db-path-to-mods-editor-home := $config:web-context || "/hra-mods-editor";
 declare variable $config:web-path-to-mods-editor-home := $config:exist-context || $config:web-context || "/hra-mods-editor";
+declare variable $config:web-path-to-tei-editor-home := $config:exist-context || $config:web-context || "/teian";
 declare variable $config:db-path-to-mods-editor := $config:db-path-to-mods-editor-home || "/index.xq";
 declare variable $config:web-path-to-mods-editor := $config:web-path-to-mods-editor-home || "/index.xq";
+declare variable $config:web-path-to-tei-editor := $config:web-path-to-tei-editor-home || "/core/teian.html";
 declare variable $config:canvas-editor-path := $config:exist-context || "/apps/svgedit/index.html";
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();

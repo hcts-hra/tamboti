@@ -137,7 +137,7 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                 (: if the item's collection is writable, display edit/delete and move buttons :)
                 if ($isWritable) then
                     (
-                        <form id="edit-mods-record-form" method="post" action="{$config:web-path-to-mods-editor-api}/{$item/@ID}" target="_blank">
+                        <form id="edit-mods-record-form" method="post" action="{$config:web-path-to-mods-editor-api}/{$id}" target="_blank">
                             <a onclick="document.getElementById('edit-mods-record-form').submit();">
                                 <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
                             </a>
