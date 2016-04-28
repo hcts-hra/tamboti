@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teian:session xmlns:teian="http://kuberam.ro/ns/teian" xmlns="http://www.w3.org/1999/xhtml">
+	<teian:config-url>/exist/apps/teian/config/config.xml</teian:config-url>
+	<teian:track-changes>true</teian:track-changes>
+	<teian:show-changes>true</teian:show-changes>
+	<teian:lock-content>false</teian:lock-content>
+	<teian:user>reviewer1</teian:user>
+	<teian:user-color>pink</teian:user-color>
+	<teian:insert-start-pi-target>teian-insert-start</teian:insert-start-pi-target>
+	<teian:insert-end-pi-target>teian-insert-end</teian:insert-end-pi-target>
+	<teian:delete-start-pi-target>teian-delete-start</teian:delete-start-pi-target>
+	<teian:delete-end-pi-target>teian-delete-end</teian:delete-end-pi-target>
+	<teian:change-authors>
+		<teian:author name="reviewer1" color="pink" />
+		<teian:author name="reviewer2" color="#D8F781" />
+	</teian:change-authors>
+	<teian:template id="insert-change-template">
+		<ins author="" />
+	</teian:template>
+	<teian:template id="delete-change-template">
+		<del author="" />
+	</teian:template>
+	<teian:search-service-url>../services/search.php</teian:search-service-url>
+	<teian:save-service-url>../services/save.php</teian:save-service-url>
+</teian:session>
