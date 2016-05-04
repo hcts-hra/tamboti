@@ -75,6 +75,7 @@ declare variable $config:web-path-to-tei-hra-framework := $config:web-path-to-ap
 (: APIs:)
 declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
 declare variable $config:web-path-to-apis := $config:web-path-to-app || "/api";
+declare variable $config:web-path-to-resources-apis := $config:web-path-to-apis || "/resources";
 declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "/editors";
 declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
 declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
