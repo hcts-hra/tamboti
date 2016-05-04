@@ -46,15 +46,21 @@ declare function apis:get($method as xs:string, $scope as xs:string, $parameters
 };
 
 declare function apis:put($method as xs:string, $scope as xs:string, $parameters as xs:string*) {
+    let $resource-id := request:get-header("X-resource-id")    
 	let $target-collection := xs:anyURI(request:get-header("X-target-collection"))
+
 	let $target-collection :=
-        if (starts-with($target-collection, "/db")) then
-            substring-after($target-collection, "/db")
-        else
-            $target-collection
+        if (exists($target-collection))
+        then $target-collection
+        else system:as-user($config:dba-credentials[1], $config:dba-credentials[2], util:collection-name(root(collection($config:content-root)//*[@xml:id = $resource-id])))	
+	let $target-collection :=
+        if (starts-with($target-collection, "/db"))
+        then substring-after($target-collection, "/db")
+        else $target-collection
+    let $target-collection-available := system:as-user($config:dba-credentials[1], $config:dba-credentials[2], xmldb:collection-available($target-collection))
 	   
 	return
-	    if (not(xmldb:collection-available($target-collection)))
+	    if (not($target-collection-available))
 	    then
 	        (
 	            response:set-status-code(404)
@@ -63,7 +69,7 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
 	        )
 	    else
 	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-	            <forward url="/rest/db{$target-collection}/{request:get-header("X-resource-name")}" absolute="yes"/>
+	            <forward url="/rest/db{$target-collection}/{$resource-id}.xml" absolute="yes"/>
 	        </dispatch>
 };
 
@@ -125,7 +131,7 @@ declare function apis:editors($parameters as xs:string*) {
         case "tei-editor"
         return
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <redirect url="{$config:web-path-to-tei-editor}?doc-url={$config:web-path-to-tei-hra-framework}/get-data.xq?id={$parameters[2]}" />
+                <redirect url="{$config:web-path-to-tei-editor}?session={$config:web-path-to-tei-hra-framework}/session.xml&amp;content={$config:web-path-to-tei-hra-framework}/get-data.xq?id={$parameters[2]}" />
             </dispatch>
         default return ()     
 };
