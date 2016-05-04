@@ -69,12 +69,13 @@ declare variable $config:web-path-to-modules := $config:web-path-to-app || "/mod
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
 
 (: frameworks :)
-declare variable $config:db-path-to-frameworks := $config:db-path-to-app || "/frameworks";
-declare variable $config:db-path-to-tei-hra-framework := $config:db-path-to-app || "/frameworks/tei-hra";
+declare variable $config:web-path-to-frameworks := $config:web-path-to-app || "/frameworks";
+declare variable $config:web-path-to-tei-hra-framework := $config:web-path-to-app || "/frameworks/tei-hra";
 
 (: APIs:)
 declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
 declare variable $config:web-path-to-apis := $config:web-path-to-app || "/api";
+declare variable $config:web-path-to-resources-apis := $config:web-path-to-apis || "/resources";
 declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "/editors";
 declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
 declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
