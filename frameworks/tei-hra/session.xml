@@ -1,25 +1,53 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<teian:session xmlns:teian="http://kuberam.ro/ns/teian" xmlns="http://www.w3.org/1999/xhtml">
-	<teian:config-url>/exist/apps/teian/config/config.xml</teian:config-url>
-	<teian:track-changes>true</teian:track-changes>
-	<teian:show-changes>true</teian:show-changes>
-	<teian:lock-content>false</teian:lock-content>
-	<teian:user>reviewer1</teian:user>
-	<teian:user-color>pink</teian:user-color>
-	<teian:insert-start-pi-target>teian-insert-start</teian:insert-start-pi-target>
-	<teian:insert-end-pi-target>teian-insert-end</teian:insert-end-pi-target>
-	<teian:delete-start-pi-target>teian-delete-start</teian:delete-start-pi-target>
-	<teian:delete-end-pi-target>teian-delete-end</teian:delete-end-pi-target>
-	<teian:change-authors>
-		<teian:author name="reviewer1" color="pink" />
-		<teian:author name="reviewer2" color="#D8F781" />
-	</teian:change-authors>
-	<teian:template id="insert-change-template">
-		<ins author="" />
-	</teian:template>
-	<teian:template id="delete-change-template">
-		<del author="" />
-	</teian:template>
-	<teian:search-service-url>../services/search.php</teian:search-service-url>
-	<teian:save-service-url>../services/save.php</teian:save-service-url>
+<teian:session xmlns="http://www.w3.org/1999/xhtml" xmlns:teian="http://kuberam.ro/ns/teian">
+    <teian:config-url>/exist/apps/teian/config/config.xml</teian:config-url>
+    <teian:track-changes>true</teian:track-changes>
+    <teian:show-changes>true</teian:show-changes>
+    <teian:lock-content>false</teian:lock-content>
+    <teian:user>reviewer1</teian:user>
+    <teian:user-color>pink</teian:user-color>
+    <teian:insert-start-pi-target>teian-insert-start</teian:insert-start-pi-target>
+    <teian:insert-end-pi-target>teian-insert-end</teian:insert-end-pi-target>
+    <teian:delete-start-pi-target>teian-delete-start</teian:delete-start-pi-target>
+    <teian:delete-end-pi-target>teian-delete-end</teian:delete-end-pi-target>
+    <teian:change-authors>
+        <teian:author name="reviewer1" color="pink"/>
+        <teian:author name="reviewer2" color="#D8F781"/>
+    </teian:change-authors>
+    <teian:template id="insert-change-template">
+        <ins author=""/>
+    </teian:template>
+    <teian:template id="delete-change-template">
+        <del author=""/>
+    </teian:template>
+    <teian:search-service-url/>
+    <teian:save-service-url>/exist/apps/tamboti/api/resources</teian:save-service-url>
+    <teian:extension-functions>
+        teian.save = function() {
+        	var utils = teian.utils;
+        	utils.oSavedSelection = null;
+        	var content = document.querySelector('#teian-content &gt; *').cloneNode(true);
+        	var contentAsString = $x.serializeToString(content);
+        	if (teian.sessionParameters.trackChanges == "true") {
+        		contentAsString = teian._convertHtmlWithChangeMarkupToChangePi(contentAsString);
+        	}
+        
+        	// filter out HTML br elements
+        	contentAsString = contentAsString.replace(/&lt;br xmlns=\"http:\/\/www.w3.org\/1999\/xhtml\" \/&gt;/g, "");
+        	
+        	var contentUrl = teian.contentUrl;
+        	var contentId = contentUrl.substring(contentUrl.indexOf('?') + 4);
+        	
+        	$x.instance('data').load($x.parseFromString(contentAsString));
+            $.ajax({
+                url: "/exist/apps/tamboti/api/resources",
+                type: "PUT",
+                contentType: 'application/xml',
+                headers: { 
+                    "X-resource-id": contentId
+                },
+                processData: false,
+                data: contentAsString
+            });       
+        };
+    </teian:extension-functions>
 </teian:session>
