@@ -3,7 +3,7 @@
     <index xmlns:mods="http://www.loc.gov/mods/v3" xmlns:vra="http://www.vraweb.org/vracore4.htm" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xlink="http://www.w3.org/1999/xlink">
         <fulltext default="none" attributes="false"/>
         <lucene>
-            <analyzer class="org.apache.lucene.analysis.core.WhitespaceAnalyzer"/><!--MODS -->
+            <analyzer class="org.apache.lucene.analysis.standard.StandardAnalyzer"/><!--MODS -->
             <text qname="mods:mods"/><!--top level elements -->
             <text qname="mods:titleInfo" boost="2.0"/>
             <text qname="mods:language"/>
