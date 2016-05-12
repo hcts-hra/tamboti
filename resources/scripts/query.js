@@ -851,6 +851,7 @@ function initCollectionTree() {
             this.reactivate();
         },
         dblclick: function(event, data) {
+        	$("#result-items-count").text(0);
             var node = data.node;
             var title = node.title;
             var key = node.key;
