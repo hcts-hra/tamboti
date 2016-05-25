@@ -653,7 +653,6 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                     let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
                     return
-                    return
                         try {
                             vra-hra-framework:format-detail-view(string($currentPos), $clean, $collection, $type, $id)
                         } catch * {
