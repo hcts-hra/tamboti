@@ -1,6 +1,8 @@
 xquery version "3.0";
 
 import module namespace biblio = "http://exist-db.org/xquery/biblio" at "../../modules/search/application.xql";
+import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
+import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 
 declare function local:generate-query($query-as-xml as element()) as xs:string* {
     let $query :=
@@ -62,17 +64,27 @@ declare function local:generate-query($query-as-xml as element()) as xs:string* 
          return $query
 };
 
-declare function local:generate-full-query($query as xs:string*) as xs:string* {
-    "collection('/data')//(" || $query || ")"
+declare function local:generate-full-query($collection-path as xs:string, $query as xs:string*) as xs:string* {
+    let $collection :=
+        (: When searching inside whole users, do not show results from own home collection :)
+        let $all-collections :=
+            if (ends-with($collection-path, $config:users-collection)) then
+                security:get-searchable-child-collections(xs:anyURI($collection-path), true())
+            else 
+                security:get-searchable-child-collections(xs:anyURI($collection-path), false())
+                
+        return "collection('" || fn:string-join(($collection-path, $all-collections), "', '") ||  "')//"
+    
+    return "collection(" || $collection || ")//(" || $query || ")"
 };
 
 let $query-as-xml :=
     <query>
-        <collection>/data</collection>
+        <collection>/data/users/editor</collection>
         <and>
             <field m="1" name="any Field (MODS, TEI, VRA)">numbers</field>
             <field m="2" name="any Field (MODS, TEI, VRA)" short-name="">gentle</field>
         </and>
     </query>
     
-return local:generate-full-query(local:generate-query($query-as-xml))
+return local:generate-full-query($query-as-xml/*[1]/text(), local:generate-query($query-as-xml))
