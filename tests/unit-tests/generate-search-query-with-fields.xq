@@ -49,11 +49,6 @@ declare function local:generate-query($query-as-xml as element()) as xs:string* 
                 return
                     (:The search term held in $query-as-xml is substituted for the '$q' held in $expr.:)
                     replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string()))
-            case element(collection)
-            return
-                if (not($query-as-xml/..//field)) 
-                then ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry | svg:svg)')
-                else ()
             default return ()
         
          (:Leading wildcards cannot appear in searches within extracted text. :) 
@@ -64,7 +59,9 @@ declare function local:generate-query($query-as-xml as element()) as xs:string* 
          return $query
 };
 
-declare function local:generate-full-query($collection-path as xs:string, $query as xs:string*) as xs:string* {
+declare function local:generate-full-query($query-as-xml as element()) as xs:string* {
+    let $collection-path := $query-as-xml/collection/text()
+    
     let $collection :=
         (: When searching inside whole users, do not show results from own home collection :)
         let $all-collections :=
@@ -73,18 +70,23 @@ declare function local:generate-full-query($collection-path as xs:string, $query
             else 
                 security:get-searchable-child-collections(xs:anyURI($collection-path), false())
                 
-        return "collection('" || fn:string-join(($collection-path, $all-collections), "', '") ||  "')//"
+        return "'" || fn:string-join(($collection-path, $all-collections), "', '") ||  "'"
+        
+    let $query :=
+        if (not($query-as-xml//field)) 
+        then "(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry | svg:svg)"
+        else local:generate-query($query-as-xml)  
     
     return "collection(" || $collection || ")//(" || $query || ")"
 };
 
 let $query-as-xml :=
     <query>
-        <collection>/data/users/editor</collection>
+        <collection>/data/commons</collection>
         <and>
             <field m="1" name="any Field (MODS, TEI, VRA)">numbers</field>
             <field m="2" name="any Field (MODS, TEI, VRA)" short-name="">gentle</field>
         </and>
     </query>
     
-return local:generate-full-query($query-as-xml/*[1]/text(), local:generate-query($query-as-xml))
+return local:generate-full-query($query-as-xml)
