@@ -425,75 +425,78 @@ declare function biblio:form-from-query($node as node(), $params as element(para
 :)
 declare function biblio:generate-query($query-as-xml as element()) as xs:string* {
     let $query :=
-    typeswitch ($query-as-xml)
-        case element(query) return
-            for $child in $query-as-xml/*
+        typeswitch ($query-as-xml)
+            case element(query)
+            return 
+                for $child in $query-as-xml/*
                 return biblio:generate-query($child)
-        case element(and) return
-            (
-                (:get the fields under "and":)
-                biblio:generate-query($query-as-xml/*[1]), 
-                " intersect ", 
-                biblio:generate-query($query-as-xml/*[2])
-            )
-        case element(or) return
-            (
-                (:get the fields under "or":)
-                biblio:generate-query($query-as-xml/*[1]), 
-                " union ", 
-                biblio:generate-query($query-as-xml/*[2])
-            )
-        case element(not) return
-            (
-                (:get the fields under "not":)
-                biblio:generate-query($query-as-xml/*[1]), 
-                " except ", 
-                biblio:generate-query($query-as-xml/*[2])
-            )
-        (:Determine which field to search in: if a field has been specified, use it; otherwise default to "any Field (MODS, TEI, VRA)".:)
-        case element(field) return
-            let $expr := $biblio:FIELDS/field[@name eq $query-as-xml/@name or @short-name eq $query-as-xml/@short-name]/search-expression
-            let $expr := 
-                if ($expr) 
-                then $expr
-                (:Default to a search in All if no search field is chosen, i.e. when Simple Search is used.:)
-                else $biblio:FIELDS/field[@name eq $biblio:FIELDS/field[1]/@name]/search-expression
-            (:This results in expressions like:
-            <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
-            The search term, to be substituted for '$q', is held in $query-as-xml. :)
-            
-            (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
-            let $collection-path := 
-                if ($expr/@name = ('the Record ID Field (MODS, VRA)', 'ID', 'the XLink Field (MODS)')) 
-                then $config:mods-root
-                else $query-as-xml/ancestor::query/collection/string()
-            let $collection :=
-                (: When searching inside whole users, do not show results from own home collection :)
-                let $all-collections :=
-                    if (ends-with($collection-path, $config:users-collection)) then
-                        security:get-searchable-child-collections(xs:anyURI($collection-path), true())
-                    else 
-                        security:get-searchable-child-collections(xs:anyURI($collection-path), false())
-                        
-                return "collection('" || fn:string-join(($collection-path, $all-collections), "', '") ||  "')//"
                 
+            case element(and)
             return
-                (:The search term held in $query-as-xml is substituted for the '$q' held in $expr.:)
-                ($collection, replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string())))
-        case element(collection)
+                string-join(
+                    for $child in $query-as-xml/*
+                    return biblio:generate-query($child), " intersect "
+                )
+            
+            case element(or)
             return
-                if (not($query-as-xml/..//field)) 
-                then ('collection("', $query-as-xml, '")//(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry | svg:svg)')
-                else ()
-        default return ()
+                string-join(
+                    for $child in $query-as-xml/*
+                    return biblio:generate-query($child), " union "
+                )            
+
+            case element(not)
+            return
+                string-join(
+                    for $child in $query-as-xml/*
+                    return biblio:generate-query($child), " except "
+                )            
+
+            (:Determine which field to search in: if a field has been specified, use it; otherwise default to "any Field (MODS, TEI, VRA)".:)
+            case element(field)
+            return
+                let $expr := $biblio:FIELDS/field[@name eq $query-as-xml/@name or @short-name eq $query-as-xml/@short-name]/search-expression
+                let $expr := 
+                    if ($expr) 
+                    then $expr
+                    (:Default to a search in All if no search field is chosen, i.e. when Simple Search is used.:)
+                    else $biblio:FIELDS/field[@name eq $biblio:FIELDS/field[1]/@name]/search-expression
+                (:This results in expressions like:
+                <field name="Title">mods:mods[ft:query(.//mods:titleInfo, '$q', $options)]</field>.
+                The search term, to be substituted for '$q', is held in $query-as-xml. :)
+                (: When searching for ID and xlink:href, do not use the chosen collection-path, but search throughout all of /resources. :)
+                return
+                    (:The search term held in $query-as-xml is substituted for the '$q' held in $expr.:)
+                    replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string()))
+            default return ()
         
          (:Leading wildcards cannot appear in searches within extracted text. :) 
          let $query := 
             for $q in $query
             return replace(replace($q, ':[?*]', ':'), '\s[?*]', ' ')
+            
+         return $query
+};
+
+declare function biblio:generate-full-query($query-as-xml as element()) as xs:string* {
+    let $collection-path := $query-as-xml/collection/text()
+    
+    let $collection :=
+        (: When searching inside whole users, do not show results from own home collection :)
+        let $all-collections :=
+            if (ends-with($collection-path, $config:users-collection)) then
+                security:get-searchable-child-collections(xs:anyURI($collection-path), true())
+            else 
+                security:get-searchable-child-collections(xs:anyURI($collection-path), false())
+                
+        return "'" || fn:string-join(($collection-path, $all-collections), "', '") ||  "'"
         
-         return
-            $query
+    let $query :=
+        if (not($query-as-xml//field)) 
+        then "(mods:mods | vra:vra[vra:work] | tei:TEI | atom:entry | svg:svg)"
+        else biblio:generate-query($query-as-xml)  
+    
+    return "collection(" || $collection || ")//(" || $query || ")"
 };
 
 (: If an apostrophe occurs in the search string (as in "China's"), it is escaped. 
@@ -580,6 +583,9 @@ declare function biblio:process-form() as element(query)? {
         order by $param descending
         return
             $param
+    let $log := util:log("INFO", "$fields")
+    let $log := util:log("INFO", $fields)
+            
     return
         if (exists($fields))
         then
@@ -724,6 +730,7 @@ declare function biblio:construct-order-by-expression($sort as xs:string?) as xs
 :)
 declare function biblio:evaluate-query($query-as-string as xs:string, $sort as xs:string?) {
     let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
+    
     let $order-by-expression := biblio:construct-order-by-expression($sort)
     let $query-with-order-by-expression :=
         (:The condition should be added that there is a search term. This will address comment in biblio:construct-order-by-expression(). :)
@@ -786,7 +793,11 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
     if ($query-as-xml) 
     then
         let $search-format := request:get-parameter("format", '')
-        let $query := string-join(biblio:generate-query($query-as-xml), '')
+        
+        let $query := string-join(biblio:generate-full-query($query-as-xml), '')
+        let $log := util:log("INFO", "$query")
+        let $log := util:log("INFO", $query)
+        
         (:Simple search does not have the parameter format, but should search in all formats.:)
         let $search-format := 
             if ($search-format)
@@ -1237,7 +1248,7 @@ $param
 declare function biblio:prepare-query($id as xs:string?, $collection as xs:string?, $reload as xs:string?, 
     $history as xs:string?, $clear as xs:string?, $filter as xs:string?, $search-field as xs:string?, $mylist as xs:string?, 
     $value as xs:string?) as element(query)? {
-    if ($id)
+    let $result := if ($id)
     then
         <query>
             <collection>{$config:mods-root}</collection>
@@ -1263,7 +1274,14 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
                             then biblio:apply-search($collection, $search-field, $value)
                             else biblio:process-form()
                             (:"else" includes "if ($mylist eq 'display')", the search made when displaying items in My List.:)
-};
+
+    let $log := util:log("INFO", "$result")
+    let $log := util:log("INFO", $result)
+    
+    return $result
+        
+        
+    };
 
 (:~
 : Gets cached results from the session;
@@ -1381,6 +1399,9 @@ declare function biblio:query($node as node(), $params as element(parameters)?, 
 
     (: Process request parameters and generate an XML representation of the query :)
     let $query-as-xml := biblio:prepare-query($id, $collection, $reload, $history, $clear, $filter, $search-field, $mylist, $value)
+    let $log := util:log("INFO", "$query-as-xml")
+    let $log := util:log("INFO", $query-as-xml)    
+
     (: Get the results :)
     let $query-as-regex := biblio:get-query-as-regex($query-as-xml)
     let $null := session:set-attribute('regex', $query-as-regex)
