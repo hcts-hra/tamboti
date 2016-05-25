@@ -52,10 +52,19 @@ $(function() {
             var $this = $(this);
             data[$this.prop('name')] = $this.val();
         });
+        var fields = $("select[name ^= 'field']", advancedSearchForm);
+        $.each(fields, function(key, value) {
+            var $this = $(this);
+            data[$this.prop('name')] = $this.val();
+        });
+        var operators = $("select[name ^= 'operator']", advancedSearchForm);
+        $.each(operators, function(key, value) {
+            var $this = $(this);
+            data[$this.prop('name')] = $this.val();
+        });        
+        
         data["format"] = $("select[name='format']", advancedSearchForm).val();
         data["default-operator"] = $("#advanced-search-form select[name='default-operator']", advancedSearchForm).val();
-        data["operator1"] = $("select[name='operator1']", advancedSearchForm).val();
-        data["field1"] = $("input[name='field1']", advancedSearchForm).val();
         data["sort"] = $("select[name='sort']", advancedSearchForm).val();
         data["sort-direction"] = $("select[name='sort-direction']", advancedSearchForm).val();
         data["query-tabs"] = $("input[name='query-tabs']", advancedSearchForm).val();
@@ -65,8 +74,6 @@ $(function() {
         data["value"] = $("input[name='value']", advancedSearchForm).val();
         data["history"] = $("input[name='history']", advancedSearchForm).val();
         data["search-field"] = $.getParameter('search-field');
-        
-        //alert(JSON.stringify(data));
         
         $("#results").html("Searching ...");        
         $.ajax({
