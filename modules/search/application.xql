@@ -583,8 +583,6 @@ declare function biblio:process-form() as element(query)? {
         order by $param descending
         return
             $param
-    let $log := util:log("INFO", "$fields")
-    let $log := util:log("INFO", $fields)
             
     return
         if (exists($fields))
@@ -795,8 +793,6 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         let $search-format := request:get-parameter("format", '')
         
         let $query := string-join(biblio:generate-full-query($query-as-xml), '')
-        let $log := util:log("INFO", "$query")
-        let $log := util:log("INFO", $query)
         
         (:Simple search does not have the parameter format, but should search in all formats.:)
         let $search-format := 
@@ -844,7 +840,7 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         return
             count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
-    else 0 
+    else 0
 };
 
 declare function biblio:list-collection($query-as-xml as element(query)?, $sort as item()?) as xs:int {
@@ -1248,7 +1244,7 @@ $param
 declare function biblio:prepare-query($id as xs:string?, $collection as xs:string?, $reload as xs:string?, 
     $history as xs:string?, $clear as xs:string?, $filter as xs:string?, $search-field as xs:string?, $mylist as xs:string?, 
     $value as xs:string?) as element(query)? {
-    let $result := if ($id)
+    if ($id)
     then
         <query>
             <collection>{$config:mods-root}</collection>
@@ -1274,14 +1270,7 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
                             then biblio:apply-search($collection, $search-field, $value)
                             else biblio:process-form()
                             (:"else" includes "if ($mylist eq 'display')", the search made when displaying items in My List.:)
-
-    let $log := util:log("INFO", "$result")
-    let $log := util:log("INFO", $result)
-    
-    return $result
-        
-        
-    };
+};
 
 (:~
 : Gets cached results from the session;
@@ -1308,7 +1297,7 @@ declare function biblio:get-or-create-cached-results($mylist as xs:string?, $que
             count($items)
     )
     else
-        if ($query-as-xml/field)
+        if ($query-as-xml//field)
         then biblio:eval-query($query-as-xml, $sort)
         else biblio:list-collection($query-as-xml, $sort)
 };
@@ -1399,8 +1388,6 @@ declare function biblio:query($node as node(), $params as element(parameters)?, 
 
     (: Process request parameters and generate an XML representation of the query :)
     let $query-as-xml := biblio:prepare-query($id, $collection, $reload, $history, $clear, $filter, $search-field, $mylist, $value)
-    let $log := util:log("INFO", "$query-as-xml")
-    let $log := util:log("INFO", $query-as-xml)    
 
     (: Get the results :)
     let $query-as-regex := biblio:get-query-as-regex($query-as-xml)
