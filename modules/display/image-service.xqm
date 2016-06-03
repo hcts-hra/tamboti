@@ -159,11 +159,11 @@ declare function image-service:get-binary-data($image-VRA as node(), $service-pr
             let $binary-url :=  image-service:get-service-url($iiif-parameters, $service-protocol)
             let $server-replacement-definitions := $service-protocol/call[@type="full-parameter"]/replacements
         
-            let $binary-url := image-service:replace-url-keys($image-VRA, $binary-url, $server-replacement-definitions)
+            let $binary-url := image-service:replace-url-keys($image-VRA, $iiif-parameters, $binary-url, $server-replacement-definitions)
         
             (: replace the service definitons :)
             let $service-replacement-definitions := $image-server/uri[@name="general"]/replacements
-            let $binary-url := image-service:replace-url-keys($image-VRA, $binary-url, $service-replacement-definitions)
+            let $binary-url := image-service:replace-url-keys($image-VRA, $iiif-parameters, $binary-url, $service-replacement-definitions)
             
             let $response := httpclient:get($binary-url, true(), ())
             let $mime := $response/httpclient:body/@mimetype/string()
@@ -267,7 +267,7 @@ declare function image-service:rotate-local-parameter($iiif-parameters as node()
                 "-rotate " || $degrees
 };
 
-declare function image-service:replace-url-keys($vra-image, $url as xs:string, $replacements as node()?) {
+declare function image-service:replace-url-keys($vra-image, $iiif-parameters as item(), $url as xs:string, $replacements as node()?) {
     let $replace-map := map:new(
         for $variable in $replacements/replace
             let $key := $variable/@key/string()
@@ -297,7 +297,7 @@ declare function image-service:replace-url-keys($vra-image, $url as xs:string, $
 
 };
 
-declare function image-service:get-info($vra-image as item()) {
+declare function image-service:get-info($vra-image as item(), $iiif-parameters as item()) {
     let $image-uuid := $vra-image/@id/string()
     let $image-href := $vra-image/@href/string()
 (:    let $useless := util:log("INFO", "info-url:" || $image-href):)
@@ -321,7 +321,7 @@ declare function image-service:get-info($vra-image as item()) {
             (: replace the service definitions:)
             let $replacement-definitions := $image-server/uri[@name="general"]/replacements
         
-            let $info-url := image-service:replace-url-keys($vra-image, $info-url, $replacement-definitions)
+            let $info-url := image-service:replace-url-keys($vra-image, $iiif-parameters, $info-url, $replacement-definitions)
             let $self-id-url := functx:substring-before-last(request:get-url(), "/")
 
             let $id-regex := '"@id"[ ]*:[ ]*"[^"]*"'
