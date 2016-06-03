@@ -35,7 +35,7 @@ return
                             let $header := response:set-header("Content-Type", "application/ld+json")
                             let $header := response:set-header('Content-Disposition', 'inline; filename="info.json"')
                             return
-                                image-service:get-info($image-vra, $iiif-parameters)
+                                image-service:get-info($image-vra)
                     case "iiif-binary" return
                         let $image-href := $image-vra/@href/string()
                         let $image-service-name :=
