@@ -1,8 +1,6 @@
 xquery version "3.0";
 
 import module namespace biblio = "http://exist-db.org/xquery/biblio" at "../../modules/search/application.xql";
-import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
-import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 
 let $query-as-xml :=
     <query>
