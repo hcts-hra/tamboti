@@ -45,25 +45,40 @@ $(function() {
     };
     
     tamboti.apis.advancedSearch = function() {
+        var advancedSearchForm = $("#advanced-search-form");
+        var data = {};
+        var inputs = $("input[name ^= 'input']", advancedSearchForm);
+        $.each(inputs, function(key, value) {
+            var $this = $(this);
+            data[$this.prop('name')] = $this.val();
+        });
+        var fields = $("select[name ^= 'field']", advancedSearchForm);
+        $.each(fields, function(key, value) {
+            var $this = $(this);
+            data[$this.prop('name')] = $this.val();
+        });
+        var operators = $("select[name ^= 'operator']", advancedSearchForm);
+        $.each(operators, function(key, value) {
+            var $this = $(this);
+            data[$this.prop('name')] = $this.val();
+        });        
+        
+        data["format"] = $("select[name='format']", advancedSearchForm).val();
+        data["default-operator"] = $("#advanced-search-form select[name='default-operator']", advancedSearchForm).val();
+        data["sort"] = $("select[name='sort']", advancedSearchForm).val();
+        data["sort-direction"] = $("select[name='sort-direction']", advancedSearchForm).val();
+        data["query-tabs"] = $("input[name='query-tabs']", advancedSearchForm).val();
+        data["collection-tree"] = $("input[name='collection-tree']", advancedSearchForm).val();
+        data["collection"] = $("input[name='collection']", advancedSearchForm).val();
+        data["filter"] = $("input[name='filter']", advancedSearchForm).val();
+        data["value"] = $("input[name='value']", advancedSearchForm).val();
+        data["history"] = $("input[name='history']", advancedSearchForm).val();
+        data["search-field"] = $.getParameter('search-field');
+        
         $("#results").html("Searching ...");        
         $.ajax({
             url: "search/",
-            data: {
-                "format": $("#advanced-search-form select[name='format']").val(),
-                "default-operator": $("#advanced-search-form select[name='default-operator']").val(),
-                "operator1": $("#advanced-search-form select[name='operator1']").val(),
-                "input1": $("#advanced-search-form input[name='input1']").val(),
-                "field1": $("#advanced-search-form input[name='field1']").val(),
-                "sort": $("#advanced-search-form select[name='sort']").val(),
-                "sort-direction": $("#advanced-search-form select[name='sort-direction']").val(),
-                "query-tabs": $("#advanced-search-form input[name='query-tabs']").val(),
-                "collection-tree": $("#advanced-search-form input[name='collection-tree']").val(),
-                "collection": $("#advanced-search-form input[name='collection']").val(),
-                "filter": $("#advanced-search-form input[name='filter']").val(),
-                "value": $("#advanced-search-form input[name='value']").val(),
-                "history": $("#advanced-search-form input[name='history']").val(),
-                "search-field": $.getParameter('search-field')
-            },
+            data: data,
             dataType: "html",
             type: "POST",
             success: function (data) {
