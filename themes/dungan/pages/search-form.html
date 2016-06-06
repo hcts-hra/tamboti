@@ -38,7 +38,7 @@
             </form>
         </jquery:tab>
         <jquery:tab id="advanced-search-form" label="Advanced Search">
-            <jquery:form-repeat trigger="#add-field" delete="" form="#advanced-search" on-ready="repeatCallback"/>
+            <jquery:form-repeat trigger="#add-field" delete="" form=".search-form" on-ready="repeatCallback"/>
             <form id="advanced-search" class="search-form" action="?" name="advanced-search" method="POST">
                 <table>
                     <tr>
@@ -92,7 +92,7 @@
                 <input type="hidden" name="collection" value=""/>
             </form>
         </jquery:tab>
-		<jquery:tab id="query-history" label="Query History" />
+        <jquery:tab id="query-history" label="Query History"/>
         <jquery:tab id="personal-list" label="My List">
             <p>You have <span id="personal-list-size"/> in your list.</p>
             <form class="search-form" action="?" name="lists" method="POST">
@@ -108,6 +108,6 @@
                 </form>
             </p>
         </jquery:tab>
-        <jquery:tab id="search-help" label="Search Help" href="../../includes/search-help.xq" />
+        <jquery:tab id="search-help" label="Search Help" href="../../includes/search-help.xq"/>
     </jquery:tabset>
 </div>
