@@ -260,7 +260,11 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
         for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
-            let $annotations := vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+            let $annotations := 
+                if($relids) then
+                    vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+                else
+                    ()
             let $type-label := 
                 switch ($type)
                     case 'imageIs' return
