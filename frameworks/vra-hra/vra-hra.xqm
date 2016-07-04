@@ -260,9 +260,17 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
         for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
+<<<<<<< HEAD
 (:            let $log := util:log("INFO", "relids: " || $relids):)
 (:            let $log := util:log("INFO", "type: " || $type):)
 (:            let $log := util:log("INFO", $relation):)
+=======
+>>>>>>> refs/remotes/origin/master
+            let $annotations := 
+                if($relids) then
+                    vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+                else
+                    ()
             let $annotations := 
                 if($relids) then
                     vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
