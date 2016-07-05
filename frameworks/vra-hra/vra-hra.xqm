@@ -260,7 +260,22 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
         for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
-            let $annotations := vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+<<<<<<< HEAD
+(:            let $log := util:log("INFO", "relids: " || $relids):)
+(:            let $log := util:log("INFO", "type: " || $type):)
+(:            let $log := util:log("INFO", $relation):)
+=======
+>>>>>>> refs/remotes/origin/master
+            let $annotations := 
+                if($relids) then
+                    vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+                else
+                    ()
+            let $annotations := 
+                if($relids) then
+                    vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
+                else
+                    ()
             let $type-label := 
                 switch ($type)
                     case 'imageIs' return
@@ -269,8 +284,21 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                         
                     case 'imageOf' return
                         'Work Record'
+                        
+                    case 'relatedTo' return
+                        <a href="?search-field=ID&amp;value={$relation/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{'&lt;&lt;' || $type}</a>
+                        
                     default return
                         $type
+            
+            let $display := $relation/string()
+(:            let $display := :)
+(:                switch ($type):)
+(:                    case 'relatedTo' return:)
+(:                        'Related To ' || $relation/string():)
+(:                    default return:)
+(:                        $relation/string():)
+
             (: get annotations for vra:image records :)
             
             (: Elevate rights because user is not able to search whole $config:mods-root   :)
@@ -285,24 +313,12 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                 <tr>
                     <td class="collection-label">{$type-label}</td>
                     <td>
-                        <div style="font-weight:bold">{$relation/string()}</div>
+                        <div style="font-weight:bold">{$display}</div>
                         <div>
                             {$annotations}
                         </div>
                     </td>
                 </tr>
-                
-    (: relation-href :)
-    let $relation-href-node :=
-        let $href-relation := $allRelations[@type="relatedTo"]
-        for $rel in $href-relation
-            return
-               <tr>
-                   <td class="collection-label">
-                      <a href="?search-field=ID&amp;value={$rel/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{concat('&lt;&lt; ', $rel/@type)}</a>
-                   </td>
-                   <td>Related To</td>
-               </tr>
 
     let $rights-node :=
         let $rights := $entry//vra:rightsSet/vra:rights
@@ -435,7 +451,6 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                 else
                     ()
             }
-            {$relation-href-node}
             {$relation-node}
             {$stable-link-node}
             {$image-embedding-node}
