@@ -56,6 +56,15 @@
             <create qname="@names" type="xs:int"/><!--categories-all.xml -->
             <create qname="@count" type="xs:int"/><!--VRA -->
             <create qname="@id" type="xs:string"/><!--MODS -->
+            <create qname="mods:name">
+                <field name="namePart" match="mods:namePart" type="xs:string"/>
+            </create>
+            <create qname="mods:namePart">
+                <field name="namePart-type" match="@type" type="xs:string"/>
+                <field name="namePart-lang" match="@lang" type="xs:string"/>
+                <field name="namePart-transliteration" match="@transliteration" type="xs:string"/>
+                <field name="namePart-script" match="@script" type="xs:string"/>
+            </create>
             <create qname="@ID" type="xs:string"/>
             <create qname="@authority" type="xs:string"/>
             <create qname="@lang" type="xs:string"/>
@@ -66,5 +75,8 @@
             <create qname="atom:published" type="xs:dateTime"/>
             <create qname="atom:updated" type="xs:dateTime"/>
         </range>
+        <ngram qname="mods:mods"/>
+        <ngram qname="vra:vra"/>
+        <ngram qname="tei:TEI"/>
     </index>
 </collection>

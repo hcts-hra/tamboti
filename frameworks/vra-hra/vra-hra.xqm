@@ -260,17 +260,9 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
         for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
-<<<<<<< HEAD
 (:            let $log := util:log("INFO", "relids: " || $relids):)
 (:            let $log := util:log("INFO", "type: " || $type):)
 (:            let $log := util:log("INFO", $relation):)
-=======
->>>>>>> refs/remotes/origin/master
-            let $annotations := 
-                if($relids) then
-                    vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
-                else
-                    ()
             let $annotations := 
                 if($relids) then
                     vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
@@ -319,7 +311,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                         </div>
                     </td>
                 </tr>
-
+                
     let $rights-node :=
         let $rights := $entry//vra:rightsSet/vra:rights
         for $right in $rights
@@ -678,7 +670,7 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
                                 <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
                             </td>
-                        }
+                        }                        
                 }
             </td>
         </tr>
@@ -1068,3 +1060,4 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
             
     return $annotations-node
 };
+

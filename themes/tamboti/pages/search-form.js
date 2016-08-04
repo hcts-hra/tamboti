@@ -85,6 +85,8 @@ $(function() {
         },
         active: 0
     });
+    
+    $("#filter-tabs").tabs({collapsible: true, active: false });    
 
 	$("#search-help").load("../../includes/search-help.xq");
     $("#about-tamboti").load("../../includes/about-tamboti.xq");

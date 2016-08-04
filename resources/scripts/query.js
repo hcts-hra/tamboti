@@ -426,6 +426,7 @@ function updateCollectionPaths(title, key) {
 
     $("#simple-search-form input[name = collection]").val(key);
     $("#advanced-search-form input[name = collection]").val(key);
+    tamboti.currentCollection = key;
     
     //dialog collection paths
     $('span[id $= collection-path_]').text(title);
