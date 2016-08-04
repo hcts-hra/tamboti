@@ -107,7 +107,7 @@ $(function() {
                 "collection-tree": 'hidden',
                 "collection": $("#advanced-search-form input[name='collection']").val(),
                 "filter": data['filter'],
-                "value": data['value'],
+                "value": unescape(data['value']),
                 "history": data['history'],
                 "search-field": "ID"
             },
