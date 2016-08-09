@@ -12,12 +12,12 @@ declare function nameutil:format-name($name as element()) as xs:string* {
     (:let $log := util:log("DEBUG", ("##$vraName): ", $vraName)):)
     let $sortFirst :=
     	(: If there is a namePart marked as being in a Western language, there could in addition be a transliterated and a Eastern-script "nick-name", but the Western namePart should have precedence over the nick-name, therefore pick out the Western-language nameParts first. :)
-    	if ($name/mods:namePart[@lang != $nameutil:eastern-languages]/text())
+    	if ($name/mods:namePart[not(@lang = $nameutil:eastern-languages)]/text())
     	then
     		(: If it has a family type, take it; otherwise take whatever namePart there is (in case of a name which has not been analysed into given and family names. :)
     		if ($name/mods:namePart[@type eq 'family']/text())
-    		then $name/mods:namePart[@lang != $nameutil:eastern-languages][@type eq 'family'][1]/text()
-    		else $name/mods:namePart[@lang != $nameutil:eastern-languages][1]/text()
+    		then $name/mods:namePart[not(@lang = $nameutil:eastern-languages)][@type eq 'family'][1]/text()
+    		else $name/mods:namePart[not(@lang = $nameutil:eastern-languages)][1]/text()
     	else
     		(: If there is not a Western-language namePart, check if there is a namePart with transliteration; if this is the case, take it. :)
 	    	if ($name/mods:namePart[@transliteration]/text())
@@ -40,10 +40,10 @@ declare function nameutil:format-name($name as element()) as xs:string* {
 		    		then $name/mods:namePart[@type eq 'family'][1]/text()
 	    			else $name/mods:namePart[1]/text()
 	let $sortLast :=
-	    	if ($name/mods:namePart[@lang != $nameutil:eastern-languages]/text())
+	    	if ($name/mods:namePart[not(@lang = $nameutil:eastern-languages)]/text())
 	    	then
 	    	(: Insert commas before Western given names. :)
-	    		concat(', ', $name/mods:namePart[@lang != $nameutil:eastern-languages][@type eq 'given'][1]/text())
+	    		concat(', ', $name/mods:namePart[not(@lang = $nameutil:eastern-languages)][@type eq 'given'][1]/text())
 	    	else
 		    	if ($name/mods:namePart[@transliteration]/text())
 		    	then
