@@ -793,6 +793,8 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         let $search-format := request:get-parameter("format", '')
         
         let $query := string-join(biblio:generate-full-query($query-as-xml), '')
+        let $log := util:log("INFO", "$query as string")
+        let $log := util:log("INFO", $query)
         
         (:Simple search does not have the parameter format, but should search in all formats.:)
         let $search-format := 

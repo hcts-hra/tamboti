@@ -17,6 +17,7 @@
         }
 	</style>
     <script src="theme/pages/search-form.js" type="text/javascript"/>
+    <script src="../filters/filters.js" type="text/javascript"/>
     <div id="query-tabs">
         <ul>
             <li>
@@ -30,6 +31,9 @@
             </li>
             <li>
                 <a href="#personal-list">My List</a>
+            </li>
+            <li>
+                <a href="#filters2">Filters</a>
             </li>
             <li>
                 <a href="#search-help">Search Help</a>
@@ -47,7 +51,7 @@
                     <tr>
                         <td class="label">Search for </td>
                         <td colspan="2">
-                            <input class="clearable" name="input1" type="search" />
+                            <input class="clearable" name="input1" type="search"/>
                         </td>
                     </tr>
                     <tr>
@@ -117,10 +121,10 @@
                 <input type="hidden" name="collection-tree" value="hidden"/>
                 <input type="hidden" name="filter" value=""/>
                 <input type="hidden" name="value" value=""/>
-                <input type="hidden" name="history" value=""/>              
+                <input type="hidden" name="history" value=""/>
             </form>
         </div>
-        <div id="query-history" />
+        <div id="query-history"/>
         <div id="personal-list">
             <p>You have <span id="personal-list-size"/> in your list.</p>
             <form class="search-form" action="?" name="lists" method="POST">
@@ -134,6 +138,17 @@
                 <p>
                     <button class="button" id="export" name="export" type="submit" value="export">Export</button> your list items. </p>
             </form>
+        </div>
+        <div id="filters2">
+            <div id="filters2-navigation">
+                <a id="title-words-filter" href="#">Title Words</a>
+                <a id="names-filter" href="#">Names</a>
+                <a id="dates-filter" href="#">Dates</a>
+                <a id="subjects-filter" href="#">Subjects</a>
+                <a id="languages-filter" href="#">Languages</a>
+                <a id="genres-filter" href="#">Genres</a>
+            </div>
+            <table id="example" class="display"/>
         </div>
         <div id="search-help"/>
         <div id="about-tamboti"/>
