@@ -3,10 +3,10 @@ xquery version "3.0";
 module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
 declare variable $filters:eastern-languages := ('chi', 'jpn', 'kor', 'skt', 'tib');
 
-(: Called from filter.xql. :)
 (: An adaption of biblio:order-by-author() from application.xql. Any changes should be coordinated. :)
 declare function filters:format-name($name as element()) as xs:string* {
     let $namePart-elements := $name/mods:namePart
@@ -67,4 +67,16 @@ declare function filters:format-name($name as element()) as xs:string* {
     let $nameOriginalScript := if ($nameOriginalScript) then $nameOriginalScript else ()
     
     return normalize-space(translate($sortFirst || $sortLast || $nameOriginalScript, '"', "'"))
+};
+
+declare function filters:keywords($results as element()*) {
+    let $prefix := request:get-parameter("prefix", "")
+    let $callback := util:function(xs:QName("filters:key"), 2)
+    
+    (: NB: Is there any way to get the number of title words? :)
+    return util:index-keys($results//(mods:titleInfo | vra:titleSet), $prefix, $callback, (), "lucene-index")
+};
+
+declare function filters:key($key, $options) {
+    ($key, $options[1])
 };
