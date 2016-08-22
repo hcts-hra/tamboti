@@ -74,7 +74,7 @@ declare function filters:keywords($results as element()*) {
     let $callback := util:function(xs:QName("filters:key"), 2)
     
     (: NB: Is there any way to get the number of title words? :)
-    return util:index-keys($results//(mods:titleInfo | vra:titleSet), $prefix, $callback, (), "lucene-index")
+    return distinct-values(util:index-keys($results//(mods:titleInfo | vra:titleSet), $prefix, $callback, (), "lucene-index"))
 };
 
 declare function filters:key($key, $options) {
