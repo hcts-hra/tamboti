@@ -15,8 +15,6 @@ declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
 
-declare option exist:serialize "method=xhtml enforce-xhtml=yes";
-
 declare variable $local:MAX_RECORD_COUNT := 13000;
 declare variable $local:MAX_RESULTS_TITLES := 1500;
 declare variable $local:MAX_TITLE_WORDS := 1000;
@@ -66,7 +64,7 @@ Even if the cache contains too many items and we do not allow it to be processed
 The size has been set to 13,000, to accommodate the largest collection. 
 If the result set is larger than that, a message is shown. :)
 let $cached := 
-    if ($record-count gt $local:MAX_RECORD_COUNT) 
+    if ($record-count lt $local:MAX_RECORD_COUNT) 
     then ()
     else session:get-attribute("mods:cached")
 return

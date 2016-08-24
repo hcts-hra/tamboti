@@ -1,12 +1,14 @@
+tamboti.filters = {};
+
 $(document).ready(function() {
     $("#filters2-navigation").on("click", "a", function() {
-        
-        alert(this.id)
+        var filterUrl = "../filters/" + (this.id).replace("-filter", "") + ".xql";
+        tamboti.filters.table.ajax.url(filterUrl).load();
     });
     
-    $('#example').DataTable({
+    tamboti.filters.table = $('#example').DataTable({
         "ajax": {
-            "url": "../filters/names.xql",
+            "url": "../filters/empty.xql",
             "dataSrc":
                 function (data) {
                     var data = data.sort();
@@ -43,11 +45,11 @@ $(document).ready(function() {
         ],
         "deferLoading": 0,
         "deferRender":    true,
-        "scrollY":        "300px",
+        "scrollY": "300px",
         "scrollX": false,
         "scrollCollapse": true,
         "paging": false,
         "sorting": false,
         "bInfo" : false
     });
-    } );
+});

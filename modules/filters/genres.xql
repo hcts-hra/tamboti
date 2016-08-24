@@ -37,4 +37,4 @@ let $processed-genres :=
 let $result := "[[&quot;" || string-join($processed-genres, "&quot;], [&quot;") || "&quot;]]"
 
 return $result
- 
+  
