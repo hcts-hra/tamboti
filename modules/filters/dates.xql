@@ -10,8 +10,6 @@ declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 declare option output:method "text";
 declare option output:media-type "text/plain";
 
-let $start := util:system-time()
-
 let $cached :=  session:get-attribute("mods:cached")
 
 let $dates :=
@@ -28,10 +26,9 @@ let $dates :=
 let $dates-processsed :=
     for $date in $dates
     order by $date descending
-    return $date
+    return normalize-space(translate($date, '"', "'"))
 
 let $result := "[[&quot;" || string-join($dates-processsed, "&quot;], [&quot;") || "&quot;]]"
 
-let $stop := util:system-time()
-
 return $result
+  

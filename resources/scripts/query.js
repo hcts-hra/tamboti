@@ -7,6 +7,7 @@ tamboti.browser.chrome = (typeof window.chrome === "object");
 
 tamboti.totalSearchResultOptions = 0;
 tamboti.selectedSearchResultOptions = {};
+tamboti.currentCollection = "/data";
 
 $.extend({
   getParameterNames: function(){
@@ -635,6 +636,7 @@ function resultsLoaded(options) {
     $("#results li").each(function() {
         $(this).height(tallest);
     });
+    $('#filters').css('display', 'block');
     $('#filters .include-target').empty();
     $('#filters .expand').removeClass('expanded');
 
@@ -644,7 +646,7 @@ function resultsLoaded(options) {
         var num = $(this).closest(".pagination-item").find(".pagination-number").text();
         if (num) {
             galleries.open();
-            galleries.show(parseInt(num, 10));
+            galleries.show(parseInt(num));
         }
     });
 
@@ -852,7 +854,7 @@ function initCollectionTree() {
             this.reactivate();
         },
         dblclick: function(event, data) {
-        	$("#result-items-count").text(0);
+            $("#result-items-count").text(0);
             var node = data.node;
             var title = node.title;
             var key = node.key;
@@ -1557,7 +1559,7 @@ function copyCollectionACL(source, target) {
 
 
 // *****************************************************************************
-// *            RESSOURCE ACTIONS
+// *            RESOURCE ACTIONS
 // *****************************************************************************
 
 tamboti.newResource = function() {

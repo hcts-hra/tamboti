@@ -7,8 +7,7 @@ let $credentials := "editor:" || $config:dba-credentials[2]
 let $http-headers :=
     <headers>
         <header name="Authorization" value="Basic {util:string-to-binary($credentials)}"/>
-        <header name="X-target-collection" value="/apps/tamboti/tests/resources/temp"/>
-        <header name="X-document-type" value="newspaper-article"/>
+        <header name="Content-type" value="application/x-www-form-urlencoded"/>
     </headers>
 let $form-fieds :=
     <httpclient:fields>
@@ -18,7 +17,7 @@ let $form-fieds :=
     
 let $record-id := util:binary-to-string(httpclient:get(xs:anyURI("http://kjc-ws2.kjc.uni-heidelberg.de:8650/exist/apps/tamboti/api/uuid"), false(), ())/*[2])
 let $api-url := xs:anyURI("http://kjc-ws2.kjc.uni-heidelberg.de:8650/exist/apps/tamboti/api/editors/hra-mods-editor/" || $record-id)
-let $resources := httpclient:post($api-url, $form-fieds, false(), $http-headers)/*[2]/*
+let $resources := httpclient:post-form($api-url, $form-fieds, false(), $http-headers)/*[2]/*
 
 
 return $resources

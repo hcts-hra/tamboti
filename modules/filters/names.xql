@@ -1,6 +1,6 @@
 xquery version "3.0";
 
-import module namespace names = "http://exist-db.org/xquery/biblio/names" at "names.xqm";
+import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/" at "filters.xqm";
 import module namespace json="http://www.json.org";
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
@@ -18,7 +18,7 @@ let $cached :=  session:get-attribute("mods:cached")
 
 let $records := collection("/data/commons")
 let $names := $records//mods:name
-let $mods-names := for $author in $names return names:format-name($author)
+let $mods-names := for $author in $names return filters:format-name($author)
 let $vra-names := $cached//vra:agentSet//vra:name[1]/text()
 let $distinct-names := distinct-values(($mods-names, $vra-names))
 
