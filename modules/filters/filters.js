@@ -1,12 +1,9 @@
 tamboti.filters = {};
 
-$(document).ready(function() {
-    $("#filters2-navigation").on("click", "a", function() {
-        var filterUrl = "../filters/" + (this.id).replace("-filter", "") + ".xql";
-        tamboti.filters.table.ajax.url(filterUrl).load();
-    });
-    
-    tamboti.filters.table = $('#example').DataTable({
+tamboti.filters.filterName = "";
+
+tamboti.filters.tableDefinition =
+{
         "ajax": {
             "url": "../filters/empty.xql",
             "dataSrc":
@@ -24,6 +21,8 @@ $(document).ready(function() {
                     while (data.length > 0) {
                         processedData.push(data.splice(0, 5));
                     }
+                    
+                    $("#" + tamboti.filters.filterId + " > img").hide();
                     
                     return processedData;
                 }
@@ -43,7 +42,6 @@ $(document).ready(function() {
                     "targets": "_all"
                 }
         ],
-        "deferLoading": 0,
         "deferRender":    true,
         "scrollY": "300px",
         "scrollX": false,
@@ -51,5 +49,20 @@ $(document).ready(function() {
         "paging": false,
         "sorting": false,
         "bInfo" : false
+    };
+
+$(document).ready(function() {
+    $("#filters2-navigation").on("click", "a", function() {
+        var $this = $(this);
+        var filterId = this.id;
+        tamboti.filters.filterId = filterId;
+        var filterName = filterId.replace("-filter", "");
+        
+        $("img", $this).show();
+        
+        tamboti.filters.table.ajax.url("../filters/" + filterName + ".xql");
+        tamboti.filters.table.load();
     });
+    
+    tamboti.filters.table = $('#example').DataTable(tamboti.filters.tableDefinition);
 });

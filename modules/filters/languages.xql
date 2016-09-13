@@ -24,6 +24,8 @@ let $processed-languages :=
                 else ()
     order by upper-case($language) ascending
     return ($language, $label)
+    
+let $processed-languages := distinct-values($processed-languages)
 
 let $result := "[[&quot;" || string-join($processed-languages, "&quot;], [&quot;") || "&quot;]]"
 
