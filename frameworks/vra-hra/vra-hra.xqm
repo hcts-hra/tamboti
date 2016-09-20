@@ -948,7 +948,7 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
         "is-target" := hra-rdf-framework:is-object($uuid, "xml")
     }
     let $add-anno-span :=
-        if (1=1) then
+        if ($config:canvas-editor-path) then
             let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;tambotiCollection=" || encode-for-uri($collection-name)
             return
                 <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
