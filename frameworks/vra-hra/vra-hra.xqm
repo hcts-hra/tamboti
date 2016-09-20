@@ -1033,9 +1033,9 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                                                                     </div>
                                                                 </a>
                                                                     {
-                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;svg="|| $parsedIRI/hra-rdf-framework:resource/string() || "&amp;tambotiCollection=" || encode-for-uri($collection-name) || "&amp;annotationUUID=" || $anno-uuid
-                                                                        return
-                                                                            if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
+                                                                        if($config:canvas-editor-path and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
+                                                                            let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;svg="|| $parsedIRI/hra-rdf-framework:resource/string() || "&amp;tambotiCollection=" || encode-for-uri($collection-name) || "&amp;annotationUUID=" || $anno-uuid
+                                                                            return
                                                                                 <div class="svg-actions-overlay" style="width:128px;">
                                                                                     <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
                                                                                         <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
@@ -1060,4 +1060,3 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
             
     return $annotations-node
 };
-

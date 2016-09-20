@@ -9,6 +9,7 @@ declare option exist:serialize "method=xhtml media-type=application/xhtml+xml en
 
 session:create()
 ,
+
 (: We receive an HTML template as input :)
 (:the search field passed in the url:)
 let $filter := request:get-parameter("filter", ())
@@ -20,8 +21,12 @@ let $history := request:get-parameter("history", ())
 let $reload := request:get-parameter("reload", ())
 let $clear := request:get-parameter("clear", ())
 let $mylist := request:get-parameter("mylist", ()) (:clear, display:)
+
 let $collection := xmldb:encode-uri(request:get-parameter("collection", $config:mods-root))
+
 let $collection := if (starts-with($collection, "/db")) then $collection else concat("/db", $collection)
+
+
 let $id := request:get-parameter("id", ())
 let $sort := request:get-parameter("sort", ())
 
@@ -35,5 +40,6 @@ let $results := biblio:get-or-create-cached-results($mylist, $query-as-xml, $sor
 let $start := xs:int(request:get-parameter("start", 1))
 let $count := xs:int(request:get-parameter("count", $config:number-of-items-per-page))
 
+let $cors := response:set-header("Access-Control-Allow-Origin", "*")
 
 return retrieve:retrieve($start, $count)

@@ -25,5 +25,7 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/reports/reports.xqm"))
     ,
+    local:set-special-permissions(xs:anyURI($target || "/frameworks/hra-annotations/annotations.xq"))
+    ,
     sm:remove-group-member($config:biblio-users-group, "admin")
 )

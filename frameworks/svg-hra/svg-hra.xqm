@@ -221,14 +221,14 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
                                                                     </a>
                                                                     {
                                                                         
-                                                                        if(1=1 and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
-                                                                        let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $parsedIRI/hra-rdf-framework:resource/string() || "&amp;svg="|| $uuid || "&amp;tambotiCollection=" || encode-for-uri($record-collection) || "&amp;annotationUUID=" || $anno-uuid
-                                                                        return
-                                                                            <span class="img-actions-overlay">
-                                                                                <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
-                                                                                    <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
-                                                                                </a>
-                                                                            </span>
+                                                                        if($config:canvas-editor-path and $resource-can-edit and $motivation = "http://www.shared-canvas.org/ns/painting") then
+                                                                            let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $parsedIRI/hra-rdf-framework:resource/string() || "&amp;svg="|| $uuid || "&amp;tambotiCollection=" || encode-for-uri($record-collection) || "&amp;annotationUUID=" || $anno-uuid
+                                                                            return
+                                                                                <span class="img-actions-overlay">
+                                                                                    <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
+                                                                                        <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
+                                                                                    </a>
+                                                                                </span>
                                                                         else
                                                                             ()
                                                                     }

@@ -90,7 +90,12 @@ declare variable $config:web-path-to-tei-editor-home := $config:exist-context ||
 declare variable $config:db-path-to-mods-editor := $config:db-path-to-mods-editor-home || "/index.xq";
 declare variable $config:web-path-to-mods-editor := $config:web-path-to-mods-editor-home || "/index.xq";
 declare variable $config:web-path-to-tei-editor := $config:web-path-to-tei-editor-home || "/core/teian.html";
-declare variable $config:canvas-editor-path := $config:exist-context || "/apps/svgedit/index.html";
+
+declare variable $config:canvas-editor-path := 
+    if (repo:list() = "http://hra.uni-heidelberg.de/ns/annycan") then
+        concat(request:get-context-path(), "/apps/svgedit/index.html")
+    else
+        ();
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 
@@ -122,6 +127,11 @@ declare variable $config:dba-credentials := ("admin","");
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
 
 declare variable $config:allow-origin := "";
+
+(: MongoDB Setup:)
+declare variable $config:mongo-url := "mongodb://localhost";
+declare variable $config:mongo-database := "tamboti";
+declare variable $config:mongo-anno-collection := "annotations";
 
 (:~ 
 : Function hook which allows you to modify the username of the user
