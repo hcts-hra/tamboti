@@ -174,6 +174,7 @@ declare function local:get-info($image-VRA as node(), $iiif-parameters as node()
 (:            let $header := response:set-header("Content-Type", "application/json"):)
             let $uuid := $iiif-parameters//identifier/string()
             let $iiif-parameters := iiif-functions:parse-iiif-call("/" || $uuid || "/full/full/0/default.jpg")
+
             let $binary := local:get-binary-data($image-VRA, $service-protocol, $iiif-parameters, $image-server)
             let $iiif-info-xml := iiif-functions:info($binary, $iiif-parameters)
 (:            let $log := util:log("INFO", $iiif-info-xml):)

@@ -145,17 +145,18 @@ declare function local:collection-relationship($collection as xs:string) as elem
 };
 
 let $output-type := request:get-parameter("output", "")
+let $action := request:get-parameter("action", ())
+
 return
-    if (request:get-parameter("action", ())) 
-    then
-        let $action := request:get-parameter("action", ()) 
-        return
-            system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],                    
-                if ($action eq "is-collection-owner") then
+    if ($action) then
+        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
+            (
+            switch($action) 
+                case "is-collection-owner" return
                     let $collection := xmldb:encode(request:get-parameter("collection",()))
                     return 
                         security:is-collection-owner(security:get-user-credential-from-session()[1], $collection)
-                else if ($action eq "collection-relationship") then
+                case "collection-relationship" return
                     let $collection := xmldb:encode(request:get-parameter("collection",()))
                     let $collection-relationship := local:collection-relationship($collection)
                     return
@@ -165,11 +166,80 @@ return
                                 serialize($collection-relationship, $local:json-serialize-parameters)
                         else
                             $collection-relationship
-                else
+                case "logout" return
+                    (
+                        let $log := util:log("INFO", "CLEAR SESSION")
+                        let $cookie := request:get-cookie-value("T-AUTH")
+                        let $log := util:log("INFO", $cookie)
+                        let $logoutResponse := request:get-parameter("callback", "loggedOut")
+                        
+                        let $clear-session :=
+                            (
+                                if($cookie) then
+                                    (
+                                        security:iiifauth-remove-cookie($cookie),
+                                        response:set-cookie("T-AUTH", "", xs:duration("PT00S"),  (), request:get-server-name(), "/exist")
+                                    )
+                                else
+                                    ()
+                                ,
+                                session:clear(),
+                                session:invalidate()
+                            )
+                            let $header := response:set-header('Content-Type', 'text/javascript; charset=utf8')
+                            return
+                                (
+                                    response:set-status-code(200),
+                                    $logoutResponse || "('true')"
+                                )
+                    )
+                            
+                case "iiif-auth" return
+                    (: try to login:)
+                    let $loginResponse := request:get-parameter("callback", "loggedIn")
+                    return
+                        if(request:get-parameter("user", ()) and request:get-parameter("password", ())) then
+                            if (security:login(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))) then
+                                (: look for an existing cookie :)
+                                let $log := util:log("INFO", "SET COOKIE")
+                                let $cookie-value := security:iiifauth-set-cookie()
+                                let $cookie := response:set-cookie("IIIFAUTH2", $cookie-value , xs:duration(("PT" || $security:cookie-lifetime div 1000) || "S"), (), "universalviewer.io", "/")
+                                let $cookie := response:set-cookie("T-AUTH", $cookie-value , xs:duration(("PT" || $security:cookie-lifetime div 1000) || "S"), (), request:get-server-name(), "/exist")
+                                let $header := response:set-header('Content-Type', 'text/javascript; charset=utf8')
+(:                                let $json := :)
+(:                                    serialize("true", $local:json-serialize-parameters):)
+                                return
+                                    (
+                                        response:set-status-code(200),
+                                        $loginResponse || "('" || $cookie-value || "')"
+                                    )
+                            else
+                            (
+                                response:set-status-code(403),
+                                $loginResponse || "()"
+                            )
+                        else
+                            let $header := response:set-header("Content-Type", "application/json")
+    (:                        let $log := util:log("INFO", sm:id()):)
+                            let $return := 
+                                if(security:get-user-credential-from-session()[1] != "guest") then
+                                    (
+                                        response:set-status-code(200),
+                                        <root json:literal="true">true</root>
+                                    )
+                                else
+                                    ( 
+                                        response:set-status-code(403),
+                                        <root json:literal="true">false</root>
+                                    )
+                            return 
+                                serialize($return, $local:json-serialize-parameters)
+                default return
                     (
                         response:set-status-code(403),
                         <unknown action="{$action}"/>
                     )
             )
+        )
     else
         local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))

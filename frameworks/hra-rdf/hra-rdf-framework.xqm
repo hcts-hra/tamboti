@@ -14,6 +14,7 @@ import module namespace functx="http://www.functx.com";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace oa="http://www.w3.org/ns/oa#";
 
+declare namespace cfg="http://hra.uni-heidelberg.de/ns/tamboti/annotations/config";
 
 (: ToDo: dynamically get namespaces according to existing Tamboti frameworks :)
 
@@ -23,10 +24,11 @@ declare namespace tei = "http://www.tei-c.org/ns/1.0";
 declare namespace atom = "http://www.w3.org/2005/Atom";
 declare namespace html = "http://www.w3.org/1999/xhtml";
 declare namespace svg="http://www.w3.org/2000/svg";
-
+(:declare namespace anno-config="http://hra.uni-heidelberg.de/ns/tamboti/annotations/config";:)
 
 declare variable $hra-rdf-framework:IRI-resolver-prefix := "/tamboti/api/resource/";
 declare variable $hra-rdf-framework:anno-IRI-resolver-prefix := "/tamboti/api/annotation/";
+declare variable $hra-rdf-framework:tamboti-api-root := request:get-scheme() || "://" || request:get-server-name() || (if (request:get-server-port() = 80) then "" else ":" || request:get-server-port()) || "/exist/apps/tamboti/api/";
 
 (:~
 : returns rdf annotations with resource(-parts) as subject
@@ -165,11 +167,9 @@ declare function hra-rdf-framework:resolve-tamboti-iri($iri as xs:anyURI) {
 };
 
 (:~
- : get a Tamboti resource and eval the query string if any
- :
- : 
- : 
- : 
+ : get a Tamboti resource and eval the query string if any. query string is relative to the document root. Namespace prefixes: you can use tamboti-internal namespaces (i.e. "vra" or "mods") or the namespace/prefix declarations inside the document
+ : @param $uuid the Tamboti uuid of the resource
+ : @param $query-string the query string to eval on the document root (i.e. "//vra:inscriptionSet")
  :)
 
 declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $query-string as xs:string?){
@@ -197,7 +197,15 @@ declare function hra-rdf-framework:get-tamboti-resource($uuid as xs:string, $que
             <span />
 };
 
-declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as document-node()) {
+
+(:~
+ : save annotation(s) for a resource
+ : @param $uuid Tamboti-UUID of the resource which contains the body-node
+ : @param $annotationXML node with rdf annotation node(s) (OADM) as XML serialization
+ :)
+
+(:declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as node(rdf:RDF)) {:)
+declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $annotationXML as node(), $overwrite as xs:boolean) {
     let $col := collection($tamboti-config:content-root)
     return
         try {
@@ -211,12 +219,22 @@ declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $a
                 return
                     (: if the annotation exists, try to update it  :)
                     if ($existing-anno) then
-                        let $result := update replace $existing-anno with $new-anno
-                        return
-                            <success>annotation {$anno-iri} updated successfully</success>
+                        if($overwrite) then
+                            (: ToDo: keep the "annotatedAt" node and set the new one as modify date :)
+    (:                        let $annotatedAt := util:deep-copy($existing-anno/oa:annotatedAt):)
+                            let $result := 
+                                update replace $existing-anno with $new-anno
+    (:                            ,:)
+    (:                            rename node $existing-anno/oa:annotatedAt as 'oa:modifiedAt':)
+    (:                        let $result := update rename node $existing-anno/oa:)
+    (:                        let $log := util:log("INFO", $annotatedAt):)
+    (:                        let $log := util:log("INFO", $existing-anno/oa:annotatedAt):)
+                            return
+                                <success>annotation {$anno-iri} updated successfully</success>
+                        else 
+                            <success>annotation {$anno-iri} exists, updating was not forced</success>
                     (: Anno does not exist, so try to create it in the anno file for the body resource:)
                     else
-(:                        let $log := util:log("DEBUG", "try to insert anno"):)
                         (: annotation document's name is the same as the resource's name (without extension), appending _anno.rdf   :)
                         let $col := collection($tamboti-config:content-root)
                         (: if get-resource is successful, user has at least read access and though is allowed to annotate :)
@@ -228,7 +246,8 @@ declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $a
 
                         let $anno-doc-name := functx:substring-before-last($document-name, ".") || "_anno.rdf"
                         let $anno-doc-uri := xs:anyURI($document-col || "/" || $anno-doc-name)
-                        (: if file exists: try to insert the anno, else store anno as ne resource :)
+                        (: if file exists: try to insert the anno, else store anno as new resource :)
+
                         let $result := 
                             if(not(exists(doc($anno-doc-uri)/rdf:RDF))) then 
                                 let $document-node := 
@@ -249,6 +268,11 @@ declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $a
         }
 };
 
+(:~
+ : get stored annotation by annotation-uuid
+ : @param $annotation-uuid the annotation's uuid 
+ :)
+
 declare function hra-rdf-framework:get-annotation($annotation-uuid as xs:string) {
     let $col := collection($tamboti-config:content-root)
     let $result := $col/rdf:RDF/oa:Annotation[ends-with(@rdf:about, $annotation-uuid)]
@@ -262,3 +286,161 @@ declare function hra-rdf-framework:get-annotation($annotation-uuid as xs:string)
         else
             ()
 }; 
+
+
+declare function hra-rdf-framework:load-namespaces($qnames as node()?) {
+    for $qname in $qnames/cfg:qname
+    return
+        util:declare-namespace($qname/@prefix, xs:anyURI($qname/string()))
+};
+
+(:declare function hra-rdf-framework:process-displayHint($nodes as node()*, $var-map as map()) {:)
+(:    for $node in $nodes:)
+(:    return :)
+(:        typeswitch($node):)
+(:            case element() return:)
+(:                let $data-name := $node/@data-name:)
+(:                let $data-query := $node/@data-query:)
+(:                let $data-query-type := $node/@data-query-type:)
+(:                let $data-root := $node/@data-root:)
+(:                let $classes := $node/@class:)
+(:                let $node-data := $node/string():)
+(:                (: if a data-query is set, evaluate it:):)
+(:                return :)
+(:                    switch ($data-query-type):)
+(:                        case "xpath" return:)
+(:                            let $query-string := "$var-map($data-root/string())" || $data-query/string():)
+(:                            let $data := util:eval($query-string):)
+(:                            for $d at $idx in $data:)
+(:                                let $var-map :=:)
+(:                                    if ($data-query) then:)
+(:                                        map:put($var-map, $data-name/string(), $d):)
+(:                                    else:)
+(:                                        $var-map:)
+(:        :)
+(:                                let $output := :)
+(:                                    if ($d instance of xs:string) then:)
+(:                                        $d:)
+(:                                    else:)
+(:                                        "":)
+(:                                let $node-iri := :)
+(:                                    if ($data-root="xml") then:)
+(:    (:                                    let $log := util:log("INFO", $var-map("root-iri")):):)
+(:    (:                                    let $log := util:log("INFO", $var-map("root-iri") || "?" || functx:path-to-node-with-pos($d)):):)
+(:    (:                                    return:):)
+(:                                            $var-map("root-iri") || "?" || xmldb:encode-uri($data-query/string() || "[" || $idx || "]"):)
+(:                                    else:)
+(:                                        ():)
+(:                        return:)
+(:                            element { fn:node-name($node) } {:)
+(:                                ($node/@*[not(starts-with(local-name(), "data-"))]:)
+(:                                ,:)
+(:                                if ($node-iri) then:)
+(:                                    attribute node-iri {$node-iri}:)
+(:                                else:)
+(:                                    ():)
+(:                                ,:)
+(:                                $output),:)
+(:                                $node/node() ! hra-rdf-framework:process-displayHint(., $var-map):)
+(:                            }:)
+(:                    case "xquery" return:)
+(:                        let $context := :)
+(:                            <static-context>:)
+(:                                <variable name="xml">{$var-map('xml')}</variable>:)
+(:                            </static-context>:)
+(:(:                        let $log := util:log("INFO", $node-data):):)
+(:                        let $result := util:eval($node-data):)
+(:(:                        let $log := util:log("INFO", $result):):)
+(:                        return:)
+(:                            element { fn:node-name($node) } {:)
+(:                                ($node/@*[not(starts-with(local-name(), "data-"))]:)
+(:                                ,:)
+(:                                $result),:)
+(:                                $node/node()[position() > 1] ! hra-rdf-framework:process-displayHint(., $var-map):)
+(:                            }:)
+(::)
+(:                            :)
+(:                    default return:)
+(:                        element { fn:node-name($node) } {:)
+(:                            ($node/@*[not(starts-with(local-name(), "data-"))]), $node/node() ! hra-rdf-framework:process-displayHint(., $var-map)}:)
+(::)
+(:            default return :)
+(:                $node:)
+(::)
+(:};:)
+(::)
+(:declare function hra-rdf-framework:get-annotator-targets($resource-uuid as xs:string, $anno-config-id as xs:string) {:)
+(:    let $anno-config := hra-rdf-framework:get-annotator-config($anno-config-id):)
+(:    let $resource-xml := root(tamboti-security:get-resource($resource-uuid)):)
+(::)
+(:    let $root-iri := request:get-scheme() || "://" || request:get-server-name() || (if (request:get-server-port() = 80) then "" else ":" || request:get-server-port()) || "/exist/apps/tamboti/api/resource/" || $resource-uuid:)
+(:    :)
+(:    let $annotationTargets :=:)
+(:        for $anno in $anno-config/cfg:annotation:)
+(:            return:)
+(:                <annotation>:)
+(:                    <identifier>{$anno/cfg:identifier/string()}</identifier>:)
+(:                    <label>{$anno/cfg:label/string()}</label>:)
+(:                    <description>{$anno/cfg:description/string()}</description>:)
+(:                    {:)
+(:                        for $target in $anno/cfg:targets/cfg:target:)
+(:                            let $var-map := :)
+(:                                map:new( :)
+(:                                    ( :)
+(:                                        map:entry("namespace-nodes", $target/cfg:qnames):)
+(:                                        ,:)
+(:                                        map:entry("xml", $resource-xml):)
+(:                                        ,:)
+(:                                        map:entry("root-iri", $root-iri):)
+(:                                    ):)
+(:                                ):)
+(:                            :)
+(:                            let $load-namespaces := hra-rdf-framework:load-namespaces($target/cfg:qnames):)
+(:                            let $display-blocks := hra-rdf-framework:process-displayHint($target/cfg:displayHint/*, $var-map):)
+(:                            return:)
+(:                                <target>:)
+(:                                    <id>{$target/@id/string()}</id>:)
+(:                                    <label>{$target/cfg:label/string()}</label>:)
+(:                                    <displayBlocks>:)
+(:                                        {:)
+(:                                            for $block in $display-blocks:)
+(:(:                                            let $log := util:log("INFO", functx:change-element-ns-deep($block, "", "")):):)
+(:                                            return:)
+(:                                                <block>:)
+(:                                                    <iri>{$block/@node-iri/string()}</iri>:)
+(:                                                    {:)
+(:                                                        $block:)
+(:                                                    }:)
+(:                                                </block>:)
+(:                                        }:)
+(:                                    </displayBlocks>:)
+(:                                </target>:)
+(:                    }:)
+(:                </annotation>:)
+(:    :)
+(:    return:)
+(:        <annotationTargets>:)
+(:            {$annotationTargets}:)
+(:        </annotationTargets>:)
+(:        :)
+(:};:)
+
+declare function hra-rdf-framework:saveCanvas($imageUUID as xs:string, $svgUUID as xs:string, $annotationUUID as xs:string?){
+    let $annotationUUID := 
+        if ($annotationUUID) then $annotationUUID
+        else "anno-" || util:uuid()
+    let $anno :=
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oa="http://www.w3.org/ns/oa#">
+            <oa:Annotation rdf:about="{$hra-rdf-framework:tamboti-api-root}annotation/{$annotationUUID}">
+                <oa:annotatedAt>{datetime:timestamp-to-datetime(datetime:timestamp())}</oa:annotatedAt>
+                <oa:hasBody rdf:resource="{$hra-rdf-framework:tamboti-api-root}resource/{$imageUUID}?%2F%2Fvra%3Aimage"/>
+                <oa:hasTarget rdf:resource="{$hra-rdf-framework:tamboti-api-root}resource/{$svgUUID}?%2F%2Fsvg%3Asvg"/>
+                <oa:motivatedBy rdf:resource="http://www.shared-canvas.org/ns/painting"/>
+            </oa:Annotation>
+        </rdf:RDF>
+    return 
+        if(hra-rdf-framework:add-annotation($imageUUID, root($anno), false())) then
+            $annotationUUID
+        else
+            ()
+};

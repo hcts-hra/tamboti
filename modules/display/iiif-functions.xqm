@@ -253,9 +253,10 @@ declare function iiif-functions:parse-format-parameter($format-string as xs:stri
 };
 
 declare function iiif-functions:info($binary as xs:base64Binary, $iiif-parameters as node()) {
+
     let $uuid := $iiif-parameters//identifier/string()
     let $id-uri := functx:substring-before-last(request:get-url(), "/")
-    
+(:    let $log := util:log("INFO", "iiiffunctions;info") :)
     let $width := image:get-width($binary)
     let $height := image:get-height($binary)
 

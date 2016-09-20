@@ -14,7 +14,7 @@ declare variable $security:GUEST_CREDENTIALS := ("guest", "guest");
 declare variable $security:SESSION_USER_ATTRIBUTE := "biblio.user";
 declare variable $security:SESSION_PASSWORD_ATTRIBUTE := "biblio.password";
 declare variable $security:user-metadata-file := "security.metadata.xml";
-
+declare variable $security:cookie-lifetime := 360000000;
 (:~
 : Authenticates a user and creates their tamboti home collection if it does not exist
 :
@@ -218,6 +218,48 @@ declare function security:get-last-login-time($user as xs:string) as xs:dateTime
                     util:log("WARN", fn:concat("Could not find the last-login time for the user '", $user,"'. Does the user's metadata exist?")),
                     util:system-dateTime()
                 )
+};
+
+(:~
+: Determines if user has access mode to a collection or resource
+:
+: @param user The username
+: @param path The path to the collection or resource
+: @param mode The mode (i.e. "r.x")
+:)
+
+declare function security:user-has-access($user as xs:string, $path as xs:anyURI, $mode as xs:string) {
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+(:
+        let $log := util:log("INFO", "user: " || $user)
+        let $log := util:log("INFO", $path)
+:)
+
+        let $permissions := sm:get-permissions($path)
+        let $usergroups := sm:get-user-groups($user)
+        
+        let $is-owner := $permissions/sm:permission/@owner/string() = $user
+        let $has-group := $permissions/sm:permission/@group/string() = $usergroups
+        
+        (: check POSIX access :)
+        let $user-access := $is-owner and fn:matches($permissions/sm:permission/@mode, $mode || "......")
+        let $group-access := $has-group and fn:matches($permissions/sm:permission/@mode, "..." || $mode || "...")
+        let $others-access := fn:matches($permissions/sm:permission/@mode, "......" || $mode)
+        
+        let $log := util:log("INFO", "$user-access: " || $user-access || " $group-access: " || $group-access || " $others-access:" || $others-access)
+        return
+            (: if one of the POSIX permissions fits, return true :)
+            if($user-access or $group-access or $others-access) then
+                true()
+            (: check for ACLs:)
+            else
+                let $valid-acls := $permissions/sm:permission/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
+                return
+                    if(count($valid-acls) > 0) then
+                        true()
+                    else
+                        false()
+    ))
 };
 
 (:~
@@ -1013,7 +1055,56 @@ declare function security:get-acl($collection-uri as xs:anyURI) {
 : @param $id the resource id
 : @return the resource as node
 :)
-declare function security:get-resource($id as xs:string) as node()? {
+
+(:~
+: Use elevated rights to search resource by id.
+:
+: @param $id the resource id
+: @return the resource as node
+:)
+
+declare function security:get-resources($ids as xs:string*) as node()* {
+    try {
+        let $auth-token := request:get-header("_authToken")
+        let $token-user := security:iiifauth-validate-cookie($auth-token)
+    (: Do search as dba :)
+        let $resources :=
+            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
+                collection($config:mods-root)//(mods:mods[@ID=$ids] | vra:vra/vra:work[@id=$ids] | vra:vra/vra:image[@id=$ids] | svg:svg[@xml:id = $ids] | tei:TEI[@xml:id = $ids])
+            )
+        return
+            for $resource in $resources
+                let $resource-path := util:collection-name($resource)
+                let $resource-name := util:document-name($resource)
+                let $fullPath := xs:anyURI($resource-path || "/" || $resource-name)
+                
+                (: only return data if user has access to resource   :)
+                return
+                    if($resource) then
+                    (: only return data if user has access to resource   :)
+                        if ($token-user) then
+                            if(security:user-has-access($token-user, $fullPath , "r..")) then 
+                                $resource
+                            else 
+                                error( xs:QName('unauthorized') ) 
+                        else
+                            if(system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+                                sm:has-access($fullPath, "r"))) then
+                                    $resource
+                                else
+                                    error( xs:QName('unauthorized') ) 
+                    else
+                        (: Resource not found :)
+                        error( xs:QName('notFound') ) 
+        } catch * {
+            error( xs:QName('notFound') ) 
+        }
+};
+
+declare function security:get-resource($id as xs:string) {
+    let $auth-token := request:get-header("T-AUTH")
+    let $token-user := security:iiifauth-validate-cookie($auth-token)
+
     (: Do search as dba :)
     let $resource :=
         system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
@@ -1023,17 +1114,25 @@ declare function security:get-resource($id as xs:string) as node()? {
         if ($resource) then
             let $resource-path := util:collection-name($resource)
             let $resource-name := util:document-name($resource)
-            
-            (: only return data if user has access to resource   :)
+            let $fullPath := xs:anyURI($resource-path || "/" || $resource-name)
             return
-                system:as-user(security:get-user-credential-from-session()[1],security:get-user-credential-from-session()[2],
-                    if(sm:has-access(xs:anyURI($resource-path || "/" || $resource-name), "r--")) then
+            (: only return data if user has access to resource   :)
+                if ($token-user) then
+                    if(security:user-has-access($token-user, $fullPath , "r..")) then 
                         $resource
-                    else
-                        ()
-                )
-    else
-        ()
+                    else 
+                        error( xs:QName('unauthorized') ) 
+
+                else
+                    if(system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+                        sm:has-access($fullPath, "r"))) then
+                            $resource
+                        else
+                            error( xs:QName('unauthorized') ) 
+                            
+        else
+            (: Resource not found :)
+            error( xs:QName('notFound') ) 
 };
 
 declare function security:duplicate-acl($source as xs:anyURI, $target as xs:anyURI) {
@@ -1066,10 +1165,12 @@ declare function security:duplicate-acl($source as xs:anyURI, $target as xs:anyU
 :)
 
 declare function security:copy-collection-ace-to-resource-apply-modechange($collection as xs:anyURI, $resource as xs:anyURI) {
+(:    let $log := util:log("INFO", $collection):)
     let $target-collection-aces := sm:get-permissions($collection)
-    (: clear respource ACL :)
+    (: clear resource ACL :)
     let $clear := sm:clear-acl($resource)
     
+    (: process each ace   :)
     for $ace in $target-collection-aces//sm:ace
         let $resource-mode := 
             for $key in map:keys($config:sharing-permissions)
@@ -1078,6 +1179,16 @@ declare function security:copy-collection-ace-to-resource-apply-modechange($coll
                     $config:sharing-permissions($key)("resource")
                 else
                     ()
+                    
+        let $resource-mode := 
+            if($resource-mode) then
+                $resource-mode
+            else
+                (: if the collection's mode is not valid, give readonly access:)
+                $config:sharing-permissions("readonly")("resource")
+
+
+        let $log := util:log("INFO", $resource-mode)
         let $target := $ace/@target/string()
         let $who := $ace/@who/string()
         let $access-type := $ace/@access_type/string() = "ALLOWED"
@@ -1158,15 +1269,16 @@ declare function security:copy-collection-acl($source-collection as xs:anyURI, $
 : Stores a resource and applies permissions according Tamboti permissions strategy
 :
 : @param target-collection the collection in which to store resource
-: @param resource-name the resource's filename
+: @param resource-name the resources filename
 : @param content the data to store into the resource
 :)
 
-declare function security:store-resource($target-collection as xs:string, $resource-name as xs:string, $content as node()) {
+declare function security:store-resource($target-collection as xs:anyURI, $resource-name as xs:string, $content as node()) {
+        
     try {
         let $resource := xmldb:store($target-collection, $resource-name, $content)
         let $chmod := sm:chmod($resource, $config:resource-mode)
-        let $copy-ace := security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource)
+(:        let $copy-ace := security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource):)
         return
             true()
         
@@ -1176,3 +1288,107 @@ declare function security:store-resource($target-collection as xs:string, $resou
 
 };
 
+
+(:declare function security:store-resource($target-collection as xs:anyURI, $resource-name as xs:string, $content as node()) {:)
+(:        :)
+(:    try { :)
+(:        let $resource := xmldb:store($target-collection, $resource-name, $content) :)
+(:        let $chmod := sm:chmod($resource, $config:resource-mode) :)
+(:        let $set-permissions := :)
+(:            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then :)
+(:                ( :)
+(:                    security:copy-owner-and-group(xs:anyURI($target-collection), $resource):)
+(:                    ,:)
+(:                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource):)
+(:                ):)
+(:            else:)
+(:                ( :)
+(:                    security:copy-collection-ace-to-resource-apply-modechange($target-collection, $resource):)
+(:                    ,:)
+(:                    security:copy-owner-and-group(xs:anyURI($target-collection), $resource):)
+(:                ):)
+(::)
+(:        :)
+(:        return:)
+(:            true():)
+(:        :)
+(:    } catch * { :)
+(:        "Error: " ||  $err:code || ": " || $err:description:)
+(:    }:)
+(::)
+(:};:)
+
+(:~
+: Stores cookie value tuple for IIIF-P authorization
+:)
+
+declare function security:iiifauth-set-cookie(){
+    let $cookie-value := request:get-cookie-value("T-AUTH")
+    let $log := util:log("INFO", "existing cookie: " || $cookie-value)
+    let $cookie-doc := doc("../../data/temp/tokens.xml")
+    let $log := util:log("INFO", $cookie-doc)
+    let $cookie-expires := datetime:timestamp-to-datetime(datetime:timestamp() + $security:cookie-lifetime)
+    return
+        try {
+            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+            (: there is already a valid cookie so just update the expire date :)
+                if($cookie-value) then
+                    let $update := update value $cookie-doc//cookie[@value=$cookie-value]/@expires with $cookie-expires
+                    let $log := util:log("INFO", "updated expiry date for " || $cookie-value || " -> " || $cookie-expires)
+                    return
+                        $cookie-value
+                else
+                    let $ip := request:get-remote-addr()
+                    let $cookie-value := util:random-ulong()
+                    let $cookie-node := <cookie value="{$cookie-value}" expires="{$cookie-expires}" remote-addr="{$ip}" user="{security:get-user-credential-from-session()[1]}"/>
+                    return
+                        let $update := update insert $cookie-node into $cookie-doc/cookies
+                        let $log := util:log("INFO", "stored cookie: " || $cookie-value)
+                        return
+                            $cookie-value
+                ))
+        } catch * {
+            let $log := util:log("INFO", "Catched Error: " ||  $err:code || ": " || $err:description)
+            return
+                ()
+        }
+};
+
+(:~
+: gets the user-id which belongs to this token
+:)
+
+declare function security:iiifauth-validate-cookie($cookie-value as xs:string?) as xs:string? {
+    if($cookie-value) then
+        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+            (: clear expired tokens before    :)
+            let $clear := security:iiifauth-clean-expired-cookies()
+            let $cookie-doc := doc("../../data/temp/tokens.xml")
+            return 
+                $cookie-doc/cookies/cookie[@value=$cookie-value]/@user/string()
+        ))
+    else
+        ()
+};
+
+(:~
+: gets the user-id which belongs to this token
+:)
+declare function security:iiifauth-clean-expired-cookies(){
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+        let $cookie-doc := doc("../../data/temp/tokens.xml")
+        return
+            update delete $cookie-doc/cookies/cookie[xs:dateTime(@expires) lt datetime:timestamp-to-datetime(datetime:timestamp())]
+    ))
+};
+
+(:~
+: delete a token
+:)
+declare function security:iiifauth-remove-cookie($cookie as xs:string) {
+    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
+      let $cookie-doc := doc("../../data/temp/tokens.xml")
+        return
+            update delete $cookie-doc/cookies/cookie[@value = $cookie]
+    ))
+};

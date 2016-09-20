@@ -22,6 +22,7 @@ N. B.  Maven 3.1.1+ is needed.
 ### Dependencies
 * eXist’s content extraction and image modules.
 * eXist ImageMagick Plugin by ZwoBit https://github.com/zwobit/imagemagick.xq
+* for annotations you will need a MongoDB running and configured in modules/config.xqm  
 
 ### Tamboti REST APIs
 

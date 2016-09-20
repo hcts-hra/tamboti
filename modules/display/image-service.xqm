@@ -149,7 +149,7 @@ declare function image-service:get-binary-data($image-VRA as node(), $service-pr
             let $resource-uri := xs:anyURI(util:collection-name(root($image-VRA)))
             let $binary-name := $image-VRA/@href/string()
             let $binary-uri := xs:anyURI($resource-uri || "/" || $binary-name)
-            let $useless := util:log("DEBUG", $binary-uri)
+(:            let $useless := util:log("DEBUG", $binary-uri):)
             return
                 util:binary-doc($binary-uri)
         else
@@ -309,13 +309,18 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
         else
             fn:substring-before($image-href, "://")
 
-    let $image-server := $image-service:services//service/image-service[@name=$image-service-name]
-
+    let $image-server := $image-service:services//image-service[./@name=$image-service-name]
+(:    let $useless := util:log("INFO", "image-server:" || $image-server):)
+    let $image-service-protocols := $image-service:services//imageServiceProtocolDefinitions/serviceProtocol
+    
     let $service-protocol-name := $image-server/uri[@name="general"]/@service-protocol/string()
-    let $service-protocol := $image-service:services/services/imageServiceProtocolDefinitions/serviceProtocol[@name=$service-protocol-name]
+    let $service-protocol := $image-service-protocols[./@name=$service-protocol-name]
+
+(:    let $useless := util:log("INFO", "image-server:" || $service-protocol):)
 
     (: if $service-protocol is set, server is capable of sending it :)
     let $info-url := $service-protocol/call[@type="info"]/url/string()
+
     return
         if ($info-url) then
             (: replace the service definitions:)
@@ -327,7 +332,6 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
             let $id-regex := '"@id"[ ]*:[ ]*"[^"]*"'
             (: construct the new @id part:)
             let $replace-with := '"@id" : "' || $self-id-url || '"'
-
             let $response := httpclient:get($info-url, false(), ())
 
             let $media-type := $response/httpclient:head/httpclient:header[@name="Content-Type"]/@value/string()
@@ -343,6 +347,8 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
             (: it's an internally modified (cropped/resized...) resource, so create an own :)
             let $iiif-parameters := iiif-functions:parse-iiif-call(xmldb:encode-uri(xs:anyURI("/" || $image-uuid || "/full/full/0/default.jpg")))
             let $binary := image-service:get-binary-data($vra-image, $service-protocol, $iiif-parameters, $image-server)
+(:            let $log := util:log("INFO", $iiif-parameters):)
+
             let $iiif-info-xml := iiif-functions:info($binary, $iiif-parameters)
             let $parameters := 
                 <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
@@ -353,5 +359,38 @@ declare function image-service:get-info($vra-image as item(), $iiif-parameters a
 
             return
                 serialize($iiif-info-xml, $parameters)
+};
 
+declare function image-service:get-server-links($vra-image-uuids as xs:string+) as xs:string+{
+    let $vra-image-xmls := collection($image-service:vra-data-root)//vra:image[@id = $vra-image-uuids]
+    return
+        for $image-xml in $vra-image-xmls
+            let $image-href := $image-xml/@href/string()
+            let $image-uuid := $image-xml/@id/string()
+
+            let $iiif-parameters := iiif-functions:parse-iiif-call(xmldb:encode-uri(xs:anyURI("/" || $image-uuid || "/full/full/0/default.jpg")))
+            let $image-service-name :=
+                if (fn:substring-before($image-href, "://") = "") then
+                    "exist-internal"
+                else
+                    fn:substring-before($image-href, "://")
+        
+            let $image-server := $image-service:services//service/image-service[@name=$image-service-name]
+        
+            let $service-protocol-name := $image-server/uri[@name="general"]/@service-protocol/string()
+            let $service-protocol := $image-service:services/services/imageServiceProtocolDefinitions/serviceProtocol[@name=$service-protocol-name]
+            (: if $service-protocol is set, server is capable of sending it :)
+            let $info-url := $service-protocol/call[@type="info"]/url/string()
+            return
+                if ($info-url) then
+                    (: replace the service definitions:)
+                    let $replacement-definitions := $image-server/uri[@name="general"]/replacements
+                
+                    let $info-url := image-service:replace-url-keys($image-xml, $iiif-parameters, $info-url, $replacement-definitions)
+                    return
+                        $info-url
+                else
+                    let $info-url := request:get-parameter("scheme", "") || "://" || request:get-parameter("host", "") || ":" || request:get-parameter("port", "") || request:get-parameter("app-path", "") || "/api/iiif/" || $image-uuid || "/info.json" 
+                    return 
+                        $info-url
 };

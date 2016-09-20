@@ -67,14 +67,21 @@ let
         else()
     ,
     $password := request:get-parameter("password",())
-
+(: let $log := util:log("INFO", "Controller-Cookies: " || string-join(request:get-cookie-names(), ":")) :)
 return
     
     if ($exist:path eq '') then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{concat(request:get-uri(), '/')}"/>
         </dispatch>
-    else if (contains($exist:path, "/api/")) then apis:process()
+    else if (contains($exist:path, "/api/")) then
+        switch (request:get-header("Accept"))
+            case "application/json" return
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <forward url="/modules/apis/json-apis.xq"/>
+                </dispatch>
+            default return
+                apis:process()
     else if ($exist:path = ('/bib')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/bib.html"/>
@@ -198,7 +205,7 @@ return
                         </forward>
                     </dispatch>
             else
-                let $header := response:set-status-code(400)
+                let $header := response:set-status-code(500)
                 return
                     <div>invalid IIIF call</div>
 
