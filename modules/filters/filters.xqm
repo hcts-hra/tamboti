@@ -80,3 +80,12 @@ declare function filters:keywords($results as element()*) {
 declare function filters:key($key, $options) {
     ($key, $options[1])
 };
+
+declare function filters:get-frequencies($filters) {
+    map:new(
+        for $filter in $filters
+        group by $key := $filter
+        return map:entry($filter[1], count($filter))
+    )
+};
+

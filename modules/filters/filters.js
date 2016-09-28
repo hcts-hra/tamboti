@@ -56,13 +56,22 @@ $(document).ready(function() {
         var $this = $(this);
         var filterId = this.id;
         tamboti.filters.filterId = filterId;
-        var filterName = filterId.replace("-filter", "");
+        var filterUrl = "../filters/" + filterId.replace("-filter", "") + ".xql";
         
         $("img", $this).show();
         
-        tamboti.filters.table.ajax.url("../filters/" + filterName + ".xql");
-        tamboti.filters.table.load();
+        $.ajax({
+            url: filterUrl,
+            dataType: "text",
+            type: "GET",
+            success: function (data) {
+            	alert(JSON.parse(data));
+            }
+        });        
+        
+        // tamboti.filters.table.ajax.url("../filters/" + filterName + ".xql");
+        // tamboti.filters.table.load();
     });
     
-    tamboti.filters.table = $('#example').DataTable(tamboti.filters.tableDefinition);
+    //tamboti.filters.table = $('#example').DataTable(tamboti.filters.tableDefinition);
 });
