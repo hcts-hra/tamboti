@@ -42,9 +42,6 @@ let $processed-filters :=
             return <filter>{$filter || "" || $label, " [" || $filters-map($filter) || "]"}</filter>
         }
     </filters>
-(:let $result := "[[&quot;" || string-join($processed-filters, "&quot;], [&quot;") || "&quot;]]":)
 
-let $result := $processed-filters
-
-return $result
+return $processed-filters
   
