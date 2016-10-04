@@ -7,15 +7,18 @@ declare namespace vra = "http://www.vraweb.org/vracore4.htm";
 
 let $cached :=  session:get-attribute("mods:cached")
 
-let $mods-names := for $author in $cached//mods:name return filters:format-name($author)
-let $vra-names := $cached//vra:agentSet//vra:name[1]/text()
+let $mods-filters := for $author in $cached//mods:name return filters:format-name($author)
+let $vra-filters := $cached//vra:agentSet//vra:name[1]/text()
 
-let $filters := distinct-values(($mods-names, $vra-names))
+let $filters := ($mods-filters, $vra-filters)
+let $distinct-filters := distinct-values($filters)
+let $filters-map := filters:get-frequencies($filters)
+
 let $processsed-filters :=
     <filters xmlns="">
         {
-            for $filter in $filters
-            return <filter>{$filter}</filter>
+            for $filter in $distinct-filters
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$filter}</filter>
         }
     </filters>
 

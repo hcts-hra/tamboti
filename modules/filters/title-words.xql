@@ -6,12 +6,14 @@ import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filte
 let $cached :=  session:get-attribute("mods:cached")
 
 let $filters := filters:keywords($cached)
+let $distinct-filters := distinct-values($filters)
+let $filters-map := filters:get-frequencies($filters)
 
 let $processed-filters :=
     <filters xmlns="">
         {
-            for $filter in $filters
-            return <filter>{$filters}</filter>
+            for $filter in $distinct-filters
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$filter}</filter>
         }
     </filters>
     

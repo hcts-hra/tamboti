@@ -73,8 +73,7 @@ declare function filters:keywords($results as element()*) {
     let $prefix := request:get-parameter("prefix", "")
     let $callback := util:function(xs:QName("filters:key"), 2)
     
-    (: NB: Is there any way to get the number of title words? :)
-    return distinct-values(util:index-keys($results//(mods:titleInfo | vra:titleSet), $prefix, $callback, (), "lucene-index"))
+    return util:index-keys($results//(mods:titleInfo | vra:titleSet), $prefix, $callback, (), "lucene-index")
 };
 
 declare function filters:key($key, $options) {
@@ -88,4 +87,3 @@ declare function filters:get-frequencies($filters) {
         return map:entry($filter[1], count($filter))
     )
 };
-

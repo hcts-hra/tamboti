@@ -9,7 +9,6 @@ let $cached :=  session:get-attribute("mods:cached")
 
 let $filters := $cached/(mods:subject | vra:work/vra:subjectSet/vra:subject/vra:term)/text()
 let $distinct-filters := distinct-values($filters)
-
 let $filters-map := filters:get-frequencies($filters)
     
 let $processed-filters :=
@@ -19,7 +18,7 @@ let $processed-filters :=
             for $filter in $distinct-filters
             order by upper-case($filter) ascending
             (:LCSH have '--', so they have to be replaced.:)
-            return <filter>{$filter || " [" || $filters-map($filter) || "]"}</filter>
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$filter}</filter>
         }
     </filters>
     
