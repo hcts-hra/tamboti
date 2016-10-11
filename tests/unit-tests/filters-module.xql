@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:tmx="http://www.lisa.org/tmx14">
     <head>
         <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8"/>
@@ -7,23 +6,22 @@
         <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
+        <link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css"/>
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#filters-selector").on("click", "a", function() {
+                tamboti = {};
+                tamboti.filters = {};
+                
+                tamboti.filters.filterName = "";
+                tamboti.filters.dataInstances = {};
+
+                $("#filters-renderer-container").on("click", "div.filter-view", function() {
                     var $this = $(this);
+                    
+                    $this.addClass("selected-filter-view");
+                    
                     var filterId = this.id;
                     var filterUrl = "../../modules/filters/" + filterId.replace("i-i18n", "") + ".xql";
-                    
-                    $("img", $this).show();
-                    
-                    $.ajax({
-                        url: filterUrl,
-                        dataType: "text",
-                        type: "GET",
-                        success: function (data) {
-                        	alert(JSON.parse(data));
-                        }
-                    });        
                 });
             });
                 
@@ -61,6 +59,7 @@
                             <filter id="genres"/>
                         </filter-ids>
                         <progress-indicator relevant="false">../../themes/default/images/ajax-loader-small.gif</progress-indicator>
+                        <filters-iterator>1</filters-iterator>
                     </configuration>
                 </xf:instance>
                 <xf:instance id="i-variables">
@@ -90,9 +89,38 @@
                     </script>
                 </xf:action>
                 <xf:action ev:event="filters:load-filters" ev:observer="body">
-                    <xf:send submission="s-get-filters"/>
+                    <script>
+                        $.ajax({
+                            url: "../../modules/filters/" + $("#selected-filter-select input:checked").val() + ".xql",
+                            dataType: "json",
+                            type: "GET",
+                            success: function (data) {
+                            	tamboti.filters.dataInstances['filters'] = data;
+                            	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
+                            }
+                        });				
+                    </script>
                 </xf:action>
                 <xf:action ev:event="filters:loaded" ev:observer="body">
+                    <script>
+                        <![CDATA[
+                            var t0 = performance.now();
+
+                            var filters = tamboti.filters.dataInstances['filters']['filter'];
+                            var filtersLength = filters.length;
+                            var filtersArray = [];
+                            
+                            for (var i = 1; i <= filtersLength; i++) {
+                                filtersArray.push('<div class="filter-view">' + filters[i-1]['#text'] + ' [' + filters[i-1]['frequency'] + ']</div>');
+                            }
+                            
+                            
+                            $("#filters-renderer").html(filtersArray.join(''));
+                            
+                            var t1 = performance.now();
+                            console.log("Call to html() took " + (t1 - t0) / 1000 + " milliseconds.")                            
+                        ]]>
+                    </script>                
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
             </xf:model>
@@ -111,19 +139,21 @@
             </xf:group>
         </div>
         <div id="filters">
-            <div id="filters-selector">
-                <xf:group appearance="minimal" model="m-filters">
-                    <xf:select1 ref="instance('i-variables')/selected-filter" appearance="full" incremental="true">
-                        <xf:itemset nodeset="instance('i-configuration')/filter-ids/filter">
-                            <xf:label ref="let $id := @id return instance('i-i18n')//tmx:tu[@tuid = concat($id, '-filter')]/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
-                            <xf:value ref="@id"/>
-                        </xf:itemset>
-                        <xf:dispatch ev:event="xforms-value-changed" name="filters:filter-type-selected" targetid="body"/>
-                    </xf:select1>
-                    <xf:output ref="instance('i-configuration')/progress-indicator" mediatype="image/gif"/>
-                </xf:group>
+            <xf:group appearance="minimal" model="m-filters">
+                <xf:select1 id="selected-filter-select" ref="instance('i-variables')/selected-filter" appearance="full" incremental="true">
+                    <xf:itemset nodeset="instance('i-configuration')/filter-ids/filter">
+                        <xf:label ref="let $id := @id return instance('i-i18n')//tmx:tu[@tuid = concat($id, '-filter')]/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
+                        <xf:value ref="@id"/>
+                    </xf:itemset>
+                    <xf:dispatch ev:event="xforms-value-changed" name="filters:filter-type-selected" targetid="body" />
+                </xf:select1>
+                <xf:output ref="instance('i-configuration')/progress-indicator" mediatype="image/gif"/>
+            </xf:group>
+            <div id="filters-renderer-container">
+                <div class="fa fa-sort-alpha-desc" style="padding: 5px;" onclick="alert('a');"/>
+                <div class="fa fa-sort-amount-asc" style="padding: 5px;" onclick="alert('b');"/>
+                <div id="filters-renderer"/>
             </div>
-            <div id="filters-renderer"/>
         </div>
     </body>
 </html>
