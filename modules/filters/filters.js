@@ -1,6 +1,7 @@
 tamboti.filters = {};
 
 tamboti.filters.filterName = "";
+tamboti.filters.dataInstances = {};
 
 tamboti.filters.tableDefinition =
 {
