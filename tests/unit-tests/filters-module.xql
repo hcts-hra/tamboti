@@ -7,56 +7,7 @@
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
         <link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css"/>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                tamboti = {};
-                tamboti.filters = {};
-                
-                tamboti.filters.filterName = "";
-                tamboti.filters.dataInstances = {};
-                
-var wrapper = document.getElementById("filters-renderer-container");
-var $wrapper = $(wrapper);
-
-var filterDiv = document.createElement('div');
-filterDiv.setAttribute("class", "filter-view");
-
-wrapper.addEventListener("scroll", function (event) {
-    checkForNewDiv();
-});
-
-var checkForNewDiv = function () {
-    var lastDiv = document.querySelector("#filters-renderer > div:last-child");
-    var lastDivOffset = lastDiv.offsetTop + lastDiv.clientHeight;
-    var pageOffset = wrapper.scrollTop + wrapper.clientHeight;
-
-    if (pageOffset > lastDivOffset - 10) {
-        newDiv.innerHTML = performance.now();
-        
-        for (i = 0; i &lt; 6; i++) {
-            document.getElementById("scroll-content").appendChild(filterDiv.cloneNode(true));
-        }
-        checkForNewDiv();
-        
-        //$("#scroll-content > div", $wrapper).slice(0, 5).detach();
-    }
-};
-
-checkForNewDiv();                
-                
-
-                $("#filters-renderer-container").on("click", "div.filter-view", function() {
-                    var $this = $(this);
-                    
-                    $this.addClass("selected-filter-view");
-                    
-                    var filterId = this.id;
-                    var filterUrl = "../../modules/filters/" + filterId.replace("i-i18n", "") + ".xql";
-                });
-            });
-                
-                
-            </script>
+        <script type="text/javascript" src="filters-module.js">/**/</script>
     </head>
     <body class="soria" style="margin:30px" id="body">
         <div style="display:none">
@@ -98,7 +49,7 @@ checkForNewDiv();
                         <selected-filter/>
                     </variables>
                 </xf:instance>
-                <xf:instance id="i-i18n" src="tmx.xml"/>
+                <xf:instance id="i-i18n" src="../../modules/filters/tmx.xml"/>
                 <xf:instance id="i-filters">
                     <filters xmlns=""/>
                 </xf:instance>
@@ -125,7 +76,7 @@ checkForNewDiv();
                             dataType: "json",
                             type: "GET",
                             success: function (data) {
-                            	tamboti.filters.dataInstances['filters'] = data;
+                            	tamboti.filters.dataInstances['filters'] = data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]};
                             	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
                             }
                         });				
@@ -133,9 +84,6 @@ checkForNewDiv();
                 </xf:action>
                 <xf:action ev:event="filters:loaded" ev:observer="body">
                     <script>
-                        
-                            var t0 = performance.now();
-
                             var filters = tamboti.filters.dataInstances['filters']['filter'];
                             var filtersLength = filters.length;
                             
@@ -144,49 +92,14 @@ checkForNewDiv();
                             var div = document.createElement('div');
                             div.setAttribute("class", "filter-view");
                             
-                            for (var i = 1; i &lt;= filtersLength; i++) {
+                            for (var i = 1; i &lt;= 1008; i++) {
                                 div.textContent = filters[i-1]['#text'] + ' [' + filters[i-1]['frequency'] + ']';
                                 fragment.appendChild(div.cloneNode(true));
                             }
                             
+                            tamboti.filters.dataInstances['variables'].lastFilterDisplayed = 1007;
                             
-                            $("#filters-renderer")[0].appendChild(fragment);
-                            
-                            var t1 = performance.now();
-                            console.log("Call to html() took " + (t1 - t0) / 1000 + " milliseconds.")  
-                            
-var t0 = performance.now();
-
-var i;
-
-for(i=0;i&lt;86400;i++)
-{
-    $('#filters-renderer').append('&lt;div class="filter-view"&gt;'+i+' sec&lt;/div&gt;');
-}
-
-var t1 = performance.now();
-console.log("Call to html() took " + (t1 - t0) / 1000 + " seconds.")
-
-
-
-
-var t0 = performance.now();
-
-$('#filters-renderer').empty();
-
-var i;
-var units = '';
-
-for(i=0;i&lt;86400;i++){
-    units +='<div>' + t0 + 'sec</div>';
-}
-
-$('#filters-renderer').append(units);
-
-var t1 = performance.now();
-console.log("Call to html() took " + (t1 - t0) / 1000 + " seconds.")
-                            
-                        
+                            $("#filters-renderer")[0].appendChild(fragment);                    
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
