@@ -1,11 +1,13 @@
 xquery version "3.0";
 
 import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/" at "filters.xqm";
-
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace mods-editor = "http://hra.uni-heidelberg.de/ns/mods-editor/";
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+
+declare option output:method "json";
 
 let $cached :=  session:get-attribute("mods:cached")
 
