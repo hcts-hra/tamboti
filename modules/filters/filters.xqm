@@ -87,3 +87,4 @@ declare function filters:get-frequencies($filters) {
         return map:entry($filter[1], count($filter))
     )
 };
+
