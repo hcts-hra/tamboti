@@ -92,12 +92,26 @@
                             var div = document.createElement('div');
                             div.setAttribute("class", "filter-view");
                             
+                            var wrapperHeight = $wrapper.height();
+                            var lastFilterOffsetBottom = 0;
+                            var threshold = 0;
+                            var filterIndex = 0;
+                            var $filtersContainer = $("#filters-renderer");
+                            var lineHeight = $filtersContainer.css('line-height').replace("px", "");
+                            
+                            while (lastFilterOffsetBottom &lt; wrapperHeight + 3 * lineHeight) {
+                                div.textContent = filters[filterIndex]['#text'] + ' [' + filters[filterIndex]['frequency'] + ']';
+                                $this = $(div.cloneNode(true)).appendTo($filtersContainer);
+                                
+                                lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
+                                filterIndex++;
+                            }                            
+                            
                             for (var i = 1; i &lt;= 1008; i++) {
-                                div.textContent = filters[i-1]['#text'] + ' [' + filters[i-1]['frequency'] + ']';
-                                fragment.appendChild(div.cloneNode(true));
+
                             }
                             
-                            tamboti.filters.dataInstances['variables'].lastFilterDisplayed = 1007;
+                            tamboti.filters.dataInstances['variables'].lastFilterDisplayedIndex = filterIndex;
                             
                             $("#filters-renderer")[0].appendChild(fragment);                    
                     </script>
