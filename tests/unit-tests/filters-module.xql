@@ -4,6 +4,9 @@
         <title>Trigger control rendered as link</title>
         <script src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
         <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"/>
+        <script src="https://cdn.jsdelivr.net/backbone.epoxy/1.2/backbone.epoxy.min.js"/>
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
         <link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css"/>
@@ -76,7 +79,13 @@
                             dataType: "json",
                             type: "GET",
                             success: function (data) {
-                            	tamboti.filters.dataInstances['filters'] = data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]};
+                                var data = data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]};
+                            	tamboti.filters.dataInstances['filters'] = data;
+
+                                tamboti.filters.dataInstances['filters2'] = new Backbone.Model({
+                                  "filters": new Backbone.Collection(data.filter)
+                                });
+
                             	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
                             }
                         });				
@@ -85,35 +94,27 @@
                 <xf:action ev:event="filters:loaded" ev:observer="body">
                     <script>
                             var filters = tamboti.filters.dataInstances['filters']['filter'];
-                            var filtersLength = filters.length;
+                            //var filtersLength = filters.length;
                             
-                            var fragment = document.createDocumentFragment();
+                            //var div = document.createElement('div');
+                            //div.setAttribute("class", "filter-view");
                             
-                            var div = document.createElement('div');
-                            div.setAttribute("class", "filter-view");
+                            //var wrapperHeight = $wrapper.height();
+                            //var lastFilterOffsetBottom = 0;
+                            //var threshold = 0;
+                            //var filterIndex = 0;
+                            //var $filtersContainer = $("#filters-renderer");
+                            //var lineHeight = $filtersContainer.css('line-height').replace("px", "");
                             
-                            var wrapperHeight = $wrapper.height();
-                            var lastFilterOffsetBottom = 0;
-                            var threshold = 0;
-                            var filterIndex = 0;
-                            var $filtersContainer = $("#filters-renderer");
-                            var lineHeight = $filtersContainer.css('line-height').replace("px", "");
-                            
-                            while (lastFilterOffsetBottom &lt; wrapperHeight + 3 * lineHeight) {
-                                div.textContent = filters[filterIndex]['#text'] + ' [' + filters[filterIndex]['frequency'] + ']';
-                                $this = $(div.cloneNode(true)).appendTo($filtersContainer);
+                            //while (lastFilterOffsetBottom &lt; wrapperHeight + 5 * lineHeight) {
+                                //div.textContent = filters[filterIndex]['#text'] + ' [' + filters[filterIndex]['frequency'] + ']';
+                                //$this = $(div.cloneNode(true)).appendTo($filtersContainer);
                                 
-                                lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
-                                filterIndex++;
-                            }                            
+                                //lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
+                                //filterIndex++;
+                            //}                            
                             
-                            for (var i = 1; i &lt;= 1008; i++) {
-
-                            }
-                            
-                            tamboti.filters.dataInstances['variables'].lastFilterDisplayedIndex = filterIndex;
-                            
-                            $("#filters-renderer")[0].appendChild(fragment);                    
+                            //tamboti.filters.dataInstances['variables2'].set("lastFilterDisplayedIndex", tamboti.filters.dataInstances['variables2'].get("lastFilterDisplayedIndex") + filterIndex);
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
@@ -143,9 +144,18 @@
                 </xf:select1>
                 <xf:output ref="instance('i-configuration')/progress-indicator" mediatype="image/gif"/>
             </xf:group>
-            <div id="filters-renderer-container">
+            <div id="filters-navigator">
                 <div class="fa fa-sort-alpha-desc" style="padding: 5px;" onclick="alert('a');"/>
                 <div class="fa fa-sort-amount-asc" style="padding: 5px;" onclick="alert('b');"/>
+                viewing 
+                <span id="filters-firstFilterDisplayedIndex"/>
+                 to 
+                <span id="filters-lastFilterDisplayedIndex"/>
+                 out of 
+                <span id="filters-totalFiltersNumber"/>
+                 filters
+            </div>
+            <div id="filters-renderer-container">
                 <div id="filters-renderer"/>
             </div>
         </div>
