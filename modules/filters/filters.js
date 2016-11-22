@@ -1,56 +1,102 @@
 tamboti.filters = {};
 
-tamboti.filters.filterName = "";
 tamboti.filters.dataInstances = {};
+tamboti.filters.dataInstances['original-filters'] = [];
+tamboti.filters.dataInstances['filters'] = [];
+tamboti.filters.dataInstances['original-filters'] = [];
 
-tamboti.filters.tableDefinition =
-{
-        "ajax": {
-            "url": "../filters/empty.xql",
-            "dataSrc":
-                function (data) {
-                    var data = data.sort();
-                    var dataLength = data.length;
-                    var dataLengthPadding = 5 - dataLength % 5;
-                    while (dataLengthPadding > 0) {
-                        data.push("");
-                        dataLengthPadding = dataLengthPadding - 1;
-                    }
-                    
-                    var processedData = [];
-                    
-                    while (data.length > 0) {
-                        processedData.push(data.splice(0, 5));
-                    }
-                    
-                    $("#" + tamboti.filters.filterId + " > img").hide();
-                    
-                    return processedData;
-                }
-        },
-        "columns": [
-            { "width": "20%"},
-            { "width": "20%"},
-            { "width": "20%"},
-            { "width": "20%"},
-            { "width": "20%"}
-        ],
-        "columnDefs": [
-                {
-                    "render": function ( data, type, row ) {
-                        return "<a href='#' onclick='tamboti.apis.advancedSearchWithData({&quot;filter&quot; : &quot;Name&quot;, &quot;value&quot; : &quot;" + escape(data) + "&quot;, &quot;query-tabs&quot; : &quot;advanced-search-form&quot;, &quot;default-operator&quot; : &quot;and&quot;, &quot;collection&quot; : &quot;" + tamboti.currentCollection + "&quot;})'>" + data + "</a>";
-                    },
-                    "targets": "_all"
-                }
-        ],
-        "deferRender":    true,
-        "scrollY": "300px",
-        "scrollX": false,
-        "scrollCollapse": true,
-        "paging": false,
-        "sorting": false,
-        "bInfo" : false
-    };
+way.set("dataInstances", {
+    "variables": {
+        "firstFilterDisplayedIndex": "0",
+        "lastFilterDisplayedIndex": "0",
+        "totalFiltersNumber": "0"
+    }
+});     
+
+tamboti.filters.actions = {};
+tamboti.filters.actions['removeFilters'] = function() {
+    var filterRenderer = document.getElementById("filters-renderer");
+    
+    var cNode = filterRenderer.cloneNode(false);
+    filterRenderer.parentNode.replaceChild(cNode, filterRenderer);        
+    filterRenderer = cNode;
+};    
+tamboti.filters.actions['renderFilters'] = function(filters) {
+    tamboti.filters.actions['removeFilters']();
+    
+    var filterRenderer = document.getElementById("filters-renderer");
+    
+    var filterDiv = document.createElement('div');
+    var docFragment = document.createDocumentFragment();
+    
+    var filtersNumber = filters.length;
+        
+    for (var i = 0; i < filtersNumber; i++) {
+        filterDiv.textContent = filters[i]['#text'] + ' [' + filters[i]['frequency'] + ']';
+        docFragment.appendChild(filterDiv.cloneNode(true));
+    } 
+    
+    filterRenderer.appendChild(docFragment);
+};
+tamboti.filters.actions['sortFilters'] = function(sortButton) {
+    var sortToken = sortButton.className;
+    var sortToken = sortToken.substring(sortToken.indexOf("fa-sort-") + 8);
+    var sortBy = sortToken.substring(0, sortToken.indexOf("-"));
+    var sortOrder = sortToken.substring(sortToken.indexOf("-") + 1);
+    
+    var filters = tamboti.filters.dataInstances['filters'];
+    var sortedFilters;
+    
+    if (sortBy == "amount") {
+        if (sortOrder == "asc") {
+            sortedFilters = filters.sort(function(a, b) {
+                return a.frequency - b.frequency;
+            });                
+        }
+        
+        if (sortOrder == "desc") {
+            sortedFilters = filters.sort(function(a, b) {
+                return b.frequency - a.frequency;
+            });                
+        }            
+    }
+    
+    if (sortBy == "alpha") {
+        if (sortOrder == "asc") {
+            sortedFilters = filters.sort(function(a, b) {
+                return a["#text"].localeCompare(b["#text"]);
+            });                
+        }
+        
+        if (sortOrder == "desc") {
+            sortedFilters = filters.sort(function(a, b) {
+                return b["#text"].localeCompare(a["#text"]);
+            });                
+        }            
+    }        
+    
+    tamboti.filters.actions['renderFilters'](sortedFilters);
+    tamboti.filters.dataInstances['filters'] = sortedFilters;        
+    
+    if (sortBy == "amount") {
+        sortButton.classList.toggle("fa-sort-amount-asc", sortOrder == "desc");
+        sortButton.classList.toggle("fa-sort-amount-desc", sortOrder == "asc");            
+    }
+    
+    if (sortBy == "alpha") {
+        sortButton.classList.toggle("fa-sort-alpha-asc", sortOrder == "desc");
+        sortButton.classList.toggle("fa-sort-alpha-desc", sortOrder == "asc");            
+    }        
+};
+
+tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
+    var regexp = new RegExp(exclusions);
+    var result = data.filter(function(item){
+        return !regexp.test(item.filter);
+    });
+    
+    return result;
+};
 
 $(document).ready(function() {
     $("#filters2-navigation").on("click", "a", function() {

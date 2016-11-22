@@ -1,16 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:tmx="http://www.lisa.org/tmx14">
     <head>
         <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8"/>
         <title>Trigger control rendered as link</title>
         <script src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
         <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"/>
-        <script src="https://cdn.jsdelivr.net/backbone.epoxy/1.2/backbone.epoxy.min.js"/>
+        <script src="https://cdn.rawgit.com/gwendall/way.js/master/way.min.js"/>
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
         <link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css"/>
         <script type="text/javascript" src="filters-module.js">/**/</script>
+        <script type="text/javascript" src="../../modules/filters/filters.js">/**/</script>
     </head>
     <body class="soria" style="margin:30px" id="body">
         <div style="display:none">
@@ -34,22 +34,23 @@
             <xf:model id="m-filters">
                 <xf:instance id="i-configuration">
                     <configuration xmlns="">
-                        <filter-ids>
-                            <filter id="title-words"/>
-                            <filter id="names"/>
-                            <filter id="dates"/>
-                            <filter id="subjects"/>
-                            <filter id="languages"/>
-                            <filter id="genres"/>
-                        </filter-ids>
+                        <filters>
+                            <filter id="title-words" exclusions="\.png"/>
+                            <filter id="names" exclusions=""/>
+                            <filter id="dates" exclusions=""/>
+                            <filter id="subjects" exclusions=""/>
+                            <filter id="languages" exclusions=""/>
+                            <filter id="genres" exclusions=""/>
+                            <filter id="test" exclusions=""/>
+                        </filters>
                         <progress-indicator relevant="false">../../themes/default/images/ajax-loader-small.gif</progress-indicator>
-                        <filters-iterator>1</filters-iterator>
                     </configuration>
                 </xf:instance>
                 <xf:instance id="i-variables">
                     <variables xmlns="">
                         <ui-language>en</ui-language>
                         <selected-filter/>
+                        <apply-exclusions>true</apply-exclusions>
                     </variables>
                 </xf:instance>
                 <xf:instance id="i-i18n" src="../../modules/filters/tmx.xml"/>
@@ -57,6 +58,7 @@
                     <filters xmlns=""/>
                 </xf:instance>
                 <xf:bind ref="instance('i-configuration')/progress-indicator" relevant="@relevant = 'true'"/>
+                <xf:bind id="exclusions-group" relevant="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/@exclusions != ''"/>
                 <xf:submission id="s-get-filters" method="get" resource="../../modules/filters/{instance('i-variables')/selected-filter}.xql" replace="instance" instance="i-filters">
                     <xf:action ev:event="xforms-submit-done">
                         <xf:dispatch name="filters:loaded" targetid="body"/>
@@ -73,48 +75,63 @@
                     </script>
                 </xf:action>
                 <xf:action ev:event="filters:load-filters" ev:observer="body">
-                    <script>
+                    <script type="text/javascript">
+                        tamboti.filters.actions['removeFilters']();
+                        way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
+                        way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                        way.set("dataInstances.variables.totalFiltersNumber", "0");
+                        
+                        var selectedFilter = $("#selected-filter-select input:checked").val();
+                        
                         $.ajax({
-                            url: "../../modules/filters/" + $("#selected-filter-select input:checked").val() + ".xql",
+                            url: "../../modules/filters/" + selectedFilter + ".xql",
                             dataType: "json",
                             type: "GET",
                             success: function (data) {
-                                var data = data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]};
+                                var data = (data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]}).filter;
+                                var exclusions = $("#exclusions-output").text();
+                                
+                                if (exclusions != '') {
+                                    tamboti.filters.dataInstances['original-filters'] = data;
+                                    data = tamboti.filters.actions['applyExcludes'](data, exclusions);
+                                }
+                                
                             	tamboti.filters.dataInstances['filters'] = data;
-
-                                tamboti.filters.dataInstances['filters2'] = new Backbone.Model({
-                                  "filters": new Backbone.Collection(data.filter)
-                                });
-
+                            	way.set("dataInstances.variables.totalFiltersNumber", data.length);
+                            	
                             	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
                             }
                         });				
                     </script>
                 </xf:action>
                 <xf:action ev:event="filters:loaded" ev:observer="body">
-                    <script>
-                            var filters = tamboti.filters.dataInstances['filters']['filter'];
-                            //var filtersLength = filters.length;
+                    <script type="text/javascript">
+                        tamboti.filters.actions['renderFilters'](tamboti.filters.dataInstances['filters']);
+                        
+                            // var filters = way.get("dataInstances.filters");
+                            // var filtersNumber = filters.length;
                             
-                            //var div = document.createElement('div');
-                            //div.setAttribute("class", "filter-view");
+                            // var div = document.createElement('div');
+                            // div.setAttribute("class", "filter-view");
                             
-                            //var wrapperHeight = $wrapper.height();
-                            //var lastFilterOffsetBottom = 0;
-                            //var threshold = 0;
-                            //var filterIndex = 0;
-                            //var $filtersContainer = $("#filters-renderer");
-                            //var lineHeight = $filtersContainer.css('line-height').replace("px", "");
+                            // var wrapperHeight = $wrapper.height();
+                            // var lastFilterOffsetBottom = 0;
+                            // var threshold = 0;
+                            // var filterIndex = 0;
+                            // var $filtersContainer = $("#filters-renderer");
+                            // var lineHeight = $filtersContainer.css('line-height').replace("px", "");
                             
-                            //while (lastFilterOffsetBottom &lt; wrapperHeight + 5 * lineHeight) {
-                                //div.textContent = filters[filterIndex]['#text'] + ' [' + filters[filterIndex]['frequency'] + ']';
-                                //$this = $(div.cloneNode(true)).appendTo($filtersContainer);
+                            // while (lastFilterOffsetBottom &lt; wrapperHeight + 5 * lineHeight &amp;&amp; filterIndex &lt; filtersNumber) {
+                            //     var filter = filters[filterIndex];
+                            //     div.textContent = filter['#text'] + ' [' + filter['frequency'] + ']';
+                            //     $this = $(div.cloneNode(true)).appendTo($filtersContainer);
                                 
-                                //lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
-                                //filterIndex++;
-                            //}                            
+                            //     lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
+                            //     filterIndex++;
+                            // }                            
                             
-                            //tamboti.filters.dataInstances['variables2'].set("lastFilterDisplayedIndex", tamboti.filters.dataInstances['variables2'].get("lastFilterDisplayedIndex") + filterIndex);
+                            // way.set("dataInstances.variables.firstFilterDisplayedIndex", 1);
+                            // way.set("dataInstances.variables.lastFilterDisplayedIndex", filterIndex);
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
@@ -136,7 +153,7 @@
         <div id="filters">
             <xf:group appearance="minimal" model="m-filters">
                 <xf:select1 id="selected-filter-select" ref="instance('i-variables')/selected-filter" appearance="full" incremental="true">
-                    <xf:itemset nodeset="instance('i-configuration')/filter-ids/filter">
+                    <xf:itemset nodeset="instance('i-configuration')/filters/filter">
                         <xf:label ref="let $id := @id return instance('i-i18n')//tmx:tu[@tuid = concat($id, '-filter')]/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
                         <xf:value ref="@id"/>
                     </xf:itemset>
@@ -144,17 +161,22 @@
                 </xf:select1>
                 <xf:output ref="instance('i-configuration')/progress-indicator" mediatype="image/gif"/>
             </xf:group>
-            <div id="filters-navigator">
-                <div class="fa fa-sort-alpha-desc" style="padding: 5px;" onclick="alert('a');"/>
-                <div class="fa fa-sort-amount-asc" style="padding: 5px;" onclick="alert('b');"/>
+            <div id="filters-navigator" way-scope="dataInstances.variables">
+                <div class="fa fa-sort-alpha-desc" style="padding: 5px;" onclick="tamboti.filters.actions['sortFilters'](this);"/>
+                <div class="fa fa-sort-amount-asc" style="padding: 5px;" onclick="tamboti.filters.actions['sortFilters'](this);"/>
                 viewing 
-                <span id="filters-firstFilterDisplayedIndex"/>
+                <output way-data="firstFilterDisplayedIndex"/>
                  to 
-                <span id="filters-lastFilterDisplayedIndex"/>
+                <output way-data="lastFilterDisplayedIndex"/>
                  out of 
-                <span id="filters-totalFiltersNumber"/>
+                <output way-data="totalFiltersNumber"/>
                  filters
             </div>
+            <xf:group bind="exclusions-group" model="m-filters">
+                <xf:label ref="instance('i-i18n')//tmx:tu[@tuid = 'exclusions']/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
+                <xf:output id="exclusions-output" ref="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/@exclusions"/>
+                <xf:input id="apply-exclusions-input" ref="instance('i-variables')/apply-exclusions" incremental="true"/>
+            </xf:group>
             <div id="filters-renderer-container">
                 <div id="filters-renderer"/>
             </div>
