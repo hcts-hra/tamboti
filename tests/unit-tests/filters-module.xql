@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:tmx="http://www.lisa.org/tmx14">
     <head>
         <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8"/>
@@ -35,7 +34,7 @@
                 <xf:instance id="i-configuration">
                     <configuration xmlns="">
                         <filters>
-                            <filter id="title-words" exclusions="\.png"/>
+                            <filter id="title-words" exclusions=".png$|.jpg$|^[0-9\\_\\.,]+$"/>
                             <filter id="names" exclusions=""/>
                             <filter id="dates" exclusions=""/>
                             <filter id="subjects" exclusions=""/>
@@ -59,6 +58,7 @@
                 </xf:instance>
                 <xf:bind ref="instance('i-configuration')/progress-indicator" relevant="@relevant = 'true'"/>
                 <xf:bind id="exclusions-group" relevant="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/@exclusions != ''"/>
+                <xf:bind ref="instance('i-variables')/apply-exclusions" type="xf:boolean"/>
                 <xf:submission id="s-get-filters" method="get" resource="../../modules/filters/{instance('i-variables')/selected-filter}.xql" replace="instance" instance="i-filters">
                     <xf:action ev:event="xforms-submit-done">
                         <xf:dispatch name="filters:loaded" targetid="body"/>
@@ -70,7 +70,7 @@
                 </xf:action>
                 <xf:action ev:event="filters:filter-type-selected" ev:observer="body">
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">true</xf:setvalue>
-                    <script>
+                    <script type="text/javascript">
 						fluxProcessor.dispatchEventType("body", "filters:load-filters", {});
                     </script>
                 </xf:action>
@@ -135,6 +135,41 @@
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
+                <xf:action ev:event="filters:apply-exclusions" ev:observer="body">
+                    <xf:action if="instance('i-variables')/apply-exclusions = 'true'">
+                        <script type="text/javascript">
+                            tamboti.filters.actions['removeFilters']();
+                            way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.totalFiltersNumber", "0");
+                            
+                            var data = tamboti.filters.dataInstances['original-filters'];
+                            var exclusions = $("#exclusions-output").text();
+                            
+                            data = tamboti.filters.actions['applyExcludes'](data, exclusions);
+                            
+                        	tamboti.filters.dataInstances['filters'] = data;
+                        	way.set("dataInstances.variables.totalFiltersNumber", data.length);
+                        	
+                        	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
+                        </script>
+                    </xf:action>
+                    <xf:action if="instance('i-variables')/apply-exclusions = 'false'">
+                        <script type="text/javascript">
+                            tamboti.filters.actions['removeFilters']();
+                            way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.totalFiltersNumber", "0");
+                            
+                            var data = tamboti.filters.dataInstances['original-filters'];
+                            
+                        	tamboti.filters.dataInstances['filters'] = data;
+                        	way.set("dataInstances.variables.totalFiltersNumber", data.length);
+                        	
+                        	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
+                        </script>
+                    </xf:action>
+                </xf:action>
             </xf:model>
         </div>
         <div style="float: right;">
@@ -175,7 +210,9 @@
             <xf:group bind="exclusions-group" model="m-filters">
                 <xf:label ref="instance('i-i18n')//tmx:tu[@tuid = 'exclusions']/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
                 <xf:output id="exclusions-output" ref="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/@exclusions"/>
-                <xf:input id="apply-exclusions-input" ref="instance('i-variables')/apply-exclusions" incremental="true"/>
+                <xf:input ref="instance('i-variables')/apply-exclusions" incremental="true">
+                    <xf:dispatch ev:event="xforms-value-changed" name="filters:apply-exclusions" targetid="body"/>
+                </xf:input>
             </xf:group>
             <div id="filters-renderer-container">
                 <div id="filters-renderer"/>

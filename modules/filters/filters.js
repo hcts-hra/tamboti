@@ -96,6 +96,13 @@ tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
     });
     
     return result;
+    
+// var data = ["002_001", "a.png", "22", "1869_0010_000_010"];
+// //
+// //.*\\.png
+// var exclusions = "^\d+(_\d+)*$";
+
+// tamboti.filters.actions['applyExcludes'](data, exclusions);    
 };
 
 $(document).ready(function() {
