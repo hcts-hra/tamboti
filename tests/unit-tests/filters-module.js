@@ -1,4 +1,4 @@
-    tamboti = {};
+tamboti = {};
 
 $(document).ready(function() {
     wrapper = document.getElementById("filters-renderer-container");
@@ -7,7 +7,75 @@ $(document).ready(function() {
     filterDiv = document.createElement('div');
     filterDiv.setAttribute("class", "filter-view");
     
-    // wrapper.addEventListener("scroll", function (event) {
+    wrapper.addEventListener("scroll", function (event) {
+        var filters = tamboti.filters.dataInstances['filters'];
+        var displayedFilters = filters.slice(way.get("dataInstances.variables.firstFilterDisplayedIndex"));
+        var displayedFiltersNumber = displayedFilters.length;
+        var lastFilterDisplayedIndex = way.get("dataInstances.variables.lastFilterDisplayedIndex");
+        var containerScrollTop = wrapper.scrollTop;
+        var pageOffset = containerScrollTop + wrapper.clientHeight;
+        var incrementingValue = 10;
+        var filterFormControls = document.querySelectorAll('#filters-renderer > div');
+        
+        var scrollTop = $(this).scrollTop();
+        
+        if (scrollTop + $(this).innerHeight() >= this.scrollHeight) {
+            way.set("dataInstances.variables.lastFilterDisplayedIndex", filters.length);
+        } else if (scrollTop <= 0) {
+            way.set("dataInstances.variables.firstFilterDisplayedIndex", 1);
+        } else {
+            var getLastDisplayedFilterElement = function (rightOffset, bottomOffset) {
+              var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - 20);
+              
+              if (lastDisplayedFilterElement.parentNode.id != 'filters-renderer') {
+                return getLastDisplayedFilterElement(rightOffset - 25, bottomOffset);
+              } else {
+                return lastDisplayedFilterElement;
+              }
+              
+            }
+            var offsets = document.getElementById('filters-renderer-container').getBoundingClientRect();
+            var topOffset = offsets.top;
+            var leftOffset = offsets.left;
+            var rightOffset = offsets.right;
+            var bottomOffset = offsets.bottom;
+            var firstDisplayedFilterElement = document.elementFromPoint(leftOffset, topOffset + 17);
+            var lastDisplayedFilterElement = getLastDisplayedFilterElement(rightOffset, bottomOffset);
+            
+            var firstDisplayedFilterIndex = firstDisplayedFilterElement.textContent;
+            if (firstDisplayedFilterElement.id == "filters-renderer-container") {
+                firstDisplayedFilterIndex = "firstDisplayedFilterIndex";
+            }
+            var lastDisplayedFilterIndex = lastDisplayedFilterElement.textContent;
+            if (lastDisplayedFilterElement.id == "filters-renderer-container") {
+                lastDisplayedFilterIndex = "lastDisplayedFilterIndex";
+            }
+            
+            way.set("dataInstances.variables.firstFilterDisplayedIndex", firstDisplayedFilterIndex);
+            way.set("dataInstances.variables.lastFilterDisplayedIndex", lastDisplayedFilterIndex);
+            
+            // for(var i = 0; i < displayedFiltersNumber; i++) {
+            //     var currentFormControl = filterFormControls[i];
+            //     var currentFilterElementTopOffset = currentFormControl.offsetTop;
+            //     var currentFilterElementOffset = currentFilterElementTopOffset + currentFormControl.clientHeight;
+                
+            //     if ((currentFilterElementTopOffset + incrementingValue) < containerScrollTop) {
+            //         way.set("dataInstances.variables.firstFilterDisplayedIndex", i + 1);
+            //     }
+                
+            //     var elem = $(currentFormControl);
+                
+            //     if (pageOffset < (currentFilterElementOffset - incrementingValue)) {
+            //         way.set("dataInstances.variables.lastFilterDisplayedIndex", i);
+                    
+            //         return;
+            //     } else {
+            //         way.set("dataInstances.variables.lastFilterDisplayedIndex", displayedFiltersNumber);
+            //     }
+                
+            // }            
+        }        
+        
     //     var filters = way.get("dataInstances.filters");
     //     var lastFilterDisplayedIndex = way.get("dataInstances.variables.lastFilterDisplayedIndex");
     //     var threshold = 0; // how many pixels past the viewport an element has to be to be removed.
@@ -24,7 +92,7 @@ $(document).ready(function() {
     //     if (lastFilterDisplayedIndex <= filters.length + 1) {
     //         checkForNewDiv();
     //     }
-    // });
+    });
     
     checkForNewDiv = function () {
         var mostVisibleItem = $("#filters-renderer > div:visible");
