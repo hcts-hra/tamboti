@@ -3,8 +3,6 @@ tamboti.filters = {};
 tamboti.filters.dataInstances = {};
 tamboti.filters.dataInstances['original-filters'] = [];
 tamboti.filters.dataInstances['filters'] = [];
-tamboti.filters.dataInstances['original-filters'] = [];
-
 way.set("dataInstances", {
     "variables": {
         "firstFilterDisplayedIndex": "0",
@@ -40,7 +38,7 @@ tamboti.filters.actions['renderFilters'] = function(filters) {
 };
 tamboti.filters.actions['sortFilters'] = function(sortButton) {
     var sortToken = sortButton.className;
-    var sortToken = sortToken.substring(sortToken.indexOf("fa-sort-") + 8);
+    sortToken = sortToken.substring(sortToken.indexOf("fa-sort-") + 8);
     var sortBy = sortToken.substring(0, sortToken.indexOf("-"));
     var sortOrder = sortToken.substring(sortToken.indexOf("-") + 1);
     
@@ -96,13 +94,6 @@ tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
     });
     
     return result;
-    
-// var data = ["002_001", "a.png", "22", "1869_0010_000_010"];
-// //
-// //.*\\.png
-// var exclusions = "^\d+(_\d+)*$";
-
-// tamboti.filters.actions['applyExcludes'](data, exclusions);    
 };
 
 $(document).ready(function() {
@@ -126,6 +117,4 @@ $(document).ready(function() {
         // tamboti.filters.table.ajax.url("../filters/" + filterName + ".xql");
         // tamboti.filters.table.load();
     });
-    
-    //tamboti.filters.table = $('#example').DataTable(tamboti.filters.tableDefinition);
 });

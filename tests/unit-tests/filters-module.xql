@@ -1,4 +1,4 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:tmx="http://www.lisa.org/tmx14">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xf="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:tmx="http://www.lisa.org/tmx14">
     <head>
         <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8"/>
         <title>Trigger control rendered as link</title>
@@ -7,7 +7,7 @@
         <script src="https://cdn.rawgit.com/gwendall/way.js/master/way.min.js"/>
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
-        <link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <script type="text/javascript" src="filters-module.js">/**/</script>
         <script type="text/javascript" src="../../modules/filters/filters.js">/**/</script>
     </head>
