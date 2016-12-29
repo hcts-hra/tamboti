@@ -5,8 +5,8 @@ tamboti.filters.dataInstances['original-filters'] = [];
 tamboti.filters.dataInstances['filters'] = [];
 way.set("dataInstances", {
     "variables": {
-        "firstFilterDisplayedIndex": "0",
-        "lastFilterDisplayedIndex": "0",
+        "firstDisplayedFilterIndex": "0",
+        "lastDisplayedFilterIndex": "0",
         "totalFiltersNumber": "0"
     }
 });     
@@ -96,6 +96,18 @@ tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
     return result;
 };
 
+tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, bottomOffset) {
+    var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - 20);
+    
+    if (lastDisplayedFilterElement !== null) {
+        if (lastDisplayedFilterElement.parentNode.id != 'filters-renderer') {
+            return tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset - 25, bottomOffset);
+        } else {
+            return lastDisplayedFilterElement.textContent;
+        }        
+    }
+};
+
 $(document).ready(function() {
     $("#filters2-navigation").on("click", "a", function() {
         var $this = $(this);
@@ -113,8 +125,5 @@ $(document).ready(function() {
             	alert(JSON.parse(data));
             }
         });        
-        
-        // tamboti.filters.table.ajax.url("../filters/" + filterName + ".xql");
-        // tamboti.filters.table.load();
     });
 });

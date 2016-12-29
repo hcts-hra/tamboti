@@ -77,8 +77,8 @@
                 <xf:action ev:event="filters:load-filters" ev:observer="body">
                     <script type="text/javascript">
                         tamboti.filters.actions['removeFilters']();
-                        way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
-                        way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                        way.set("dataInstances.variables.firstDisplayedFilterIndex", "0");
+                        way.set("dataInstances.variables.lastDisplayedFilterIndex", "0");
                         way.set("dataInstances.variables.totalFiltersNumber", "0");
                         
                         var selectedFilter = $("#selected-filter-select input:checked").val();
@@ -130,8 +130,8 @@
                             //     filterIndex++;
                             // }                            
                             
-                            // way.set("dataInstances.variables.firstFilterDisplayedIndex", 1);
-                            // way.set("dataInstances.variables.lastFilterDisplayedIndex", filterIndex);
+                            // way.set("dataInstances.variables.firstDisplayedFilterIndex", 1);
+                            // way.set("dataInstances.variables.lastDisplayedFilterIndex", filterIndex);
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
@@ -139,8 +139,8 @@
                     <xf:action if="instance('i-variables')/apply-exclusions = 'true'">
                         <script type="text/javascript">
                             tamboti.filters.actions['removeFilters']();
-                            way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
-                            way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.firstDisplayedFilterIndex", "0");
+                            way.set("dataInstances.variables.lastDisplayedFilterIndex", "0");
                             way.set("dataInstances.variables.totalFiltersNumber", "0");
                             
                             var data = tamboti.filters.dataInstances['original-filters'];
@@ -157,8 +157,8 @@
                     <xf:action if="instance('i-variables')/apply-exclusions = 'false'">
                         <script type="text/javascript">
                             tamboti.filters.actions['removeFilters']();
-                            way.set("dataInstances.variables.firstFilterDisplayedIndex", "0");
-                            way.set("dataInstances.variables.lastFilterDisplayedIndex", "0");
+                            way.set("dataInstances.variables.firstDisplayedFilterIndex", "0");
+                            way.set("dataInstances.variables.lastDisplayedFilterIndex", "0");
                             way.set("dataInstances.variables.totalFiltersNumber", "0");
                             
                             var data = tamboti.filters.dataInstances['original-filters'];
@@ -200,9 +200,9 @@
                 <div class="fa fa-sort-alpha-desc" style="padding: 5px;" onclick="tamboti.filters.actions['sortFilters'](this);"/>
                 <div class="fa fa-sort-amount-asc" style="padding: 5px;" onclick="tamboti.filters.actions['sortFilters'](this);"/>
                 viewing 
-                <output way-data="firstFilterDisplayedIndex"/>
+                <output way-data="firstDisplayedFilterIndex"/>
                  to 
-                <output way-data="lastFilterDisplayedIndex"/>
+                <output way-data="lastDisplayedFilterIndex"/>
                  out of 
                 <output way-data="totalFiltersNumber"/>
                  filters
