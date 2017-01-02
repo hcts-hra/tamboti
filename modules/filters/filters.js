@@ -109,6 +109,24 @@ tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, b
 };
 
 $(document).ready(function() {
+    document.getElementById("filters-renderer-container").addEventListener("scroll", function (event) {
+        var $this = this;
+        
+        var offsets = $this.getBoundingClientRect();
+        var topOffset = offsets.top;
+        var leftOffset = offsets.left;
+        var rightOffset = offsets.right;
+        var bottomOffset = offsets.bottom;
+        
+        var lineHeight = document.querySelector("#filters-renderer > div").getBoundingClientRect().height;
+        
+        var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + lineHeight / 2).textContent;
+        var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset);
+        
+        way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
+        way.set("dataInstances.variables.lastDisplayedFilterIndex", lastDisplayedFilterIndex);        
+    });    
+    
     $("#filters2-navigation").on("click", "a", function() {
         var $this = $(this);
         var filterId = this.id;
