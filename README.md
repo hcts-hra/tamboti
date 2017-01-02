@@ -1,6 +1,6 @@
 ### Notes for Developers 
 
-Icon stock is from - http://www.famfamfam.com/lab/icons/silk/
+Icon stock is from http://www.famfamfam.com/lab/icons/silk/ and http://fontawesome.io.
 
 
 ### Installation
