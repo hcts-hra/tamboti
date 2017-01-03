@@ -107,31 +107,6 @@
                 <xf:action ev:event="filters:loaded" ev:observer="body">
                     <script type="text/javascript">
                         tamboti.filters.actions['renderFilters'](tamboti.filters.dataInstances['filters']);
-                        
-                            // var filters = way.get("dataInstances.filters");
-                            // var filtersNumber = filters.length;
-                            
-                            // var div = document.createElement('div');
-                            // div.setAttribute("class", "filter-view");
-                            
-                            // var wrapperHeight = $wrapper.height();
-                            // var lastFilterOffsetBottom = 0;
-                            // var threshold = 0;
-                            // var filterIndex = 0;
-                            // var $filtersContainer = $("#filters-renderer");
-                            // var lineHeight = $filtersContainer.css('line-height').replace("px", "");
-                            
-                            // while (lastFilterOffsetBottom &lt; wrapperHeight + 5 * lineHeight &amp;&amp; filterIndex &lt; filtersNumber) {
-                            //     var filter = filters[filterIndex];
-                            //     div.textContent = filter['#text'] + ' [' + filter['frequency'] + ']';
-                            //     $this = $(div.cloneNode(true)).appendTo($filtersContainer);
-                                
-                            //     lastFilterOffsetBottom = $this.offset().top + $this.height() + threshold;
-                            //     filterIndex++;
-                            // }                            
-                            
-                            // way.set("dataInstances.variables.firstDisplayedFilterIndex", 1);
-                            // way.set("dataInstances.variables.lastDisplayedFilterIndex", filterIndex);
                     </script>
                     <xf:setvalue ref="instance('i-configuration')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
@@ -214,9 +189,7 @@
                     <xf:dispatch ev:event="xforms-value-changed" name="filters:apply-exclusions" targetid="body"/>
                 </xf:input>
             </xf:group>
-            <div id="filters-renderer-container">
-                <div id="filters-renderer"/>
-            </div>
+            <div id="filters-renderer" />
         </div>
     </body>
 </html>

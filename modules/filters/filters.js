@@ -18,6 +18,25 @@ tamboti.filters.actions['removeFilters'] = function() {
     var cNode = filterRenderer.cloneNode(false);
     filterRenderer.parentNode.replaceChild(cNode, filterRenderer);        
     filterRenderer = cNode;
+    
+    filterRenderer.addEventListener("scroll", function (event) {
+        var $this = this;
+        
+        var offsets = $this.getBoundingClientRect();
+        var topOffset = offsets.top;
+        var leftOffset = offsets.left;
+        var rightOffset = offsets.right;
+        var bottomOffset = offsets.bottom;
+        
+        var filterElementHeight = document.querySelector("#filters-renderer > div").getBoundingClientRect().height;
+        var filterElementWidth = document.querySelector("#filters-renderer > div").getBoundingClientRect().width;
+        
+        var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + filterElementHeight / 2).dataset.index;
+        var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset, filterElementHeight, filterElementWidth);
+        
+        way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
+        way.set("dataInstances.variables.lastDisplayedFilterIndex", lastDisplayedFilterIndex);        
+    });     
 };    
 tamboti.filters.actions['renderFilters'] = function(filters) {
     tamboti.filters.actions['removeFilters']();
@@ -31,6 +50,7 @@ tamboti.filters.actions['renderFilters'] = function(filters) {
         
     for (var i = 0; i < filtersNumber; i++) {
         filterDiv.textContent = filters[i]['#text'] + ' [' + filters[i]['frequency'] + ']';
+        filterDiv.dataset.index = i + 1;
         docFragment.appendChild(filterDiv.cloneNode(true));
     } 
     
@@ -96,37 +116,19 @@ tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
     return result;
 };
 
-tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, bottomOffset) {
-    var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - 20);
+tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, bottomOffset, filterElementHeight, filterElementWidth) {
+    var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - filterElementHeight / 2);
     
     if (lastDisplayedFilterElement !== null) {
         if (lastDisplayedFilterElement.parentNode.id != 'filters-renderer') {
-            return tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset - 25, bottomOffset);
+            return tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset - filterElementWidth / 2, bottomOffset, filterElementHeight, filterElementWidth);
         } else {
-            return lastDisplayedFilterElement.textContent;
+            return lastDisplayedFilterElement.dataset.index;
         }        
     }
 };
 
 $(document).ready(function() {
-    document.getElementById("filters-renderer-container").addEventListener("scroll", function (event) {
-        var $this = this;
-        
-        var offsets = $this.getBoundingClientRect();
-        var topOffset = offsets.top;
-        var leftOffset = offsets.left;
-        var rightOffset = offsets.right;
-        var bottomOffset = offsets.bottom;
-        
-        var lineHeight = document.querySelector("#filters-renderer > div").getBoundingClientRect().height;
-        
-        var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + lineHeight / 2).textContent;
-        var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset);
-        
-        way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
-        way.set("dataInstances.variables.lastDisplayedFilterIndex", lastDisplayedFilterIndex);        
-    });    
-    
     $("#filters2-navigation").on("click", "a", function() {
         var $this = $(this);
         var filterId = this.id;

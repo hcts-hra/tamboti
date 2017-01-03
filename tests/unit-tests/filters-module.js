@@ -1,7 +1,7 @@
 tamboti = {};
 
 $(document).ready(function() {
-    $("#filters-renderer-container").on("click", "div", function() {
+    $("#filters-renderer").on("click", "div", function() {alert("click");
         var $this = $(this);
         
         $this.toggleClass("selected-filter-view");
