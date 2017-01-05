@@ -189,7 +189,7 @@
                     <xf:dispatch ev:event="xforms-value-changed" name="filters:apply-exclusions" targetid="body"/>
                 </xf:input>
             </xf:group>
-            <div id="filters-renderer" />
+            <div id="filters-renderer"/>
         </div>
     </body>
 </html>

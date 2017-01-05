@@ -12,36 +12,22 @@ way.set("dataInstances", {
 });     
 
 tamboti.filters.actions = {};
+tamboti.filters.actions['getFiltersRendererId'] = function() {return "filters-renderer"};
 tamboti.filters.actions['removeFilters'] = function() {
-    var filterRenderer = document.getElementById("filters-renderer");
+    var filtersRenderer = document.getElementById(tamboti.filters.actions['getFiltersRendererId']());
     
-    var cNode = filterRenderer.cloneNode(false);
-    filterRenderer.parentNode.replaceChild(cNode, filterRenderer);        
-    filterRenderer = cNode;
+    var cNode = filtersRenderer.cloneNode(false);
+    filtersRenderer.parentNode.replaceChild(cNode, filtersRenderer);        
+    filtersRenderer = cNode;
     
-    filterRenderer.addEventListener("scroll", function (event) {
-        var $this = this;
-        
-        var offsets = $this.getBoundingClientRect();
-        var topOffset = offsets.top;
-        var leftOffset = offsets.left;
-        var rightOffset = offsets.right;
-        var bottomOffset = offsets.bottom;
-        
-        var filterElementHeight = document.querySelector("#filters-renderer > div").getBoundingClientRect().height;
-        var filterElementWidth = document.querySelector("#filters-renderer > div").getBoundingClientRect().width;
-        
-        var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + filterElementHeight / 2).dataset.index;
-        var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset, filterElementHeight, filterElementWidth);
-        
-        way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
-        way.set("dataInstances.variables.lastDisplayedFilterIndex", lastDisplayedFilterIndex);        
+    filtersRenderer.addEventListener("scroll", function (event) {
+        tamboti.filters.actions['setDisplayedFiltersIndexes']();
     });     
 };    
 tamboti.filters.actions['renderFilters'] = function(filters) {
     tamboti.filters.actions['removeFilters']();
     
-    var filterRenderer = document.getElementById("filters-renderer");
+    var filterRenderer = document.getElementById(tamboti.filters.actions['getFiltersRendererId']());
     
     var filterDiv = document.createElement('div');
     var docFragment = document.createDocumentFragment();
@@ -104,7 +90,9 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
     if (sortBy == "alpha") {
         sortButton.classList.toggle("fa-sort-alpha-asc", sortOrder == "desc");
         sortButton.classList.toggle("fa-sort-alpha-desc", sortOrder == "asc");            
-    }        
+    } 
+    
+    tamboti.filters.actions['setDisplayedFiltersIndexes']();
 };
 
 tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
@@ -120,12 +108,32 @@ tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, b
     var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - filterElementHeight / 2);
     
     if (lastDisplayedFilterElement !== null) {
-        if (lastDisplayedFilterElement.parentNode.id != 'filters-renderer') {
+        if (lastDisplayedFilterElement.parentNode.id != tamboti.filters.actions['getFiltersRendererId']()) {
             return tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset - filterElementWidth / 2, bottomOffset, filterElementHeight, filterElementWidth);
         } else {
             return lastDisplayedFilterElement.dataset.index;
         }        
     }
+};
+
+tamboti.filters.actions['setDisplayedFiltersIndexes'] = function() {
+    var filterRenderer = document.getElementById(tamboti.filters.actions['getFiltersRendererId']());
+        
+    var offsets = filterRenderer.getBoundingClientRect();
+    var topOffset = offsets.top;
+    var leftOffset = offsets.left;
+    var rightOffset = offsets.right;
+    var bottomOffset = offsets.bottom;
+    
+    var filterElementOffsets = document.querySelector("#" + tamboti.filters.actions['getFiltersRendererId']() + " > div").getBoundingClientRect();
+    var filterElementHeight = filterElementOffsets.height;
+    var filterElementWidth = filterElementOffsets.width;
+    
+    var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + filterElementHeight / 2).dataset.index;
+    var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset, filterElementHeight, filterElementWidth);
+    
+    way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
+    way.set("dataInstances.variables.lastDisplayedFilterIndex", lastDisplayedFilterIndex); 
 };
 
 $(document).ready(function() {
@@ -146,4 +154,14 @@ $(document).ready(function() {
             }
         });        
     });
+    
+    $("#filters").on("click", "#"+ tamboti.filters.actions['getFiltersRendererId']() + " > div", function() {
+        var $this = $(this);
+        
+        $this.toggleClass("selected-filter-view");
+        
+        var filterId = this.id;
+        var filterUrl = "../../modules/filters/" + filterId.replace("i-i18n", "") + ".xql";
+        alert(filterUrl);
+    });    
 });
