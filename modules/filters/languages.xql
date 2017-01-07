@@ -4,9 +4,14 @@ import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filte
 import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
 
 declare namespace mods = "http://www.loc.gov/mods/v3";
-declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 
-declare option output:method "json";
+let $output-format := request:get-parameter("format", "json")
+
+let $json-serialization-parameters :=
+    <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+        <output:method value="json"/>
+        <output:media-type value="text/javascript"/>
+    </output:serialization-parameters>
 
 let $cached :=  session:get-attribute("mods:cached")
 
@@ -25,4 +30,7 @@ let $processsed-filters :=
     </filters>            
 
 
-return $processsed-filters
+return
+    if ($output-format = 'json')
+    then serialize($processsed-filters, $json-serialization-parameters)
+    else $processsed-filters
