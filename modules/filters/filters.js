@@ -105,7 +105,7 @@ tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
 };
 
 tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, bottomOffset, filterElementHeight, filterElementWidth) {
-    var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - filterElementHeight / 2);
+    var lastDisplayedFilterElement = document.elementFromPoint(rightOffset, bottomOffset - filterElementHeight);
     
     if (lastDisplayedFilterElement !== null) {
         if (lastDisplayedFilterElement.parentNode.id != tamboti.filters.actions['getFiltersRendererId']()) {
@@ -129,7 +129,7 @@ tamboti.filters.actions['setDisplayedFiltersIndexes'] = function() {
     var filterElementHeight = filterElementOffsets.height;
     var filterElementWidth = filterElementOffsets.width;
     
-    var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + filterElementHeight / 2).dataset.index;
+    var firstDisplayedFilterIndex = document.elementFromPoint(leftOffset, topOffset + filterElementHeight).dataset.index;
     var lastDisplayedFilterIndex = tamboti.filters.actions['getLastDisplayedFilterIndex'](rightOffset, bottomOffset, filterElementHeight, filterElementWidth);
     
     way.set("dataInstances.variables.firstDisplayedFilterIndex", firstDisplayedFilterIndex);
