@@ -6,6 +6,7 @@ declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 
 declare option output:method "json";
+declare option output:media-type "application/json";
 
 let $cached :=  session:get-attribute("mods:cached")
 
