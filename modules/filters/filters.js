@@ -95,13 +95,23 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
     tamboti.filters.actions['setDisplayedFiltersIndexes']();
 };
 
-tamboti.filters.actions['applyExcludes'] = function(data, exclusions) {
+tamboti.filters.actions['applyExclusions'] = function(data, exclusions) {
     var regexp = new RegExp(exclusions);
     var result = data.filter(function(item){
         return !regexp.test(item.filter);
     });
     
     return result;
+};
+
+tamboti.filters.actions['getExclusions'] = function() {
+    var exclusionInputElements = document.querySelectorAll("#exclusions-select input[type = 'checkbox']");
+    
+    var exclusions = Array.prototype.map.call(exclusionInputElements, function(exclusionInputElement) {
+        return exclusionInputElement.attributes.getNamedItem("value").value;
+    }).join('|');    
+
+    return exclusions;
 };
 
 tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, bottomOffset, filterElementHeight, filterElementWidth) {
