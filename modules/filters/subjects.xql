@@ -21,8 +21,9 @@ let $processed-filters :=
             (:No distinction is made between different kinds of subjects - topics, temporal, geographic, etc.:)
             for $filter in $distinct-filters
             order by upper-case($filter) ascending
+            
             (:LCSH have '--', so they have to be replaced.:)
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$filter}</filter>
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}" label="{$filter}" />
         }
     </filters>
     

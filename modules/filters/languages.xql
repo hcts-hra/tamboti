@@ -19,9 +19,10 @@ let $processsed-filters :=
     <filters xmlns="">
         {
             for $filter in $distinct-filters
-                let $label := mods-common:get-language-label($filter)
-                order by upper-case($filter) ascending
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$label}</filter>
+            let $label := mods-common:get-language-label($filter)
+            order by upper-case($filter) ascending
+            
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}" label="{$label}" />
         }
     </filters>            
 

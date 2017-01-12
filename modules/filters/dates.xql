@@ -26,8 +26,10 @@ let $processsed-filters :=
     <filters xmlns="">
         {
             for $filter in $distinct-filters
+            let $normalized-filter := normalize-space($filter)
             order by $filter descending
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{normalize-space(translate($filter, '"', "'"))}</filter>
+            
+            return <filter frequency="{$filters-map($filter)}" filter="{$normalized-filter}" label="{translate($normalized-filter, '"', "'")}" />
         }
     </filters>            
 

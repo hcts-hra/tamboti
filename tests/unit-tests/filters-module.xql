@@ -76,6 +76,7 @@
                     <xf:setvalue ref="instance('i-variables')/ui-language" value="event('ui-language')"/>
                 </xf:action>
                 <xf:action ev:event="filters:filter-type-selected" ev:observer="body">
+                    <xf:setvalue ref="instance('i-variables')/exclusions-initialized">false</xf:setvalue>
                     <xf:setvalue ref="instance('i-variables')/selected-exclusions" value="string-join(instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion, ' ')"/>
                     <script type="text/javascript">
 						fluxProcessor.dispatchEventType("body", "filters:load-filters", {});
@@ -95,7 +96,7 @@
                             dataType: "json",
                             type: "GET",
                             success: function (data) {
-                                var data = (data || {"filter": [{"filter": "", "#text": "", "frequency": ""}]}).filter;
+                                var data = (data || {"filter": [{"filter": "", "label": "", "frequency": ""}]}).filter;
                                 
                                 var exclusions = tamboti.filters.actions['getExclusions']();
                                 if (exclusions != '') {

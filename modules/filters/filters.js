@@ -35,14 +35,18 @@ tamboti.filters.actions['renderFilters'] = function(filters) {
     var filtersNumber = filters.length;
         
     for (var i = 0; i < filtersNumber; i++) {
-        filterDiv.textContent = filters[i]['#text'] + ' [' + filters[i]['frequency'] + ']';
+        filterDiv.textContent = filters[i]['label'] + ' [' + filters[i]['frequency'] + ']';
         filterDiv.dataset.index = i + 1;
         docFragment.appendChild(filterDiv.cloneNode(true));
     } 
     
     filterRenderer.appendChild(docFragment);
+    
+    tamboti.filters.actions['setDisplayedFiltersIndexes']();
 };
 tamboti.filters.actions['sortFilters'] = function(sortButton) {
+    fluxProcessor.dispatchEventType("body", "filters:start-processing", {});
+    
     var sortToken = sortButton.className;
     sortToken = sortToken.substring(sortToken.indexOf("fa-sort-") + 8);
     var sortBy = sortToken.substring(0, sortToken.indexOf("-"));
@@ -68,13 +72,13 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
     if (sortBy == "alpha") {
         if (sortOrder == "asc") {
             sortedFilters = filters.sort(function(a, b) {
-                return a["#text"].localeCompare(b["#text"]);
+                return a["label"].localeCompare(b["label"]);
             });                
         }
         
         if (sortOrder == "desc") {
             sortedFilters = filters.sort(function(a, b) {
-                return b["#text"].localeCompare(a["#text"]);
+                return b["label"].localeCompare(a["label"]);
             });                
         }            
     }        
@@ -93,6 +97,8 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
     } 
     
     tamboti.filters.actions['setDisplayedFiltersIndexes']();
+    
+    fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
 };
 
 tamboti.filters.actions['applyExclusions'] = function(data, exclusions) {

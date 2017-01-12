@@ -17,7 +17,8 @@ let $processed-filters :=
     <filters xmlns="">
         {
             for $filter in $distinct-filters
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}">{$filter}</filter>
+            
+            return <filter frequency="{$filters-map($filter)}" filter="{$filter}" label="{$filter}" />
         }
     </filters>
     
