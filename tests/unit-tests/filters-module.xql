@@ -138,12 +138,12 @@
                         fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
                     </script>
                     <xf:setvalue ref="instance('i-variables')/exclusions-initialized">true</xf:setvalue>
-                </xf:action>                
+                </xf:action>
                 <xf:action ev:event="filters:start-processing" ev:observer="body">
                     <xf:setvalue ref="instance('i-variables')/progress-indicator/@relevant">true</xf:setvalue>
                 </xf:action>
                 <xf:action ev:event="filters:end-processing" ev:observer="body">
-                    <xf:setvalue ref="instance('i-variables')/progress-indicator/@relevant">false</xf:setvalue>                    
+                    <xf:setvalue ref="instance('i-variables')/progress-indicator/@relevant">false</xf:setvalue>
                 </xf:action>
             </xf:model>
         </div>
