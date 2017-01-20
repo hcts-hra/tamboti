@@ -40,9 +40,11 @@ tamboti.filters.actions['renderFilters'] = function(filters) {
         docFragment.appendChild(filterDiv.cloneNode(true));
     } 
     
-    filterRenderer.appendChild(docFragment);
-    
-    tamboti.filters.actions['setDisplayedFiltersIndexes']();
+    if (filtersNumber > 0) {
+        filterRenderer.appendChild(docFragment);
+        
+        tamboti.filters.actions['setDisplayedFiltersIndexes']();    
+    }
 };
 tamboti.filters.actions['sortFilters'] = function(sortButton) {
     fluxProcessor.dispatchEventType("body", "filters:start-processing", {});
@@ -101,20 +103,30 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
     fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
 };
 
-tamboti.filters.actions['applyExclusions'] = function(data, exclusions) {
-    var regexp = new RegExp(exclusions);
-    var result = data.filter(function(item){
-        return !regexp.test(item.filter);
-    });
+tamboti.filters.actions['applyExclusions'] = function() {
+    var data = tamboti.filters.dataInstances['original-filters'];
+    var exclusions = tamboti.filters.actions['getExclusions']();
+    
+    var result = data;
+    
+    if (exclusions !== '') {
+        var regexp = new RegExp(exclusions);
+        
+        result = data.filter(function(item){
+            return !regexp.test(item.filter);
+        });
+    }
+    
+    tamboti.filters.dataInstances['filters'] = result;
     
     return result;
 };
 
 tamboti.filters.actions['getExclusions'] = function() {
-    var exclusionInputElements = document.querySelectorAll("#exclusions-select input[type = 'checkbox']");
+    var exclusionInputElements = document.querySelectorAll("#exclusions-select input[type = 'checkbox']:checked");
     
     var exclusions = Array.prototype.map.call(exclusionInputElements, function(exclusionInputElement) {
-        return exclusionInputElement.attributes.getNamedItem("value").value;
+        return exclusionInputElement.value;
     }).join('|');    
 
     return exclusions;
@@ -134,14 +146,14 @@ tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, b
 
 tamboti.filters.actions['setDisplayedFiltersIndexes'] = function() {
     var filterRenderer = document.getElementById(tamboti.filters.actions['getFiltersRendererId']());
-        
+       
     var offsets = filterRenderer.getBoundingClientRect();
     var topOffset = offsets.top;
     var leftOffset = offsets.left;
     var rightOffset = offsets.right;
     var bottomOffset = offsets.bottom;
     
-    var filterElementOffsets = document.querySelector("#" + tamboti.filters.actions['getFiltersRendererId']() + " > div").getBoundingClientRect();
+    var filterElementOffsets = document.querySelector("#" + tamboti.filters.actions['getFiltersRendererId']() + " > div").getBoundingClientRect(); 
     var filterElementHeight = filterElementOffsets.height;
     var filterElementWidth = filterElementOffsets.width;
     

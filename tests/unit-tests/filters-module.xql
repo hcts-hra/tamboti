@@ -39,15 +39,22 @@
                                     <exclusion title="png">.png$</exclusion>
                                     <exclusion title="jpg">.jpg$</exclusion>
                                     <exclusion title="digits, etc.">^[0-9\\_\\.,]+$</exclusion>
-                                    <exclusion title="non-latin scripts">^[\w\u00C0-\u024f]+$</exclusion>
+                                    <exclusion title="non-latin scripts">^[^\u0020-\u007f\u00a0-\u00ff\u0100-\u01ff\u0180-\u024f]+$</exclusion>
                                 </exclusions>
                             </filter>
-                            <filter id="names" exclusions=""/>
-                            <filter id="dates" exclusions=""/>
-                            <filter id="subjects" exclusions=""/>
-                            <filter id="languages" exclusions=""/>
-                            <filter id="genres" exclusions=""/>
-                            <filter id="test" exclusions=""/>
+                            <filter id="names"/>
+                            <filter id="dates"/>
+                            <filter id="subjects"/>
+                            <filter id="languages"/>
+                            <filter id="genres"/>
+                            <filter id="test">
+                                <exclusions>
+                                    <exclusion title="png">.png$</exclusion>
+                                    <exclusion title="jpg">.jpg$</exclusion>
+                                    <exclusion title="digits, etc.">^[0-9\\_\\.,]+$</exclusion>
+                                    <exclusion title="non-latin scripts">^[^\u0020-\u007f\u00a0-\u00ff\u0100-\u01ff\u0180-\u024f]+$</exclusion>
+                                </exclusions>
+                            </filter>
                         </filters>
                     </configuration>
                 </xf:instance>
@@ -66,29 +73,18 @@
                 </xf:instance>
                 <xf:bind ref="instance('i-variables')/progress-indicator" relevant="@relevant = 'true'"/>
                 <xf:bind id="exclusions-group" relevant="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion != ''"/>
-                <xf:submission id="s-get-filters" method="get" resource="../../modules/filters/{instance('i-variables')/selected-filter}.xql" replace="instance" instance="i-filters">
-                    <xf:action ev:event="xforms-submit-done">
-                        <xf:dispatch name="filters:loaded" targetid="body"/>
-                    </xf:action>
-                    <xf:message ev:event="xforms-submit-error" level="modal">A submission error (<xf:output value="event('response-reason-phrase')"/>) occurred. Details: 'response-status-code' = '<xf:output value="event('response-status-code')"/>', 'resource-uri' = '<xf:output value="event('resource-uri')"/>'.</xf:message>
-                </xf:submission>
                 <xf:action ev:event="tamboti:ui-language-changed" ev:observer="body">
                     <xf:setvalue ref="instance('i-variables')/ui-language" value="event('ui-language')"/>
                 </xf:action>
                 <xf:action ev:event="filters:filter-type-selected" ev:observer="body">
-                    <xf:setvalue ref="instance('i-variables')/exclusions-initialized">false</xf:setvalue>
+                    <xf:setvalue ref="instance('i-variables')/exclusions-initialized" value="'false'"/>
                     <xf:setvalue ref="instance('i-variables')/selected-exclusions" value="string-join(instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion, ' ')"/>
-                    <script type="text/javascript">
-						fluxProcessor.dispatchEventType("body", "filters:load-filters", {});
-                    </script>
+                    <xf:dispatch name="filters:start-processing" targetid="body"/>
+                    <xf:dispatch name="filters:load-filters" targetid="body"/>
                 </xf:action>
                 <xf:action ev:event="filters:load-filters" ev:observer="body">
                     <script type="text/javascript">
-                        tamboti.filters.actions['removeFilters']();
-                        way.set("dataInstances.variables.firstDisplayedFilterIndex", "0");
-                        way.set("dataInstances.variables.lastDisplayedFilterIndex", "0");
-                        way.set("dataInstances.variables.totalFiltersNumber", "0");
-                        
+                    
                         var selectedFilter = $("#selected-filter-select input:checked").val();
                         
                         $.ajax({
@@ -98,22 +94,21 @@
                             success: function (data) {
                                 var data = (data || {"filter": [{"filter": "", "label": "", "frequency": ""}]}).filter;
                                 
-                                var exclusions = tamboti.filters.actions['getExclusions']();
-                                if (exclusions != '') {
-                                    tamboti.filters.dataInstances['original-filters'] = data;
-                                    data = tamboti.filters.actions['applyExclusions'](data, exclusions);
-                                }
+                                tamboti.filters.dataInstances['original-filters'] = data;
                                 
-                            	tamboti.filters.dataInstances['filters'] = data;
-                            	way.set("dataInstances.variables.totalFiltersNumber", data.length);
-                            	
                             	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
                             }
-                        });				
+                        });	
+                        
                     </script>
                 </xf:action>
-                <xf:action if="instance('i-variables')/exclusions-initialized = 'true'" ev:event="filters:apply-exclusions" ev:observer="body">
+                <xf:action ev:event="filters:loaded" ev:observer="body">
+                    <xf:setvalue ref="instance('i-variables')/exclusions-initialized" value="'true'"/>
+                    <xf:dispatch name="filters:apply-exclusions" targetid="body"/>
+                </xf:action>
+                <xf:action ev:event="filters:apply-exclusions" ev:observer="body">
                     <script type="text/javascript">
+                    
                         tamboti.filters.actions['removeFilters']();
                         
                         way.set("dataInstances.variables.firstDisplayedFilterIndex", "0");
@@ -122,23 +117,20 @@
                         
                         var data = tamboti.filters.dataInstances['original-filters'];
                         var exclusions = tamboti.filters.actions['getExclusions']();
-
+                        
                         data = tamboti.filters.actions['applyExclusions'](data, exclusions);
                         
                     	tamboti.filters.dataInstances['filters'] = data;
+                    	
+                    	tamboti.filters.actions['renderFilters'](data);
+                    	
                     	way.set("dataInstances.variables.totalFiltersNumber", data.length);
                     	
-                    	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
+                    	fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
+                    	
                     </script>
                 </xf:action>
-                <xf:action ev:event="filters:loaded" ev:observer="body">
-                    <script type="text/javascript">
-                        tamboti.filters.actions['renderFilters'](tamboti.filters.dataInstances['filters']);
-                        
-                        fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
-                    </script>
-                    <xf:setvalue ref="instance('i-variables')/exclusions-initialized">true</xf:setvalue>
-                </xf:action>
+                <xf:action ev:event="filters:loaded" ev:observer="body"><!--                    <xf:setvalue ref="instance('i-variables')/selected-exclusions" value="string-join(instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion, ' ')"/>--></xf:action>
                 <xf:action ev:event="filters:start-processing" ev:observer="body">
                     <xf:setvalue ref="instance('i-variables')/progress-indicator/@relevant">true</xf:setvalue>
                 </xf:action>
@@ -167,7 +159,6 @@
                         <xf:label ref="let $id := @id return instance('i-i18n')//tmx:tu[@tuid = concat($id, '-filter')]/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
                         <xf:value ref="@id"/>
                     </xf:itemset>
-                    <xf:dispatch ev:event="xforms-value-changed" name="filters:start-processing" targetid="body"/>
                     <xf:dispatch ev:event="xforms-value-changed" name="filters:filter-type-selected" targetid="body"/>
                 </xf:select1>
                 <xf:output ref="instance('i-variables')/progress-indicator" mediatype="image/gif"/>
@@ -183,14 +174,14 @@
                 <output way-data="totalFiltersNumber"/>
                  filters
             </div>
-            <xf:group bind="exclusions-group" model="m-filters">
+            <xf:group model="m-filters">
                 <xf:select id="exclusions-select" ref="instance('i-variables')/selected-exclusions" appearance="full" incremental="true">
                     <xf:label ref="instance('i-i18n')//tmx:tu[@tuid = 'exclusions']/tmx:tuv[@xml:lang = instance('i-variables')/ui-language]/tmx:seg"/>
                     <xf:itemset ref="instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion">
                         <xf:label ref="@title"/>
                         <xf:value ref="."/>
                     </xf:itemset>
-                    <xf:dispatch ev:event="xforms-value-changed" name="filters:apply-exclusions" targetid="body"/>
+                    <xf:dispatch if="instance('i-variables')/exclusions-initialized = 'true'" ev:event="xforms-value-changed" name="filters:apply-exclusions" targetid="body"/>
                 </xf:select>
             </xf:group>
             <div id="filters-renderer"/>
