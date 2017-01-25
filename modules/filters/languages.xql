@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/" at "filters.xqm";
 import module namespace mods-common="http://exist-db.org/mods/common" at "../mods-common.xql";
@@ -16,15 +16,12 @@ let $distinct-filters := distinct-values($filters)
 let $filters-map := filters:get-frequencies($filters)
 
 let $processsed-filters :=
-    <filters xmlns="">
-        {
-            for $filter in $distinct-filters
-            let $label := mods-common:get-language-label($filter)
-            order by upper-case($filter) ascending
-            
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}" label="{$label}" />
-        }
-    </filters>            
-
+    array {
+        for $filter in $distinct-filters
+        let $label := mods-common:get-language-label($filter)
+        order by upper-case($filter) ascending
+        
+        return map {"frequency": $filters-map($filter), "filter": $filter, "label": $label}
+    } 
 
 return $processsed-filters

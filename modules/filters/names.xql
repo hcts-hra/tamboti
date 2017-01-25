@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/" at "filters.xqm";
 
@@ -19,13 +19,11 @@ let $distinct-filters := distinct-values($filters)
 let $filters-map := filters:get-frequencies($filters)
 
 let $processsed-filters :=
-    <filters xmlns="">
-        {
-            for $filter in $distinct-filters
-            
-            return <filter frequency="{$filters-map($filter)}" filter="{$filter}" label="{$filter}" />
-        }
-    </filters>
+    array {
+        for $filter in $distinct-filters
+        
+        return map {"frequency": $filters-map($filter), "filter": $filter, "label": $filter}
+    }     
 
 return $processsed-filters
   

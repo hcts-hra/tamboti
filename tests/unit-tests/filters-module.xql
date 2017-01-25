@@ -51,7 +51,6 @@
                                 <exclusions>
                                     <exclusion title="png">.png$</exclusion>
                                     <exclusion title="jpg">.jpg$</exclusion>
-                                    <exclusion title="digits, etc.">^[0-9\\_\\.,]+$</exclusion>
                                     <exclusion title="non-latin scripts">^[^\u0020-\u007f\u00a0-\u00ff\u0100-\u01ff\u0180-\u024f]+$</exclusion>
                                 </exclusions>
                             </filter>
@@ -92,8 +91,6 @@
                             dataType: "json",
                             type: "GET",
                             success: function (data) {
-                                var data = (data || {"filter": [{"filter": "", "label": "", "frequency": ""}]}).filter;
-                                
                                 tamboti.filters.dataInstances['original-filters'] = data;
                                 
                             	fluxProcessor.dispatchEventType("body", "filters:loaded", {});
@@ -130,7 +127,6 @@
                     	
                     </script>
                 </xf:action>
-                <xf:action ev:event="filters:loaded" ev:observer="body"><!--                    <xf:setvalue ref="instance('i-variables')/selected-exclusions" value="string-join(instance('i-configuration')//filter[@id = instance('i-variables')/selected-filter]/exclusions/exclusion, ' ')"/>--></xf:action>
                 <xf:action ev:event="filters:start-processing" ev:observer="body">
                     <xf:setvalue ref="instance('i-variables')/progress-indicator/@relevant">true</xf:setvalue>
                 </xf:action>

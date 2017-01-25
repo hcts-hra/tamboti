@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace filters = "http://hra.uni-heidelberg.de/ns/tamboti/filters/" at "filters.xqm";
 
@@ -23,14 +23,12 @@ let $distinct-filters := distinct-values($filters)
 let $filters-map := filters:get-frequencies($filters)
 
 let $processsed-filters :=
-    <filters xmlns="">
-        {
-            for $filter in $distinct-filters
-            let $normalized-filter := normalize-space($filter)
-            order by $filter descending
-            
-            return <filter frequency="{$filters-map($filter)}" filter="{$normalized-filter}" label="{translate($normalized-filter, '"', "'")}" />
-        }
-    </filters>            
+    array {
+        for $filter in $distinct-filters
+        let $normalized-filter := normalize-space($filter)
+        order by $filter descending
+        
+        return map {"frequency": $filters-map($filter), "filter": $normalized-filter, "label": translate($normalized-filter, '"', "'")}
+    }    
 
 return $processsed-filters
