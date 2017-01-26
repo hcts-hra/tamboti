@@ -21,7 +21,7 @@ tamboti.filters.actions['removeFilters'] = function() {
     filtersRenderer = cNode;
     
     filtersRenderer.addEventListener("scroll", function (event) {
-        tamboti.filters.actions['setDisplayedFiltersIndexes']();
+        tamboti.filters.actions['setDisplayedFiltersIndexes'](0);
     });     
 };    
 tamboti.filters.actions['renderFilters'] = function(filters) {
@@ -40,11 +40,9 @@ tamboti.filters.actions['renderFilters'] = function(filters) {
         docFragment.appendChild(filterDiv.cloneNode(true));
     } 
     
-    if (filtersNumber > 0) {
-        filterRenderer.appendChild(docFragment);
+    filterRenderer.appendChild(docFragment);
         
-        tamboti.filters.actions['setDisplayedFiltersIndexes']();    
-    }
+    tamboti.filters.actions['setDisplayedFiltersIndexes'](filtersNumber);
 };
 tamboti.filters.actions['sortFilters'] = function(sortButton) {
     fluxProcessor.dispatchEventType("body", "filters:start-processing", {});
@@ -98,7 +96,7 @@ tamboti.filters.actions['sortFilters'] = function(sortButton) {
         sortButton.classList.toggle("fa-sort-alpha-desc", sortOrder == "asc");            
     } 
     
-    tamboti.filters.actions['setDisplayedFiltersIndexes']();
+    tamboti.filters.actions['setDisplayedFiltersIndexes'](sortedFilters.length);
     
     fluxProcessor.dispatchEventType("body", "filters:end-processing", {});
 };
@@ -144,16 +142,27 @@ tamboti.filters.actions['getLastDisplayedFilterIndex'] = function(rightOffset, b
     }
 };
 
-tamboti.filters.actions['setDisplayedFiltersIndexes'] = function() {
+tamboti.filters.actions['setDisplayedFiltersIndexes'] = function(totalFiltersNumber) {
+    var firstFilterElement = document.querySelector("#" + tamboti.filters.actions['getFiltersRendererId']() + " > div");
+    
+    if (firstFilterElement === null) {
+        return;    
+    }
+    
     var filterRenderer = document.getElementById(tamboti.filters.actions['getFiltersRendererId']());
-       
+    
+    if (filterRenderer.scrollHeight == filterRenderer.clientHeight) {
+        way.set("dataInstances.variables.lastDisplayedFilterIndex", totalFiltersNumber); 
+        return;    
+    }    
+    
     var offsets = filterRenderer.getBoundingClientRect();
     var topOffset = offsets.top;
     var leftOffset = offsets.left;
     var rightOffset = offsets.right;
     var bottomOffset = offsets.bottom;
     
-    var filterElementOffsets = document.querySelector("#" + tamboti.filters.actions['getFiltersRendererId']() + " > div").getBoundingClientRect(); 
+    var filterElementOffsets = firstFilterElement.getBoundingClientRect(); 
     var filterElementHeight = filterElementOffsets.height;
     var filterElementWidth = filterElementOffsets.width;
     
