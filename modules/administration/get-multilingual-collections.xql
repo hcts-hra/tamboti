@@ -9,16 +9,17 @@ return
     xmldb: store("/db/resources", "multilingual-collections.xml",
         <metadata>
             {(
-                "Top Collection Name,Languages Other Than English&#10;"
+                "Top Collection Path,Languages Other Than English,Number Of Multilingual Records&#10;"
                 ,
                 for $subcollection-name in xmldb:get-child-collections($collection-path)
                 let $subcollection-path := $collection-path || $subcollection-name
                 let $mods-records := collection($subcollection-path)/mods:mods
-                let $languages := string-join(distinct-values($mods-records//@lang)[not(. = ('', 'eng'))], ' ')    
+                let $languages := $mods-records//@lang[not(. = ('', 'eng'))]
+                let $distinct-languages := string-join(distinct-values($languages), ' ')    
                 
                 return
                     if (count($languages) > 0)
-                    then string-join(($subcollection-path, $languages), ', ') || "&#10;"
+                    then string-join(($subcollection-path, $distinct-languages, count($languages)), ', ') || "&#10;"
                     else ()
             )}
         </metadata>
