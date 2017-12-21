@@ -2,276 +2,164 @@ xquery version "3.1";
 
 declare default element namespace "http://www.loc.gov/mods/v3";
 
-declare variable $genre-mappings :=
+declare variable $api-key := "";
+declare variable $api-key-parameter := "?key=" || $api-key;
+declare variable $base-uri := xs:anyURI("https://api.zotero.org/groups/2023208");
 
-map {
-"Ph.D." : "",
-"Encyclopedia" : "",
-"N/A" : "",
-"forum" : "",
-"forumPost" : "",
-"interview" : "",
-"Travelogue" : "",
-"speech" : "",
-"Status Report" : "",
-"law" : "",
-"magazineArticle" : "",
-"interactive" : "",
-"blogPost" : "",
-"Bibliography" : "",
-"blog" : "",
-"Blog" : "",
-"editedVolume" : "",
-"whitepaper" : "",
-"Diary" : "",
-"Anthology" : "",
-"diary" : "",
-"webpage" : "",
-"film" : "",
-"Digest" : "",
-"Link collection" : "",
-"Autobiography" : "",
-"Family" : "",
-"Blo" : "",
-"periodical" : "",
-"letter" : "",
-"Executive Summary Report" : "",
-"FP7 project" : "",
-"manuscript" : "",
-"Fantasy" : "",
-"radioBroadcast" : "",
-"Secondary Source" : "",
-"PhD Dissertation" : "",
-"Software" : "",
-"Drama" : "",
-"Religious Blog" : "",
-"Entertainment" : "",
-"Education" : "",
-"computerProgram" : "",
-"book" : "book",
-"Master thesis" : "",
-"Diploma Thesis" : "",
-"Muromachi" : "",
-"Collected Works" : "",
-"portal" : "",
-"thesis" : "",
-"Ph.D. Thesis" : "",
-"text" : "",
-"Text" : "",
-"Thesis (PhD level)" : "",
-"documentary" : "",
-"International Standard" : "",
-"sound" : "",
-"e-Journal" : "",
-"newspaper article" : "",
-"guideline" : "",
-"Musical" : "",
-"Survey Results" : "",
-"conferencePaper" : "",
-"The Chronicle of Higher Education" : "",
-"Seminararbeit" : "",
-"Adventure" : "",
-"other" : "",
-"Wiki" : "",
-"canonical scripture" : "",
-"Translation" : "",
-"Report of the Annual Conference of the Cluster of Excellence &#34;Asia and Europe in a Global Context&#34;" : "",
-"Crime" : "",
-"contract" : "",
-"web site" : "",
-"Conference or Workshop Item" : "",
-"workshop paper" : "",
-"educational" : "",
-"Dissertation" : "",
-"Biography" : "",
-"report" : "",
-"interim report" : "",
-"ppt" : "",
-"motion picture" : "",
-"digital essay" : "",
-"Service" : "",
-"software evaluation" : "",
-"liturgical text" : "",
-"Dictionary" : "",
-"article" : "",
-"Textbook" : "",
-"Action" : "",
-"Présentation" : "",
-"e-journal (but coins for Z not working)" : "",
-"Project page" : "",
-"videoRecording" : "",
-"videorecording" : "",
-"encyclopediaArticle" : "",
-"Conference Website" : "",
-"series" : "",
-"Series" : "",
-"memorandum" : "",
-"journal" : "",
-"technical report" : "",
-"Technical Report" : ""
-,
-"best practice" : ""
-,
-"Final Draft International Standard" : ""
-,
-"Thriller" : ""
-,
-"Conference report" : ""
-,
-"MA level" : ""
-,
-"Documents" : ""
-,
-"MA thesis" : ""
-,
-"Phdthesis" : ""
-,
-"Review" : ""
-,
-"Primary Source" : ""
-,
-"issue" : ""
-,
-"newspaper" : ""
-,
-"Comedy" : ""
-,
-"Survey Report" : ""
-,
-"declaration" : ""
-,
-"Forum - Q&A" : ""
-,
-"presentation" : ""
-,
-"student-paper" : ""
-,
-"Deutscher Bundestag Pressestelle" : ""
-,
-"document" : ""
-,
-"SSRN Scholarly Paper" : ""
-,
-"Personal Website" : ""
-,
-"audioRecording" : ""
-,
-"Masters Thesis" : ""
-,
-"dictionaryEntry" : ""
-,
-"novel" : ""
-,
-"guide" : ""
-,
-"bookSection" : ""
-,
-"Dissertation (Microform)" : ""
-,
-"multimedia and multi-layered presentation" : ""
-,
-"newspaperArticle" : ""
-,
-"essay" : ""
-,
-"Festschrift" : ""
-,
-"festschrift" : ""
-,
-"Thesis (MA level)" : ""
-,
-"Diplomarbeit" : ""
-,
-"petition" : ""
-,
-"Habilitation" : ""
-,
-"IPI PAN Reports" : ""
-,
-"Mystery" : ""
-,
-"journalArticle" : ""
-,
-"Romance" : ""
-,
-"treaty" : ""
-,
-"Deliverable" : ""
-};
-
-declare variable $role-mappings :=
-    map {
-        "aut": "author",
-        "translator": "translator",
-        "author": "author",
-        "editor": "editor",
-        "co-editor": "editor",
-        "edt": "editor",
-        "ctb": "contributor",
-        "trl": "translator",
-        "com": "editor",
-        "drt": "director",
-        "pro": "producer",
-        "act": "castMember",
-        "sdr": "contributor",
-        "cre": "creator",
-        "cwt": "commenter",
-        "cmp": "composer",
-        "Monograph": "contributor"
-};
-
-let $resource := doc(xmldb:encode('/data/commons/Buddhism Bibliography/uuid-01754502-1003-4f5c-9825-a5ef073232b0.xml'))/mods
-let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])
-let $originInfo := $resource/originInfo
-
-let $title := $titleInfo/title/string(.)
-let $language := string-join($resource/language/element(), '-')
-let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
-let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
-let $shortTitle := $titleInfo/subTitle/string(.)
-
-let $api-key := "MQGEe8SzWRCbPj8COl4VDlvP"
-let $init-uri := xs:anyURI("https://api.zotero.org/groups/2023208/items?")
-let $content :=
-    [
-      map {
-        "itemType" : $resource/genre/text(),
-        "title" : $title,
-        "creators" : [
+declare function local:write-resource($collection-key, $resource) {
+    let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])
+    let $originInfo := $resource/originInfo
+    
+    let $title := $titleInfo/title/string(.)
+    let $itemType := map:get($genre-mappings, $resource/genre[1])
+    let $creators :=
+        for $name in $resource/name
+        let $firstName := $name/namePart[@type = 'given']/text()
+        let $lastName := $name/namePart[@type = 'family']/text()
+        
+        return
+            for $role in $name/role/roleTerm[. != '']
+            
+            return
+                map {
+                    "creatorType": map:get($role-mappings, $role),
+                    "firstName" : $firstName,
+                    "lastName" : $lastName
+                }        
+    let $language := string-join($resource/language/element(), '-')
+    let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
+    let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
+    let $shortTitle := $titleInfo/subTitle/string(.)  
+    
+    let $content :=
+        [
           map {
-            "creatorType":"castMember",
-            "firstName" : "Sam",
-            "lastName" : "McAuthor"
-          },
-          map {
-            "creatorType":"editor",
-            "name" : "John T. Singlefield"
+            "itemType" : $itemType,
+            "title" : $title,
+            "creators" : array {$creators},
+            "language": $language,        
+            "ISBN": $isbn,
+            "DOI": $doi,
+            "shortTitle": $shortTitle,
+            "tags" : [],
+            "collections" : array {$collection-key},
+            "relations" : map {}
           }
-        ],
-        "language": $language,        
-        "ISBN": $isbn,
-        "DOI": $doi,
-        "shortTitle": $shortTitle,
-        "tags" : [
-          map {"tag" : "awesome" },
-          map {"tag" : "rad", "type" : 1 }
-        ],
-        "collections" : [
-          
-        ],
-        "relations" : map {
-          "owl:sameAs" : "http://zotero.org/groups/1/items/JKLM6543",
-          "dc:relation" : "http://zotero.org/groups/1/items/PQRS6789",
-          "dc:replaces" : "http://zotero.org/users/1/items/BCDE5432"
-        }
-      }
-    ]
-let $serialized-content := 
-	serialize(
-		$content,
-		<output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
-			<output:method value="json" />
-		</output:serialization-parameters>
-	)    
-(:return $content:)
-return util:base64-decode(httpclient:post(xs:anyURI($init-uri || "&amp;key=" || $api-key), $serialized-content, true(), ()))
+        ]
+    let $serialized-content := 
+    	serialize(
+    		$content,
+    		<output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+    			<output:method value="json" />
+    		</output:serialization-parameters>
+    	)    
+    (:return $content:)
+    return util:base64-decode(httpclient:post(xs:anyURI($base-uri || "/items" || $api-key-parameter), $serialized-content, true(), ()))    
+};
+
+declare variable $genre-mappings := map {
+    "Encyclopedia" : "encyclopediaArticle",
+    "forumPost" : "forumPost",
+    "interview" : "interview",
+    "Travelogue" : "book",
+    "speech" : "presentation",
+    "law" : "statute",
+    "magazineArticle" : "magazineArticle",
+    "blogPost" : "blogPost",
+    "Bibliography" : "bookSection",
+    "blog" : "blogPost",
+    "Blog" : "blogPost",
+    "editedVolume" : "book",
+    "whitepaper" : "presentation",
+    "Diary" : "book",
+    "Anthology" : "book",
+    "diary" : "book",
+    "webpage" : "webpage",
+    "film" : "film",
+    "Digest" : "journalArticle",
+    "Autobiography" : "book",
+    "periodical" : "journalArticle",
+    "letter" : "letter",
+    "manuscript" : "manuscript",
+    "radioBroadcast" : "radioBroadcast",
+    "Secondary Source" : "document",
+    "computerProgram" : "computerProgram",
+    "book" : "book",
+    "Muromachi" : "book",
+    "Collected Works" : "document",
+    "thesis" : "thesis",
+    "text" : "document",
+    "newspaper article" : "newspaperArticle",
+    "conferencePaper" : "conferencePaper",
+    "other" : "document",
+    "canonical scripture" : "book",
+    "Translation" : "book",
+    "contract" : "statute",
+    "Biography" : "book",
+    "report" : "report",
+    "motion picture" : "film",
+    "liturgical text" : "book",
+    "Dictionary" : "dictionaryEntry",
+    "article" : "journalArticle",
+    "Textbook" : "book",
+    "videoRecording" : "videoRecording",
+    "videorecording" : "videoRecording",
+    "encyclopediaArticle" : "encyclopediaArticle",
+    "series" : "book",
+    "Series" : "book",
+    "memorandum" : "book",
+    "journal" : "journalArticle",
+    "technical report" : "report",
+    "Documents" : "book",
+    "Phdthesis" : "thesis",
+    "Primary Source" : "book",
+    "issue" : "book",
+    "newspaper" : "newspaperArticle",
+    "declaration" : "report",
+    "presentation" : "presentation",
+    "document" : "document",
+    "audioRecording" : "audioRecording",
+    "dictionaryEntry" : "dictionaryEntry",
+    "novel" : "book",
+    "bookSection" : "bookSection",
+    "newspaperArticle" : "newspaperArticle",
+    "essay" : "book",
+    "Festschrift" : "book",
+    "festschrift" : "book",
+    "Diplomarbeit" : "thesis",
+    "petition" : "report",
+    "journalArticle" : "journalArticle",
+    "treaty" : "statute"
+};
+
+declare variable $role-mappings := map {
+    "aut": "author",
+    "translator": "translator",
+    "author": "author",
+    "editor": "editor",
+    "co-editor": "editor",
+    "edt": "editor",
+    "ctb": "contributor",
+    "trl": "translator",
+    "com": "editor",
+    "drt": "director",
+    "pro": "producer",
+    "act": "castMember",
+    "sdr": "contributor",
+    "cre": "creator",
+    "cwt": "commenter",
+    "cmp": "composer",
+    "Monograph": "contributor"
+};
+
+let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography'))/mods
+
+return
+    for $resource in $resources
+    
+    return local:write-resource("RJHBCQTT", $resource)
+
+
+
+
+
