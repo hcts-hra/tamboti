@@ -10,7 +10,7 @@ declare function local:write-resource($collection-key, $resource) {
     let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])
     let $originInfo := $resource/originInfo
     
-    let $title := $titleInfo/title/string(.)
+    let $title := string-join($titleInfo/(title, subTitle)[. != ''], ': ')
     let $itemType := map:get($genre-mappings, $resource/genre[1])
     let $creators :=
         for $name in $resource/name
@@ -29,7 +29,7 @@ declare function local:write-resource($collection-key, $resource) {
     let $language := string-join($resource/language/element(), '-')
     let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
     let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
-    let $shortTitle := $titleInfo/subTitle/string(.)  
+    let $shortTitle := $titleInfo/title/string(.)  
     
     let $content :=
         [
@@ -157,9 +157,4 @@ let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography')
 return
     for $resource in $resources
     
-    return local:write-resource("RJHBCQTT", $resource)
-
-
-
-
-
+    return local:write-resource("BW6V63FQ", $resource)

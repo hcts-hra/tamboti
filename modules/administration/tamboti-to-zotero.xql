@@ -11,7 +11,7 @@ declare function local:create-collection($collection-name, $parent-collection-ke
     let $subcollections := local:get-subcollections($parent-collection-key)
     
     return 
-        if ($subcollections != $collection-name)
+        if (empty(index-of($subcollections, $collection-name)))
         then
             let $content :=
                 [
@@ -24,7 +24,6 @@ declare function local:create-collection($collection-name, $parent-collection-ke
             		$content,
             		<output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
             			<output:method value="json"/>
-            			
             		</output:serialization-parameters>
             ) 
             let $request-headers :=
@@ -76,16 +75,18 @@ declare function local:get-subcollections($collection-key) {
 };
 
 let $collection-name := "Buddhism Bibliography"
-let $subcollections := local:get-subcollections(())
-let $parent-collection-key := ()
+
 
 return ( 
-    for $entry in httpclient:get(xs:anyURI($base-uri || "/collections" || $api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry
-    
-    return local:delete-collection($entry/zapi:key, ())
-    ,
-(:    local:create-collection($collection-name, ()):)
-    for $entry in httpclient:get(xs:anyURI($base-uri || "/items" || $api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry
-    
-    return local:delete-item($entry/zapi:key, ())
+(:    for $entry in httpclient:get(xs:anyURI($base-uri || "/collections" || $api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry:)
+(:    :)
+(:    return local:delete-collection($entry/zapi:key, ()):)
+(:    ,:)
+
+    local:create-collection($collection-name, ())
+
+
+(:    for $entry in httpclient:get(xs:anyURI($base-uri || "/items" || $api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry:)
+(:    :)
+(:    return local:delete-item($entry/zapi:key, ()):)
 )
