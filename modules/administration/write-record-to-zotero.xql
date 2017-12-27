@@ -7,45 +7,26 @@ declare variable $api-key-parameter := "?key=" || $api-key;
 declare variable $base-uri := xs:anyURI("https://api.zotero.org/groups/2023208");
 
 declare function local:write-resource($collection-key, $resource) {
-    let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])
     let $originInfo := $resource/originInfo
     
-    let $title := string-join($titleInfo/(title, subTitle)[. != ''], ': ')
     let $itemType := map:get($genre-mappings, $resource/genre[1])
-    let $creators :=
-        for $name in $resource/name
-        let $firstName := $name/namePart[@type = 'given']/text()
-        let $lastName := $name/namePart[@type = 'family']/text()
-        
-        return
-            for $role in $name/role/roleTerm[. != '']
-            
-            return
-                map {
-                    "creatorType": map:get($role-mappings, $role),
-                    "firstName" : $firstName,
-                    "lastName" : $lastName
-                }        
-    let $language := string-join($resource/language/element(), '-')
     let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
     let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
-    let $shortTitle := $titleInfo/title/string(.)  
     
-    let $content :=
-        [
-          map {
-            "itemType" : $itemType,
-            "title" : $title,
-            "creators" : array {$creators},
-            "language": $language,        
-            "ISBN": $isbn,
-            "DOI": $doi,
-            "shortTitle": $shortTitle,
-            "tags" : [],
-            "collections" : array {$collection-key},
-            "relations" : map {}
-          }
-        ]
+    let $content := array {
+        map:new((
+            local:generate-general-fields($resource, $itemType)
+            ,
+            map {
+                "ISBN": $isbn,
+                "DOI": $doi,
+                "tags" : [],
+                "collections" : array {$collection-key},
+                "relations" : map {}
+            }
+        ))
+    }
+
     let $serialized-content := 
     	serialize(
     		$content,
@@ -152,7 +133,44 @@ declare variable $role-mappings := map {
     "Monograph": "contributor"
 };
 
-let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography'))/mods
+declare function local:generate-general-fields($resource, $itemType) {
+    let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])[string(.) != '']
+    let $originInfo := $resource/originInfo
+
+    let $title := string-join($titleInfo/(title, subTitle)[. != ''], ': ')
+    let $creators :=
+        for $name in $resource/name
+        let $firstName := $name/namePart[@type = 'given']/text()
+        let $lastName := $name/namePart[@type = 'family']/text()
+        
+        return
+            for $role in $name/role/roleTerm[. != '']
+            
+            return map {
+                "creatorType": map:get($role-mappings, $role),
+                "firstName" : $firstName,
+                "lastName" : $lastName
+            }
+    let $abstract := $resource/abstract/string(.)
+    let $date := $originInfo/dateIssued/string(.)
+    let $shortTitle := $titleInfo/title/string(.)
+    let $language := string-join($resource/language/element(), '-')
+    
+    
+    return map {
+        "itemType": $itemType,
+        "title": $title,
+        "creators": array {$creators},
+        "abstractNote": "",
+        "date": "",
+        "shortTitle": $shortTitle,
+        "language": $language
+    }
+    
+    
+};
+
+let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography'))[position() = (1 to 7)]/mods
 
 return
     for $resource in $resources
