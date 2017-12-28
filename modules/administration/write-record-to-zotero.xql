@@ -2,24 +2,26 @@ xquery version "3.1";
 
 declare default element namespace "http://www.loc.gov/mods/v3";
 
-declare variable $api-key := "";
+declare variable $api-key := "1tV4KC897ZouMWhVWyyikJYv";
 declare variable $api-key-parameter := "?key=" || $api-key;
 declare variable $base-uri := xs:anyURI("https://api.zotero.org/groups/2023208");
 
 declare function local:write-resource($collection-key, $resource) {
-    let $originInfo := $resource/originInfo
-    
     let $itemType := map:get($genre-mappings, $resource/genre[1])
-    let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
-    let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
     
     let $content := array {
         map:new((
             local:generate-general-fields($resource, $itemType)
             ,
+            switch($itemType)
+                case "book" return local:generate-fields-for-book-itemType($resource)
+                default return ()
+            ,
+            local:generate-accessing-fields($resource)
+            ,
+            local:generate-additional-fields($resource)
+            ,
             map {
-                "ISBN": $isbn,
-                "DOI": $doi,
                 "tags" : [],
                 "collections" : array {$collection-key},
                 "relations" : map {}
@@ -166,8 +168,57 @@ declare function local:generate-general-fields($resource, $itemType) {
         "shortTitle": $shortTitle,
         "language": $language
     }
+};
+
+declare function local:generate-fields-for-book-itemType($resource) {
+    let $series := $resource/relatedItem[@type = 'series']
+    let $originInfo := $resource/originInfo
     
+    let $seriesTitle := string-join($series/titleInfo[string(.) != '']/(title, subTitle), ': ')
+    let $seriesNumber := $series/part/detail[@type = 'volume']/number/string(.)
+    let $place := string-join($originInfo/place/placeTerm[string(.) != '']/(title, subTitle), ', ')
+    let $publisher := $originInfo/publisher[not(@*)]/string(.)
+    let $numPages := $resource/physicalDescription/extent[@unit = 'pages']/string(.)
+    let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
+
+    return map {
+        "volume": $seriesTitle,
+        "numberOfVolumes": "",
+        "edition": "",
+        "series": $seriesTitle,
+        "seriesNumber": $seriesNumber,
+        "place": $place,
+        "publisher": $publisher,
+        "numPages": $numPages,
+        "ISBN": $isbn
+    }    
+};
+
+declare function local:generate-accessing-fields($resource) {
+    let $location := $resource/location
     
+    let $accessDate := $location/url/@dateLastAccessed/string(.)
+    let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
+    let $url := $location/url/string(.)
+    
+    return map {
+        "accessDate": $accessDate,
+        "DOI": $doi,
+        "url": $url,
+        "archive": "",
+        "archiveLocation": "",
+        "libraryCatalog": "",
+        "callNumber": ""
+    }
+};
+
+declare function local:generate-additional-fields($resource) {
+    let $rights := $resource/accessCondition/string(.)
+    
+    return map {
+        "rights": $rights,
+        "extra": ""
+    }
 };
 
 let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography'))[position() = (1 to 7)]/mods
@@ -176,3 +227,8 @@ return
     for $resource in $resources
     
     return local:write-resource("BW6V63FQ", $resource)
+
+
+
+
+
