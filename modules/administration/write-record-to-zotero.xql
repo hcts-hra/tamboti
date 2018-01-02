@@ -28,16 +28,15 @@ declare function local:write-resource($collection-key, $resource) {
             }
         ))
     }
-
-    let $serialized-content := 
-    	serialize(
-    		$content,
-    		<output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
-    			<output:method value="json" />
-    		</output:serialization-parameters>
-    	)    
-    (:return $content:)
-    return util:base64-decode(httpclient:post(xs:anyURI($base-uri || "/items" || $api-key-parameter), $serialized-content, true(), ()))    
+    let $serialized-content := serialize(
+        $content,
+        <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+        	<output:method value="json" />
+        </output:serialization-parameters>
+    )
+    let $result := parse-json(util:base64-decode(httpclient:post(xs:anyURI($base-uri || "/items" || $api-key-parameter), $serialized-content, true(), ())))
+    
+    return map:get(map:get($result, 'success'), '0')
 };
 
 declare variable $genre-mappings := map {
@@ -221,14 +220,38 @@ declare function local:generate-additional-fields($resource) {
     }
 };
 
+declare function local:add-attachment-to-item($parent-item-key, $tamboti-id) {
+    let $content := array {
+        map {
+            "itemType": "attachment",
+            "parentItem": $parent-item-key,
+            "linkMode": "imported_file",
+            "title": $tamboti-id,
+            "accessDate": "2012-03-14T17:45:54Z",
+            "url": "http://example.com/doc.pdf",
+            "note": "",
+            "tags": [],
+            "relations": map {},
+            "contentType": "application/xml",
+            "charset": "UTF-8",
+            "filename": $tamboti-id || ".xml"
+        }
+    }
+    let $serialized-content := serialize(
+        $content,
+        <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+        	<output:method value="json" />
+        </output:serialization-parameters>
+    )
+    let $result := parse-json(util:base64-decode(httpclient:post(xs:anyURI($base-uri || "/items" || $api-key-parameter), $serialized-content, true(), ())))
+    
+    return $result
+};
+
 let $resources := collection(xmldb:encode('/data/commons/Buddhism Bibliography'))[position() = (1 to 7)]/mods
 
-return
-    for $resource in $resources
-    
-    return local:write-resource("BW6V63FQ", $resource)
+return local:add-attachment-to-item("DJCNC7HW", "tamboti-id")
 
-
-
-
-
+(:    for $resource in $resources:)
+(:    :)
+(:    return local:write-resource("BW6V63FQ", $resource):)
