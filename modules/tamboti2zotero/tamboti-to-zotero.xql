@@ -16,10 +16,10 @@ return (
 
 (:    local:create-collection($collection-name, ()):)
     
-    tamboti2zotero:delete-item("TNDV75X7", ())
+(:    tamboti2zotero:delete-item("EEHB5AC4", ()):)
 
 
-(:    for $entry in httpclient:get(xs:anyURI($base-uri || "/items" || $api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry:)
-(:    :)
-(:    return local:delete-item($entry/zapi:key, ()):)
+    for $entry in httpclient:get(xs:anyURI($tamboti2zotero:base-uri || "/items" || $tamboti2zotero:api-key-parameter || "&amp;format=atom&amp;limit=100"), true(), ())/httpclient:body//atom:entry
+    
+    return tamboti2zotero:delete-item($entry/zapi:key/text(), ())
 )

@@ -2,13 +2,17 @@ xquery version "3.1";
 
 module namespace tamboti2zotero = "http://hra.uni-heidelberg.de/ns/tamboti/tamboti2zotero/";
 
+import module namespace crypto = "http://expath.org/ns/crypto";
+
+declare default element namespace "http://www.loc.gov/mods/v3";
+
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace zapi="http://zotero.org/ns/api";
 
 declare variable $tamboti2zotero:api-key := "1tV4KC897ZouMWhVWyyikJYv";
 declare variable $tamboti2zotero:api-key-parameter := "?key=" || $tamboti2zotero:api-key;
 (:declare variable $tamboti2zotero:base-uri := xs:anyURI("https://api.zotero.org/groups/2023208");:)
-declare variable $tamboti2zotero:base-uri := xs:anyURI("https://api.zotero.org/users/4588859");
+declare variable $tamboti2zotero:base-uri := xs:anyURI("https://api.zotero.org/users/4588859/");
 declare variable $tamboti2zotero:genre-mappings := map {
     "Encyclopedia" : "encyclopediaArticle",
     "forumPost" : "forumPost",
@@ -129,12 +133,12 @@ declare function tamboti2zotero:create-collection($collection-name, $parent-coll
                     <header name="Zotero-Write-Token" value="{replace(util:uuid(), '-', '')}" />
                 </headers>            
         	
-            return httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "/collections" || $tamboti2zotero:api-key || "&amp;format=atom"), $serialized-content, true(), $request-headers)/httpclient:body/*
+            return httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "collections" || $tamboti2zotero:api-key || "&amp;format=atom"), $serialized-content, true(), $request-headers)/httpclient:body/*
         else ()
 };
 
 declare function tamboti2zotero:delete-collection($collection-key, $if-unmodified-since-version) {
-    let $collection-uri := xs:anyURI($tamboti2zotero:base-uri || "/collections/" || $collection-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
+    let $collection-uri := xs:anyURI($tamboti2zotero:base-uri || "collections/" || $collection-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
     let $expected-version :=
         if (empty($if-unmodified-since-version))
         then httpclient:get($collection-uri, true(), ())/httpclient:body//zapi:version/text()
@@ -148,7 +152,7 @@ declare function tamboti2zotero:delete-collection($collection-key, $if-unmodifie
 };
 
 declare function tamboti2zotero:delete-item($item-key, $if-unmodified-since-version) {
-    let $item-uri := xs:anyURI($tamboti2zotero:base-uri || "/items/" || $item-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
+    let $item-uri := xs:anyURI($tamboti2zotero:base-uri || "items/" || $item-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
     let $expected-version :=
         if (empty($if-unmodified-since-version))
         then httpclient:get($item-uri, true(), ())/httpclient:body//zapi:version/text()
@@ -166,25 +170,26 @@ declare function tamboti2zotero:get-subcollections($collection-key) {
         if ($collection-key != "")
         then "/" || $collection-key || "/collections"
         else ""
-    let $response := httpclient:get(xs:anyURI($tamboti2zotero:base-uri || "/collections" || $subcollections-path || $tamboti2zotero:api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry/atom:title/text()
+    let $response := httpclient:get(xs:anyURI($tamboti2zotero:base-uri || "collections" || $subcollections-path || $tamboti2zotero:api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry/atom:title/text()
     
     return distinct-values($response)
 };
 
-declare function tamboti2zotero:write-resource($collection-key, $resource) {
-    let $itemType := map:get($genre-mappings, $resource/genre[1])
+declare function tamboti2zotero:write-resource($collection-key, $tamboti-resource) {
+    let $tamboti-genre := if (exists($tamboti-resource/genre[1])) then $tamboti-resource/genre[1] else "book"
+    let $itemType := map:get($tamboti2zotero:genre-mappings, $tamboti-genre)
     
     let $content := array {
         map:new((
-            tamboti2zotero:generate-general-fields($resource, $itemType)
+            tamboti2zotero:generate-general-fields($tamboti-resource, $itemType)
             ,
             switch($itemType)
-                case "book" return tamboti2zotero:generate-fields-for-book-itemType($resource)
+                case "book" return tamboti2zotero:generate-fields-for-book-itemType($tamboti-resource)
                 default return ()
             ,
-            tamboti2zotero:generate-accessing-fields($resource)
+            tamboti2zotero:generate-accessing-fields($tamboti-resource)
             ,
-            tamboti2zotero:generate-additional-fields($resource)
+            tamboti2zotero:generate-additional-fields($tamboti-resource)
             ,
             map {
                 "tags" : [],
@@ -199,13 +204,24 @@ declare function tamboti2zotero:write-resource($collection-key, $resource) {
         	<output:method value="json" />
         </output:serialization-parameters>
     )
-    let $result := parse-json(util:base64-decode(httpclient:post(xs:anyURI($base-user-uri || "/items" || $api-key-parameter), $serialized-content, true(), ())))
-    let $success := map:get(map:get($result, 'success'), '0')
+    let $result :=
+        try {
+            parse-json(util:base64-decode(httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "items" || $tamboti2zotero:api-key-parameter), $serialized-content, true(), ())))
+        }
+        catch * {
+            map {
+                "error": "Error for " || $serialized-content
+            }
+        }    
+    let $zotero-item-key := map:get(map:get($result, 'success'), '0')
     let $failed := map:get(map:get($result, 'failed'), '0')
     
     return (
-        if (exists($success))
-        then $success
+        if (exists($zotero-item-key))
+        then
+            let $zotero-child-attachment-item-key := tamboti2zotero:create-zotero-child-attachment-item($zotero-item-key, $tamboti-resource)
+            
+            return tamboti2zotero:upload-tamboti-resource($tamboti-resource, $zotero-child-attachment-item-key)            
         else ()
         ,
         if (exists($failed))
@@ -228,7 +244,7 @@ declare function tamboti2zotero:generate-general-fields($resource, $itemType) {
             for $role in $name/role/roleTerm[. != '']
             
             return map {
-                "creatorType": map:get($role-mappings, $role),
+                "creatorType": map:get($tamboti2zotero:role-mappings, $role),
                 "firstName" : $firstName,
                 "lastName" : $lastName
             }
@@ -328,9 +344,18 @@ declare function tamboti2zotero:create-zotero-child-attachment-item($parent-item
         	<output:method value="json" />
         </output:serialization-parameters>
     )
-    let $result := parse-json(util:base64-decode(httpclient:post(xs:anyURI($base-user-uri || "items" || $api-key-parameter), $serialized-content, true(), ())))
+    let $request-result := httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "items" || $tamboti2zotero:api-key-parameter), $serialized-content, true(), ())
+    let $result :=
+        try {
+            parse-json(util:base64-decode($request-result))
+        }
+        catch * {
+            map {
+                "error": "Error for " || $request-result
+            }
+        }    
     
-    return map:get(map:get($result, 'success'), '0')
+    return map:get(map:get($result, "success"), "0")
 };
 
 declare function tamboti2zotero:upload-tamboti-resource($tamboti-resource, $zotero-child-attachment-item-key) {
@@ -383,7 +408,7 @@ declare function tamboti2zotero:get-upload-authorization($tamboti-resource-md5, 
             <header name="Content-Type" value="application/x-www-form-urlencoded" />
             <header name="If-None-Match" value="*" />
         </headers>
-    let $request-result := httpclient:post(xs:anyURI($base-user-uri || "items/" || $zotero-child-attachment-item-key || "/file" || $api-key-parameter), $serialized-request-content, true(), $request-headers)
+    let $request-result := httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "items/" || $zotero-child-attachment-item-key || "/file" || $tamboti2zotero:api-key-parameter), $serialized-request-content, true(), $request-headers)
     let $result :=
         try {
             parse-json(util:base64-decode($request-result))
@@ -422,7 +447,7 @@ declare function tamboti2zotero:register-upload($uploadKey, $zotero-child-attach
             <header name="If-None-Match" value="*" />
         </headers>    
     
-    return httpclient:post(xs:anyURI($base-user-uri || "items/" || $zotero-child-attachment-item-key || "/file" || $api-key-parameter), $request-content, true(), $request-headers)
+    return httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "items/" || $zotero-child-attachment-item-key || "/file" || $tamboti2zotero:api-key-parameter), $request-content, true(), $request-headers)
 };
 
 declare function tamboti2zotero:serialize-resource($tamboti-resource, $tamboti-resource-mime-type) {
