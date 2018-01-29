@@ -6,7 +6,6 @@ declare default element namespace "http://www.loc.gov/mods/v3";
 
 declare variable $local:tamboti-collection external;
 declare variable $local:zotero-collection-key external;
-(:let $login := xmldb:login("/db"):)
 
 let $counter := doc("counters.xml")//*:write-record-to-zotero
 let $counter-value := number($counter)
@@ -17,6 +16,3 @@ return (
     ,
     update value $counter with ($counter-value + 1)
 )
-(:    for $tamboti-resource in $tamboti-resources:)
-(:    :)
-(:    return tamboti2zotero:write-resource($zotero-collection-key, $tamboti-resource):)

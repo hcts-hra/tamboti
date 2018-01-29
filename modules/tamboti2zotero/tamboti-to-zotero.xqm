@@ -9,7 +9,7 @@ declare default element namespace "http://www.loc.gov/mods/v3";
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace zapi="http://zotero.org/ns/api";
 
-declare variable $tamboti2zotero:api-key := "1tV4KC897ZouMWhVWyyikJYv";
+declare variable $tamboti2zotero:api-key := "";
 declare variable $tamboti2zotero:api-key-parameter := "?key=" || $tamboti2zotero:api-key;
 (:declare variable $tamboti2zotero:base-uri := xs:anyURI("https://api.zotero.org/groups/2023208");:)
 declare variable $tamboti2zotero:base-uri := xs:anyURI("https://api.zotero.org/users/4588859/");
@@ -213,15 +213,25 @@ declare function tamboti2zotero:write-resource($collection-key, $tamboti-resourc
                 "error": "Error for " || $serialized-content
             }
         }    
-    let $zotero-item-key := map:get(map:get($result, 'success'), '0')
+    let $zotero-item-key :=
+        let $zotero-item-key-success := map:get($result, 'success')
+        
+        return
+            if (exists($zotero-item-key-success))
+            then map:get($zotero-item-key-success, '0')
+            else ()
     let $failed := map:get(map:get($result, 'failed'), '0')
     
     return (
         if (exists($zotero-item-key))
         then
             let $zotero-child-attachment-item-key := tamboti2zotero:create-zotero-child-attachment-item($zotero-item-key, $tamboti-resource)
+            let $zotero-child-attachment-item-key-success := map:get($zotero-child-attachment-item-key, "success")
             
-            return tamboti2zotero:upload-tamboti-resource($tamboti-resource, $zotero-child-attachment-item-key)            
+            return
+                if (exists($zotero-child-attachment-item-key-success))
+                then tamboti2zotero:upload-tamboti-resource($tamboti-resource, map:get($zotero-child-attachment-item-key-success, '0'))
+                else $zotero-child-attachment-item-key
         else ()
         ,
         if (exists($failed))
@@ -234,7 +244,8 @@ declare function tamboti2zotero:generate-general-fields($resource, $itemType) {
     let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])[string(.) != '']
     let $originInfo := $resource/originInfo
 
-    let $title := string-join($titleInfo/(title, subTitle)[. != ''], ': ')
+    let $title-1 := string-join($titleInfo/(nonSort, title)[. != ''], ' ')
+    let $title-2 := string-join(($title-1, $titleInfo/subTitle)[. != ''], ': ')
     let $creators :=
         for $name in $resource/name
         let $firstName := $name/namePart[@type = 'given']/text()
@@ -256,7 +267,7 @@ declare function tamboti2zotero:generate-general-fields($resource, $itemType) {
     
     return map {
         "itemType": $itemType,
-        "title": $title,
+        "title": $title-2,
         "creators": array {$creators},
         "abstractNote": "",
         "date": "",
@@ -355,7 +366,7 @@ declare function tamboti2zotero:create-zotero-child-attachment-item($parent-item
             }
         }    
     
-    return map:get(map:get($result, "success"), "0")
+    return $result
 };
 
 declare function tamboti2zotero:upload-tamboti-resource($tamboti-resource, $zotero-child-attachment-item-key) {
