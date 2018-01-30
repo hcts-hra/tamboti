@@ -2,9 +2,12 @@ xquery version "3.1";
 
 module namespace tamboti2zotero = "http://hra.uni-heidelberg.de/ns/tamboti/tamboti2zotero/";
 
+import module namespace mods-to-zotero = "http://hra.uni-heidelberg.de/ns/mods-to-zotero/" at "mods-to-zotero.xqm";
 import module namespace crypto = "http://expath.org/ns/crypto";
+import module namespace console = "http://exist-db.org/xquery/console";
 
 declare default element namespace "http://www.loc.gov/mods/v3";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 
 declare namespace atom="http://www.w3.org/2005/Atom";
 declare namespace zapi="http://zotero.org/ns/api";
@@ -141,7 +144,7 @@ declare function tamboti2zotero:delete-collection($collection-key, $if-unmodifie
     let $collection-uri := xs:anyURI($tamboti2zotero:base-uri || "collections/" || $collection-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
     let $expected-version :=
         if (empty($if-unmodified-since-version))
-        then httpclient:get($collection-uri, true(), ())/httpclient:body//zapi:version/text()
+        then httpclient:get($collection-uri, true(), ())/httpclient:body//zapi:version/string()
         else $if-unmodified-since-version
     let $request-headers :=
         <headers>
@@ -155,7 +158,7 @@ declare function tamboti2zotero:delete-item($item-key, $if-unmodified-since-vers
     let $item-uri := xs:anyURI($tamboti2zotero:base-uri || "items/" || $item-key || $tamboti2zotero:api-key-parameter || "&amp;format=atom")
     let $expected-version :=
         if (empty($if-unmodified-since-version))
-        then httpclient:get($item-uri, true(), ())/httpclient:body//zapi:version/text()
+        then httpclient:get($item-uri, true(), ())/httpclient:body//zapi:version/string()
         else $if-unmodified-since-version
     let $request-headers :=
         <headers>
@@ -170,13 +173,13 @@ declare function tamboti2zotero:get-subcollections($collection-key) {
         if ($collection-key != "")
         then "/" || $collection-key || "/collections"
         else ""
-    let $response := httpclient:get(xs:anyURI($tamboti2zotero:base-uri || "collections" || $subcollections-path || $tamboti2zotero:api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry/atom:title/text()
+    let $response := httpclient:get(xs:anyURI($tamboti2zotero:base-uri || "collections" || $subcollections-path || $tamboti2zotero:api-key-parameter || "&amp;format=atom"), true(), ())/httpclient:body//atom:entry/atom:title/string()
     
     return distinct-values($response)
 };
 
 declare function tamboti2zotero:write-resource($collection-key, $tamboti-resource) {
-    let $tamboti-genre := if (exists($tamboti-resource/genre[1])) then $tamboti-resource/genre[1] else "book"
+    let $tamboti-genre := if (exists($tamboti-resource/*:genre[1])) then $tamboti-resource/*:genre[1] else "book"
     let $itemType := map:get($tamboti2zotero:genre-mappings, $tamboti-genre)
     
     let $content := array {
@@ -209,9 +212,13 @@ declare function tamboti2zotero:write-resource($collection-key, $tamboti-resourc
             parse-json(util:base64-decode(httpclient:post(xs:anyURI($tamboti2zotero:base-uri || "items" || $tamboti2zotero:api-key-parameter), $serialized-content, true(), ())))
         }
         catch * {
-            map {
-                "error": "Error for " || $serialized-content
-            }
+            (
+                console:log("INFO", "Error for " || $serialized-content)
+                ,
+                map {
+                    "error": "Error for " || $serialized-content
+                }
+            )
         }    
     let $zotero-item-key :=
         let $zotero-item-key-success := map:get($result, 'success')
@@ -241,28 +248,28 @@ declare function tamboti2zotero:write-resource($collection-key, $tamboti-resourc
 };
 
 declare function tamboti2zotero:generate-general-fields($resource, $itemType) {
-    let $titleInfo := $resource/(titleInfo[not(@*)], titleInfo[@type = 'translated' and @lang = 'eng'])[string(.) != '']
-    let $originInfo := $resource/originInfo
+    let $titleInfo := $resource/(*:titleInfo[not(@*)], *:titleInfo[@type = 'translated' and @lang = 'eng'])[string(.) != '']
+    let $originInfo := $resource/*:originInfo
 
-    let $title-1 := string-join($titleInfo/(nonSort, title)[. != ''], ' ')
-    let $title-2 := string-join(($title-1, $titleInfo/subTitle)[. != ''], ': ')
+    let $title-1 := string-join($titleInfo/(*:nonSort, *:title)[. != ''], ' ')
+    let $title-2 := string-join(($title-1, $titleInfo/*:subTitle)[. != ''], ': ')
     let $creators :=
-        for $name in $resource/name
-        let $firstName := $name/namePart[@type = 'given']/text()
-        let $lastName := $name/namePart[@type = 'family']/text()
+        for $name in $resource/*:name
+        let $firstName := string-join($name/*:namePart[@type = 'given']/text()[. != ''], ' ')
+        let $lastName := string-join($name/*:namePart[@type = 'family']/text()[. != ''], ' ')
         
         return
-            for $role in $name/role/roleTerm[. != '']
+            for $role in $name/*:role/*:roleTerm[. != '']
             
             return map {
                 "creatorType": map:get($tamboti2zotero:role-mappings, $role),
                 "firstName" : $firstName,
                 "lastName" : $lastName
             }
-    let $abstract := $resource/abstract/string(.)
-    let $date := $originInfo/dateIssued/string(.)
-    let $shortTitle := $titleInfo/title/string(.)
-    let $language := string-join($resource/language/element(), '-')
+    let $abstract := $resource/*:abstract/string(.)
+    let $date := $originInfo/*:dateIssued/string(.)
+    let $shortTitle := $titleInfo/*:title/string(.)
+    let $language := string-join($resource/*:language/element(), '-')
     
     
     return map {
@@ -270,22 +277,22 @@ declare function tamboti2zotero:generate-general-fields($resource, $itemType) {
         "title": $title-2,
         "creators": array {$creators},
         "abstractNote": "",
-        "date": "",
+        "date": $date,
         "shortTitle": $shortTitle,
         "language": $language
     }
 };
 
-declare function tamboti2zotero:generate-fields-for-book-itemType($resource) {
-    let $series := $resource/relatedItem[@type = 'series']
-    let $originInfo := $resource/originInfo
+declare function tamboti2zotero:generate-fields-for-book-itemType($tamboti-resource) {
+    let $series := $tamboti-resource/*:relatedItem[@type = 'series']
+    let $originInfo := $tamboti-resource/*:originInfo
     
-    let $seriesTitle := string-join($series/titleInfo[string(.) != '']/(title, subTitle), ': ')
-    let $seriesNumber := $series/part/detail[@type = 'volume']/number/string(.)
-    let $place := string-join($originInfo/place/placeTerm[string(.) != '']/(title, subTitle), ', ')
-    let $publisher := $originInfo/publisher[not(@*)]/string(.)
-    let $numPages := $resource/physicalDescription/extent[@unit = 'pages']/string(.)
-    let $isbn := $resource/identifier[@type = 'isbn'][1]/string(.)
+    let $seriesTitle := string-join($series/*:titleInfo[string(.) != '']/(*:title, *:subTitle), ': ')
+    let $seriesNumber := $series/*:part/*:detail[@type = 'volume']/*:number/string(.)
+    let $place := string-join($originInfo/*:place/*:placeTerm[string(.) != '']/(*:title, *:subTitle), ', ')
+    let $publisher := $originInfo/*:publisher[not(@*)]/string(.)
+    let $numPages := mods-to-zotero:numPages($tamboti-resource/*:physicalDescription/*:extent[@unit = 'pages'])
+    let $isbn := $tamboti-resource/*:identifier[@type = 'isbn'][1]/string(.)
 
     return map {
         "volume": $seriesTitle,
@@ -303,9 +310,9 @@ declare function tamboti2zotero:generate-fields-for-book-itemType($resource) {
 declare function tamboti2zotero:generate-accessing-fields($resource) {
     let $location := $resource/location
     
-    let $accessDate := $location/url/@dateLastAccessed/string(.)
-    let $doi := $resource/identifier[@type = 'doi'][1]/string(.)
-    let $url := $location/url/string(.)
+    let $accessDate := $location/*:url/@dateLastAccessed/string(.)
+    let $doi := $resource/*:identifier[@type = 'doi'][1]/string(.)
+    let $url := $location/*:url/string(.)
     
     return map {
         "accessDate": $accessDate,
@@ -319,7 +326,7 @@ declare function tamboti2zotero:generate-accessing-fields($resource) {
 };
 
 declare function tamboti2zotero:generate-additional-fields($resource) {
-    let $rights := $resource/accessCondition/string(.)
+    let $rights := $resource/*:accessCondition/string(.)
     
     return map {
         "rights": $rights,
@@ -361,9 +368,13 @@ declare function tamboti2zotero:create-zotero-child-attachment-item($parent-item
             parse-json(util:base64-decode($request-result))
         }
         catch * {
-            map {
-                "error": "Error for " || $request-result
-            }
+            (
+                console:log("INFO", "Error for " || $serialized-content)
+                ,            
+                map {
+                    "error": "Error for " || $request-result
+                }
+            )
         }    
     
     return $result
@@ -425,9 +436,13 @@ declare function tamboti2zotero:get-upload-authorization($tamboti-resource-md5, 
             parse-json(util:base64-decode($request-result))
         }
         catch * {
-            map {
-                "error": ("Error for " || $zotero-child-attachment-item-key, $request-result)
-            }
+            (
+                console:log("INFO", ("Error for " || $zotero-child-attachment-item-key, $request-result))
+                ,            
+                map {
+                    "error": ("Error for " || $zotero-child-attachment-item-key, $request-result)
+                }
+            )                
         }    
     
     return $result
