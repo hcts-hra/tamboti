@@ -2,6 +2,10 @@ xquery version "3.0";
 
 declare namespace file = "http://exist-db.org/xquery/file";
 declare namespace contents = "http://exist.sourceforge.net/NS/exist";
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+
+declare option output:method "text";
+declare option output:media-type "text/plain";
 
 declare function local:date-from-dateTime($date-time) {
     format-dateTime($date-time, "[Y0001]-[M01]-[D01]")
@@ -27,7 +31,7 @@ declare function local:get-collection-metadata($directory) {
     return <collection latest-modification-datetime="{$latest-modification-datetime}">{$collection}</collection>
 };
 
-let $base-directories := ("/media/sdb/backup/full/tamboti/full20180326-0300/db/resources/commons", "/media/sdb/backup/full/tamboti/full20180326-0300/db/resources/users")
+let $base-directories := ("/media/sdb/backup/full/tamboti/full20180502-0300/db/resources/commons", "/media/sdb/backup/full/tamboti/full20180502-0300/db/resources/users")
 
 let $metadata-records :=
         for $base-directory in $base-directories
@@ -37,9 +41,12 @@ let $metadata-records :=
             
             return local:get-collection-metadata($base-directory || "/" || $directory-name)
 
-return
+let $result :=
     for $metadata-record in $metadata-records
-    order by $metadata-record/@latest-modification-datetime descending
+    let $latest-modification-datetime := data($metadata-record/@latest-modification-datetime)
+    order by $latest-modification-datetime descending
     
-    return $metadata-record
+    return string-join(($metadata-record/text(), $latest-modification-datetime), " ") || "&#10;"
     
+
+return $result[position() < 10]
