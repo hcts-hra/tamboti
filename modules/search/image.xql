@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 (:author  Dulip withanage:)
 declare namespace vra="http://www.vraweb.org/vracore4.htm";
 declare namespace upload = "http://exist-db.org/eXide/upload";

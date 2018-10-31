@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace functx = "http://www.functx.com";
 import module namespace mods-hra-framework="http://hra.uni-heidelberg.de/ns/mods-hra-framework" at "mods-hra.xqm";

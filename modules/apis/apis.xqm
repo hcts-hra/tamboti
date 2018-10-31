@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
 import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../../frameworks/hra-rdf/hra-rdf-framework.xqm";

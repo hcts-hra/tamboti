@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
@@ -6,7 +6,7 @@ declare function local:install-cluster-publications-data() as item()* {
     let $http-headers := <headers/>    
     let $cluster-publications-collection-name := "Cluster Publications"    
     let $cluster-publications-db-path := xmldb:encode-uri($config:mods-commons || "/" || $cluster-publications-collection-name || "/")
-    let $cluster-publications-url := "http://kjc-sv016.kjc.uni-heidelberg.de:8080/exist/rest" || $cluster-publications-db-path
+    let $cluster-publications-url := "http://kjc-sv036.kjc.uni-heidelberg.de:8080/exist/rest" || $cluster-publications-db-path
     let $resources := httpclient:get(xs:anyURI($cluster-publications-url), false(), $http-headers)/*[2]/*/*
     
     return

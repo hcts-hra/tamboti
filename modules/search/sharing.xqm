@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace sharing = "http://exist-db.org/mods/sharing";
 
@@ -195,7 +195,7 @@ declare function sharing:add-collection-group-ace($collection as xs:anyURI, $gro
     )
 };
 
-declare function sharing:send-share-user-invitation-mail($collection-path as xs:string, $username as xs:string) as empty()
+declare function sharing:send-share-user-invitation-mail($collection-path as xs:string, $username as xs:string) as empty-sequence()
 {
     if($config:send-notification-emails)then
         let $mail-template := fn:doc(fn:concat($config:search-app-root, "/group-invitation-email-template.xml")) return
@@ -203,7 +203,7 @@ declare function sharing:send-share-user-invitation-mail($collection-path as xs:
     else()
 };
 
-declare function sharing:send-share-group-invitation-mail($collection-path as xs:string, $groupname as xs:string) as empty()
+declare function sharing:send-share-group-invitation-mail($collection-path as xs:string, $groupname as xs:string) as empty-sequence()
 {
     if($config:send-notification-emails)then
         for $group-member in security:get-group-members($groupname) return
@@ -211,7 +211,7 @@ declare function sharing:send-share-group-invitation-mail($collection-path as xs
     else()
 };
 
-declare function sharing:send-share-user-removal-mail($collection-path as xs:string, $username as xs:string) as empty()
+declare function sharing:send-share-user-removal-mail($collection-path as xs:string, $username as xs:string) as empty-sequence()
 {
     if($config:send-notification-emails)then
         let $mail-template := fn:doc(fn:concat($config:search-app-root, "/group-removal-email-template.xml")) return
@@ -219,7 +219,7 @@ declare function sharing:send-share-user-removal-mail($collection-path as xs:str
     else()
 };
 
-declare function sharing:send-share-group-removal-mail($collection-path as xs:string, $groupname as xs:string) as empty()
+declare function sharing:send-share-group-removal-mail($collection-path as xs:string, $groupname as xs:string) as empty-sequence()
 {
     if($config:send-notification-emails)then
         for $group-member in security:get-group-members($groupname) return

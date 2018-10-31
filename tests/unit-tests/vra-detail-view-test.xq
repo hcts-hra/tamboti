@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "/db/apps/tamboti/frameworks/vra-hra/vra-hra.xqm";
 

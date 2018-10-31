@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace inherit-acl="http://hra.uni-heidelberg.de/ns/tamboti/unit-tests/inherit-acl.xq";
 import module namespace security="http://exist-db.org/mods/security" at "/db/apps/tamboti/modules/search/security.xqm";

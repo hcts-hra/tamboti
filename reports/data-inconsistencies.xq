@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace reports = "http://hra.uni-heidelberg.de/ns/tamboti/reports" at "reports.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";

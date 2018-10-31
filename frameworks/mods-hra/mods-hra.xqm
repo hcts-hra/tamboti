@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework";
 

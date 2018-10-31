@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace dateTime="http://exist-db.org/xquery/datetime"
 at "java:org.exist.xquery.modules.datetime.DateTimeModule";

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace dbutil="http://exist-db.org/xquery/dbutil";
 

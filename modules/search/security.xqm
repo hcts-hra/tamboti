@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace security = "http://exist-db.org/mods/security";
 
@@ -58,7 +58,7 @@ declare function security:login($username as xs:string, $password as xs:string?)
 : @param username The username
 : @param password The password
 :)
-declare function security:store-user-credential-in-session($username as xs:string, $password as xs:string?) as empty() {
+declare function security:store-user-credential-in-session($username as xs:string, $password as xs:string?) as empty-sequence() {
     let $username := config:rewrite-username($username)
         return
         (
@@ -194,7 +194,7 @@ declare function security:create-user-metadata($user-collection-uri as xs:string
 (:~
 : Update the last login time of a user
 :)
-declare function security:update-login-time($user as xs:string) as empty() {
+declare function security:update-login-time($user as xs:string) as empty-sequence() {
     let $user-home-collection := security:get-home-collection-uri($user),
     $security-metadata := fn:doc(fn:concat($user-home-collection, "/", $security:user-metadata-file)) 
     return
@@ -334,7 +334,7 @@ declare function security:get-group-members($group as xs:string) as xs:string*
 (:    sm:get-group-members($group):)
 };
 
-declare function security:set-resource-permissions($resource-path as xs:anyURI, $user-name as xs:string, $group-name as xs:string, $permissions as xs:string) as empty() {
+declare function security:set-resource-permissions($resource-path as xs:anyURI, $user-name as xs:string, $group-name as xs:string, $permissions as xs:string) as empty-sequence() {
     (
         sm:chown($resource-path, $user-name),
         sm:chgrp($resource-path, $group-name),
@@ -587,7 +587,7 @@ declare function security:insert-user-ace($resource as xs:anyURI, $id as xs:int,
 (: ~
 : Resources always inherit the permissions of the parent collection
 :)
-declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty() {
+declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty-sequence() {
     let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1")))
     let $this-permissions := sm:get-permissions($resource)
     let $this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1

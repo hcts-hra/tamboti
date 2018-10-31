@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace biblio="http://exist-db.org/xquery/biblio" at "application.xql";
 import module namespace json="http://www.json.org";

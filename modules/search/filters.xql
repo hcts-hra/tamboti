@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
     Returns the list of distinct title words, names, dates, and subjects occurring in the result set.

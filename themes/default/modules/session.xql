@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
     Handles the actual display of the search result. The pagination jQuery plugin in jquery-utils.js

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 declare namespace mods = "http://www.loc.gov/mods/v3";
 for $record in //mods:mods
 let $ID := $record/@ID

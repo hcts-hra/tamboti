@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
     Create indexes to speed up the sorting of query results.

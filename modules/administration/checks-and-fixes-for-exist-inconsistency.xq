@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 declare namespace ns="http://exist-db.org/Configuration";
 declare namespace sm="http://exist-db.org/xquery/securitymanager";

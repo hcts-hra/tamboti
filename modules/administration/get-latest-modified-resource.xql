@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 declare namespace file = "http://exist-db.org/xquery/file";
 declare namespace contents = "http://exist.sourceforge.net/NS/exist";

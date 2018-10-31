@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:
     TODO KISS - This file should be removed in favour of a convention based approach + some small metadata for users/groups/permissions (added by AR)

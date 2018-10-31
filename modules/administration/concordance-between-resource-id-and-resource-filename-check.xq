@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 declare namespace mods="http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";

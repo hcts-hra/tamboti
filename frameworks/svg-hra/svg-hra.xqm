@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace svg-hra-framework = "http://hra.uni-heidelberg.de/ns/svg-hra-framework";
 

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../modules/config.xqm";
 

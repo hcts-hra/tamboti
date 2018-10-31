@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 
@@ -16,4 +16,4 @@ return
         return sm:get-permissions(xs:anyURI($subcollection-path))
 
 
-(:sm:add-user-ace($path as xs:anyURI, $user-name as xs:string, $allowed as xs:boolean, $mode as xs:string) as empty():)
+(:sm:add-user-ace($path as xs:anyURI, $user-name as xs:string, $allowed as xs:boolean, $mode as xs:string) as empty-sequence() :)

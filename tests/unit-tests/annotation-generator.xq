@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 declare namespace c="http://hra.uni-heidelberg.de/ns/tamboti/annotations/config";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 import module namespace config = "http://exist-db.org/mods/config" at "/db/apps/tamboti/modules/config.xqm";

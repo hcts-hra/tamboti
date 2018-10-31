@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
