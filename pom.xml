@@ -10,12 +10,7 @@
 
 	<url>http://exist-db.org</url>
 
-	<prerequisites>
-		<maven>${mavenVersion}</maven>
-	</prerequisites>
-
 	<properties>
-		<mavenVersion>3.1.1</mavenVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<package-name>http://exist-db.org/apps/tamboti</package-name>
 		<package-title>Tamboti Metadata Framework</package-title>
@@ -266,23 +261,22 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
+						<groupId>com.coderplus.maven.plugins</groupId>
+						<artifactId>copy-rename-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-test-data</id>
-								<phase>prepare-package</phase>
+								<id>copy-services.xml</id>
+								<phase>generate-resources</phase>
 								<goals>
-									<goal>download-single</goal>
+									<goal>copy</goal>
 								</goals>
 								<configuration>
-									<url>http://${tamboti.server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
-									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
-									<toDir>${project.build.directory}</toDir>
+									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
+									<destinationFile>${project.build.directory}/services.xml</destinationFile>
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>					
 					<plugin>
 						<groupId>ro.kuberam.maven.plugins</groupId>
 						<artifactId>kuberam-expath-plugin</artifactId>
@@ -363,19 +357,18 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
+						<groupId>com.coderplus.maven.plugins</groupId>
+						<artifactId>copy-rename-maven-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>download-test-data</id>
-								<phase>prepare-package</phase>
+								<id>copy-services.xml</id>
+								<phase>generate-resources</phase>
 								<goals>
-									<goal>download-single</goal>
+									<goal>copy</goal>
 								</goals>
 								<configuration>
-									<url>http://${tamboti.server-credentials}@kjc-sv016.kjc.uni-heidelberg.de:8080</url>
-									<fromFile>exist/rest/persistent-data/services.xml</fromFile>
-									<toDir>${project.build.directory}</toDir>
+									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
+									<destinationFile>${project.build.directory}/services.xml</destinationFile>
 								</configuration>
 							</execution>
 						</executions>

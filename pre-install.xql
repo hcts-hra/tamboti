@@ -60,6 +60,8 @@ if (xmldb:exists-user($config:biblio-admin-user))
 then ()
 else xmldb:create-user($config:biblio-admin-user, $config:biblio-admin-user, $config:biblio-users-group, ())
 ,
+sm:passwd("guest", "guest")
+,
 util:log($log-level, "Security: Done.")
 ,
 

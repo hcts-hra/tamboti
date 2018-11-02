@@ -1,6 +1,7 @@
 xquery version "3.1";
 
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
+
 import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../../frameworks/hra-rdf/hra-rdf-framework.xqm";
 import module namespace hra-anno-framework = "http://hra.uni-heidelberg.de/ns/hra-anno-framework" at "../../frameworks/hra-annotations/hra-annotations.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
