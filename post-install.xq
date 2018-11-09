@@ -23,6 +23,8 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     sm:chmod(xs:anyURI($target || "/modules/administration/fix-for-duplicated-aces.xq"), "rwsr-x---")
     ,
+    sm:chmod(xs:anyURI($target || "/docs/controller.xql"), "rwxr-xr-x")
+    ,
     local:set-special-permissions(xs:anyURI($target || "/reports/reports.xqm"))
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/hra-annotations/annotations.xq"))
