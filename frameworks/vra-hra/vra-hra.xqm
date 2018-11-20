@@ -589,13 +589,12 @@ declare function vra-hra-framework:format-list-view($position as xs:string, $ent
 };
 
 declare function vra-hra-framework:get-vra-image-uuid($rel as element(vra:relation)) {
-    if(starts-with(data($rel/@relids), "i_")) then
-        data($rel/@relids)
+    if (starts-with(data($rel/@relids), "i_"))
+    then data($rel/@relids)
     else 
-        if(starts-with(data($rel/@refid), "i_")) then
-            data($rel/@refid)
-        else
-            ()
+        if (starts-with(data($rel/@refid), "i_"))
+        then data($rel/@refid)
+        else ()
 };
 
 declare function vra-hra-framework:detail-view-table($item as element(vra:vra), $currentPos as xs:int) {
@@ -635,20 +634,24 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                    let $main-image-rel := 
+                    let $main-image-relations := 
                         (: if @pref then take this. If not then take the first one :)
-                        if ($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]) then
-                            $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
-                        else
-                            $item//vra:relationSet/vra:relation[@type="imageIs"][1]
-                    let $main-image-uuid := vra-hra-framework:get-vra-image-uuid($main-image-rel)
-                    let $main-image := security:get-resource($main-image-uuid)
+                        if ($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"])
+                        then $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
+                        else $item//vra:relationSet/vra:relation[@type="imageIs"][1]
+                        
                     return
-                        <p>
-                            {
-                                vra-hra-framework:create-thumbnail-span($main-image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
-                            }
-                        </p>
+                        if ($main-image-relations)
+                        then
+                            let $main-image-uuid := vra-hra-framework:get-vra-image-uuid($main-image-relations)
+                            
+                            return
+                                <p>
+                                    {
+                                        vra-hra-framework:create-thumbnail-span($main-image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
+                                    }
+                                </p>
+                        else ()
                 }
                 </div>
             </td>            
