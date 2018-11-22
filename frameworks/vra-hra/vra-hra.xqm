@@ -773,20 +773,19 @@ declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:strin
             $height
         else
             $width
-    
+    let $images := (
+    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+    ,
+    <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide(); $(this).show();" onerror="$(this).parent().find('.placeholder').hide();"/>
+)
+
     return
         if($zoom) then 
             <span style="width:{$width}px; min-height:{$width}px;">
-                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
-                    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                    <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-                </a>
+                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">{$images}</a>
             </span>
         else
-            <span style="width:{$width}px; min-height:{$width}px;">
-                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
-                <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-            </span>
+            <span style="width:{$width}px; min-height:{$width}px;">{$images}</span>
 
 };
 
