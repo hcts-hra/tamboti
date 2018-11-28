@@ -4,7 +4,7 @@
         <title>Filters Module Unit Test</title>
         <script src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
         <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
-        <script src="https://cdn.rawgit.com/gwendall/way.js/master/way.min.js"/>
+        <script src="https://cdn.jsdelivr.net/gh/gwendall/way.js/dist/way.js">/**/</script>
         <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
