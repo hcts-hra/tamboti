@@ -1,19 +1,12 @@
 xquery version "3.1";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace json="http://www.json.org";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
-import module namespace sharing="http://exist-db.org/mods/sharing" at "sharing.xqm";
 
-import module namespace request = "http://exist-db.org/xquery/request";
-import module namespace util="http://exist-db.org/xquery/util";
-import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
-import module namespace functx = "http://www.functx.com";
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 
-declare namespace col = "http://library/search/collections";
-
-declare option exist:serialize "method=json media-type=text/javascript";
-
+declare option output:method "json";
+declare option output:media-type "application/json";
 
 declare variable $user-folder-icon := "../skin/ltFld.user.gif";
 declare variable $groups-folder-icon := "../skin/ltFld.groups.gif";
@@ -24,7 +17,7 @@ declare variable $not-writeable-and-shared-folder-icon := "../skin/ltFld.locked.
 declare variable $commons-folder-icon := "../skin/ltFld.png";
 declare variable $collections-to-skip-for-all := ('VRA_images');
 
-declare function col:lazy-read($collection-uri as xs:anyURI) {
+declare function local:lazy-read($collection-uri as xs:anyURI) {
     (: if searching for shared collections, do not display shares in own home collection:)
     let $skip-collections :=
         if ( ($collection-uri = $config:users-collection) ) then
@@ -46,47 +39,48 @@ declare function col:lazy-read($collection-uri as xs:anyURI) {
         let $readable := security:can-read-collection($fullpath)
         let $executeable := security:can-execute-collection($fullpath) 
         let $writeable := security:can-write-collection($fullpath) 
-        let $readable-children := col:has-readable-children($fullpath)
+        let $readable-children := local:has-readable-children($fullpath)
         let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
         let $extra-classes := (
-            if($writeable) then 
-                'fancytree-writeable' 
-            else 
-                'fancytree-readable'
+            if ($writeable)
+            then 'fancytree-writeable' 
+            else 'fancytree-readable'
             ,
-            if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+            if ($is-owner and count(security:get-acl($fullpath)) > 0 )
+            then 'fancytree-shared'
 (:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
-                'fancytree-shared'
             else ()
         )
         return
-            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
-                <json:value json:array="true">
-                    <title>{xmldb:decode($subcol)}</title>
-                    <key>{xmldb:decode($fullpath)}</key>
-                    <folder json:literal="true">true</folder>
-                    <writeable json:literal="true">{$writeable}</writeable>
-                    <lazy json:literal="true">true</lazy>
-                    {
-                        $readable-children
-                    }
-                    <extraClasses>
-                    {
-                        $extra-classes
-                    }
-                    </extraClasses>
-                </json:value>
-            else
-                ()
+            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
+            then map:merge((
+                map {
+                    "title": xmldb:decode($subcol),
+                    "key": xmldb:decode($fullpath),
+                    "folder": true(),
+                    "writeable": $writeable,
+                    "lazy": true(),
+                    "extraClasses": $extra-classes
+                }                
+                ,
+                if (exists($readable-children))
+                then map {"children": $readable-children}
+                else ()
+                ,
+                if ($is-owner and count(security:get-acl($fullpath)) > 0)
+                then () (: "icon": $writeable-and-shared-folder-icon :)
+                else ()                
+            ))                
+            else array {()}
 };
 
-declare function col:has-readable-children($collection-uri as xs:anyURI) {
+declare function local:has-readable-children($collection-uri as xs:anyURI) {
     (: if searching for shared collections, do not display shares in own home collection:)
+    let $collections-to-skip-for-all := ('VRA_images')
     let $skip-collections :=
-        if ( ($collection-uri = $config:users-collection) ) then
-            ($collections-to-skip-for-all, xmldb:encode(security:get-user-credential-from-session()[1]))
-        else
-            $collections-to-skip-for-all
+        if ($collection-uri = $config:users-collection)
+        then ($collections-to-skip-for-all, xmldb:encode(security:get-user-credential-from-session()[1]))
+        else $collections-to-skip-for-all
 
     (: elevate rights for going into the collection structure :)
     let $subcollections := 
@@ -101,45 +95,41 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
         let $readable := security:can-read-collection($fullpath)
         let $executeable := security:can-execute-collection($fullpath) 
         let $writeable := security:can-write-collection($fullpath) 
-        let $readable-children := col:has-readable-children($fullpath)
+        let $readable-children := local:has-readable-children($fullpath)
         let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
         let $extra-classes := (
-            if($writeable) then 
-                'fancytree-writeable' 
-            else 
-                'fancytree-readable'
+            if ($writeable)
+            then 'fancytree-writeable' 
+            else 'fancytree-readable'
             ,
-            if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
+            if ($is-owner and count(security:get-acl($fullpath)) > 0 )
+            then
 (:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
                 'fancytree-shared'
             else ()
         )
         
         return
-            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children)))) then
-                <children json:array="true">
-                    <title>{xmldb:decode($subcol)}</title>
-                    <key>{xmldb:decode($fullpath)}</key>
-                    <folder json:literal="true">true</folder>
-                    <writeable json:literal="true">{$writeable}</writeable>
-                    <lazy json:literal="true">true</lazy>
-                    {
-                        if ($is-owner and count(security:get-acl($fullpath)) > 0 ) then
-                            ()
-(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
-                        else ()
-                    }
-                    {
-                        $readable-children
-                    }
-                    <extraClasses>
-                        {
-                            $extra-classes
-                        }
-                    </extraClasses>                        
-                </children>
-            else
-                ()
+            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
+            then map:merge((
+                map {
+                    "title": xmldb:decode($subcol),
+                    "key": xmldb:decode($fullpath),
+                    "folder": true(),
+                    "writeable": $writeable,
+                    "lazy": true(),
+                    "extraClasses": $extra-classes
+                }
+                ,
+                if (exists($readable-children))
+                then map {"children": $readable-children}
+                else ()
+                ,
+                if ($is-owner and count(security:get-acl($fullpath)) > 0)
+                then () (: "icon": $writeable-and-shared-folder-icon :)
+                else ()                 
+            ))
+            else ()
 
 };
 
@@ -153,79 +143,78 @@ declare function col:has-readable-children($collection-uri as xs:anyURI) {
 
 (: if no key is submitted, take the predefined root collection :)
 let $key := request:get-parameter("key", ())
-return
 
+return
 (: if no key is submitted, build up the full tree :)
-if (not($key)) then
+if (not($key))
+then
     let $user-id := security:get-user-credential-from-session()[1]
     let $user-home-dir := security:get-home-collection-uri($user-id)
 
-    return
-            <something>
-                <json:value json:array="true">
-                    <title>{$config:data-collection-name}</title>
-                    <key>/{xmldb:decode($config:data-collection-name)}</key>
-                    <folder json:literal="true">true</folder>
-                    <writeable json:literal="true">false</writeable>
-                    <extraClasses>fancytree-readable</extraClasses>
-                    <expanded json:literal="true">true</expanded>
-                    <lazy json:literal="true">true</lazy>
-                {
-                    (: no home for guest :)
-                    if(not($user-id = "guest")) then
-                        <children json:array="true">
-                            <title>Home</title>
-                            <key>{xmldb:decode($user-home-dir)}</key>
-                            <folder json:literal="true">true</folder>
-                            <writeable json:literal="true">{security:can-write-collection($user-home-dir)}</writeable>
-                            <extraClasses>fancytree-writeable</extraClasses>
-                            <expanded json:literal="true">true</expanded>
-                            <lazy json:literal="true">true</lazy>
-                            {
-                                (: construct the home branch:)
-                                let $child-branch := col:has-readable-children(xs:anyURI($user-home-dir))
-                                return
-                                    $child-branch
-                            }
-                        </children>
-                    else
-                        ()
-                }
-                <children json:array="true">
-                    <title>Shared</title>
-                    <key>{xmldb:decode($config:users-collection)}</key>
-                    <folder json:literal="true">true</folder>
-                    <writeable json:literal="true">false</writeable>
-                    <lazy json:literal="true">true</lazy>
-                    <extraClasses>fancytree-readable</extraClasses>
-                </children>
-                <children json:array="true">
-                    <title>Commons</title>
-                    <key>{xmldb:decode($config:mods-commons)}</key>
-                    <writeable json:literal="true">false</writeable>
-                    <extraClasses>fancytree-readable</extraClasses>
-                    <folder json:literal="true">true</folder>
-                    <expanded json:literal="true">true</expanded>
-                    <lazy json:literal="true">true</lazy>
-                        {
-                            (: construct the commons branch:)
-                            let $child-branch := col:has-readable-children(xs:anyURI($config:mods-commons))
-                            return
-                                $child-branch
-                        }
-                </children>
-            </json:value>
-        </something>
+    return array {
+        map {
+            "title": $config:data-collection-name,
+            "key": "/" || xmldb:decode($config:data-collection-name),
+            "folder": true(),
+            "writeable": false(),
+            "extraClasses": "fancytree-readable",
+            "expanded": true(),
+            "lazy": true(),
+            "children": array {
+                if (not($user-id = "guest"))
+                then map:merge((
+                    map {
+                        "title": "Home",
+                        "key": xmldb:decode($user-home-dir),
+                        "folder": true(),
+                        "writeable": security:can-write-collection($user-home-dir),
+                        "extraClasses": "fancytree-readable",
+                        "expanded": true(),
+                        "lazy": true()
+                    } 
+                    ,
+                    let $readable-children := local:has-readable-children(xs:anyURI($user-home-dir))
+                    
+                    return
+                        if (exists($readable-children))
+                        then map {"children": $readable-children}
+                        else ()
+                ))
+                else ()
+                ,
+                map {
+                    "title": "Shared",
+                    "key": xmldb:decode($config:users-collection),
+                    "folder": true(),
+                    "writeable": false(),
+                    "extraClasses": "fancytree-readable",
+                    "lazy": true()             
+                },
+                map:merge((
+                    map {
+                        "title": "Commons",
+                        "key": xmldb:decode($config:mods-commons),
+                        "folder": true(),
+                        "writeable": false(),
+                        "extraClasses": "fancytree-readable",
+                        "expanded": true(),
+                        "lazy": true()
+                    }  
+                    ,
+                    let $readable-children := local:has-readable-children(xs:anyURI($config:mods-commons))
+                    
+                    return
+                        if (exists($readable-children))
+                        then map {"children": $readable-children}
+                        else ()
+                ))                    
+            }
+        }
+    }
 else
     (: load a defined branch (lazy) :)
-    let $child-branch := col:lazy-read(xmldb:encode-uri($key))
+    let $child-branch := local:lazy-read(xmldb:encode-uri($key))
     return 
-        if($child-branch) then
-            <json:value>
-            {
-                $child-branch
-            }
-            </json:value>
-        else
-            <json:value json:array="true" />
-
+        if (exists($child-branch))
+        then $child-branch
+        else ()
