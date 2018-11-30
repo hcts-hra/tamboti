@@ -53,7 +53,7 @@ declare variable $config:sharing-permissions := map {
 };
 
 declare variable $config:data-collection-name := "data";
-declare variable $config:content-root := "/" || $config:data-collection-name;
+declare variable $config:content-root := "/" || $config:data-collection-name || "/";
 declare variable $config:mods-root := "/" || $config:data-collection-name;
 declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
 declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));

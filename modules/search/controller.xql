@@ -93,7 +93,7 @@ else if ($exist:resource eq 'retrieve') then
 
 	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 	   { local:set-user() }
-		<forward url="{ theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, 'modules/session.xql') }">
+		<forward url="/modules/session.xql">
 		</forward>
 	</dispatch>
 	

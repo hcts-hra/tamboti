@@ -104,7 +104,7 @@ return
 
        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
            { local:set-user($username, $password) }
-          <forward url="../modules/search/session.xql">
+          <forward url="../modules/session.xql">
           </forward>
        </dispatch>
 

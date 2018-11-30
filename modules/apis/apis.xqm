@@ -161,7 +161,7 @@ declare function apis:options($method as xs:string, $scope as xs:string, $parame
 
 declare function apis:search($exist-prefix as xs:string) {
    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-      <forward url="/modules/search/search.xq">
+      <forward url="/modules/search/search.xql">
         <set-attribute name="exist:prefix" value="{$exist-prefix}"/>
       </forward>
    </dispatch>

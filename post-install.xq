@@ -19,6 +19,8 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     (: set special permissions for xquery scripts :)
     sm:chmod(xs:anyURI($target || "/modules/upload/upload.xq"), "rwsr-xr-x")
     ,
+    sm:chmod(xs:anyURI($target || "/modules/search/security.xqm"), "rwsr-xr-x")
+    ,    
     local:set-special-permissions(xs:anyURI($target || "/reports/data-inconsistencies.xq"))
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/vra-hra/vra-hra.xqm"))
