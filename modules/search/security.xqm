@@ -2,10 +2,10 @@ xquery version "3.1";
 
 module namespace security = "http://exist-db.org/mods/security";
 
-declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
-declare namespace svg="http://www.w3.org/2000/svg";
-declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace svg = "http://www.w3.org/2000/svg";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
@@ -266,8 +266,14 @@ declare function security:user-has-access($user as xs:string, $path as xs:anyURI
 :)
 declare function security:can-read-collection($collection as xs:string) as xs:boolean {
     if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        sm:has-access($collection, "r"))
+    then
+        let $current-user := security:get-user-credential-from-session()[1]
+        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
+        
+        return
+            if ($current-user = ($permissions/@owner, //sm:ace[@target = "USER"]/@who))
+            then true()
+            else false()
     else sm:has-access($collection, "r")
 };
 
@@ -279,8 +285,14 @@ declare function security:can-read-collection($collection as xs:string) as xs:bo
 :)
 declare function security:can-write-collection($collection as xs:string) as xs:boolean {
     if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        sm:has-access($collection, "w"))
+    then 
+        let $current-user := security:get-user-credential-from-session()[1]
+        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
+        
+        return
+            if ($current-user = $permissions/@owner or contains($permissions//sm:ace[@target = "USER" and @who = $current-user]/@mode, "w"))
+            then true()
+            else false()        
     else sm:has-access($collection, "w")
 };
 
@@ -988,32 +1000,29 @@ declare function security:copy-collection-acl-to-child-resources($collection as 
 : @return sequence with full paths to searchable collections
 :)
 declare function security:get-searchable-child-collections($collection-uri as xs:anyURI, $spare-user-home as xs:boolean) {
-    (: elevate rights for going into the collection structure :)
     let $subcollections := xmldb:get-child-collections($collection-uri)
     for $subcol in $subcollections[not($config:images-subcollection = .)]
     let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
     order by $subcol
     
     return
-        if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1]) then
-            ()
+        if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1])
+        then ()
         else
             (
-                system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                    if (xmldb:collection-available($fullpath))
-                    then
-                        let $readable := security:can-read-collection($fullpath)
-                        let $executeable := security:can-execute-collection($fullpath) 
-                        let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
-                        return
-                            (
-                                if (($readable and $executeable) or not(empty($readable-children))) then
-                                    xs:anyURI($fullpath)
-                                else
-                                    ()
-                            )
-                    else ()
-                )
+                if (xmldb:collection-available($fullpath))
+                then
+                    let $readable := security:can-read-collection($fullpath)
+                    let $executeable := security:can-execute-collection($fullpath) 
+                    let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
+                    return
+                        (
+                            if (($readable and $executeable) or not(empty($readable-children))) then
+                                xs:anyURI($fullpath)
+                            else
+                                ()
+                        )
+                else ()
             ,
                 security:get-searchable-child-collections($fullpath, $spare-user-home)
             )
