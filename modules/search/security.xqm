@@ -1001,31 +1001,32 @@ declare function security:copy-collection-acl-to-child-resources($collection as 
 :)
 declare function security:get-searchable-child-collections($collection-uri as xs:anyURI, $spare-user-home as xs:boolean) {
     let $subcollections := xmldb:get-child-collections($collection-uri)
-    for $subcol in $subcollections[not($config:images-subcollection = .)]
-    let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
-    order by $subcol
     
     return
-        if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1])
-        then ()
-        else
-            (
-                if (xmldb:collection-available($fullpath))
-                then
-                    let $readable := security:can-read-collection($fullpath)
-                    let $executeable := security:can-execute-collection($fullpath) 
-                    let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
-                    return
-                        (
-                            if (($readable and $executeable) or not(empty($readable-children))) then
-                                xs:anyURI($fullpath)
-                            else
-                                ()
-                        )
-                else ()
-            ,
-                security:get-searchable-child-collections($fullpath, $spare-user-home)
-            )
+        for $subcol in $subcollections[not($config:images-subcollection = .)]
+        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+        order by $subcol
+        
+        return
+            if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1])
+            then ()
+            else
+                (
+                    if (xmldb:collection-available($fullpath))
+                    then
+                        let $readable := security:can-read-collection($fullpath)
+                        let $executeable := security:can-execute-collection($fullpath) 
+                        let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
+                        return
+                            (
+                                if (($readable and $executeable) or not(empty($readable-children)))
+                                then $fullpath
+                                else ()
+                            )
+                    else ()
+                ,
+                    security:get-searchable-child-collections($fullpath, $spare-user-home)
+                )
 };
 
 declare function security:get-acl($collection-uri as xs:anyURI) {

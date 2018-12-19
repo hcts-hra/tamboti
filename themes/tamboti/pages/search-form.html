@@ -18,7 +18,9 @@
 	</style>
     <script src="theme/pages/search-form.js" type="text/javascript"/>
     <script src="../filters/filters.js" type="text/javascript"/>
-    <div id="privacy-policy"><a href="https://www.uni-heidelberg.de/privacypolicy_web.html" target="_blank">Privacy policy</a></div>
+    <div id="privacy-policy">
+        <a href="https://www.uni-heidelberg.de/privacypolicy_web.html" target="_blank">Privacy policy</a>
+    </div>
     <div id="query-tabs">
         <ul>
             <li>
@@ -47,7 +49,7 @@
             </li>
         </ul>
         <div id="simple-search-tab">
-            <form id="simple-search-form" class="search-form" action="?" name="simple-search" method="POST">
+            <form id="simple-search-form" class="search-form">
                 <table>
                     <tr>
                         <td class="label">Search for </td>
@@ -81,7 +83,7 @@
             </form>
         </div>
         <div id="advanced-search-form">
-            <form id="advanced-search" class="search-form" action="?" name="advanced-search" method="POST">
+            <form id="advanced-search" class="search-form">
                 <table>
                     <tr class="biblio:form-from-query"/>
                     <tr>
@@ -98,7 +100,7 @@
                                 <option value="Author">Author</option>
                                 <option value="Title">Title</option>
                                 <option value="Year">Year</option>
-                            </select>&#160;
+                            </select> 
                             <select name="sort-direction">
                                 <option value="descending" selected="selected">descending</option>
                                 <option value="ascending">ascending</option>
@@ -142,12 +144,18 @@
         </div>
         <div id="filters2">
             <div id="filters2-navigation">
-                <a id="title-words-filter" href="#">Title Words<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
-                <a id="names-filter" href="#">Names<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
-                <a id="dates-filter" href="#">Dates<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
-                <a id="subjects-filter" href="#">Subjects<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
-                <a id="languages-filter" href="#">Languages<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
-                <a id="genres-filter" href="#">Genres<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/></a>
+                <a id="title-words-filter" href="#">Title Words<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
+                <a id="names-filter" href="#">Names<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
+                <a id="dates-filter" href="#">Dates<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
+                <a id="subjects-filter" href="#">Subjects<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
+                <a id="languages-filter" href="#">Languages<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
+                <a id="genres-filter" href="#">Genres<img class="filters-loading-indicator" src="theme/images/ajax-loader-small.gif"/>
+                </a>
             </div>
             <table id="example" class="display"/>
         </div>
