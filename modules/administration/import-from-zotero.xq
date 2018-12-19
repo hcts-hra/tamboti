@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace functx="http://www.functx.com";
 import module namespace security="http://exist-db.org/mods/security" at "../search/security.xqm";

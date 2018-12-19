@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
     Handles the actual display of the search result. The pagination jQuery plugin in jquery-utils.js
@@ -11,7 +11,7 @@ xquery version "3.0";
     4) the data to display.
 :)
 
-import module namespace config = "http://exist-db.org/mods/config" at "../../../modules/config.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "config.xqm";
 
 import module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework" at "/db/apps/tamboti/frameworks/mods-hra/mods-hra.xqm";
 import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "/db/apps/tamboti/frameworks/vra-hra/vra-hra.xqm";

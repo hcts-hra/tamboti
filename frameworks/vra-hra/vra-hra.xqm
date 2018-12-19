@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework";
 
@@ -589,13 +589,12 @@ declare function vra-hra-framework:format-list-view($position as xs:string, $ent
 };
 
 declare function vra-hra-framework:get-vra-image-uuid($rel as element(vra:relation)) {
-    if(starts-with(data($rel/@relids), "i_")) then
-        data($rel/@relids)
+    if (starts-with(data($rel/@relids), "i_"))
+    then data($rel/@relids)
     else 
-        if(starts-with(data($rel/@refid), "i_")) then
-            data($rel/@refid)
-        else
-            ()
+        if (starts-with(data($rel/@refid), "i_"))
+        then data($rel/@refid)
+        else ()
 };
 
 declare function vra-hra-framework:detail-view-table($item as element(vra:vra), $currentPos as xs:int) {
@@ -635,20 +634,24 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 
-                    let $main-image-rel := 
+                    let $main-image-relations := 
                         (: if @pref then take this. If not then take the first one :)
-                        if ($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]) then
-                            $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
-                        else
-                            $item//vra:relationSet/vra:relation[@type="imageIs"][1]
-                    let $main-image-uuid := vra-hra-framework:get-vra-image-uuid($main-image-rel)
-                    let $main-image := security:get-resource($main-image-uuid)
+                        if ($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"])
+                        then $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
+                        else $item//vra:relationSet/vra:relation[@type="imageIs"][1]
+                        
                     return
-                        <p>
-                            {
-                                vra-hra-framework:create-thumbnail-span($main-image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
-                            }
-                        </p>
+                        if ($main-image-relations)
+                        then
+                            let $main-image-uuid := vra-hra-framework:get-vra-image-uuid($main-image-relations)
+                            
+                            return
+                                <p>
+                                    {
+                                        vra-hra-framework:create-thumbnail-span($main-image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)
+                                    }
+                                </p>
+                        else ()
                 }
                 </div>
             </td>            
@@ -690,75 +693,77 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
             else '/vra:image/@id'
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id eq $id])
-        return
-            <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
-                <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{$item/vra:work/@id}"/></td>
-                <td class="pagination-number" style="vertical-align:middle">{$currentPos}</td>
+    
+    return
+        <tr xmlns="http://www.w3.org/1999/xhtml" class="pagination-item list">
+            <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{$item/vra:work/@id}"/></td>
+            <td class="pagination-number" style="vertical-align:middle">{$currentPos}</td>
+            {
+            <td class="actions-cell" style="vertical-align:middle">
+                <a id="save_{$id}" href="#{$currentPos}" class="save">
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                </a>
+            </td>
+            }
+            <td class="list-type" style="vertical-align:middle"><img src="theme/images/image.png" title="Still Image"/></td>
+            { 
+                (: relids/refid workaround :)
+                let $relations := 
+                    if (exists($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]))
+                    then $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
+                    else $item//vra:relationSet/vra:relation[@type="imageIs"]
+    
+                return
+                    <td class="list-image">
+                        {
+                            if (exists($relations))
+                            then
+                                let $relids :=
+                                    for $rel in $relations
+                                        let $image-uuid := 
+                                            if (starts-with(data($rel/@refid), "i_"))
+                                            then data($rel/@refid)
+                                            else data($rel/@relids)
+                                            
+                                    return $image-uuid 
+                                (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
+                                For now, we disregard this; otherwise we have to check after retrieving the image records.:)
+                                let $relids := tokenize($relids, ' ')
+                
+                                (: Elevate rights because user is not able to search whole $config:mods-root   :)
+                                (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
+                                let $image := collection($config:mods-root)//vra:image[@id = $relids]
+                                let $image-uuid := $image/@id                                
+                                
+                                return vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW)
+                            else ()
+                        }
+                    </td>               
+            }
+            {
+            <td class="pagination-toggle" style="vertical-align:middle">
+                <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <a>
                 {
-                <td class="actions-cell" style="vertical-align:middle">
-                    <a id="save_{$id}" href="#{$currentPos}" class="save">
-                        <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
-                    </a>
-                </td>
-                }
-                <td class="list-type" style="vertical-align:middle"><img src="theme/images/image.png" title="Still Image"/></td>
-                { 
-                    (: relids/refid workaround :)
-                    let $relations := 
-                        if (exists($item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"])) then 
-                            $item//vra:relationSet/vra:relation[@type="imageIs" and @pref="true"]
-                        else
-                            $item//vra:relationSet/vra:relation[@type="imageIs"]
-                    let $relids :=
-                        for $rel in $relations
-                            let $image-uuid := 
-                                if(starts-with(data($rel/@refid), "i_")) then
-                                    data($rel/@refid)
-                                    else 
-                                        data($rel/@relids)
-                                return $image-uuid 
-                    (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
-                    For now, we disregard this; otherwise we have to check after retrieving the image records.:)
-                    let $relids := tokenize($relids, ' ')
-
-                    (: Elevate rights because user is not able to search whole $config:mods-root   :)
-                    (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
-                    let $image := 
-                        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                            collection($config:mods-root)//vra:image[@id = $relids]
-                        )
-                    let $image-uuid := $image/@id
+                    let $collection := util:collection-name($item)
+                    let $collection := functx:replace-first($collection, '/db/', '')
+                    let $clean := clean:cleanup($item)
                     return
-                        <td class="list-image">
-                            {
-                                vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW)
-                            }
-                        </td>               
+                        try {
+                            vra-hra-framework:format-list-view(string($currentPos), $clean, $collection)
+                        } catch * {
+                            util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
+                            <td class="error" colspan="2">
+                                {$config:error-message-before-link} 
+                                <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
+                                {$config:error-message-after-link}
+                            </td>
+                        }
                 }
-                {
-                <td class="pagination-toggle" style="vertical-align:middle">
-                    <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
-                    <a>
-                    {
-                        let $collection := util:collection-name($item)
-                        let $collection := functx:replace-first($collection, '/db/', '')
-                        let $clean := clean:cleanup($item)
-                        return
-                            try {
-                                vra-hra-framework:format-list-view(string($currentPos), $clean, $collection)
-                            } catch * {
-                                util:log("DEBUG", "Code: " || $err:code || "Descr.: " || $err:description || " Value: " || $err:value ),
-                                <td class="error" colspan="2">
-                                    {$config:error-message-before-link} 
-                                    <a href="{$config:error-message-href}{$item/*/@id/string()}.">{$config:error-message-link-text}</a>
-                                    {$config:error-message-after-link}
-                                </td>
-                            }
-                    }
-                    </a>
-                </td>
-                }
-            </tr>
+                </a>
+            </td>
+            }
+        </tr>
 };
 
 
@@ -768,20 +773,19 @@ declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:strin
             $height
         else
             $width
-    
+    let $images := (
+    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
+    ,
+    <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide(); $(this).show();" onerror="$(this).parent().find('.placeholder').hide();"/>
+)
+
     return
         if($zoom) then 
             <span style="width:{$width}px; min-height:{$width}px;">
-                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">
-                    <img src="{$vra-hra-framework:loading-image}" class="placeholder" />
-                    <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-                </a>
+                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">{$images}</a>
             </span>
         else
-            <span style="width:{$width}px; min-height:{$width}px;">
-                <img src="{$vra-hra-framework:loading-image}" class="placeholder"/>
-                <img src="/exist/apps/tamboti/iiif/{$image-uuid}/full/!{$width},{$height}/0/default.jpg" alt="image" class="relatedImage picture" style="max-width:{$width}px; max-height:{$height}px; display:none;" onload="$(this).parent().find('.placeholder').hide();$(this).show();"/>
-            </span>
+            <span style="width:{$width}px; min-height:{$width}px;">{$images}</span>
 
 };
 

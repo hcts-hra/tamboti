@@ -1,6 +1,7 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/";
+
 import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "../../frameworks/hra-rdf/hra-rdf-framework.xqm";
 import module namespace hra-anno-framework = "http://hra.uni-heidelberg.de/ns/hra-anno-framework" at "../../frameworks/hra-annotations/hra-annotations.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
@@ -160,7 +161,7 @@ declare function apis:options($method as xs:string, $scope as xs:string, $parame
 
 declare function apis:search($exist-prefix as xs:string) {
    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-      <forward url="/modules/search/search.xq">
+      <forward url="/modules/search/search.xql">
         <set-attribute name="exist:prefix" value="{$exist-prefix}"/>
       </forward>
    </dispatch>

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (: This functions reorders VRA elements in the required order. :)
 

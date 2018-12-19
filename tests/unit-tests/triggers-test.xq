@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 let $log := util:log("INFO", "Cleanup trigger tests")
 let $clear-test-collections := 

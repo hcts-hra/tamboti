@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace tamboti-common="http://exist-db.org/tamboti/common";
 

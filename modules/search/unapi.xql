@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 (:~
 : Implementation of unAPI v1.0 - http://unapi.info/

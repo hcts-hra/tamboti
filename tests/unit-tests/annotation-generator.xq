@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 declare namespace c="http://hra.uni-heidelberg.de/ns/tamboti/annotations/config";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 import module namespace config = "http://exist-db.org/mods/config" at "/db/apps/tamboti/modules/config.xqm";
@@ -30,7 +30,7 @@ let $header := response:set-header("Content-Disposition", "inline; filename=""in
 
 return 
     try {
-        system:as-user("admin", "Mdft2012", (
+        system:as-user("admin", $config:dba-credentials[2], (
             let $anno-map := hra-anno-framework:generate-anno($html, "anno-config-1", "anno-type-1")
 (:            let $log := util:log("INFO", "hier"):)
             return

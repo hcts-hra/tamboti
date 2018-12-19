@@ -1,7 +1,7 @@
 (:~
     Module to clean up a MODS record. Removes empty elements, empty attributes and elements without required subelements.
 :)
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace clean="http://exist-db.org/xquery/mods/cleanup";
 

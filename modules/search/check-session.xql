@@ -1,11 +1,9 @@
-xquery version "3.0";
+xquery version "3.1";
 
-import module namespace dateTime="http://exist-db.org/xquery/datetime"
-at "java:org.exist.xquery.modules.datetime.DateTimeModule";
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 
-declare namespace json="http://www.json.org";
-
-declare option exist:serialize "method=json media-type=text/javascript";
+declare option output:method "json";
+declare option output:media-type "application/json";
 
 
     let $created := session:get-last-accessed-time()
@@ -13,9 +11,8 @@ declare option exist:serialize "method=json media-type=text/javascript";
     return
         if ($elapsed gt xs:dayTimeDuration("PT8H")) then
             let $null := session:invalidate()
-            return
-                <json:value json:literal="true">{false()}</json:value>
+            return false()
         else
             let $remaining := util:system-dateTime() + xs:dayTimeDuration("PT8H")
-            return
-                <json:value>{dateTime:format-dateTime($remaining, "hh:mm")}</json:value>
+            return format-dateTime($remaining, "[h]:[m01]")
+            

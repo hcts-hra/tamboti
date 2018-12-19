@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework";
 
@@ -173,538 +173,538 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
 :)
 declare function mods-hra-framework:format-detail-view($position as xs:string, $entry as element(mods:mods), $collection-short as xs:string) as element(table) {
     let $ID := $entry/@ID/string()
-    (:let $log := util:log("DEBUG", ("##$ID): ", $ID)):)
     let $entry := mods-common:remove-parent-with-missing-required-node($entry)
     let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
     let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
     let $result :=
-    <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
-    {
-    <tr>
-        <td class="collection-label">Record Location</td>
-        <td>
-            <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
-            <div class="collection" >
-                {replace(replace(xmldb:decode($collection-short), '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')}
-            </div>
-         </td>
-    </tr>
-    ,
-    <tr>
-        <td class="collection-label">Record Format</td>
-        <td>
-            <div id="record-format" style="display:none;">MODS</div>
-            <div>MODS</div>
-        </td>
-    </tr>
-    ,
-    (: names :)
-    if ($entry/mods:name)
-    then mods-common:names-full($entry, $global-transliteration, $global-language)
-    else ()
-    ,
-    
-    (: titles :)
-    for $titleInfo in $entry/mods:titleInfo[not(@type eq 'abbreviated')]
-    let $titleInfo := mods-common:title-full($titleInfo) 
-    return $titleInfo
-    ,
-    
-    (: conferences :)
-    mods-common:simple-row(mods-common:get-conference-detail-view($entry), 'Conference')
-    ,
-
-    (: place :)
-    for $place in $entry/mods:originInfo[1]/mods:place
-        return mods-common:simple-row(mods-common:get-place($place), 'Place')
-    ,
-    
-    (: publisher :)
-        (: If a transliterated publisher name exists, this probably means that several publisher names are simply different script forms of the same publisher name. Place the transliterated name first, then the original script name. :)
-        if ($entry/mods:originInfo[1]/mods:publisher[@transliteration])
-        then
-            mods-common:simple-row(
-                string-join(
-                    for $publisher in $entry/mods:originInfo[1]/mods:publisher
-                    let $order := 
-                        if ($publisher[@transliteration]) 
-                        then 0 
-                        else 1
-                    order by $order
-                    return mods-common:get-publisher($publisher)
-                , ' ')
+        <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
+        {
+            <tr>
+                <td class="collection-label">Record Location</td>
+                <td>
+                    <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
+                    <div class="collection" >
+                        {replace(replace(xmldb:decode($collection-short), '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')}
+                    </div>
+                 </td>
+            </tr>
             ,
-            'Publisher')
-        else
-        (: Otherwise we have a number of different publishers.:)
-            for $publisher in $entry/mods:originInfo[1]/mods:publisher
-            return mods-common:simple-row(mods-common:get-publisher($publisher), 'Publisher')
-    ,
-    
-    (: dates :)
-    (:If a related item has a date, use it instead of a date in originInfo:)   
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateCreated) 
-    then ()
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateCreated
-            return mods-common:simple-row($date, 
-            concat('Date Created',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:copyrightDate) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:copyrightDate
-            return mods-common:simple-row($date, 
-            concat('Copyright Date',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateCaptured) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateCaptured
-            return mods-common:simple-row($date, 
-            concat('Date Captured',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )            
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateValid) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateValid
-            return mods-common:simple-row($date, 
-            concat('Date Valid',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateIssued) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateIssued
-            return mods-common:simple-row($date, 
-            concat(
-                'Date Issued', 
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateModified) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateModified
-            return mods-common:simple-row($date, 
-            concat('Date Modified',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )
-    ,
-    if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateOther) 
-    then () 
-    else 
-        for $date in $entry/mods:originInfo[1]/mods:dateOther
-            return mods-common:simple-row($date, 
-            concat('Other Date',
-                concat(
-                if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
-                if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
-                )
-                )
-            )            
-    ,
-    (: edition :)
-    if ($entry/mods:originInfo[1]/mods:edition) 
-    then mods-common:simple-row($entry/mods:originInfo[1]/mods:edition[1], 'Edition') 
-    else ()
-    ,
-    (: extent :)
-    let $extent := $entry/mods:physicalDescription/mods:extent
-    return
-        if ($extent) 
-        then 
-            for $extent in $extent
-                return
+            <tr>
+                <td class="collection-label">Record Format</td>
+                <td>
+                    <div id="record-format" style="display:none;">MODS</div>
+                    <div>MODS</div>
+                </td>
+            </tr>
+            ,
+            (: names :)
+            if ($entry/mods:name)
+            then mods-common:names-full($entry, $global-transliteration, $global-language)
+            else ()
+            ,
+            
+            (: titles :)
+            for $titleInfo in $entry/mods:titleInfo[not(@type eq 'abbreviated')]
+            let $titleInfo := mods-common:title-full($titleInfo) 
+            return $titleInfo
+            ,
+            
+            (: conferences :)
+            mods-common:simple-row(mods-common:get-conference-detail-view($entry), 'Conference')
+            ,
+        
+            (: place :)
+            for $place in $entry/mods:originInfo[1]/mods:place
+                return mods-common:simple-row(mods-common:get-place($place), 'Place')
+            ,
+            
+            (: publisher :)
+                (: If a transliterated publisher name exists, this probably means that several publisher names are simply different script forms of the same publisher name. Place the transliterated name first, then the original script name. :)
+                if ($entry/mods:originInfo[1]/mods:publisher[@transliteration])
+                then
                     mods-common:simple-row(
-                    mods-common:get-extent($extent), 
-                    concat('Extent', 
-                        if ($extent/@unit) 
-                        then concat(' (', functx:capitalize-first($extent/@unit), ')') 
-                        else ()
-                        )
-                    )    
-        else ()
-    ,
-    (: URL :)
-    for $url in $entry/mods:location/mods:url[./text()]
-    let $displayLabel := $url/@displayLabel/string()
-    let $dateLastAccessed := $url/@displayLabel/string()
-    return
-        <tr xmlns="http://www.w3.org/1999/xhtml">
-            <td class="label"> 
-            {
-                concat(
-                    if ($url/@displayLabel/string())
-                    then $url/@displayLabel/string()
-                    else 'URL'
-                ,
-                    if ($url/@dateLastAccessed/string())
-                    then concat(' (Last Accessed: ', $url/@dateLastAccessed/string(), ')')
-                    else ''
-                )
-            }
-            </td>
-            <td class="record">
-            {mods-common:format-url($url, $collection-short)}</td>
-        </tr>
-    ,
-    (: location :)
-    let $locations := $entry/mods:location[(* except mods:url)]
-    for $location in $locations
-        return
-            <tr xmlns="http://www.w3.org/1999/xhtml">
-                <td class="label">Location</td>
-                <td class="record">
-                {mods-common:format-location($location, $collection-short)}</td>
-            </tr>
-    ,
-    (: relatedItem :)
-    mods-common:get-related-items($entry, 'detail', $global-language, $collection-short)
-    ,
-    (: subject :)
-    (: We assume that there are no subjects with an empty topic element. If it is empty, we skip processing.:)
-    if (normalize-space(string($entry/mods:subject[1])))
-    then mods-common:format-subjects($entry, $global-transliteration, $global-language)    
-    else ()
-    , 
-    (: table of contents :)
-    for $table-of-contents in $entry/mods:tableOfContents
-    return
-        if (string($table-of-contents)) 
-        then        
-            <tr xmlns="http://www.w3.org/1999/xhtml">
-                <td class="label"> 
-                {
-                    if ($table-of-contents/@displayLabel)
-                    then $table-of-contents/@displayLabel
-                    else 'Table of Contents'
-                }
-                </td>
-                <td class="record">
-                {
-                (:Possibly, both text and link could be displayed.:)
-                if ($table-of-contents/text())
-                then $table-of-contents/text()
+                        string-join(
+                            for $publisher in $entry/mods:originInfo[1]/mods:publisher
+                            let $order := 
+                                if ($publisher[@transliteration]) 
+                                then 0 
+                                else 1
+                            order by $order
+                            return mods-common:get-publisher($publisher)
+                        , ' ')
+                    ,
+                    'Publisher')
                 else
-                    if (string($table-of-contents/@xlink:href))
-                    then
-                        let $url := $table-of-contents/@xlink:href
-                        let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;'))
+                (: Otherwise we have a number of different publishers.:)
+                    for $publisher in $entry/mods:originInfo[1]/mods:publisher
+                    return mods-common:simple-row(mods-common:get-publisher($publisher), 'Publisher')
+            ,
+            
+            (: dates :)
+            (:If a related item has a date, use it instead of a date in originInfo:)   
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateCreated) 
+            then ()
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateCreated
+                    return mods-common:simple-row($date, 
+                    concat('Date Created',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:copyrightDate) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:copyrightDate
+                    return mods-common:simple-row($date, 
+                    concat('Copyright Date',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateCaptured) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateCaptured
+                    return mods-common:simple-row($date, 
+                    concat('Date Captured',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )            
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateValid) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateValid
+                    return mods-common:simple-row($date, 
+                    concat('Date Valid',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateIssued) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateIssued
+                    return mods-common:simple-row($date, 
+                    concat(
+                        'Date Issued', 
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateModified) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateModified
+                    return mods-common:simple-row($date, 
+                    concat('Date Modified',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )
+            ,
+            if ($entry/mods:relatedItem[@type eq 'host']/mods:originInfo[1]/mods:dateOther) 
+            then () 
+            else 
+                for $date in $entry/mods:originInfo[1]/mods:dateOther
+                    return mods-common:simple-row($date, 
+                    concat('Other Date',
+                        concat(
+                        if ($date/@point) then concat(' (', functx:capitalize-first($date/@point), ')') else (),
+                        if ($date/@qualifier) then concat(' (', functx:capitalize-first($date/@qualifier), ')') else ()
+                        )
+                        )
+                    )            
+            ,
+            (: edition :)
+            if ($entry/mods:originInfo[1]/mods:edition) 
+            then mods-common:simple-row($entry/mods:originInfo[1]/mods:edition[1], 'Edition') 
+            else ()
+            ,
+            (: extent :)
+            let $extent := $entry/mods:physicalDescription/mods:extent
+            return
+                if ($extent) 
+                then 
+                    for $extent in $extent
                         return
-                            <a href="{string($url)}" target="_blank">{$url-for-display}</a>
-                    else ()
-                }
-                </td>
-            </tr>
-        else ()
-        ,
-    
-    (: find records that refer to the current record if this record is a periodical or an edited volume or a similar kind of publication. :)
-    (:NB: This takes time!:)
-    (:NB: allowing empty genre to triger this: remove when WSC has genre.:)
-    if ($entry/mods:genre = ('series', 'periodical', 'editedVolume', 'newspaper', 'journal', 'festschrift', 'encyclopedia', 'conference publication', 'canonical scripture') or empty($entry/mods:genre)) 
-    then
-        (:The $ID is passed to the query; when the query is constructed, the hash is appended (application.xql, $biblio:FIELDS). 
-        This is necessary since a hash in the URL is interpreted as a fragment identifier and not passed as a param.:)
-        let $linked-ID := concat('#',$ID)
-        let $linked-records := collection($config:mods-root-minus-temp)//mods:mods[mods:relatedItem[@type = ('host', 'series', 'otherFormat')]/@xlink:href eq $linked-ID]
-        let $linked-records-count := count($linked-records)
-        return
-        if ($linked-records-count eq 0)
-        then ()
-        else 
-            if ($linked-records-count gt 10)
-            then
-                let $advanced-search-data :=
-                    <data>
-                        <action />
-                        <search-field>XLink</search-field>
-                        <value>{$ID}</value>
-                        <query-tabs>advanced-search-form</query-tabs>
-                    </data>
-                return            
-                    <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
-                        <td class="url label relatedItem-label"> 
-                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
+                            mods-common:simple-row(
+                            mods-common:get-extent($extent), 
+                            concat('Extent', 
+                                if ($extent/@unit) 
+                                then concat(' (', functx:capitalize-first($extent/@unit), ')') 
+                                else ()
+                                )
+                            )    
+                else ()
+            ,
+            (: URL :)
+            for $url in $entry/mods:location/mods:url[./text()]
+            let $displayLabel := $url/@displayLabel/string()
+            let $dateLastAccessed := $url/@displayLabel/string()
+            return
+                <tr xmlns="http://www.w3.org/1999/xhtml">
+                    <td class="label"> 
+                    {
+                        concat(
+                            if ($url/@displayLabel/string())
+                            then $url/@displayLabel/string()
+                            else 'URL'
+                        ,
+                            if ($url/@dateLastAccessed/string())
+                            then concat(' (Last Accessed: ', $url/@dateLastAccessed/string(), ')')
+                            else ''
+                        )
+                    }
+                    </td>
+                    <td class="record">
+                    {mods-common:format-url($url, $collection-short)}</td>
+                </tr>
+            ,
+            (: location :)
+            let $locations := $entry/mods:location[(* except mods:url)]
+            for $location in $locations
+                return
+                    <tr xmlns="http://www.w3.org/1999/xhtml">
+                        <td class="label">Location</td>
+                        <td class="record">
+                        {mods-common:format-location($location, $collection-short)}</td>
+                    </tr>
+            ,
+            (: relatedItem :)
+            mods-common:get-related-items($entry, 'detail', $global-language, $collection-short)
+            ,
+            (: subject :)
+            (: We assume that there are no subjects with an empty topic element. If it is empty, we skip processing.:)
+            if (normalize-space(string($entry/mods:subject[1])))
+            then mods-common:format-subjects($entry, $global-transliteration, $global-language)    
+            else ()
+            , 
+            (: table of contents :)
+            for $table-of-contents in $entry/mods:tableOfContents
+            return
+                if (string($table-of-contents)) 
+                then        
+                    <tr xmlns="http://www.w3.org/1999/xhtml">
+                        <td class="label"> 
+                        {
+                            if ($table-of-contents/@displayLabel)
+                            then $table-of-contents/@displayLabel
+                            else 'Table of Contents'
+                        }
                         </td>
-                        <td class="relatedItem-record">
-                            <span class="relatedItem-span">{$linked-records-count} records</span>
+                        <td class="record">
+                        {
+                        (:Possibly, both text and link could be displayed.:)
+                        if ($table-of-contents/text())
+                        then $table-of-contents/text()
+                        else
+                            if (string($table-of-contents/@xlink:href))
+                            then
+                                let $url := $table-of-contents/@xlink:href
+                                let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;'))
+                                return
+                                    <a href="{string($url)}" target="_blank">{$url-for-display}</a>
+                            else ()
+                        }
                         </td>
                     </tr>
-            else
-                for $linked-record in $linked-records
-                let $link-ID := $linked-record/@ID/string()
-                let $link-contents := 
-                    if (string-join($linked-record/mods:titleInfo/mods:title, '')) then 
-                        mods-hra-framework:format-list-view('', $linked-record, '') 
-                    else 
-                        ()
-                let $advanced-search-data :=
-                    <data>
-                        <search-field>XLink</search-field>
-                        <value>{$link-ID}</value>
-                        <query-tabs>advanced-search-form</query-tabs>
-                    </data>                    
-                return
-                <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
-                    <td class="url label relatedItem-label">
-                        <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
-                    </td>
-                    <td class="relatedItem-record">
-                        <span class="relatedItem-span">{$link-contents}</span>
-                    </td>
-                </tr>
-        else ()
-    
-        ,
-    (: typeOfResource :)
-    mods-common:simple-row(string($entry/mods:typeOfResource[1]), 'Type of Resource')
-    ,
-    
-    (: internetMediaType :)
-    let $internetMediaTypes := $entry/mods:physicalDescription/mods:internetMediaType
-    return
-        for $internetMediaType in $internetMediaTypes
-        return
-            mods-common:simple-row(
-            (
-                let $label := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/internet-media-type.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $internetMediaType]/mods-editor:label
-                return
-                    if ($label) 
-                    then $label
-                    else $internetMediaType)
-            , 'Internet Media Type')
-    ,
-    
-    (: genre :)
-    for $genre in ($entry/mods:genre)
-    let $authority := string($genre/@authority)
-    return   
-        mods-common:simple-row(
-            if ($authority eq 'local')
-                then doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-local.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
-                else
-                    if ($authority eq 'marcgt')
-                    then doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-marcgt.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
-                    else string($genre)
-                , 
-                concat(
-                    'Genre'
-                    , 
-                    if ($authority)
-                    then
-                        if ($authority eq 'marcgt')
-                        then ' (MARC Genre Terms)'
-                        else concat(' (', $authority, ')')
-                    else ()            
-            )
-    )
-    ,
-    
-    (: abstract :)
-    for $abstract in ($entry/mods:abstract)
-        let $abstract := concat('&lt;span>', $abstract, '&lt;/span>')
-        let $abstract := util:parse-html($abstract)
-        let $abstract := $abstract//*:span
-            return
-                mods-common:simple-row($abstract, 'Abstract')
-    ,
-    
-    (: note :)
-    for $note in $entry/mods:note
-        let $displayLabel := string($note/@displayLabel)
-        let $type := string($note/@type)
-        let $text := concat('&lt;span>', $note, '&lt;/span>')
-        let $text := util:parse-html($text)    
-        let $text := $text//*:span
-        for $text in $text
-            return        
-                mods-common:simple-row($text
-                , 
-                concat('Note', 
-                    concat(
-                    if ($displayLabel)
-                    then concat(' (', $displayLabel, ')')            
-                    else ()
-                    ,
-                    if ($type)
-                    then concat(' (', $type, ')')            
-                    else ()
-                    )
-                    )
-                )
-    ,
-
-    (: language of resource :)
-    let $distinct-language-labels := distinct-values(
-        for $language in $entry/mods:language
-        for $languageTerm in $language/mods:languageTerm
-        return mods-common:get-language-label($languageTerm/text())
-        )
-    let $distinct-language-labels-count := count($distinct-language-labels)
-        return
-            if ($distinct-language-labels-count gt 0)
-            then
-                mods-common:simple-row(
-                    mods-common:serialize-list($distinct-language-labels, $distinct-language-labels-count)
-                ,
-                if ($distinct-language-labels-count gt 1) 
-                then 'Languages of Resource' 
-                else 'Language of Resource'
-                    )
-            else ()
-    ,
-
-    (: script of resource :)
-    let $distinct-script-labels := distinct-values(
-        for $language in $entry/mods:language
-        for $scriptTerm in $language/mods:scriptTerm
-        return mods-common:get-script-label($scriptTerm/text())
-        )
-    let $distinct-script-labels-count := count($distinct-script-labels)
-        return
-            if ($distinct-script-labels-count gt 0)
-            then
-                mods-common:simple-row(
-                    mods-common:serialize-list($distinct-script-labels, $distinct-script-labels-count)
-                ,
-                if ($distinct-script-labels-count gt 1) 
-                then 'Scripts of Resource' 
-                else 'Script of Resource'
-                    )
-            else ()
-    ,
-    (: language of cataloging :)
-    (:Since there can only be one (default) language of cataloging, the assumption must be that multiple language terms refer to the same language, so just take the first one. 
-    Language and script of resource can be multiple.:) 
-    let $language-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm[1]
-    let $language-label := 
-        if ($language-label)
-        then mods-common:get-language-label($language-label)
-        else ()
-    return
-        if ($language-label)
-        then mods-common:simple-row($language-label, 'Language of Cataloging')
-        else ()
-    ,
-    
-    (: script of cataloging :)
-    (:Since there can only be one (default) script of cataloging, the assumption must be that multiple script terms refer to the same script, so just take the first one. 
-    Language and script of resource can be multiple.:)
-    let $script-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm[1]
-    let $script-label := 
-        if ($script-label)
-        then mods-common:get-script-label($script-label)
-        else ()
-    return
-        if ($script-label)
-        then mods-common:simple-row($script-label, 'Script of Cataloging')
-        else ()
-    ,
-
-    (: identifier :)
-    let $identifiers := $entry/mods:identifier
-    for $identifier in $identifiers
-    let $type := $identifier/@type/string()
-    let $type := doc(concat($config:db-path-to-mods-editor-home, "/code-tables/identifier-type.xml"))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
-    return 
-        mods-common:simple-row
-        (
-            if ($identifier/@type = 'doi')
-            then <a href="http://dx.doi.org/{$identifier/text()}" target="_blank">{$identifier/text()}</a>
-            else $identifier/text(), 
-            concat
-            (
-                'Identifier',
-                if (string($type)) 
-                then concat(
-                    ' (', $type, ')'
-                )
-                else ' (unknown type)'
-                , 
-                if ($type eq 'local')
-                then
-                    let $local-identifiers := collection($config:mods-root-minus-temp)//mods:mods[.//mods:identifier eq $identifier]/@ID/string()
-                    let $local-identifiers := 
-                        (for $local-identifier in $local-identifiers where $local-identifier ne $ID return $local-identifier)
-                    return
-                    (:warn about duplications of local ids:)
-                        if (count($local-identifiers) gt 0)
-                        then concat(' NB: This identifier has already been used on record(s) with the following IDs: ', string-join($local-identifiers, ', '))
-                        else ()
                 else ()
+                ,
+            
+            (: find records that refer to the current record if this record is a periodical or an edited volume or a similar kind of publication. :)
+            (:NB: This takes time!:)
+            (:NB: allowing empty genre to triger this: remove when WSC has genre.:)
+            if ($entry/mods:genre = ('series', 'periodical', 'editedVolume', 'newspaper', 'journal', 'festschrift', 'encyclopedia', 'conference publication', 'canonical scripture') or empty($entry/mods:genre)) 
+            then
+                (:The $ID is passed to the query; when the query is constructed, the hash is appended (application.xql, $biblio:FIELDS). 
+                This is necessary since a hash in the URL is interpreted as a fragment identifier and not passed as a param.:)
+                let $linked-ID := concat('#',$ID)
+                let $linked-records := collection($config:mods-root-minus-temp)//mods:mods[mods:relatedItem[@type = ('host', 'series', 'otherFormat')]/@xlink:href eq $linked-ID]
+                let $linked-records-count := count($linked-records)
+                return
+                if ($linked-records-count eq 0)
+                then ()
+                else 
+                    if ($linked-records-count gt 10)
+                    then
+                        let $advanced-search-data :=
+                            <data>
+                                <action />
+                                <search-field>XLink</search-field>
+                                <value>{$ID}</value>
+                                <query-tabs>advanced-search-form</query-tabs>
+                            </data>
+                        return            
+                            <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
+                                <td class="url label relatedItem-label"> 
+                                    <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
+                                </td>
+                                <td class="relatedItem-record">
+                                    <span class="relatedItem-span">{$linked-records-count} records</span>
+                                </td>
+                            </tr>
+                    else
+                        for $linked-record in $linked-records
+                        let $link-ID := $linked-record/@ID/string()
+                        let $link-contents := 
+                            if (string-join($linked-record/mods:titleInfo/mods:title, '')) then 
+                                mods-hra-framework:format-list-view('', $linked-record, '') 
+                            else 
+                                ()
+                        let $advanced-search-data :=
+                            <data>
+                                <search-field>XLink</search-field>
+                                <value>{$link-ID}</value>
+                                <query-tabs>advanced-search-form</query-tabs>
+                            </data>                    
+                        return
+                        <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
+                            <td class="url label relatedItem-label">
+                                <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">&lt;&lt; Catalogued Contents</a>
+                            </td>
+                            <td class="relatedItem-record">
+                                <span class="relatedItem-span">{$link-contents}</span>
+                            </td>
+                        </tr>
+                else ()
+            
+                ,
+            (: typeOfResource :)
+            mods-common:simple-row(string($entry/mods:typeOfResource[1]), 'Type of Resource')
+            ,
+            
+            (: internetMediaType :)
+            let $internetMediaTypes := $entry/mods:physicalDescription/mods:internetMediaType
+            return
+                for $internetMediaType in $internetMediaTypes
+                return
+                    mods-common:simple-row(
+                    (
+                        let $label := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/internet-media-type.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $internetMediaType]/mods-editor:label
+                        return
+                            if ($label) 
+                            then $label
+                            else $internetMediaType)
+                    , 'Internet Media Type')
+            ,
+            
+            (: genre :)
+            for $genre in ($entry/mods:genre)
+            let $authority := string($genre/@authority)
+            return   
+                mods-common:simple-row(
+                    if ($authority eq 'local')
+                        then doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-local.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                        else
+                            if ($authority eq 'marcgt')
+                            then doc(concat($config:db-path-to-mods-editor-home, '/code-tables/genre-marcgt.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $genre]/mods-editor:label
+                            else string($genre)
+                        , 
+                        concat(
+                            'Genre'
+                            , 
+                            if ($authority)
+                            then
+                                if ($authority eq 'marcgt')
+                                then ' (MARC Genre Terms)'
+                                else concat(' (', $authority, ')')
+                            else ()            
+                    )
             )
-        )
-    ,
-    
-    (: classification :)
-    for $item in $entry/mods:classification
-    let $authority := 
-        if (string($item/@authority)) 
-        then concat(' (', (string($item/@authority)), ')') 
-        else ()
-    return mods-common:simple-row($item, concat('Classification', $authority))
-    ,
-    
-    (: last modification date :)
-    let $last-modified := $entry/mods:extension/ext:modified/ext:when
-    return 
-        if ($last-modified) then
-            mods-common:simple-row(functx:substring-before-last-match($last-modified[count(.)], 'T'), 'Record Last Modified')
-        else ()
-    ,
-    let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
-    let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
-    let $stable-link-node :=
-            <tr>
-                <td class="collection-label">Stable link to this record</td>
-                <td>
-                    <a href="{$stable-link-href}" target="_blank">{$server || $stable-link-href}</a>
-                </td>
-            </tr>
-    return $stable-link-node
-    ,
-    if (contains($collection-short, 'Priya Paul Collection')) 
-    then 
-    let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/modules/search/index.html', '?search-field=ID&amp;value=', $ID, '&amp;query-tabs=advanced-search-form')
-    return
-    mods-common:simple-row(
-        <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Priya Paul Collection') 
-    else ()
-    }
-    </table>
+            ,
+            
+            (: abstract :)
+            for $abstract in ($entry/mods:abstract)
+                let $abstract := concat('&lt;span>', $abstract, '&lt;/span>')
+                let $abstract := util:parse-html($abstract)
+                let $abstract := $abstract//*:span
+                    return
+                        mods-common:simple-row($abstract, 'Abstract')
+            ,
+            
+            (: note :)
+            for $note in $entry/mods:note
+                let $displayLabel := string($note/@displayLabel)
+                let $type := string($note/@type)
+                let $text := concat('&lt;span>', $note, '&lt;/span>')
+                let $text := util:parse-html($text)    
+                let $text := $text//*:span
+                for $text in $text
+                    return        
+                        mods-common:simple-row($text
+                        , 
+                        concat('Note', 
+                            concat(
+                            if ($displayLabel)
+                            then concat(' (', $displayLabel, ')')            
+                            else ()
+                            ,
+                            if ($type)
+                            then concat(' (', $type, ')')            
+                            else ()
+                            )
+                            )
+                        )
+            ,
+        
+            (: language of resource :)
+            let $distinct-language-labels := distinct-values(
+                for $language in $entry/mods:language
+                for $languageTerm in $language/mods:languageTerm
+                return mods-common:get-language-label($languageTerm/text())
+                )
+            let $distinct-language-labels-count := count($distinct-language-labels)
+                return
+                    if ($distinct-language-labels-count gt 0)
+                    then
+                        mods-common:simple-row(
+                            mods-common:serialize-list($distinct-language-labels, $distinct-language-labels-count)
+                        ,
+                        if ($distinct-language-labels-count gt 1) 
+                        then 'Languages of Resource' 
+                        else 'Language of Resource'
+                            )
+                    else ()
+            ,
+        
+            (: script of resource :)
+            let $distinct-script-labels := distinct-values(
+                for $language in $entry/mods:language
+                for $scriptTerm in $language/mods:scriptTerm
+                return mods-common:get-script-label($scriptTerm/text())
+                )
+            let $distinct-script-labels-count := count($distinct-script-labels)
+                return
+                    if ($distinct-script-labels-count gt 0)
+                    then
+                        mods-common:simple-row(
+                            mods-common:serialize-list($distinct-script-labels, $distinct-script-labels-count)
+                        ,
+                        if ($distinct-script-labels-count gt 1) 
+                        then 'Scripts of Resource' 
+                        else 'Script of Resource'
+                            )
+                    else ()
+            ,
+            (: language of cataloging :)
+            (:Since there can only be one (default) language of cataloging, the assumption must be that multiple language terms refer to the same language, so just take the first one. 
+            Language and script of resource can be multiple.:) 
+            let $language-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:languageTerm[1]
+            let $language-label := 
+                if ($language-label)
+                then mods-common:get-language-label($language-label)
+                else ()
+            return
+                if ($language-label)
+                then mods-common:simple-row($language-label, 'Language of Cataloging')
+                else ()
+            ,
+            
+            (: script of cataloging :)
+            (:Since there can only be one (default) script of cataloging, the assumption must be that multiple script terms refer to the same script, so just take the first one. 
+            Language and script of resource can be multiple.:)
+            let $script-label := $entry/mods:recordInfo/mods:languageOfCataloging/mods:scriptTerm[1]
+            let $script-label := 
+                if ($script-label)
+                then mods-common:get-script-label($script-label)
+                else ()
+            return
+                if ($script-label)
+                then mods-common:simple-row($script-label, 'Script of Cataloging')
+                else ()
+            ,
+        
+            (: identifier :)
+            let $identifiers := $entry/mods:identifier
+            for $identifier in $identifiers
+            let $type := $identifier/@type/string()
+            let $type := doc(concat($config:db-path-to-mods-editor-home, "/code-tables/identifier-type.xml"))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
+            return 
+                mods-common:simple-row
+                (
+                    if ($identifier/@type = 'doi')
+                    then <a href="http://dx.doi.org/{$identifier/text()}" target="_blank">{$identifier/text()}</a>
+                    else $identifier/text(), 
+                    concat
+                    (
+                        'Identifier',
+                        if (string($type)) 
+                        then concat(
+                            ' (', $type, ')'
+                        )
+                        else ' (unknown type)'
+                        , 
+                        if ($type eq 'local')
+                        then
+                            let $local-identifiers := collection($config:mods-root-minus-temp)//mods:mods[.//mods:identifier eq $identifier]/@ID/string()
+                            let $local-identifiers := 
+                                (for $local-identifier in $local-identifiers where $local-identifier ne $ID return $local-identifier)
+                            return
+                            (:warn about duplications of local ids:)
+                                if (count($local-identifiers) gt 0)
+                                then concat(' NB: This identifier has already been used on record(s) with the following IDs: ', string-join($local-identifiers, ', '))
+                                else ()
+                        else ()
+                    )
+                )
+            ,
+            
+            (: classification :)
+            for $item in $entry/mods:classification
+            let $authority := 
+                if (string($item/@authority)) 
+                then concat(' (', (string($item/@authority)), ')') 
+                else ()
+            return mods-common:simple-row($item, concat('Classification', $authority))
+            ,
+            
+            (: last modification date :)
+            let $last-modified := $entry/mods:extension/ext:modified/ext:when
+            
+            return 
+                if ($last-modified)
+                then mods-common:simple-row(substring-before($last-modified, 'T'), 'Record Last Modified')
+                else ()
+            ,
+            let $server := request:get-scheme() || "://" || request:get-server-name() || ":" || request:get-server-port()
+            let $stable-link-href := '/exist/apps/tamboti/modules/search/index.html' || '?search-field=ID&amp;value=' || $ID
+            let $stable-link-node :=
+                    <tr>
+                        <td class="collection-label">Stable link to this record</td>
+                        <td>
+                            <a href="{$stable-link-href}" target="_blank">{$server || $stable-link-href}</a>
+                        </td>
+                    </tr>
+            return $stable-link-node
+            ,
+            if (contains($collection-short, 'Priya Paul Collection')) 
+            then 
+            let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/modules/search/index.html', '?search-field=ID&amp;value=', $ID, '&amp;query-tabs=advanced-search-form')
+            return
+            mods-common:simple-row(
+                <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Priya Paul Collection') 
+            else ()
+        }
+        </table>
     
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
     let $regex := session:get-attribute('regex')
@@ -738,7 +738,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
             { mods-hra-framework:get-icon($mods-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $item, $currentPos)}
             </td>
             <td style="vertical-align:top;">
-               <div id="image-cover-box" > 
+               <div id="image-cover-box">
                 {
                    let $image-return :=
                             for $entry in $results
@@ -755,7 +755,9 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                                        </p>
                                 else()
                         return $print-image
-                   let $elements := for $element in  $item/node()
+                   let $elements :=
+                        for $element in  $item/node()
+                        
                         return  $element
                       
                   return $image-return
@@ -770,15 +772,17 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                     let $collection := util:collection-name($item)
                     let $collection := functx:replace-first($collection, '/db/', '')
                     let $clean := clean:cleanup($item)
+                    
                     return
-                     try {
+                        try {
                             mods-hra-framework:format-detail-view(string($currentPos), $clean, $collection)
                         } catch * {
-                        <td class="error" colspan="2">
-                        {$config:error-message-before-link} 
-                        <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
-                        {$config:error-message-after-link}
-                        </td>
+                            <td class="error" colspan="2">
+                                {$config:error-message-before-link} 
+                                <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
+                                {$config:error-message-after-link}
+                                <p>Caught error {$err:code}: {$err:description}. {("(line ", $err:line-number, ", column ", $err:column-number, ")")}</p>
+                            </td>
                         }
                 
                         (: What is $currentPos used for? :)
@@ -796,7 +800,6 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
 :)
 declare function mods-hra-framework:format-list-view($position as xs:string, $entry as element(mods:mods), $collection-short as xs:string) as element(span) {
     let $entry := mods-common:remove-parent-with-missing-required-node($entry)
-    (:let $log := util:log("DEBUG", ("##$ID): ", $entry/@ID/string())):)
     let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
     let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
     return
@@ -984,10 +987,11 @@ declare function mods-hra-framework:remove-resource($document-uri as xs:anyURI){
         try {
             let $result := 
                 (: ToDo: if the resource is linked: handle it:)
-                if (count($xlink-recs/..) = 0) then
-                    xmldb:remove(util:collection-name($doc), util:document-name($doc))
+                if (count($xlink-recs/..) = 0)
+                then xmldb:remove(util:collection-name($doc), util:document-name($doc))
                 else
                     let $log := util:log("DEBUG", "Prevented removing resource " || $resource-id || ": it has " || count($xlink-recs/..) || " xlinks")
+                    
                     return 
                         false()
             return

@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace config = "http://exist-db.org/mods/config" at "/apps/tamboti/modules/config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "/apps/tamboti/modules/search/security.xqm";

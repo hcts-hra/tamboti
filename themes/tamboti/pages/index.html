@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms">
     <head>
         <title>Tamboti Metadata Framework</title>
@@ -13,6 +12,7 @@
         <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.dataTables-1.8.1.min.js">/**/</script>
         <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery.cookie.js">/**/</script>
         <script type="text/javascript" src="resources/scripts/jquery-utils.js">/**/</script>
+        <script src="https://cdn.jsdelivr.net/gh/gwendall/way.js/dist/way.js">/**/</script>
         <script type="text/javascript" src="../session.js.xql">/**/</script>
         <script type="text/javascript" src="../apis/apis.js">/**/</script>
         <script type="text/javascript" src="resources/scripts/query.js">/**/</script>
@@ -190,6 +190,9 @@
 						$("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
 						}
 						});
+						
+						$("#simple-search-form input[name='collection']").val(tamboti.currentCollection);
+						$("#advanced-search-form input[name='collection']").val(tamboti.currentCollection);
 					</script>
                 </xf:action>
                 <xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
@@ -269,7 +272,7 @@
         </div>
         <div id="content1col">
             <div class="biblio:login"/>
-            <div class="biblio:query">
+            <div>
                 <div class="templates:include?path=pages/search-form.html"/>
                 <div class="templates:include?path=pages/collection-tree.html"/>
                 <div id="main-content">

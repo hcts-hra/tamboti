@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace biblio="http://exist-db.org/xquery/biblio";
 
@@ -470,8 +470,8 @@ declare function biblio:generate-query($query-as-xml as element()) as xs:string*
                     replace($expr, '\$q', biblio:normalize-search-string($query-as-xml/string()))
             default return ()
         
-         (:Leading wildcards cannot appear in searches within extracted text. :) 
-         let $query := 
+        (:Leading wildcards cannot appear in searches within extracted text. :) 
+        let $query := 
             for $q in $query
             return replace(replace($q, ':[?*]', ':'), '\s[?*]', ' ')
             
@@ -484,11 +484,11 @@ declare function biblio:generate-full-query($query-as-xml as element()) as xs:st
     let $collection :=
         (: When searching inside whole users, do not show results from own home collection :)
         let $all-collections :=
-            if (ends-with($collection-path, $config:users-collection)) then
-                security:get-searchable-child-collections(xs:anyURI($collection-path), true())
-            else 
-                security:get-searchable-child-collections(xs:anyURI($collection-path), false())
-                
+            if (ends-with($collection-path, $config:users-collection))
+            then security:get-searchable-child-collections(xs:anyURI($collection-path), true())
+            else security:get-searchable-child-collections(xs:anyURI($collection-path), false())
+        let $all-collections := $all-collections ! replace(., "'", "%27")
+        
         return "'" || fn:string-join(($collection-path, $all-collections), "', '") ||  "'"
         
     let $query :=
@@ -510,7 +510,8 @@ declare function biblio:normalize-search-string($search-string as xs:string?) as
        else $search-string 
     let $search-string := replace($search-string, "'", "''")
     let $search-string := translate($search-string, "[:&amp;]", " ")
-        return $search-string
+    
+    return $search-string
 };
 
 (:~
@@ -544,8 +545,7 @@ declare function biblio:xml-query-to-string($query-as-xml as element()) as xs:st
             concat("collection(""", xmldb:decode-uri($query-as-xml), """):")
         case element(field) return
             concat($query-as-xml/@name, ':', $query-as-xml/string())
-        default return
-            ()
+        default return ()
 };
 
 (:~
@@ -568,6 +568,24 @@ declare function biblio:process-form-parameters($params as xs:string*) as elemen
                 }
 };
 
+declare function biblio:process-form-parameters2($params) as element() {
+    (:Only take the new param. The form of params is "input1".:)
+    let $param := $params(1)
+    let $index := $param?index
+    (:This "param" is the search term, so get the search term for the param in question.:)
+    let $search-term := $param?value
+    let $search-field := $param?field
+    let $search-operator := $param?operator
+        return
+            if (array:size($params) = 1)
+            then <field m="{$index}" name="{$search-field}">{$search-term}</field>
+            else 
+                element { xs:QName($search-operator) } {
+                    biblio:process-form-parameters2(array:tail($params)),
+                    <field m="{$index}" name="{$search-field}" short-name="{$biblio:FIELDS/field[@name eq $search-field]/@short-name}">{$search-term}</field>
+                }
+};
+
 (:~
     Process the received form parameters and create an XML representation of
     the query. Filter out empty parameters and take care of boolean operators.
@@ -581,8 +599,8 @@ declare function biblio:process-form() as element(query)? {
         let $value := request:get-parameter($param, ())
         where string-length($value) gt 0
         order by $param descending
-        return
-            $param
+        
+        return $param
             
     return
         if (exists($fields))
@@ -599,6 +617,45 @@ declare function biblio:process-form() as element(query)? {
             </query>
 };
 
+declare function biblio:process-form2($parameters) as element(query)? {
+    let $collection := xmldb:encode-uri($parameters?collection)
+    let $f := function($k, $v) {
+        if (starts-with($k, "input") and $v != "")
+        then
+            let $index := substring-after($k, 'input')
+            
+            return
+                map {
+                    "index": $index,
+                    "value": $v,
+                    "field": $parameters("field" || $index),
+                    "operator": $parameters("operator" || $index)
+                }    
+        else ()
+    }
+    
+    let $fields := map:for-each($parameters, $f)
+    let $fields := array {
+        for $field in $fields
+        order by $field?index
+        return $field
+    }
+    
+    return
+        if (array:size($fields) > 0)
+        then
+            (:  process-form recursively calls itself for every parameter and
+                generates and XML representation of the query. :)
+            <query>
+                <collection>{$collection}</collection>
+                {biblio:process-form-parameters2($fields)}
+            </query>
+        else
+            <query>
+                <collection>{$collection}</collection>
+            </query>
+};
+
 (:~
     Helper function used to sort by name within the "order by"
     clause of the query.
@@ -607,8 +664,7 @@ declare function biblio:process-form() as element(query)? {
 declare variable $biblio:eastern-languages := ('chi', 'jpn', 'kor', 'skt', 'tib');
 declare variable $biblio:author-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt', 'photographer', 'pht');
 (: This function is adapted in nameutil:format-name() in names.xql. Any changes should be coordinated. :)
-declare function biblio:order-by-author($hit as element()) as xs:string?
-{
+declare function biblio:order-by-author($hit as element()) as xs:string? {
     (: Pick the first occurring name element of an author/creator. :)
     let $vra-name := $hit//vra:agent[vra:role = $biblio:author-roles][1]/vra:name
     let $mods-name :=
@@ -618,60 +674,60 @@ declare function biblio:order-by-author($hit as element()) as xs:string?
 
     return
         if ($mods-name) 
+        then
+            (: Sort according to family and given names.:)
+            let $mods-sortFirst :=
+                (: If there is a namePart marked as being in a Western language, there could in addition be a transliterated and a Eastern-script "nick-name", but the Western namePart should have precedence over the nick-name, therefore pick out the Western-language nameParts first. :)
+                if ($mods-name/mods:namePart[@lang != $biblio:eastern-languages]/text())
                 then
-                        (: Sort according to family and given names.:)
-                        let $mods-sortFirst :=
-                       (: If there is a namePart marked as being in a Western language, there could in addition be a transliterated and a Eastern-script "nick-name", but the Western namePart should have precedence over the nick-name, therefore pick out the Western-language nameParts first. :)
-                       if ($mods-name/mods:namePart[@lang != $biblio:eastern-languages]/text())
+                   (: If it has a family type, take it; otherwise take whatever namePart there is (in case of a name which has not been analysed into given and family names. :)
+                   if ($mods-name/mods:namePart[@type eq 'family']/text())
+                   then $mods-name/mods:namePart[@lang != $biblio:eastern-languages][@type eq 'family'][1]/text()
+                   else $mods-name/mods:namePart[@lang != $biblio:eastern-languages][1]/text()
+                else
+                   (: If there is not a Western-language namePart, check if there is a namePart with transliteration; if this is the case, take it. :)
+                   if ($mods-name/mods:namePart[@transliteration]/text())
+                   then
+                       (: If it has a family type, take it; otherwise take whatever transliterated namePart there is. :)
+                       if ($mods-name/mods:namePart[@type eq 'family']/text())
+                       then $mods-name/mods:namePart[@type eq 'family'][@transliteration][1]/text()
+                       else $mods-name/mods:namePart[@transliteration][1]/text()
+                   else
+                       (: If the name does not have a transliterated namePart, it is probably a "standard" (unmarked) Western name, if it does not have a script attribute or uses Latin script. :)
+                       if ($mods-name/mods:namePart[@script eq 'Latn']/text() or $mods-name/mods:namePart[not(@script)]/text())
                        then
-                           (: If it has a family type, take it; otherwise take whatever namePart there is (in case of a name which has not been analysed into given and family names. :)
+                       (: If it has a family type, take it; otherwise takes whatever untransliterated namePart there is.:) 
                            if ($mods-name/mods:namePart[@type eq 'family']/text())
-                           then $mods-name/mods:namePart[@lang != $biblio:eastern-languages][@type eq 'family'][1]/text()
-                           else $mods-name/mods:namePart[@lang != $biblio:eastern-languages][1]/text()
+                           then $mods-name/mods:namePart[not(@script) or @script eq 'Latn'][@type eq 'family'][1]/text()
+                           else $mods-name/mods:namePart[not(@script) or @script eq 'Latn'][1]/text()
+                       (: The last step should take care of Eastern names without transliteration. These will usually have a script attribute :)
                        else
-                           (: If there is not a Western-language namePart, check if there is a namePart with transliteration; if this is the case, take it. :)
-                           if ($mods-name/mods:namePart[@transliteration]/text())
-                           then
-                               (: If it has a family type, take it; otherwise take whatever transliterated namePart there is. :)
-                               if ($mods-name/mods:namePart[@type eq 'family']/text())
-                               then $mods-name/mods:namePart[@type eq 'family'][@transliteration][1]/text()
-                               else $mods-name/mods:namePart[@transliteration][1]/text()
-                           else
-                               (: If the name does not have a transliterated namePart, it is probably a "standard" (unmarked) Western name, if it does not have a script attribute or uses Latin script. :)
-                               if ($mods-name/mods:namePart[@script eq 'Latn']/text() or $mods-name/mods:namePart[not(@script)]/text())
-                               then
-                               (: If it has a family type, take it; otherwise takes whatever untransliterated namePart there is.:) 
-                                   if ($mods-name/mods:namePart[@type eq 'family']/text())
-                                   then $mods-name/mods:namePart[not(@script) or @script eq 'Latn'][@type eq 'family'][1]/text()
-                                   else $mods-name/mods:namePart[not(@script) or @script eq 'Latn'][1]/text()
-                               (: The last step should take care of Eastern names without transliteration. These will usually have a script attribute :)
-                               else
-                                   if ($mods-name/mods:namePart[@type eq 'family']/text())
-                                   then $mods-name/mods:namePart[@type eq 'family'][1]/text()
-                                   else $mods-name/mods:namePart[1]/text()
-                   let $mods-sortLast :=
-                           if ($mods-name/mods:namePart[@lang != $biblio:eastern-languages]/text())
-                           then $mods-name/mods:namePart[@lang != $biblio:eastern-languages][@type eq 'given'][1]/text()
-                           else
-                               if ($mods-name/mods:namePart[@transliteration]/text())
-                               then $mods-name/mods:namePart[@type eq 'given'][@transliteration][1]/text()
-                               else
-                                   if ($mods-name/mods:namePart[@script eq 'Latn']/text() or $mods-name/mods:namePart[not(@script)]/text())
-                                   then $mods-name/mods:namePart[@type eq 'given'][not(@script) or @script eq 'Latn'][1]/text()
-                                   else $mods-name/mods:namePart[@type eq 'given'][1]/text()
-                    let $mods-sort-string :=
-                        if (concat($mods-sortFirst, $mods-sortLast)) 
-                        then upper-case(concat($mods-sortFirst, ' ', $mods-sortLast)) 
-                        else ()
-                    return
-                        $mods-sort-string
-                    else
-                        if ($vra-name) 
-                        then 
-                            let $vra-sort-string := upper-case($vra-name)
-                            return 
-                                $vra-sort-string
-                        else ()        
+                           if ($mods-name/mods:namePart[@type eq 'family']/text())
+                           then $mods-name/mods:namePart[@type eq 'family'][1]/text()
+                           else $mods-name/mods:namePart[1]/text()
+            let $mods-sortLast :=
+                if ($mods-name/mods:namePart[@lang != $biblio:eastern-languages]/text())
+                then $mods-name/mods:namePart[@lang != $biblio:eastern-languages][@type eq 'given'][1]/text()
+                else
+                   if ($mods-name/mods:namePart[@transliteration]/text())
+                   then $mods-name/mods:namePart[@type eq 'given'][@transliteration][1]/text()
+                   else
+                       if ($mods-name/mods:namePart[@script eq 'Latn']/text() or $mods-name/mods:namePart[not(@script)]/text())
+                       then $mods-name/mods:namePart[@type eq 'given'][not(@script) or @script eq 'Latn'][1]/text()
+                       else $mods-name/mods:namePart[@type eq 'given'][1]/text()
+            let $mods-sort-string :=
+                if (concat($mods-sortFirst, $mods-sortLast)) 
+                then upper-case(concat($mods-sortFirst, ' ', $mods-sortLast)) 
+                else ()
+            
+        return $mods-sort-string
+    else
+        if ($vra-name) 
+        then 
+            let $vra-sort-string := upper-case($vra-name)
+            return 
+                $vra-sort-string
+        else ()        
 };
 
 declare function biblio:get-year($hit as element()) as xs:string? {
@@ -707,35 +763,35 @@ declare function biblio:get-year($hit as element()) as xs:string? {
 declare function biblio:construct-order-by-expression($sort as xs:string?) as xs:string?
 {
     let $sort-direction := request:get-parameter("sort-direction", '')
-        return
-            if ($sort eq "Score") 
-            (:If no sort direction has been chosen, the search comes from simple search and the highest scores should be first.:)
-            then concat("ft:score($hit) ", if ($sort-direction) then $sort-direction else 'descending') 
-            else 
-                if ($sort eq "Author") 
-                then concat("biblio:order-by-author($hit) ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
-                else 
-                    if ($sort eq "Title") 
-                    then concat("translate($hit/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')", " ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
-                    else 
-                        if ($sort eq "Year") 
-                        then concat("biblio:get-year($hit) ", if ($sort-direction) then $sort-direction else 'descending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
-                        else ()
-        };
+    
+    return
+        switch($sort)
+        case "Score" (:If no sort direction has been chosen, the search comes from simple search and the highest scores should be first.:)
+        return concat("ft:score($hit) ", if ($sort-direction) then $sort-direction else 'descending')
+        case "Author"
+        return concat("biblio:order-by-author($hit) ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
+        case "Title"
+        return concat("translate($hit/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title), '“‘«「‹‚›‟‛([""''', '')", " ", if ($sort-direction) then $sort-direction else 'ascending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
+        case "Year"
+        return concat("biblio:get-year($hit) ", if ($sort-direction) then $sort-direction else 'descending', " ", if ($sort-direction eq 'descending') then "empty least" else "empty greatest")
+        default return ()
+};
 
 (:~
     Evaluate the actual XPath query and order the results
 :)
 declare function biblio:evaluate-query($query-as-string as xs:string, $sort as xs:string?) {
-    let $query-as-string := if (ends-with($query-as-string, "//")) then concat($query-as-string, "*") else $query-as-string
-    
+    let $query-as-string :=
+        if (ends-with($query-as-string, "//"))
+        then concat($query-as-string, "*")
+        else $query-as-string
+
     let $order-by-expression := biblio:construct-order-by-expression($sort)
     let $query-with-order-by-expression :=
         (:The condition should be added that there is a search term. This will address comment in biblio:construct-order-by-expression(). :)
-        if ($order-by-expression) then
-            concat("for $hit in ", $query-as-string, " order by ", $order-by-expression, " return $hit")
-        else
-            $query-as-string
+        if ($order-by-expression)
+        then concat("for $hit in ", $query-as-string, " order by ", $order-by-expression, " return $hit")
+        else $query-as-string
     let $options := request:get-parameter("default-operator", '')
     let $options :=
         if ($options eq 'and')
@@ -751,8 +807,8 @@ declare function biblio:evaluate-query($query-as-string as xs:string, $sort as x
                 <leading-wildcard>yes</leading-wildcard>
                 <filter-rewrite>yes</filter-rewrite>
             </options>
-    return
-        util:eval($query-with-order-by-expression)
+            
+    return util:eval($query-with-order-by-expression)
 };
 
 (:~
@@ -793,8 +849,6 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
         let $search-format := request:get-parameter("format", '')
         
         let $query := string-join(biblio:generate-full-query($query-as-xml), '')
-        let $log := util:log("INFO", "$query as string")
-        let $log := util:log("INFO", $query)
         
         (:Simple search does not have the parameter format, but should search in all formats.:)
         let $search-format := 
@@ -820,7 +874,70 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
             if (not(contains($search-format, 'Wiki') or contains($search-format, 'WIKI')))
             then replace($query, 'atom:', '')
             else $query
-        let $sort := if ($sort) then $sort else session:get-attribute("sort")
+        let $sort :=
+            if ($sort)
+            then $sort
+            else session:get-attribute("sort")
+        let $results := biblio:evaluate-query($query, $sort)
+        let $processed :=
+            for $item in $results
+            return
+                typeswitch ($item)
+                    case element(results) 
+                        return $item/search
+                    default 
+                        return $item
+        (:~ Take the query results and store them into the HTTP session. :)
+        let $null := session:set-attribute('mods:cached', $processed)
+        let $null := session:set-attribute('query', $query-as-xml)
+        let $null := session:set-attribute('sort', $query-as-xml)
+        let $null := session:set-attribute('collection', $query-as-xml)
+        let $null := 
+            if ($query-as-xml//field)
+            then biblio:add-to-history($query-as-xml)
+            else ()        
+        return
+            count($processed)
+    (:NB: When 0 is returned to a query, it is set here.:)
+    else 0
+};
+
+declare function biblio:eval-query2($query-as-xml as element(query)?, $parameters) as xs:int {
+    if ($query-as-xml) 
+    then
+        let $search-format := $parameters?format
+        let $sort := $parameters?sort
+        
+        let $query := string-join(biblio:generate-full-query($query-as-xml), '')
+        
+        (:Simple search does not have the parameter format, but should search in all formats.:)
+        let $search-format := 
+            if ($search-format)
+            then $search-format
+            else 'MODS-TEI-VRA-WIKI'
+        (:If the format parameter does not contain a certain string, 
+        the corresponding namepsace is stripped from the search expression, 
+        leading to a search for the element in question in no namespace.:)
+        let $query :=
+            if (not(contains($search-format, 'MODS')))
+            then replace($query, 'mods:', '')
+            else $query
+        let $query :=
+            if (not(contains($search-format, 'VRA')))
+            then replace($query, 'vra:', '')
+            else $query
+        let $query :=
+            if (not(contains($search-format, 'TEI')))
+            then replace($query, 'tei:', '')
+            else $query
+        let $query :=
+            if (not(contains($search-format, 'Wiki') or contains($search-format, 'WIKI')))
+            then replace($query, 'atom:', '')
+            else $query
+        let $sort :=
+            if ($sort)
+            then $sort
+            else session:get-attribute("sort")
         let $results := biblio:evaluate-query($query, $sort)
         let $processed :=
             for $item in $results
@@ -846,35 +963,38 @@ declare function biblio:eval-query($query-as-xml as element(query)?, $sort as it
 };
 
 declare function biblio:list-collection($query-as-xml as element(query)?, $sort as item()?) as xs:int {
-    if ($query-as-xml) then
-        let $selected-collection := $query-as-xml/collection
-        let $searchable-subcols :=
-            security:get-searchable-child-collections(xs:anyURI($selected-collection), true())
+    if ($query-as-xml)
+    then
+        let $selected-collection := $query-as-xml/collection/text()
+        let $searchable-subcols := security:get-searchable-child-collections(xs:anyURI($selected-collection), true())
         let $collection := 
             (: Include selected collection as well only if user has permissions to search there :)
-            if (security:can-read-collection($selected-collection) and security:can-execute-collection($selected-collection)) then
-                ($selected-collection, $searchable-subcols)
-            else
-                $searchable-subcols
+            if (security:can-read-collection($selected-collection) and security:can-execute-collection($selected-collection))
+            then ($selected-collection, $searchable-subcols)
+            else $searchable-subcols
 
         let $sort := if ($sort) then $sort else session:get-attribute("sort")
         let $processed :=
-            if ($sort eq "Author") 
-            then 
+            switch ($sort)
+            case "Author"
+            return
                 for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                order by biblio:order-by-author($item)
+                let $title := biblio:order-by-author($item)
+                order by $title
                 return $item
-            else 
-                if ($sort eq "Year")
-                then 
-                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                    order by biblio:get-year($item)
-                    return $item
-                else
-                    (:when listing collection, the Lucene-based Score has no meaning; therefore default to sorting by Title.:) 
-                    for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry | svg:svg]/*
-                    order by translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work[1]/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title[1] | svg:svg/@xml:id), '“‘«「‹‚›‟‛([""''', '') 
-                    return $item
+            case "Year"
+            return
+                for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
+                order by biblio:get-year($item)
+                return $item
+            default
+            return
+                (:when listing collection, the Lucene-based Score has no meaning; therefore default to sorting by Title.:) 
+                for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry | svg:svg]/*
+                let $title := translate($item/(mods:titleInfo[not(@type)][1]/mods:title[1] | vra:work[1]/vra:titleSet[1]/vra:title[1] | tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[1] | atom:entry/atom:title[1] | svg:svg/@xml:id), '“‘«「‹‚›‟‛([""''', '')
+                order by $title
+                
+                return $item
         (:~ Take the query results and store them into the HTTP session. :)
         let $null := session:set-attribute('mods:cached', $processed)
         let $null := session:set-attribute('query', $query-as-xml)
@@ -883,9 +1003,9 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
         let $null := 
             if ($query-as-xml//field)
             then biblio:add-to-history($query-as-xml)
-            else ()        
-        return
-            count($processed)
+            else ()
+        
+        return count($processed)
     (:NB: When 0 is returned to a query, it is set here.:)
     else 0 
 };
@@ -936,8 +1056,8 @@ declare function biblio:notice() as element(div)* {
 :)
 declare function local:get-collection-last-modified($collection-path as xs:string) as xs:dateTime {
     let $resources-last-modified := 
-        for $resource in xmldb:get-child-resources($collection-path) return
-            xmldb:last-modified($collection-path, $resource)
+        for $resource in xmldb:get-child-resources($collection-path)
+        return xmldb:last-modified($collection-path, $resource)
     return
         if (not(empty($resources-last-modified)))
         then max($resources-last-modified)
@@ -964,7 +1084,6 @@ declare function local:find-collections-modified-after($collection-paths as xs:s
 :)
 declare function biblio:clear-search-terms($collection) {
     <query><collection>{$collection}</collection></query>
-
 };
 
 (:~
@@ -973,8 +1092,8 @@ declare function biblio:clear-search-terms($collection) {
 declare function biblio:clear-history() {
     let $null := session:remove-attribute('history')
     let $null := session:set-attribute("history", ())
-    return
-        ()
+    
+    return ()
 };
 
 
@@ -1012,8 +1131,8 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
 
 declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
     let $collection := functx:replace-first(request:get-parameter("collection", theme:get-root()), "/db/", "")
-        return
-            templates:copy-set-attribute($node, "value", $collection, $model)
+    
+    return templates:copy-set-attribute($node, "value", $collection, $model)
 };
 
 declare function biblio:resource-types($node as node(), $params as element(parameters)?, $model as item()*) {
@@ -1027,17 +1146,17 @@ declare function biblio:resource-types($node as node(), $params as element(param
     let $language-type-codes-path := concat($code-table-path, '/language-3-type.xml')
     let $language-type-code-table := doc($language-type-codes-path)/mods-editor:code-table
     let $language-options :=
-                    for $item in $language-type-code-table//mods-editor:item[(mods-editor:frequencyClassifier)]
-                        let $label := $item/mods-editor:label/text()
-                        let $labelValue := $item/mods-editor:value/text()
-                        let $sortOrder :=                                  
-                            if ($item/mods-editor:frequencyClassifier[. = 'common']) 
-                            then 'A' 
-                            (: else frequencyClassifier = 'default':)
-                            else ''
-                        order by $sortOrder, $label
-                        return
-                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
+        for $item in $language-type-code-table//mods-editor:item[(mods-editor:frequencyClassifier)]
+            let $label := $item/mods-editor:label/text()
+            let $labelValue := $item/mods-editor:value/text()
+            let $sortOrder :=                                  
+                if ($item/mods-editor:frequencyClassifier[. = 'common']) 
+                then 'A' 
+                (: else frequencyClassifier = 'default':)
+                else ''
+            order by $sortOrder, $label
+            return
+                <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
     (:to get all values:
                     for $item in $language-type-code-table//item
                         let $label := $item/label/text()
@@ -1056,27 +1175,27 @@ declare function biblio:resource-types($node as node(), $params as element(param
     let $script-codes-path := concat($code-table-path, '/script-short.xml')
     let $script-code-table := doc($script-codes-path)/mods-editor:code-table
     let $script-options :=
-                    for $item in $script-code-table//mods-editor:item
-                        let $label := $item/mods-editor:label/text()
-                        let $labelValue := $item/mods-editor:value/text()
-                        let $sortOrder := 
-                        if (empty($item/mods-editor:frequencyClassifier)) 
-                        then 'B' 
-                        else 
-                            if ($item/mods-editor:frequencyClassifier[. = 'common']) 
-                            then 'A'
-                            else ''
-                        order by $sortOrder, $label
-                        return
-                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
+        for $item in $script-code-table//mods-editor:item
+            let $label := $item/mods-editor:label/text()
+            let $labelValue := $item/mods-editor:value/text()
+            let $sortOrder := 
+            if (empty($item/mods-editor:frequencyClassifier)) 
+            then 'B' 
+            else 
+                if ($item/mods-editor:frequencyClassifier[. = 'common']) 
+                then 'A'
+                else ''
+            order by $sortOrder, $label
+            return
+                <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
     
     let $transliteration-codes-path := concat($code-table-path, '/transliteration-short.xml')
     let $transliteration-code-table := doc($transliteration-codes-path)/mods-editor:code-table
     let $transliteration-options :=
-                    for $item in $transliteration-code-table//mods-editor:item
-                        let $labelValue := $item/mods-editor:value/text()
-                        return
-                            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
+        for $item in $transliteration-code-table//mods-editor:item
+        let $labelValue := $item/mods-editor:value/text()
+        return
+            <option value="{$labelValue}">{$item/mods-editor:label/text()}</option>
                     
     
     return 
@@ -1138,14 +1257,13 @@ declare function biblio:form-select-current-user-groups($select-name as xs:strin
     let $user := request:get-attribute("xquery.user") return
         <select name="{$select-name}">
         {
-            for $group in sm:get-user-groups($user) return
-                <option value="{$group}">{$group}</option>
+            for $group in sm:get-user-groups($user)
+            return <option value="{$group}">{$group}</option>
         }
         </select>
 };
 
 declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
-    
     for $sub in xmldb:get-child-collections($path)
     let $col := concat($path, "/", $sub) return
         (
@@ -1159,7 +1277,10 @@ declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
     Perform a search from scratch
 :)
 declare function biblio:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
-    let $collection := if ($collection) then $collection else '/db' || $config:mods-root || '/'
+    let $collection := if ($collection)
+    then $collection
+    else '/db' || $config:mods-root || '/'
+    
     return
         <query>
             <collection>{$collection}</collection>
@@ -1274,6 +1395,45 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
                             (:"else" includes "if ($mylist eq 'display')", the search made when displaying items in My List.:)
 };
 
+declare function biblio:prepare-query2($parameters) as element(query)? {
+    let $id := $parameters?id
+    let $collection := $parameters?collection
+    let $reload := $parameters?reload
+    let $history := $parameters?history
+    let $clear := $parameters?clear
+    let $filter := $parameters?filter
+    let $search-field := $parameters?search-field
+    let $value := $parameters?value
+    
+    return
+        if ($id)
+        then
+            <query>
+                <collection>{$config:mods-root}</collection>
+                <field m="1" name="the Record ID Field (MODS, VRA)">{$id}</field>
+            </query>
+        else 
+            if (empty($collection)) 
+            then ()
+            else
+                if ($reload) 
+                then session:get-attribute('query')
+                else 
+                    if ($history)
+                    then biblio:query-from-history($history)
+                    else 
+                        if ($clear)
+                        then biblio:clear-search-terms($collection)
+                        else 
+                            if ($filter) 
+                            then biblio:apply-filter($collection, $filter, $value)
+                            else  
+                                if ($search-field) 
+                                then biblio:apply-search($collection, $search-field, $value)
+                                else biblio:process-form2($parameters)
+                                (:"else" includes "if ($mylist eq 'display')", the search made when displaying items in My List.:)
+};
+
 (:~
 : Gets cached results from the session;
 : if no such results exist, then a query is performed
@@ -1284,24 +1444,51 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
 declare function biblio:get-or-create-cached-results($mylist as xs:string?, $query-as-xml as element(query)?, $sort as item()?) as xs:int {
     if ($mylist) 
     then 
-    (
-        if ($mylist eq 'clear')
-        then session:set-attribute("personal-list", ())
-        else ()
-        ,
-        let $list := session:get-attribute("personal-list")
-        let $items :=
-            for $item in $list/listitem
-            return
-                util:node-by-id(doc(substring-before($item/@id, '#')), substring-after($item/@id, '#'))
-        let $null := session:set-attribute('mods:cached', $items)
-        return
-            count($items)
-    )
+        (
+            if ($mylist eq 'clear')
+            then session:set-attribute("personal-list", ())
+            else ()
+            ,
+            let $list := session:get-attribute("personal-list")
+            let $items :=
+                for $item in $list/listitem
+                
+                return util:node-by-id(doc(substring-before($item/@id, '#')), substring-after($item/@id, '#'))
+            let $null := session:set-attribute('mods:cached', $items)
+            
+            return count($items)
+        )
     else
         if ($query-as-xml//field)
         then biblio:eval-query($query-as-xml, $sort)
         else biblio:list-collection($query-as-xml, $sort)
+};
+
+declare function biblio:get-or-create-cached-results2($query-as-xml as element(query)?, $parameters) as xs:int {
+    let $mylist := $parameters?mylist
+    let $sort := $parameters?sort
+    
+    return
+        if ($mylist) 
+        then 
+            (
+                if ($mylist eq 'clear')
+                then session:set-attribute("personal-list", ())
+                else ()
+                ,
+                let $list := session:get-attribute("personal-list")
+                let $items :=
+                    for $item in $list/listitem
+                    
+                    return util:node-by-id(doc(substring-before($item/@id, '#')), substring-after($item/@id, '#'))
+                let $null := session:set-attribute('mods:cached', $items)
+                
+                return count($items)
+            )
+        else
+            if ($query-as-xml//field)
+            then biblio:eval-query2($query-as-xml, $parameters)
+            else biblio:list-collection($query-as-xml, $sort)
 };
 
 declare function biblio:get-query-as-regex($query-as-xml) as xs:string { 
@@ -1310,8 +1497,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
     by substituting spaces for the operators.:)
     let $query := 
         for $expression in $query
-            return 
-                replace(replace(replace($expression, '\sAND\s', ' '), '\sOR\s', ' '), '\sNOT\s', ' ')
+        return replace(replace(replace($expression, '\sAND\s', ' '), '\sOR\s', ' '), '\sNOT\s', ' ')
     (:we first go through the outer expression, to see if there are any phrase searches, then tokenize on spaces:)
 
     let $query := 
@@ -1340,8 +1526,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                 let $to := (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
                 let $query := 
                     for $expression in $query
-                        return 
-                            normalize-space(functx:replace-multi($expression, $from, $to))
+                    return normalize-space(functx:replace-multi($expression, $from, $to))
 
                 (:First tokenize the expressions created by replacement by space above:)
                 let $query := tokenize($query, ' ') 
@@ -1350,52 +1535,21 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                         replace the lucene wildcards with the corresponding regex wildcard 
                         and wrap the resultant expression in regex word boundaries:)
                         for $expression in $query
-                            return
-                                concat(
-                                    '\b'
-                                    ,
+                        return
+                            concat(
+                                '\b'
+                                ,
+                                replace(
                                     replace(
-                                        replace(
-                                            translate(
-                                                $expression
-                                            , ' ', '|')
-                                        , '\?', '\\w')
-                                    , '\*', '\\w*?')
-                                    ,
-                                    '\b')
+                                        translate(
+                                            $expression
+                                        , ' ', '|')
+                                    , '\?', '\\w')
+                                , '\*', '\\w*?')
+                                ,
+                                '\b')
                 (:Join all regex expressions with the or operator.:)
                 let $query := string-join($query, '|')
-                    return $query
-};
-
-
-declare function biblio:query($node as node(), $params as element(parameters)?, $model as item()*) {
-    session:create()
-    ,
-    (: We receive an HTML template as input :)
-    (:the search field passed in the url:)
-    let $filter := request:get-parameter("filter", ())
-    (:the search term for added filters passed in the url:)
-    let $search-field := request:get-parameter("search-field", ())
-    (:the search term for new sarches passed in the url:)
-    let $value := request:get-parameter("value", ())
-    let $history := request:get-parameter("history", ())
-    let $reload := request:get-parameter("reload", ())
-    let $clear := request:get-parameter("clear", ())
-    let $mylist := request:get-parameter("mylist", ()) (:clear, display:)
-    let $collection := xmldb:encode-uri(request:get-parameter("collection", $config:mods-root))
-    let $collection := if (starts-with($collection, "/db")) then $collection else concat("/db", $collection)
-    let $id := request:get-parameter("id", ())
-    let $sort := request:get-parameter("sort", ())
-
-    (: Process request parameters and generate an XML representation of the query :)
-    let $query-as-xml := biblio:prepare-query($id, $collection, $reload, $history, $clear, $filter, $search-field, $mylist, $value)
-
-    (: Get the results :)
-    let $query-as-regex := biblio:get-query-as-regex($query-as-xml)
-    let $null := session:set-attribute('regex', $query-as-regex)
-    let $results := biblio:get-or-create-cached-results($mylist, $query-as-xml, $sort)
-    
-    return
-        templates:process($node/node(), ($query-as-xml, $results))
+                
+                return $query
 };

@@ -1,5 +1,3 @@
-tamboti = {};
-
 tamboti.utils = {};
 tamboti.browser = {};
 
@@ -7,7 +5,6 @@ tamboti.browser.chrome = (typeof window.chrome === "object");
 
 tamboti.totalSearchResultOptions = 0;
 tamboti.selectedSearchResultOptions = {};
-tamboti.currentCollection = "/data";
 
 $.extend({
   getParameterNames: function(){

@@ -216,7 +216,6 @@
                         params[option] = base.options.params[option];
                     }
                 }
-                console.log("[pagination] Retrieving page: %d from %s", start, base.options.url);
                 base.element.empty();
                 $.ajax({
                     type: "GET",

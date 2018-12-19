@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
@@ -93,7 +93,7 @@ else if ($exist:resource eq 'retrieve') then
 
 	<dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 	   { local:set-user() }
-		<forward url="{ theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, 'modules/session.xql') }">
+		<forward url="/modules/session.xql">
 		</forward>
 	</dispatch>
 	

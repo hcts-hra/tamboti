@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace tei-hra-framework = "http://hra.uni-heidelberg.de/ns/tei-hra-framework";
 
@@ -157,6 +157,7 @@ declare function tei-hra-framework:list-view-table($item as node(), $currentPos 
                                 {$config:error-message-before-link} 
                                 <a href="{$config:error-message-href}{$item/@xml:id/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
+                                <p>Caught error {$err:code}: {$err:description}. {("(line ", $err:line-number, ", column ", $err:column-number, ")")}</p>
                             </td>
                         }
                 }

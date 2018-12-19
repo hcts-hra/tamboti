@@ -1,11 +1,11 @@
-xquery version "3.0";
+xquery version "3.1";
 
 module namespace security = "http://exist-db.org/mods/security";
 
-declare namespace mods="http://www.loc.gov/mods/v3";
+declare namespace mods = "http://www.loc.gov/mods/v3";
 declare namespace vra = "http://www.vraweb.org/vracore4.htm";
-declare namespace svg="http://www.w3.org/2000/svg";
-declare namespace tei="http://www.tei-c.org/ns/1.0";
+declare namespace svg = "http://www.w3.org/2000/svg";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
@@ -58,7 +58,7 @@ declare function security:login($username as xs:string, $password as xs:string?)
 : @param username The username
 : @param password The password
 :)
-declare function security:store-user-credential-in-session($username as xs:string, $password as xs:string?) as empty() {
+declare function security:store-user-credential-in-session($username as xs:string, $password as xs:string?) as empty-sequence() {
     let $username := config:rewrite-username($username)
         return
         (
@@ -97,13 +97,12 @@ declare function security:get-email-address-for-user($username as xs:string) as 
 
 declare function security:get-human-name-for-user($username as xs:string) as xs:string?
 {
-    let $first := (system:as-user($config:dba-credentials[1],$config:dba-credentials[2], sm:get-account-metadata($username, xs:anyURI("http://axschema.org/namePerson/first"))))
-        return
-            if ($first) 
-            then
-                concat($first, " ", (system:as-user($config:dba-credentials[1],$config:dba-credentials[2], sm:get-account-metadata($username, xs:anyURI("http://axschema.org/namePerson/last")))))
-            else
-                $username
+    let $first := sm:get-account-metadata($username, xs:anyURI("http://axschema.org/namePerson/first"))
+    
+    return
+        if ($first) 
+        then concat($first, " ", sm:get-account-metadata($username, xs:anyURI("http://axschema.org/namePerson/last")))
+        else $username
 };
 
 (:~
@@ -145,25 +144,25 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
         else 
             $user
     return
-        if (xmldb:collection-available($config:users-collection)) then
-            system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-                let $collection-uri := xmldb:create-collection($config:users-collection, xmldb:encode-uri($username))
-                    return
-                        if ($collection-uri) then
-                            (:
-                            TODO do we need the group 'read' to allow sub-collections to be enumerated?
-                                NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
-                            :)
-                            let $null := sm:chmod($collection-uri, $config:collection-mode)
-                            (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
-                            let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
-                            let $null := sm:chown($collection-uri, security:get-user-credential-from-session()[1])
-                            let $null := security:create-user-metadata($collection-uri, $username) 
-                            return
-                                $collection-uri
-                         else 
-                            $collection-uri
-            )
+        if (xmldb:collection-available($config:users-collection))
+        then 
+            let $collection-uri := xmldb:create-collection($config:users-collection, xmldb:encode-uri($username))
+            
+            return
+                if ($collection-uri)
+                then
+                    (:
+                    TODO do we need the group 'read' to allow sub-collections to be enumerated?
+                        NOTE - this will need to be updated to 'execute' when permissions are finalised in trunk
+                    :)
+                    let $null := sm:chmod($collection-uri, $config:collection-mode)
+                    (: set the group as biblio users group, so that other users can enumerate our sub-collections :)
+                    let $null := sm:chgrp($collection-uri, $config:biblio-users-group)
+                    let $null := sm:chown($collection-uri, security:get-user-credential-from-session()[1])
+                    let $null := security:create-user-metadata($collection-uri, $username) 
+                    
+                    return $collection-uri
+                 else $collection-uri
         else 
             ()        
 };
@@ -174,19 +173,18 @@ declare function security:create-home-collection($user as xs:string) as xs:strin
 declare function security:create-user-metadata($user-collection-uri as xs:string, $owner as xs:string) as xs:string {
     let $login-time := util:system-dateTime()
     let $metadata-doc-uri :=
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-            let $metadata-doc-uri :=
-                xmldb:store($user-collection-uri, $security:user-metadata-file,
-                    <security:metadata>
-                        <security:last-login-time>{$login-time}</security:last-login-time>
-                        <security:login-time>{$login-time}</security:login-time>
-                    </security:metadata>
-                )
-            let $chmod := sm:chmod($metadata-doc-uri, $config:resource-mode)
-            let $chown := sm:chown($metadata-doc-uri, security:get-user-credential-from-session()[1])
-            let $chgrp := sm:chgrp($metadata-doc-uri, $config:biblio-users-group)
-            return $metadata-doc-uri
-        )
+        let $metadata-doc-uri :=
+            xmldb:store($user-collection-uri, $security:user-metadata-file,
+                <security:metadata>
+                    <security:last-login-time>{$login-time}</security:last-login-time>
+                    <security:login-time>{$login-time}</security:login-time>
+                </security:metadata>
+            )
+        let $chmod := sm:chmod($metadata-doc-uri, $config:resource-mode)
+        let $chown := sm:chown($metadata-doc-uri, security:get-user-credential-from-session()[1])
+        let $chgrp := sm:chgrp($metadata-doc-uri, $config:biblio-users-group)
+        
+        return $metadata-doc-uri
 
     return $metadata-doc-uri
 };
@@ -194,7 +192,7 @@ declare function security:create-user-metadata($user-collection-uri as xs:string
 (:~
 : Update the last login time of a user
 :)
-declare function security:update-login-time($user as xs:string) as empty() {
+declare function security:update-login-time($user as xs:string) as empty-sequence() {
     let $user-home-collection := security:get-home-collection-uri($user),
     $security-metadata := fn:doc(fn:concat($user-home-collection, "/", $security:user-metadata-file)) 
     return
@@ -229,37 +227,35 @@ declare function security:get-last-login-time($user as xs:string) as xs:dateTime
 :)
 
 declare function security:user-has-access($user as xs:string, $path as xs:anyURI, $mode as xs:string) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
 (:
         let $log := util:log("INFO", "user: " || $user)
         let $log := util:log("INFO", $path)
 :)
 
-        let $permissions := sm:get-permissions($path)
-        let $usergroups := sm:get-user-groups($user)
-        
-        let $is-owner := $permissions/sm:permission/@owner/string() = $user
-        let $has-group := $permissions/sm:permission/@group/string() = $usergroups
-        
-        (: check POSIX access :)
-        let $user-access := $is-owner and fn:matches($permissions/sm:permission/@mode, $mode || "......")
-        let $group-access := $has-group and fn:matches($permissions/sm:permission/@mode, "..." || $mode || "...")
-        let $others-access := fn:matches($permissions/sm:permission/@mode, "......" || $mode)
-        
-        let $log := util:log("INFO", "$user-access: " || $user-access || " $group-access: " || $group-access || " $others-access:" || $others-access)
-        return
-            (: if one of the POSIX permissions fits, return true :)
-            if($user-access or $group-access or $others-access) then
-                true()
-            (: check for ACLs:)
-            else
-                let $valid-acls := $permissions/sm:permission/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
-                return
-                    if(count($valid-acls) > 0) then
-                        true()
-                    else
-                        false()
-    ))
+    let $permissions := sm:get-permissions($path)
+    let $usergroups := sm:get-user-groups($user)
+    
+    let $is-owner := $permissions/sm:permission/@owner/string() = $user
+    let $has-group := $permissions/sm:permission/@group/string() = $usergroups
+    
+    (: check POSIX access :)
+    let $user-access := $is-owner and fn:matches($permissions/sm:permission/@mode, $mode || "......")
+    let $group-access := $has-group and fn:matches($permissions/sm:permission/@mode, "..." || $mode || "...")
+    let $others-access := fn:matches($permissions/sm:permission/@mode, "......" || $mode)
+    
+    let $log := util:log("INFO", "$user-access: " || $user-access || " $group-access: " || $group-access || " $others-access:" || $others-access)
+    
+    return
+        (: if one of the POSIX permissions fits, return true :)
+        if($user-access or $group-access or $others-access)
+        then true()
+        (: check for ACLs:)
+        else
+            let $valid-acls := $permissions/sm:permission/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
+            return
+                if (count($valid-acls) > 0)
+                then true()
+                else false()
 };
 
 (:~
@@ -270,8 +266,14 @@ declare function security:user-has-access($user as xs:string, $path as xs:anyURI
 :)
 declare function security:can-read-collection($collection as xs:string) as xs:boolean {
     if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        sm:has-access($collection, "r"))
+    then
+        let $current-user := security:get-user-credential-from-session()[1]
+        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
+        
+        return
+            if ($current-user = ($permissions/@owner, //sm:ace[@target = "USER"]/@who))
+            then true()
+            else false()
     else sm:has-access($collection, "r")
 };
 
@@ -283,8 +285,14 @@ declare function security:can-read-collection($collection as xs:string) as xs:bo
 :)
 declare function security:can-write-collection($collection as xs:string) as xs:boolean {
     if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        sm:has-access($collection, "w"))
+    then 
+        let $current-user := security:get-user-credential-from-session()[1]
+        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
+        
+        return
+            if ($current-user = $permissions/@owner or contains($permissions//sm:ace[@target = "USER" and @who = $current-user]/@mode, "w"))
+            then true()
+            else false()        
     else sm:has-access($collection, "w")
 };
 
@@ -334,7 +342,7 @@ declare function security:get-group-members($group as xs:string) as xs:string*
 (:    sm:get-group-members($group):)
 };
 
-declare function security:set-resource-permissions($resource-path as xs:anyURI, $user-name as xs:string, $group-name as xs:string, $permissions as xs:string) as empty() {
+declare function security:set-resource-permissions($resource-path as xs:anyURI, $user-name as xs:string, $group-name as xs:string, $permissions as xs:string) as empty-sequence() {
     (
         sm:chown($resource-path, $user-name),
         sm:chgrp($resource-path, $group-name),
@@ -587,7 +595,7 @@ declare function security:insert-user-ace($resource as xs:anyURI, $id as xs:int,
 (: ~
 : Resources always inherit the permissions of the parent collection
 :)
-declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty() {
+declare function security:apply-parent-collection-permissions($resource as xs:anyURI) as empty-sequence() {
     let $parent-permissions := sm:get-permissions(xs:anyURI(fn:replace($resource, "(.*)/.*", "$1")))
     let $this-permissions := sm:get-permissions($resource)
     let $this-last-acl-index := xs:int($this-permissions/sm:permission/sm:acl/@entries) -1
@@ -635,14 +643,12 @@ declare function security:get-group($path as xs:string) as xs:string {
 };
 
 declare function security:copy-collection-rights-to-child-resources($collection as xs:anyURI) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        let $collection-owner := xmldb:get-owner($collection)
-        let $collection-group := xmldb:get-group($collection)
-        
-        for $resource-name in xmldb:get-child-resources($collection)
-            return
-                security:copy-owner-and-group($collection, xs:anyURI($collection || "/" || $resource-name))
-    )
+    let $collection-owner := xmldb:get-owner($collection)
+    let $collection-group := xmldb:get-group($collection)
+    
+    for $resource-name in xmldb:get-child-resources($collection)
+    
+    return security:copy-owner-and-group($collection, xs:anyURI($collection || "/" || $resource-name))
 };
 
 declare function security:copy-collection-permissions-to-child-resources($collection as xs:anyURI) {
@@ -668,67 +674,55 @@ declare function security:copy-tamboti-collection-user-acl($collection as xs:any
 };
 
 declare function security:recursively-inherit-collection-acl($collection as xs:anyURI) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        (
-            (: copy collection ACL and rights to each resource:)
-            let $inherit-permissions := security:copy-collection-acl-to-child-resources($collection)
-        
-            for $subcollection in xmldb:get-child-collections($collection)
-                let $subcollection-path := xs:anyURI($collection || "/" || $subcollection)
-                    return
-                        (
-                            (: copy collection ACE to subcollection :)
-                            sm:clear-acl($subcollection-path),
-                            security:duplicate-acl($collection, $subcollection-path),
-                            (: recursive call of function:)
-                            security:recursively-inherit-collection-acl($subcollection-path)
-                        )
-        )
+    (: copy collection ACL and rights to each resource:)
+    let $inherit-permissions := security:copy-collection-acl-to-child-resources($collection)
+
+    for $subcollection in xmldb:get-child-collections($collection)
+    let $subcollection-path := xs:anyURI($collection || "/" || $subcollection)
+    
+    return (
+        (: copy collection ACE to subcollection :)
+        sm:clear-acl($subcollection-path),
+        security:duplicate-acl($collection, $subcollection-path),
+        (: recursive call of function:)
+        security:recursively-inherit-collection-acl($subcollection-path)
     )
 };
 
 declare function security:recursively-set-owner-and-group($collection as xs:anyURI, $owner, $group) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        (
-            try {
-                let $res-result :=
-                    for $resource in xmldb:get-child-resources($collection)
-                        return
-                            (
-                                sm:chown(xs:anyURI($collection || "/" || $resource), $owner),
-                                sm:chgrp(xs:anyURI($collection || "/" || $resource), $group)
-                            )
-                let $col-result :=
+    try {
+        let $res-result :=
+            for $resource in xmldb:get-child-resources($collection)
+                return
                     (
-                        sm:chown($collection, $owner),
-                        sm:chgrp($collection, $group),
-    
-                        for $subcol in xmldb:get-child-collections($collection)
-                            return 
-                                (
-                                    security:recursively-set-owner-and-group(xs:anyURI($collection || "/" || $subcol), $owner, $group)
-                                )
+                        sm:chown(xs:anyURI($collection || "/" || $resource), $owner),
+                        sm:chgrp(xs:anyURI($collection || "/" || $resource), $group)
                     )
-                return true()
-            } catch * {
-                util:log("INFO", "Catched Error: " ||  $err:code || ": " || $err:description),
-                false()
-            }
-            
-        )
-    )
-        
+        let $col-result :=
+            (
+                sm:chown($collection, $owner),
+                sm:chgrp($collection, $group),
+
+                for $subcol in xmldb:get-child-collections($collection)
+                    return 
+                        (
+                            security:recursively-set-owner-and-group(xs:anyURI($collection || "/" || $subcol), $owner, $group)
+                        )
+            )
+        return true()
+    } catch * {
+        util:log("INFO", "Catched Error: " ||  $err:code || ": " || $err:description),
+        false()
+    }
 };
 
 declare function security:copy-owner-and-group($source as xs:anyURI, $target as xs:anyURI) {
     let $source-owner := xmldb:get-owner($source)
     let $source-group := xmldb:get-group($source)
     return
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-            (
-                sm:chown($target, $source-owner),
-                sm:chgrp($target, $source-group)
-            )
+        (
+            sm:chown($target, $source-owner),
+            sm:chgrp($target, $source-group)
         )
 };
 
@@ -1006,46 +1000,38 @@ declare function security:copy-collection-acl-to-child-resources($collection as 
 : @return sequence with full paths to searchable collections
 :)
 declare function security:get-searchable-child-collections($collection-uri as xs:anyURI, $spare-user-home as xs:boolean) {
-    (: elevate rights for going into the collection structure :)
-    let $subcollections := 
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-                xmldb:get-child-collections($collection-uri)
-            )
-        )
-    for $subcol in $subcollections[not($config:images-subcollection = .)]
-    let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
-    order by $subcol
+    let $subcollections := xmldb:get-child-collections($collection-uri)
     
     return
-        if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1]) then
-            ()
-        else
-            (
-                system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                    if (xmldb:collection-available($fullpath)) then
+        for $subcol in $subcollections[not($config:images-subcollection = .)]
+        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+        order by $subcol
+        
+        return
+            if ($spare-user-home and $subcol = security:get-user-credential-from-session()[1])
+            then ()
+            else
+                (
+                    if (xmldb:collection-available($fullpath))
+                    then
                         let $readable := security:can-read-collection($fullpath)
                         let $executeable := security:can-execute-collection($fullpath) 
                         let $readable-children := security:get-searchable-child-collections($fullpath, $spare-user-home)
                         return
                             (
-                                if (($readable and $executeable) or not(empty($readable-children))) then
-                                    xs:anyURI($fullpath)
-                                else
-                                    ()
+                                if (($readable and $executeable) or not(empty($readable-children)))
+                                then $fullpath
+                                else ()
                             )
-                    else
-                        ()
+                    else ()
+                ,
+                    security:get-searchable-child-collections($fullpath, $spare-user-home)
                 )
-            ,
-                security:get-searchable-child-collections($fullpath, $spare-user-home)
-            )
 };
 
 declare function security:get-acl($collection-uri as xs:anyURI) {
-    let $aces := 
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-            sm:get-permissions($collection-uri)//sm:ace
-        )
+    let $aces := sm:get-permissions($collection-uri)//sm:ace
+    
     return $aces
 };
 
@@ -1068,10 +1054,8 @@ declare function security:get-resources($ids as xs:string*) as node()* {
         let $auth-token := request:get-header("_authToken")
         let $token-user := security:iiifauth-validate-cookie($auth-token)
     (: Do search as dba :)
-        let $resources :=
-            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                collection($config:mods-root)//(mods:mods[@ID=$ids] | vra:vra/vra:work[@id=$ids] | vra:vra/vra:image[@id=$ids] | svg:svg[@xml:id = $ids] | tei:TEI[@xml:id = $ids])
-            )
+        let $resources := collection($config:mods-root)//(mods:mods[@ID = $ids] | vra:vra/vra:work[@id = $ids] | vra:vra/vra:image[@id = $ids] | svg:svg[@xml:id = $ids] | tei:TEI[@xml:id = $ids])
+
         return
             for $resource in $resources
                 let $resource-path := util:collection-name($resource)
@@ -1080,7 +1064,8 @@ declare function security:get-resources($ids as xs:string*) as node()* {
                 
                 (: only return data if user has access to resource   :)
                 return
-                    if($resource) then
+                    if ($resource)
+                    then
                     (: only return data if user has access to resource   :)
                         if ($token-user) then
                             if(security:user-has-access($token-user, $fullPath , "r..")) then 
@@ -1106,10 +1091,8 @@ declare function security:get-resource($id as xs:string) {
     let $token-user := security:iiifauth-validate-cookie($auth-token)
 
     (: Do search as dba :)
-    let $resource :=
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-            collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
-        )
+    let $resource := collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
+
     return
         if ($resource) then
             let $resource-path := util:collection-name($resource)
@@ -1124,11 +1107,10 @@ declare function security:get-resource($id as xs:string) {
                         error( xs:QName('unauthorized') ) 
 
                 else
-                    if(system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                        sm:has-access($fullPath, "r"))) then
-                            $resource
-                        else
-                            error( xs:QName('unauthorized') ) 
+                    if (system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
+                        sm:has-access($fullPath, "r")))
+                    then $resource
+                    else error( xs:QName('unauthorized') ) 
                             
         else
             (: Resource not found :)
@@ -1330,23 +1312,21 @@ declare function security:iiifauth-set-cookie(){
     let $cookie-expires := datetime:timestamp-to-datetime(datetime:timestamp() + $security:cookie-lifetime)
     return
         try {
-            system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
             (: there is already a valid cookie so just update the expire date :)
-                if($cookie-value) then
-                    let $update := update value $cookie-doc//cookie[@value=$cookie-value]/@expires with $cookie-expires
-                    let $log := util:log("INFO", "updated expiry date for " || $cookie-value || " -> " || $cookie-expires)
+            if($cookie-value) then
+                let $update := update value $cookie-doc//cookie[@value=$cookie-value]/@expires with $cookie-expires
+                let $log := util:log("INFO", "updated expiry date for " || $cookie-value || " -> " || $cookie-expires)
+                return
+                    $cookie-value
+            else
+                let $ip := request:get-remote-addr()
+                let $cookie-value := util:random-ulong()
+                let $cookie-node := <cookie value="{$cookie-value}" expires="{$cookie-expires}" remote-addr="{$ip}" user="{security:get-user-credential-from-session()[1]}"/>
+                return
+                    let $update := update insert $cookie-node into $cookie-doc/cookies
+                    let $log := util:log("INFO", "stored cookie: " || $cookie-value)
                     return
                         $cookie-value
-                else
-                    let $ip := request:get-remote-addr()
-                    let $cookie-value := util:random-ulong()
-                    let $cookie-node := <cookie value="{$cookie-value}" expires="{$cookie-expires}" remote-addr="{$ip}" user="{security:get-user-credential-from-session()[1]}"/>
-                    return
-                        let $update := update insert $cookie-node into $cookie-doc/cookies
-                        let $log := util:log("INFO", "stored cookie: " || $cookie-value)
-                        return
-                            $cookie-value
-                ))
         } catch * {
             let $log := util:log("INFO", "Catched Error: " ||  $err:code || ": " || $err:description)
             return
@@ -1359,36 +1339,28 @@ declare function security:iiifauth-set-cookie(){
 :)
 
 declare function security:iiifauth-validate-cookie($cookie-value as xs:string?) as xs:string? {
-    if($cookie-value) then
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-            (: clear expired tokens before    :)
-            let $clear := security:iiifauth-clean-expired-cookies()
-            let $cookie-doc := doc("../../data/temp/tokens.xml")
-            return 
-                $cookie-doc/cookies/cookie[@value=$cookie-value]/@user/string()
-        ))
-    else
-        ()
+    if($cookie-value)
+    then
+        (: clear expired tokens before    :)
+        let $clear := security:iiifauth-clean-expired-cookies()
+        let $cookie-doc := doc("../../data/temp/tokens.xml")
+        return $cookie-doc/cookies/cookie[@value=$cookie-value]/@user/string()
+    else ()
 };
 
 (:~
 : gets the user-id which belongs to this token
 :)
 declare function security:iiifauth-clean-expired-cookies(){
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-        let $cookie-doc := doc("../../data/temp/tokens.xml")
-        return
-            update delete $cookie-doc/cookies/cookie[xs:dateTime(@expires) lt datetime:timestamp-to-datetime(datetime:timestamp())]
-    ))
+    let $cookie-doc := doc("../../data/temp/tokens.xml")
+    return update delete $cookie-doc/cookies/cookie[xs:dateTime(@expires) lt datetime:timestamp-to-datetime(datetime:timestamp())]
 };
 
 (:~
 : delete a token
 :)
 declare function security:iiifauth-remove-cookie($cookie as xs:string) {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-      let $cookie-doc := doc("../../data/temp/tokens.xml")
-        return
-            update delete $cookie-doc/cookies/cookie[@value = $cookie]
-    ))
+  let $cookie-doc := doc("../../data/temp/tokens.xml")
+  
+  return update delete $cookie-doc/cookies/cookie[@value = $cookie]
 };

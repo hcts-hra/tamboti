@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace json="http://www.json.org";
 import module namespace session="http://exist-db.org/xquery/session";

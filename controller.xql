@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 
 import module namespace session ="http://exist-db.org/xquery/session";
 
@@ -104,7 +104,7 @@ return
 
        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
            { local:set-user($username, $password) }
-          <forward url="../modules/search/session.xql">
+          <forward url="../modules/session.xql">
           </forward>
        </dispatch>
 

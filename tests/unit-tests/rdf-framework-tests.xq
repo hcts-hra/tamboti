@@ -1,4 +1,4 @@
-xquery version "3.0";
+xquery version "3.1";
 import module namespace hra-rdf-framework="http://hra.uni-heidelberg.de/ns/hra-rdf-framework" at "/db/apps/tamboti/frameworks/hra-rdf/hra-rdf-framework.xqm";
 
 import module namespace functx="http://www.functx.com";
