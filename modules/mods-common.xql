@@ -694,7 +694,7 @@ declare function mods-common:format-name($name as element()?, $position as xs:in
                         , ', ')
                         )
                     }</span>
-                    <a class="name-link" onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#" title="Find all records with the same name">
+                    <a class="name-link" onclick="tamboti.apis.advancedSearchWithData({$advanced-search-data})" href="#" title="Find all records with the same name">
                         (find all records)
                     </a>
                 </span>
@@ -2196,62 +2196,68 @@ return
 :)
 declare function mods-common:get-related-items($entry as element(mods:mods), $destination as xs:string, $global-language as xs:string?, $collection-short as xs:string) as element()* {
     for $item in $entry/mods:relatedItem
-        let $type := string($item/@type)
-        let $type-label := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/related-item-type.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
-        let $titleInfo := $item/mods:titleInfo
-        let $displayLabel := string($item/@displayLabel)
-        let $label :=
-            string(
-                if ($displayLabel)
-                then $displayLabel
-                else
-                    if ($type)
-                    then functx:capitalize-first(functx:camel-case-to-words($type, ' '))
-                    else 'Related Item'
-            )
-        let $part := $item/mods:part
-        let $xlinked-ID := replace($item/@xlink:href, '^#?(.*)$', '$1')
-                let $xlinked-record-format-head := substring($xlinked-ID, 1, 2) 
-        let $xlinked-record-format := 
-            if ($xlinked-record-format-head eq 'uu') 
-            then 'MODS' 
-            else    
-                if ($xlinked-record-format-head eq 'i_') 
-                then 'VRA-image' 
-                else
-                    if ($xlinked-record-format-head eq 'w_') 
-                    then 'VRA-work' 
-                    else
-                        if ($xlinked-record-format-head eq 'c_') 
-                        then 'VRA-collection' 
-                        else ()
-        let $xlinked-record :=
-            (: Any MODS record in /db{$config:mods-root} is retrieved if there is a @xlink:href/@ID match and the relatedItem has no string value. If there should be duplicate IDs, only the first record is retrieved.:)
-            (: The linked record is only retrieved if there is no title information inside the related item. :)
-            if ($xlinked-record-format eq 'MODS' and exists($xlinked-ID) and not($titleInfo))
-            then collection($config:mods-root-minus-temp)//mods:mods[@ID eq $xlinked-ID][1]
-            else ()
-        let $related-item :=
-            (:If the related item is recorded in another record than the current record.:)
-            if ($xlinked-record) 
-            (: NB: There must be a smarter way to merge the retrieved relatedItem with the native part element! :)
-            (: "update insert $part into $xlinked-record2 does not work for in-memory fragments :)
-            then 
-               <mods:relatedItem displayLabel ="{$displayLabel}" type="{$type}" xlink:href="{$xlinked-ID}">
-                   {($xlinked-record/mods:titleInfo,$xlinked-record/mods:originInfo, $part)}
-               </mods:relatedItem> 
+    let $type := string($item/@type)
+    let $type-label := doc(concat($config:db-path-to-mods-editor-home, '/code-tables/related-item-type.xml'))/mods-editor:code-table/mods-editor:items/mods-editor:item[mods-editor:value eq $type]/mods-editor:label
+    let $titleInfo := $item/mods:titleInfo
+    let $displayLabel := string($item/@displayLabel)
+    let $label :=
+        string(
+            if ($displayLabel)
+            then $displayLabel
             else
-            (:If the related item is described with title in the current record.:)
-                if ($item/mods:titleInfo/mods:title)
-                then $item
-                else ()
-        let $advanced-search-data :=
-            <data>
-                <search-field>ID</search-field>
-                <value>{$xlinked-ID}</value>
-                <query-tabs>advanced-search-form</query-tabs>
-                <default-operator>and</default-operator>
-            </data>                
+                if ($type)
+                then functx:capitalize-first(functx:camel-case-to-words($type, ' '))
+                else 'Related Item'
+        )
+    let $part := $item/mods:part
+    let $xlinked-ID := replace($item/@xlink:href, '^#?(.*)$', '$1')
+    let $xlinked-record-format-head := substring($xlinked-ID, 1, 2) 
+    let $xlinked-record-format := 
+        if ($xlinked-record-format-head eq 'uu') 
+        then 'MODS' 
+        else    
+            if ($xlinked-record-format-head eq 'i_') 
+            then 'VRA-image' 
+            else
+                if ($xlinked-record-format-head eq 'w_') 
+                then 'VRA-work' 
+                else
+                    if ($xlinked-record-format-head eq 'c_') 
+                    then 'VRA-collection' 
+                    else ()
+    let $xlinked-record :=
+        (: Any MODS record in /db{$config:mods-root} is retrieved if there is a @xlink:href/@ID match and the relatedItem has no string value. If there should be duplicate IDs, only the first record is retrieved.:)
+        (: The linked record is only retrieved if there is no title information inside the related item. :)
+        if ($xlinked-record-format eq 'MODS' and exists($xlinked-ID) and not($titleInfo))
+        then collection($config:mods-root-minus-temp)//mods:mods[@ID eq $xlinked-ID][1]
+        else ()
+    let $related-item :=
+        (:If the related item is recorded in another record than the current record.:)
+        if ($xlinked-record) 
+        (: NB: There must be a smarter way to merge the retrieved relatedItem with the native part element! :)
+        (: "update insert $part into $xlinked-record2 does not work for in-memory fragments :)
+        then 
+           <mods:relatedItem displayLabel ="{$displayLabel}" type="{$type}" xlink:href="{$xlinked-ID}">
+               {($xlinked-record/mods:titleInfo,$xlinked-record/mods:originInfo, $part)}
+           </mods:relatedItem> 
+        else
+        (:If the related item is described with title in the current record.:)
+            if ($item/mods:titleInfo/mods:title)
+            then $item
+            else ()
+    let $advanced-search-data := serialize(
+        map {
+            "search-field": "ID",
+            "value": $xlinked-ID,
+            "query-tabs": "advanced-search-form",
+            "default-operator": "and"
+            
+        },
+        <output:serialization-parameters xmlns:output="http://www.w3.org/2010/xslt-xquery-serialization">
+            <output:method value="json"/>
+            <output:media-type value="text/javascript"/>
+        </output:serialization-parameters>
+    )
 
     return
         (:Only MODS records have $related-item:)
@@ -2275,7 +2281,7 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
                 then
                     <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
                         <td class="url label relatedItem-label">
-                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $label)}</a>
+                            <a onclick="tamboti.apis.advancedSearchWithData({$advanced-search-data})" href="#">{concat('&lt;&lt; ', $label)}</a>
                         </td>
                         <td class="relatedItem-record">
                             <span class="relatedItem-span">{mods-common:format-related-item($related-item, $global-language, $collection-short)}</span>
@@ -2296,7 +2302,7 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
                 then
                     <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
                         <td class="url label relatedItem-label">
-                            <a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{concat('&lt;&lt; ', $type)}</a>
+                            <a onclick="tamboti.apis.advancedSearchWithData({$advanced-search-data})" href="#">{concat('&lt;&lt; ', $type)}</a>
                         </td>
                         <td class="relatedItem-record">
                             <span class="relatedItem-span">Ziziphus VRA Work Record</span>

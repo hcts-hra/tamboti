@@ -516,7 +516,7 @@ function emptyFileList() {
  * the form to reload the page.
  */
 function login(dialog) {
-    var user = $('#login-dialog input[name = user]');
+    var user = $('#login-dialog input[name = user]');alert(user);
     var password = $('#login-dialog input[name = password]');
     $('#login-message').text('Checking ...');
     $.ajax({
@@ -527,15 +527,8 @@ function login(dialog) {
         },
         type: 'POST',
         success:
-                function(data, message) {
-        			$.ajax({
-        				url: "index.html",
-        				data: "user=" + user.val() + "&password=" + escape(password.val()),
-        				type: 'POST',
-        				success: function(data, message) {
-        					location.reload();
-        				}
-        			});
+                function(data, message) {alert(data);
+
                 },
         error: function(response, message) {
             showMessage('Login failed: ' + $(response.responseXML).text());

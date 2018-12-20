@@ -1,6 +1,6 @@
 xquery version "3.1";
 
-module namespace biblio="http://exist-db.org/xquery/biblio";
+module namespace biblio = "http://exist-db.org/xquery/biblio";
 
 (:~
     The core XQuery script for the bibliographic demo. It receives a template XML document
@@ -638,6 +638,7 @@ declare function biblio:process-form2($parameters) as element(query)? {
     let $fields := array {
         for $field in $fields
         order by $field?index
+        
         return $field
     }
     
@@ -978,10 +979,11 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
             switch ($sort)
             case "Author"
             return
-                for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                let $title := biblio:order-by-author($item)
-                order by $title
-                return $item
+                for $resource in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
+                let $author := ft:get-field($resource/root()/document-uri(.), "author")
+                order by $author
+                
+                return $resource
             case "Year"
             return
                 for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*

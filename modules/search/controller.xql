@@ -97,7 +97,11 @@ else if ($exist:resource eq 'retrieve') then
 		</forward>
 	</dispatch>
 	
-else if ($exist:path eq '/search/') then apis:search($exist:prefix)	
+else if ($exist:path eq '/search/') then apis:search($exist:prefix)
+
+else if ($exist:path eq '/search/simple/') then apis:search-simple()
+else if ($exist:path eq '/search/advanced/') then apis:search-advanced()
+
 else if ($exist:path = "/history/") then apis:search-history()
 else if (contains($exist:path, "/$shared/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

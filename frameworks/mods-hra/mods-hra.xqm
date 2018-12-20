@@ -3,12 +3,11 @@ xquery version "3.1";
 module namespace mods-hra-framework = "http://hra.uni-heidelberg.de/ns/mods-hra-framework";
 
 import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra-hra-framework" at "../vra-hra/vra-hra.xqm";
-
 import module namespace config = "http://exist-db.org/mods/config" at "../../modules/config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
 import module namespace clean = "http://exist-db.org/xquery/mods/cleanup" at "../../modules/search/cleanup.xql";
 
-import module namespace functx="http://www.functx.com";
+import module namespace functx = "http://www.functx.com";
 import module namespace json="http://www.json.org";
 
 import module namespace mods-common = "http://exist-db.org/mods/common" at "../../modules/mods-common.xql";
@@ -816,8 +815,7 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
             }</primary-names>
             return
                 if (string($names-primary))
-                then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language)
-                , '. ')
+                then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language), '. ')
                 else ()
         ,
         (: The title of the primary publication. :)
@@ -825,20 +823,21 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
         ,
         let $names := $entry/mods:name
         let $role-terms-secondary := $names/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]
+        
+        return
+            for $role-term-secondary in distinct-values($role-terms-secondary) 
             return
-                for $role-term-secondary in distinct-values($role-terms-secondary) 
-                    return
-                        let $names-secondary := <entry>{$entry/mods:name[mods:role/lower-case(mods:roleTerm) = $role-term-secondary]}</entry>
-                            return                            (
-                                (: Introduce secondary role label with comma. :)
-                                (: NB: What if there are multiple secondary roles? :)
-                                ', '
-                                ,
-                                mods-common:get-role-label-for-list-view($role-term-secondary)
-                                ,
-                                (: Terminate secondary role with period if there is no related item. :)
-                                mods-common:format-multiple-names($names-secondary, 'secondary', $global-transliteration, $global-language)
-                                )
+                let $names-secondary := <entry>{$entry/mods:name[mods:role/lower-case(mods:roleTerm) = $role-term-secondary]}</entry>
+                    return                            (
+                        (: Introduce secondary role label with comma. :)
+                        (: NB: What if there are multiple secondary roles? :)
+                        ', '
+                        ,
+                        mods-common:get-role-label-for-list-view($role-term-secondary)
+                        ,
+                        (: Terminate secondary role with period if there is no related item. :)
+                        mods-common:format-multiple-names($names-secondary, 'secondary', $global-transliteration, $global-language)
+                        )
         ,
         (:If there are no secondary names, insert a period after the title, if there is no related item.:)
         if (not($entry/mods:name/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]))
@@ -868,16 +867,18 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
         then <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>
         else 
         (: The url of the primary publication. :)
-            if (contains($collection-short, 'Priya')) then () else
-            if ($entry/mods:location/mods:url/text())
-            then
-                for $url in $entry/mods:location/mods:url
-                    return
-                        let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;')) 
+            if (contains($collection-short, 'Priya'))
+            then ()
+            else
+                if ($entry/mods:location/mods:url/text())
+                then
+                    for $url in $entry/mods:location/mods:url
                         return
-                            (: NB: The link is not clickable. :)
-                            concat(' <', $url-for-display, '>', '.')
-            else '.'
+                            let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;')) 
+                            return
+                                (: NB: The link is not clickable. :)
+                                concat(' <', $url-for-display, '>', '.')
+                else '.'
         )
     
     let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}</span>
@@ -888,8 +889,8 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
         then tamboti-common:highlight-matches($result, $regex, $highlight) 
         else $result
     let $result := mods-common:clean-up-punctuation($result)
-        return
-            $result
+    
+    return $result
 };
 
 declare function mods-hra-framework:list-view-table($item as node(), $currentPos as xs:int) {
