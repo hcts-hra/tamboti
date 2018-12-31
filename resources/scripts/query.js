@@ -82,10 +82,16 @@ $(function() {
     //check if the URL has a query string for search, in order to trigger that search
     if ($.getParameter('search-field') != undefined && $.getParameter('value') != undefined) {
     	$("#advanced-search-form input[name='value']").val($.getParameter('value'));
-        tamboti.apis.advancedSearch();
+    } else if ($.getParameter('collection') != undefined) {
+        var collection = decodeURI($.getParameter('collection'));
+        $("#simple-search-form input[name='collection']").val(collection);
+		$("#advanced-search-form input[name='collection']").val(collection);        
     } else {
-        tamboti.apis.initialSearch();    
+        $("#simple-search-form input[name='collection']").val(tamboti.currentCollection);
+        $("#advanced-search-form input[name='collection']").val(tamboti.currentCollection);
     }
+    
+    tamboti.apis.initialSearch();
     
     $(".pagination-mode-gallery").click(function(ev) {
         ev.preventDefault();
@@ -516,7 +522,7 @@ function emptyFileList() {
  * the form to reload the page.
  */
 function login(dialog) {
-    var user = $('#login-dialog input[name = user]');alert(user);
+    var user = $('#login-dialog input[name = user]');
     var password = $('#login-dialog input[name = password]');
     $('#login-message').text('Checking ...');
     $.ajax({
@@ -527,8 +533,15 @@ function login(dialog) {
         },
         type: 'POST',
         success:
-                function(data, message) {alert(data);
-
+                function(data, message) {
+        			$.ajax({
+        				url: "index.html",
+        				data: "user=" + user.val() + "&password=" + escape(password.val()),
+        				type: 'POST',
+        				success: function(data, message) {
+        					location.reload();
+        				}
+        			});
                 },
         error: function(response, message) {
             showMessage('Login failed: ' + $(response.responseXML).text());

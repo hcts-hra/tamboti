@@ -14,7 +14,7 @@ tamboti.apis.initialSearch = function() {
         "sort-direction": "descending",
         "query-tabs": $("input[name='query-tabs']", advancedSearchForm).val(),
         "collection-tree": $("input[name='collection-tree']", advancedSearchForm).val(),
-        "collection": tamboti.currentCollection,
+        "collection": $("#simple-search-form input[name='collection']").val(),
         "filter": $("input[name='filter']", advancedSearchForm).val(),
         "value": $("input[name='value']", advancedSearchForm).val(),
         "history": $("input[name='history']", advancedSearchForm).val(),
