@@ -1,12 +1,12 @@
-<package xmlns="http://expath.org/ns/pkg" name="${package-name}" abbrev="${project.artifactId}" version="${project.version}"
+<package xmlns="http://expath.org/ns/pkg" name="${package.name}" abbrev="${project.artifactId}" version="${project.version}"
 	spec="1.0">
-	<title>${package-title}</title>
+	<title>${package.title}</title>
 	<dependency package="http://exist-db.org/apps/shared" />
 	<dependency package="http://exist-db.org/apps/xsltforms" />
 	<dependency package="http://xqilla.sourceforge.net/pkg/xqjson" />
 	<dependency package="http://www.functx.com" />
 	<dependency package="http://hra.uni-hd.de/apps/mods-editor" />
-	<dependency package="http://kuberam.ro/teian/" />
+	<dependency package="http://kuberam.ro/teian/" />	
 	<dependency package="http://exist-db.org/mongrel" />
 	<author>Wolfgang Meier</author>
 	<author>Adam Retter</author>
@@ -18,14 +18,14 @@
 	<website>${project.url}</website>
 	<license>GNU-LGPL</license>
 	<copyright>true</copyright>
-	<type>application</type>
+	<type>${package.type}</type>
 	<target>${project.artifactId}</target>
 	<permissions user="editor" password="editor" group="biblio.users" mode="0444" />
 	<status>stable</status>
 	<prepare>pre-install.xql</prepare>
 	<finish>post-install.xq</finish>
-	<tag>tamboti</tag>
-	<tag>${package-type}</tag>
+	<tag>${project.artifactId}</tag>
+	<tag>${package.type}</tag>
 	<tag>exist</tag>
 	<category id="libs">Libraries</category>
 	<category id="exist">eXist extensions</category>
@@ -40,17 +40,10 @@
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/maven-replacer-plugin</directory>
+			<directory>${project.build.directory}</directory>
 			<outputDirectory>/modules</outputDirectory>
 			<includes>
 				<include>config.xqm</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}</directory>
-			<outputDirectory>/modules/configuration</outputDirectory>
-			<includes>
-				<include>services.xml</include>
 			</includes>
 		</fileSet>
 	</fileSets>

@@ -2,6 +2,11 @@ xquery version "3.1";
 
 module namespace config = "http://exist-db.org/mods/config";
 
+(:~ Credentials for the dba admin user :)
+declare variable $config:dba-credentials := ("admin", "");
+declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
+
+
 (: 
     Determine the application root collection from the current module load path.
 :)
@@ -26,7 +31,7 @@ declare variable $config:web-context := '/apps';
 declare variable $config:app-id := "tamboti";
 (: this will replace $config:app-id when theming will be solved :)
 declare variable $config:actual-app-id := "tamboti";
-declare variable $config:app-version := "1.2.0";
+declare variable $config:app-version := "${project.version}";
 
 declare variable $config:db-path-to-app := concat('/apps/', $config:actual-app-id);
 declare variable $config:rest-path-to-app := $config:exist-context || "/rest/db" || $config:db-path-to-app;
@@ -121,10 +126,6 @@ declare variable $config:require-query := true();
 declare variable $config:send-notification-emails := false();
 declare variable $config:smtp-server := "smtp.yourdomain.com";
 declare variable $config:smtp-from-address := "exist@yourdomain.com";
-
-(:~ Credentials for the dba admin user :)
-declare variable $config:dba-credentials := ("admin","Wars4Spass2$s");
-declare variable $config:enforced-realm-id := "${tamboti.enforced-realm-id}";
 
 declare variable $config:allow-origin := "";
 
