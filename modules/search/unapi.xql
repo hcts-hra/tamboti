@@ -80,7 +80,7 @@ declare function unapi:get-object($id as xs:string, $format as xs:string, $resou
 : Get a mods resource from the database
 :)
 declare function local:get-resource($id as xs:string) as element(mods:mods)? {
-    fn:collection($config:mods-root)//mods:mods[@ID eq unapi:extract-uuid-from-uri($id)]
+    collection($config:content-root)//mods:mods[@ID eq unapi:extract-uuid-from-uri($id)]
 };
 
 (:~

@@ -4,31 +4,24 @@ xquery version "3.1";
     TODO KISS - This file should be removed in favour of a convention based approach + some small metadata for users/groups/permissions (added by AR)
 :)
 
-import module namespace util = "http://exist-db.org/xquery/util";
 import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
 import module namespace installation = "http://hra.uni-heidelberg.de/ns/tamboti/installation/" at "modules/installation/installation.xqm";
 
-(: The following external variables are set by the repo:deploy function :)
-
-(: file path pointing to the exist installation directory :)
 declare variable $home external;
-(: path to the directory containing the unpacked .xar package :)
 declare variable $dir external;
-(: the target collection into which the app is deployed :)
 declare variable $target external;
 
 declare variable $log-level := "INFO";
 declare variable $db-root := "/db";
-declare variable $config-collection := concat($db-root, "/system/config");
+declare variable $config-collection := "/system/config/db";
 
 (:~ Collection names :)
 declare variable $temp-collection-name := "temp";
 declare variable $samples-collection-name := "Samples";
 
 (:~ Collection paths :)
-declare variable $resources-collection := concat($db-root, "/", $config:data-collection-name);
-declare variable $temp-collection := concat($resources-collection, "/", $temp-collection-name);
+declare variable $temp-collection := $config:content-root || $temp-collection-name;
 
 declare function local:strip-prefix($str as xs:string, $prefix as xs:string) as xs:string? {
     replace($str, $prefix, "")
@@ -65,16 +58,18 @@ sm:passwd("guest", "guest")
 util:log($log-level, "Security: Done.")
 ,
 
-(: Load collection.xconf documents :)
+(: Load collection.xconf documents:)
 util:log($log-level, "Config: Loading collection configuration ...")
 ,
-installation:mkcol($config-collection, $resources-collection, $config:public-collection-mode)
+installation:mkcol($config-collection, $config:content-root, $config:public-collection-mode)
 ,
-xmldb:store-files-from-pattern(concat($config-collection, $resources-collection), $dir, "data/xconf/resources/*.xconf")
+if (doc-available($config-collection || $config:content-root || "collection.xconf"))
+then ()
+else xmldb:store-files-from-pattern($config-collection || $config:content-root, $dir, "data/xconf/data/*.xconf")
 ,
 (: installation:mkcol($config-collection, $mads-collection),:)
 (:xmldb:store-files-from-pattern(concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
-util:log($log-level, "Config: Done.")
+util:log($log-level, "Config: Done.=========================================================")
 ,
 
 (: Create temp collection :)
@@ -105,5 +100,4 @@ sm:chown($config:users-collection, 'admin')
 sm:chgrp($config:users-collection, $config:biblio-users-group)
 ,
 util:log($log-level, "Config: Done.")
-,
-util:log($log-level, "Script: Done.")
+

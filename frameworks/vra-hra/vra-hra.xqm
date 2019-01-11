@@ -136,7 +136,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
             <td class="collection-label">Record Location</td>
             <td>
                 <div class="collection">
-                    {replace(replace(xmldb:decode-uri($collection-short), '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')}
+                    {replace(replace(xmldb:decode-uri($collection-short), '^' || $config:mods-commons || '/', $config:content-root),'^' || $config:users-collection || '/', $config:content-root)}
                 </div>
                 <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
             </td>
@@ -293,11 +293,11 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
 
             (: get annotations for vra:image records :)
             
-            (: Elevate rights because user is not able to search whole $config:mods-root   :)
-            (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
+            (: Elevate rights because user is not able to search whole $config:content-root :)
+            (: ToDo: do not search whole $config:content-root, since we know the image-record is in VRA_images/ relative to work record  :)
 (:            let $vra-image := :)
 (:                system:as-user($config:dba-credentials[1], $config:dba-credentials[2], :)
-(:                    collection($config:mods-root)//vra:image[@id = $relids]:)
+(:                    collection($config:content-root)//vra:image[@id = $relids]:)
 (:                ):)
 (:(:            let $list-view := vra-hra-framework:format-list-view('', $list-view, ''):):)
 (:            let $log := util:log("INFO", $relation):)
@@ -730,9 +730,9 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
                                 For now, we disregard this; otherwise we have to check after retrieving the image records.:)
                                 let $relids := tokenize($relids, ' ')
                 
-                                (: Elevate rights because user is not able to search whole $config:mods-root   :)
-                                (: ToDo: do not search whole $config:mods-root, since we know the image-record is in VRA_images/ relative to work record  :)
-                                let $image := collection($config:mods-root)//vra:image[@id = $relids]
+                                (: Elevate rights because user is not able to search whole $config:content-root :)
+                                (: ToDo: do not search whole $config:content-root, since we know the image-record is in VRA_images/ relative to work record  :)
+                                let $image := collection($config:content-root)//vra:image[@id = $relids]
                                 let $image-uuid := $image/@id                                
                                 
                                 return vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW)

@@ -20,6 +20,6 @@ declare function local:move-uuid($collection-uri as xs:anyURI) {
             
 };
 
-let $uri := xs:anyURI($config:mods-root || "/commons/Priya_Paul_Collection")
+let $uri := xs:anyURI($config:content-root || "commons/Priya_Paul_Collection")
 return 
     local:move-uuid($uri)

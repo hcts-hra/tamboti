@@ -128,7 +128,7 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
                                 format-dateTime($date, "[M00]/[D00]/[Y0000] [H00]:[m00]:[s00]")
                     let $canWrite :=
                             sm:has-access(xs:anyURI($collection || "/" || $resource), "w")
-                    let $image_vra := collection($config:mods-root)//vra:image[@id=fn:tokenize($resource,'.xml')[1]]
+                    let $image_vra := collection($config:content-root)//vra:image[@id=fn:tokenize($resource,'.xml')[1]]
                     return 
                         if (exists($image_vra)) then
                             <json:value json:array="true">
@@ -140,7 +140,7 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
                                             substring-after($resource, "/") 
                                         else
                                             if (fn:contains($resource,'.xml')) then
-                                                let $image_vra := collection($config:mods-root)//vra:image[@id=fn:tokenize($resource,'.xml')[1]]
+                                                let $image_vra := collection($config:content-root)//vra:image[@id=fn:tokenize($resource,'.xml')[1]]
                                                 return
                                                     if (exists($image_vra)) then 
                                                         $image_vra//vra:title/text()
@@ -166,12 +166,12 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
 
 declare function local:get-attached-files ($file as xs:string ) {
     let $json := attribute json:array { true() }       
-    let $mods-results := collection($config:mods-root)//mods:mods[@ID=$file]//mods:relatedItem
+    let $mods-results := collection($config:content-root)//mods:mods[@ID=$file]//mods:relatedItem
     let $mods-entry :=
         if (exists($mods-results)) then
             for $entry in $mods-results 
                 let $image-is-preview := $entry/mods:typeOfResource eq 'still image' 
-                let $image_vra := collection($config:mods-root)//vra:image[@id=data(data($entry/mods:location/mods:url))]
+                let $image_vra := collection($config:content-root)//vra:image[@id=data(data($entry/mods:location/mods:url))]
                 return   
                     if ($image-is-preview) then 
                         let $modified := xmldb:last-modified(util:collection-name($image_vra), $image_vra/@href)
@@ -195,12 +195,12 @@ declare function local:get-attached-files ($file as xs:string ) {
         else
             ()
         
-    let $vra-results :=  collection($config:mods-root)//vra:work[@id=$file]/vra:relationSet/vra:relation
+    let $vra-results :=  collection($config:content-root)//vra:work[@id=$file]/vra:relationSet/vra:relation
     let $vra-entry :=
         if (exists($vra-results)) then
             (
                 for $entry in $vra-results
-                    let $image_vra := collection($config:mods-root)//vra:image[@id=$entry/@relids]
+                    let $image_vra := collection($config:content-root)//vra:image[@id=$entry/@relids]
                     let $modified := xmldb:last-modified(util:collection-name($image_vra), $image_vra/@href)
                     return
                         <json:value json:array="true">     

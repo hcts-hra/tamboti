@@ -27,7 +27,7 @@ declare function installation:mkcol-recursive($collection, $components, $permiss
 
 (: Helper function to recursively create a collection hierarchy. :)
 declare function installation:mkcol($collection, $path, $permissions as xs:string) {
-    installation:mkcol-recursive($collection, tokenize($path, "/"), $permissions)
+    installation:mkcol-recursive($collection, tokenize($path, "/")[. != ''], $permissions)
 };
 
 declare function installation:set-public-collection-permissions-recursively($collection-path as xs:anyURI) {
@@ -35,9 +35,11 @@ declare function installation:set-public-collection-permissions-recursively($col
         security:set-resource-permissions($collection-path, $config:biblio-admin-user, $config:biblio-users-group, $config:public-collection-mode)
         ,
         for $subcollection-name in xmldb:get-child-collections($collection-path)
+        
         return installation:set-public-collection-permissions-recursively(xs:anyURI($collection-path || "/" || $subcollection-name))
         ,
         for $resource-name in xmldb:get-child-resources($collection-path)
+        
         return security:set-resource-permissions(xs:anyURI(concat($collection-path, '/', $resource-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:public-resource-mode)
     )
 };

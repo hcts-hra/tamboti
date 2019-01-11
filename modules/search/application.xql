@@ -1281,7 +1281,7 @@ declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
 declare function biblio:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
     let $collection := if ($collection)
     then $collection
-    else '/db' || $config:mods-root || '/'
+    else $config:content-root
     
     return
         <query>
@@ -1372,7 +1372,7 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
     if ($id)
     then
         <query>
-            <collection>{$config:mods-root}</collection>
+            <collection>{$config:content-root}</collection>
             <field m="1" name="the Record ID Field (MODS, VRA)">{$id}</field>
         </query>
     else 
@@ -1411,7 +1411,7 @@ declare function biblio:prepare-query2($parameters) as element(query)? {
         if ($id)
         then
             <query>
-                <collection>{$config:mods-root}</collection>
+                <collection>{$config:content-root}</collection>
                 <field m="1" name="the Record ID Field (MODS, VRA)">{$id}</field>
             </query>
         else 

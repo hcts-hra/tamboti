@@ -34,7 +34,6 @@ declare variable $config:actual-app-id := "tamboti";
 declare variable $config:app-version := "${project.version}";
 
 declare variable $config:db-path-to-app := concat('/apps/', $config:actual-app-id);
-declare variable $config:rest-path-to-app := $config:exist-context || "/rest/db" || $config:db-path-to-app;
 declare variable $config:web-path-to-app := $config:exist-context || $config:web-context || "/" || $config:actual-app-id;
 
 (:~ Biblio security - admin user and users group :)
@@ -60,32 +59,24 @@ declare variable $config:sharing-permissions := map {
 declare variable $config:data-collection-name := "data";
 declare variable $config:content-root := "/" || $config:data-collection-name || "/";
 declare variable $config:mods-root := "/" || $config:data-collection-name;
-declare variable $config:mods-commons := fn:concat($config:mods-root, "/commons");
-declare variable $config:users-collection := xs:anyURI(fn:concat($config:mods-root, "/users"));
+declare variable $config:mods-commons := $config:content-root || "commons";
+declare variable $config:users-collection := xs:anyURI($config:content-root || "users");
 declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection);
 
 declare variable $config:url-image-size := "256";
 
 (: modules :)
 declare variable $config:db-path-to-modules := $config:db-path-to-app || "/modules";
-declare variable $config:rest-path-to-modules := $config:rest-path-to-app || "/modules";
-declare variable $config:web-path-to-modules := $config:web-path-to-app || "/modules";
 
 declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
 
 (: frameworks :)
-declare variable $config:web-path-to-frameworks := $config:web-path-to-app || "/frameworks";
 declare variable $config:web-path-to-tei-hra-framework := $config:web-path-to-app || "/frameworks/tei-hra";
 
 (: APIs:)
-declare variable $config:db-path-to-apis := $config:db-path-to-app || "/api";
 declare variable $config:web-path-to-apis := $config:web-path-to-app || "/api";
-declare variable $config:web-path-to-resources-apis := $config:web-path-to-apis || "/resources";
-declare variable $config:db-path-to-editors-apis := $config:db-path-to-apis || "/editors";
 declare variable $config:web-path-to-editors-apis := $config:web-path-to-apis || "/editors";
-declare variable $config:db-path-to-mods-editor-api := $config:db-path-to-editors-apis || "/hra-mods-editor";
 declare variable $config:web-path-to-mods-editor-api := $config:web-path-to-editors-apis || "/hra-mods-editor";
-declare variable $config:db-path-to-tei-editor-api := $config:db-path-to-editors-apis || "/tei-editor";
 declare variable $config:web-path-to-tei-editor-api := $config:web-path-to-editors-apis || "/tei-editor";
 
 (: DB paths to the default editors :)
@@ -104,30 +95,18 @@ declare variable $config:canvas-editor-path :=
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 
-declare variable $config:mods-temp-collection := $config:mods-root || "/temp";
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
 
 declare variable $config:themes := concat($config:app-root, "/themes");
-
-declare variable $config:resources := concat($config:app-root, $config:mods-root);
-declare variable $config:images := concat($config:app-root, $config:mods-root ||  "/images");
 
 declare variable $config:images-subcollection := ("VRA_images");
 
 declare variable $config:app-http-root := "/exist" || substring-after($config:app-root, "/db");
 
-(: If the user has not specified a query, should he see the entire collection contents?
- : Set to true() if a query must be specified, false() to list the entire collection.
- : On large databases, false() will most likely lead to problems.
- :)
-declare variable $config:require-query := true();
-
 (: email invitation settings :)
 declare variable $config:send-notification-emails := false();
 declare variable $config:smtp-server := "smtp.yourdomain.com";
 declare variable $config:smtp-from-address := "exist@yourdomain.com";
-
-declare variable $config:allow-origin := "";
 
 (: MongoDB Setup:)
 declare variable $config:mongo-url := "mongodb://localhost";

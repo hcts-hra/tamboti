@@ -184,7 +184,7 @@ declare function tei-hra-framework:format-detail-view($position as xs:string, $e
     let $result :=
     <table xmlns="http://www.w3.org/1999/xhtml" class="biblio-full">
     {
-    let $collection := replace(replace($collection-short, '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')
+    let $collection := replace(replace($collection-short, '^' || $config:mods-commons || '/', $config:content-root),'^' || $config:users-collection || '/', $config:content-root)
     (:let $log := util:log("DEBUG", ("##$collection): ", $collection)):)
     return
     <tr>

@@ -91,13 +91,13 @@ declare function local:get-vra-workrecord-template($workrecord-uuid as xs:string
 declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type, $workrecord-uuid) {
     let $image-uuid := concat('i_', util:uuid())
     let $upload-collection-path :=
-        if (exists(collection($config:mods-root)//vra:work[@id = $workrecord-uuid])) then 
-            let $resource := collection($config:mods-root)//vra:work[@id = $workrecord-uuid]
+        if (exists(collection($config:content-root)//vra:work[@id = $workrecord-uuid])) then 
+            let $resource := collection($config:content-root)//vra:work[@id = $workrecord-uuid]
             return
                 util:collection-name($resource)
         else 
-            if (exists(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid])) then
-                util:collection-name(collection($config:mods-root)//mods:mods[@ID = $workrecord-uuid]/@ID)
+            if (exists(collection($config:content-root)//mods:mods[@ID = $workrecord-uuid])) then
+                util:collection-name(collection($config:content-root)//mods:mods[@ID = $workrecord-uuid]/@ID)
             else 
                 ()
 
@@ -182,12 +182,12 @@ declare function upload:add-tag-to-parent-doc($parentdoc_path as xs:string, $par
 };
 
 declare function upload:determine-type($workrecord) {
-    let $vra_image := collection($config:mods-root)//vra:work[@id = $workrecord]/@id
+    let $vra_image := collection($config:content-root)//vra:work[@id = $workrecord]/@id
     let $type :=
         if (exists($vra_image)) 
         then 'vra'
         else
-            let $mods := collection($config:mods-root)//mods:mods[@ID = $workrecord]/@ID
+            let $mods := collection($config:content-root)//mods:mods[@ID = $workrecord]/@ID
             let $mods_type :=
                 if (exists($mods)) 
                 then 'mods'

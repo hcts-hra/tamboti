@@ -1160,7 +1160,7 @@ declare function search:get-writeable-subcollection-paths($path as xs:string) {
     Perform a search from scratch
 :)
 declare function search:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
-    let $collection := if ($collection) then $collection else '/db' || $config:mods-root || '/'
+    let $collection := if ($collection) then $collection else $config:content-root
     return
         <query>
             <collection>{$collection}</collection>

@@ -38,14 +38,6 @@ declare function local:set-user() {
         )
 };
 
-if($config:allow-origin ne "") then
-(
-    response:set-header("Access-Control-Allow-Origin", $config:allow-origin),
-    if(request:get-header("Access-Control-Request-Headers"))then
-        response:set-header("Access-Control-Allow-Headers", request:get-header("Access-Control-Request-Headers"))
-    else()
-)else(),
-
 if ($exist:path eq '/') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 		<redirect url="index.html"/>

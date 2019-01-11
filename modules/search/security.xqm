@@ -1054,7 +1054,7 @@ declare function security:get-resources($ids as xs:string*) as node()* {
         let $auth-token := request:get-header("_authToken")
         let $token-user := security:iiifauth-validate-cookie($auth-token)
     (: Do search as dba :)
-        let $resources := collection($config:mods-root)//(mods:mods[@ID = $ids] | vra:vra/vra:work[@id = $ids] | vra:vra/vra:image[@id = $ids] | svg:svg[@xml:id = $ids] | tei:TEI[@xml:id = $ids])
+        let $resources := collection($config:content-root)//(mods:mods[@ID = $ids] | vra:vra/vra:work[@id = $ids] | vra:vra/vra:image[@id = $ids] | svg:svg[@xml:id = $ids] | tei:TEI[@xml:id = $ids])
 
         return
             for $resource in $resources
@@ -1091,7 +1091,7 @@ declare function security:get-resource($id as xs:string) {
     let $token-user := security:iiifauth-validate-cookie($auth-token)
 
     (: Do search as dba :)
-    let $resource := collection($config:mods-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
+    let $resource := collection($config:content-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
 
     return
         if ($resource) then

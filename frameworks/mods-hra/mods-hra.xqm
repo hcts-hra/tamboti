@@ -183,7 +183,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                 <td>
                     <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
                     <div class="collection" >
-                        {replace(replace(xmldb:decode($collection-short), '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')}
+                        {replace(replace(xmldb:decode($collection-short), '^' || $config:mods-commons || '/', $config:content-root),'^' || $config:users-collection || '/', $config:content-root)}
                     </div>
                  </td>
             </tr>
@@ -723,7 +723,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
     let $id := concat($document-uri, '#', util:node-id($item))
     let $stored := session:get-attribute("personal-list")
     let $saved := exists($stored//*[@id = $id])
-    let $results :=  collection($config:mods-root)//mods:mods[@ID=$item/@ID]/mods:relatedItem
+    let $results :=  collection($config:content-root)//mods:mods[@ID=$item/@ID]/mods:relatedItem
     return
         <tr class="pagination-item detail" xmlns="http://www.w3.org/1999/xhtml">
             <td><input class="search-list-item-checkbox" type="checkbox" data-tamboti-record-id="{$item/@ID}"/></td>
@@ -744,7 +744,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
                             let $image-is-preview := $entry//mods:typeOfResource eq 'still image' and  $entry//mods:url[@access eq 'preview']
                             let $print-image :=
                                 if ($image-is-preview) then 
-                                    let $image := collection($config:mods-root)//vra:image[@id=data($entry//mods:url)]
+                                    let $image := collection($config:content-root)//vra:image[@id=data($entry//mods:url)]
                                     let $image-uuid := $image/@id
                                     return
                                         <p>

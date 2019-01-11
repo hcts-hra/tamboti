@@ -138,7 +138,7 @@ declare function wiki-hra-framework:format-detail-view($position as xs:string, $
     {
     <tr>
         <td class="collection-label">Record Location</td>
-        <td><div class="collection">{replace(replace(xmldb:decode($collection), '^' || $config:mods-commons || '/', $config:mods-root || '/'),'^' || $config:users-collection || '/', $config:mods-root || '/')}</div></td>
+        <td><div class="collection">{replace(replace(xmldb:decode($collection), '^' || $config:mods-commons || '/', $config:content-root),'^' || $config:users-collection || '/', $config:content-root)}</div></td>
     </tr>
     ,
         <tr>
@@ -264,7 +264,7 @@ declare function wiki-hra-framework:format-detail-view($position as xs:string, $
                     if ($type eq 'w')
                     then 'Work Record'
                     else 'Collection Record'
-            let $list-view := collection($config:mods-root)//vra:image[@id = $relid]/..
+            let $list-view := collection($config:content-root)//vra:image[@id = $relid]/..
             let $list-view := wiki-hra-framework:format-list-view('', $list-view, '')
             return
                 <tr>
@@ -466,7 +466,7 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
                                         vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)                                                                           }
                                 </p>
                     else 
-                        let $image := collection($config:mods-root)//vra:image[@id=$id]
+                        let $image := collection($config:content-root)//vra:image[@id=$id]
                         return
                                 <p>
                                     {
