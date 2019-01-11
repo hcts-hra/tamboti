@@ -14,8 +14,8 @@ let $testvra := collection("/db/data/users/editor")//vra:work[@id="w_c501fff7-28
 return
     <html>
         <head>
-            <script src="/exist/apps/tamboti/resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
-            <script type="text/javascript" src="/exist/apps/tamboti/resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
+            <script src="https://code.jquery.com/jquery-1.11.2.min.js">/**/</script>
+            <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js">/**/</script>
             <link rel="stylesheet" type="text/css" href="/exist/apps/tamboti/resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
             <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery-utils.js">/**/</script>
             <script type="text/javascript" src="/exist/apps/tamboti/resources/scripts/qtip/jquery.qtip.min.js">/**/</script>

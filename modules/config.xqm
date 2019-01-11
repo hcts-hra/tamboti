@@ -95,8 +95,6 @@ declare variable $config:canvas-editor-path :=
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 
-declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
-
 declare variable $config:themes := concat($config:app-root, "/themes");
 
 declare variable $config:images-subcollection := ("VRA_images");

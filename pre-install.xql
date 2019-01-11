@@ -67,9 +67,7 @@ if (doc-available($config-collection || $config:content-root || "collection.xcon
 then ()
 else xmldb:store-files-from-pattern($config-collection || $config:content-root, $dir, "data/xconf/data/*.xconf")
 ,
-(: installation:mkcol($config-collection, $mads-collection),:)
-(:xmldb:store-files-from-pattern(concat($config-collection, $mads-collection), $dir, "data/xconf/mads/*.xconf"),:) 
-util:log($log-level, "Config: Done.=========================================================")
+util:log($log-level, "Config: Done.")
 ,
 
 (: Create temp collection :)
