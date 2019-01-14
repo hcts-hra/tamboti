@@ -40,16 +40,6 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>com.google.code.maven-replacer-plugin</groupId>
-					<artifactId>replacer</artifactId>
-					<version>1.5.3</version>
-				</plugin>
-				<plugin>
-					<groupId>ro.kuberam.maven.plugins</groupId>
-					<artifactId>kuberam-expath-plugin</artifactId>
-					<version>0.5.9</version>
-				</plugin>
-				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>wagon-maven-plugin</artifactId>
 					<version>1.0</version>
@@ -68,7 +58,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -88,6 +78,7 @@
 			<plugin>
 				<groupId>ro.kuberam.maven.plugins</groupId>
 				<artifactId>kuberam-expath-plugin</artifactId>
+				<version>0.5.9</version>
 				<executions>
 					<execution>
 						<id>create-general-test-build</id>

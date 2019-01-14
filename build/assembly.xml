@@ -9,6 +9,7 @@
 	<dependency package="http://kuberam.ro/teian/" />	
 	<dependency package="http://exist-db.org/mongrel" />
 	<dependency package="http://expath.org/ns/crypto" />
+	<dependency processor="http://exist-db.org" semver-min="4.4.0" />
 	<author>Wolfgang Meier</author>
 	<author>Adam Retter</author>
 	<author>Dan McCreary</author>
@@ -32,7 +33,7 @@
 	<category id="exist">eXist extensions</category>
 	<fileSets>
 		<fileSet>
-			<directory>${basedir}</directory>
+			<directory>${project.basedir}</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
 				<exclude>build/</exclude>
