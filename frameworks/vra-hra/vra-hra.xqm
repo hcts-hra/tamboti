@@ -782,7 +782,7 @@ declare function vra-hra-framework:create-thumbnail-span($image-uuid as xs:strin
     return
         if($zoom) then 
             <span style="width:{$width}px; min-height:{$width}px;">
-                <a href="{$config:app-http-root}/components/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">{$images}</a>
+                <a href="/db/apps/iipmooviewer/mooviewer.xq?uuid={$image-uuid}" target="_blank">{$images}</a>
             </span>
         else
             <span style="width:{$width}px; min-height:{$width}px;">{$images}</span>

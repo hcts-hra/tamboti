@@ -27,10 +27,14 @@ declare function local:strip-prefix($str as xs:string, $prefix as xs:string) as 
     replace($str, $prefix, "")
 };
 
-
 util:log($log-level, "Script: Running pre-install script ..."),
 util:log($log-level, concat("...Script: using $home '", $home, "'")),
 util:log($log-level, concat("...Script: using $dir '", $dir, "'")),
+
+
+(: install the EXPath packages needed by Tamboti :)
+repo:install-and-deploy("http://hra.uni-heidelberg.de/ns/iipmooviewer", "http://kjc-sv036.kjc.uni-heidelberg.de:8080/exist/apps/public-repo/modules/find.xql"),
+repo:install-and-deploy("http://existsolutions.com/xquery/im4xquery", "http://kjc-sv036.kjc.uni-heidelberg.de:8080/exist/apps/public-repo/modules/find.xql"),
 
 (: create $config:data-collection-name collection :)
 if (not(xmldb:collection-available($config:content-root)))
