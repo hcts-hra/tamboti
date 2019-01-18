@@ -928,6 +928,7 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
                         {$config:error-message-before-link} 
                         <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
                         {$config:error-message-after-link}
+						<p>Caught error {$err:code}: {$err:description}. {("(line ", $err:line-number, ", column ", $err:column-number, ")")}</p>
                         </td>
                         }                        
                         (: Originally $item was passed to retrieve-mods:format-list-view() - was there a reason for that? Performance? :)

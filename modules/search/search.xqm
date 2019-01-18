@@ -1335,7 +1335,7 @@ declare function search:get-query-as-regex($query-as-xml) as xs:string {
                 in word-initial or word-final position, but if any of them occur elsewhere, 
                 they will make the query invalid anyway, so there is actually no need to do this.:)
                 (:Since a final period is itself treated as whitespace, it is removed, since otherwise it would reseult in expressions
-                sunce as "\bW.\b" which do not highlight.:)
+                sunce as "\s+W.\s+" which do not highlight.:)
                 
                 let $from := ("^\-", "\{", "\}", "\[", "\]", "\^", "\(", "\)", "~", "," , "\.^")
                 let $to := (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
@@ -1353,7 +1353,7 @@ declare function search:get-query-as-regex($query-as-xml) as xs:string {
                         for $expression in $query
                             return
                                 concat(
-                                    '\b'
+                                    '\s+'
                                     ,
                                     replace(
                                         replace(
@@ -1363,7 +1363,7 @@ declare function search:get-query-as-regex($query-as-xml) as xs:string {
                                         , '\?', '\\w')
                                     , '\*', '\\w*?')
                                     ,
-                                    '\b')
+                                    '\s+')
                 (:Join all regex expressions with the or operator.:)
                 let $query := string-join($query, '|')
                     return $query

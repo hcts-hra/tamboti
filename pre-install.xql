@@ -4,7 +4,6 @@ xquery version "3.1";
     TODO KISS - This file should be removed in favour of a convention based approach + some small metadata for users/groups/permissions (added by AR)
 :)
 
-import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
 import module namespace installation = "http://hra.uni-heidelberg.de/ns/tamboti/installation/" at "modules/installation/installation.xqm";
 
@@ -38,12 +37,7 @@ repo:install-and-deploy("http://existsolutions.com/xquery/im4xquery", "http://kj
 
 (: create $config:data-collection-name collection :)
 if (not(xmldb:collection-available($config:content-root)))
-then
-    (
-        xmldb:create-collection("/db", $config:data-collection-name)
-        ,
-        security:set-resource-permissions(xs:anyURI($config:content-root), "admin", "dba", $config:public-collection-mode)
-    )
+then xmldb:create-collection("/db", $config:data-collection-name)
 else ()
 ,
 (: Create users and groups :)
