@@ -40,6 +40,6 @@ declare function installation:set-public-collection-permissions-recursively($col
         ,
         for $resource-name in xmldb:get-child-resources($collection-path)
         
-        return security:set-resource-permissions(xs:anyURI(concat($collection-path, '/', $resource-name)), $config:biblio-admin-user, $config:biblio-users-group, $config:public-resource-mode)
+        return security:set-resource-permissions(xs:anyURI($collection-path || "/" || $resource-name), $config:biblio-admin-user, $config:biblio-users-group, $config:public-resource-mode)
     )
 };
