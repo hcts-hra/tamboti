@@ -466,7 +466,7 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
                                         vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_DETAIL_VIEW)                                                                           }
                                 </p>
                     else 
-                        let $image := collection($config:content-root)//vra:image[@id=$id]
+                        let $image := collection($config:content-root)//vra:image[@id = $id]
                         return
                                 <p>
                                     {

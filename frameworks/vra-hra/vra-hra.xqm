@@ -718,22 +718,16 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
                         {
                             if (exists($relations))
                             then
-                                let $relids :=
-                                    for $rel in $relations
-                                        let $image-uuid := 
-                                            if (starts-with(data($rel/@refid), "i_"))
-                                            then data($rel/@refid)
-                                            else data($rel/@relids)
-                                            
-                                    return $image-uuid 
+                            	for $relation in $relations
+                                    let $image-uuid := 
+                                        if (starts-with(data($relation/@refid), "i_"))
+                                        then data($relation/@refid)
+                                        else data($relation/@relids)                            
                                 (:NB: relids can hold multiple values; the image record with @pref on vra:relation is "true".
                                 For now, we disregard this; otherwise we have to check after retrieving the image records.:)
-                                let $relids := tokenize($relids, ' ')
                 
                                 (: Elevate rights because user is not able to search whole $config:content-root :)
                                 (: ToDo: do not search whole $config:content-root, since we know the image-record is in VRA_images/ relative to work record  :)
-                                let $image := collection($config:content-root)//vra:image[@id = $relids]
-                                let $image-uuid := $image/@id                                
                                 
                                 return vra-hra-framework:create-thumbnail-span($image-uuid, xs:boolean(not(security:get-user-credential-from-session()[1] eq "guest")), $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW, $vra-hra-framework:THUMB_SIZE_FOR_LIST_VIEW)
                             else ()
