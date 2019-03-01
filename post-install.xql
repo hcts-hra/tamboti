@@ -19,15 +19,17 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     (: set special permissions for xquery scripts :)
     sm:chmod(xs:anyURI($target || "/modules/upload/upload.xq"), "rwsr-xr-x")
     ,
-    sm:chmod(xs:anyURI($target || "/modules/search/security.xqm"), "rwsr-xr-x")
+    sm:chmod(xs:anyURI($target || "/modules/search/collections.xql"), "rwsr-xr-x") 
+    ,
+    sm:chmod(xs:anyURI($target || "/modules/search/simple-search.xql"), "rwsr-xr-x")     
+    ,
+    sm:chmod(xs:anyURI($target || "/modules/search/advanced-search.xql"), "rwsr-xr-x") 
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/vra-hra/vra-hra.xqm"))
     ,
     sm:chmod(xs:anyURI($target || "/docs/controller.xql"), "rwxr-xr-x")
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/hra-annotations/annotations.xq"))
-    ,
-    sm:remove-group-member($config:biblio-users-group, "admin")
     ,
     local:set-special-permissions(xs:anyURI($config:content-root))
 )

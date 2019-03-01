@@ -13,8 +13,8 @@ declare variable $local:json-serialize-parameters :=
 
 declare function local:authenticate($user as xs:string, $password as xs:string?) as element() {
    try {
-        if (security:login($user, $password)) then
-            <ok/>
+        if (security:login($user, $password))
+        then <ok/>
         else (
             response:set-status-code(403),
             <span>Wrong username and/or wrong password.</span>
@@ -241,5 +241,4 @@ return
                     )
             )
         )
-    else
-        local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))
+    else local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))

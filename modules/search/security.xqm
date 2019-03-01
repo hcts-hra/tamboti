@@ -23,8 +23,8 @@ declare variable $security:cookie-lifetime := 360000000;
 :)
 declare function security:login($username as xs:string, $password as xs:string?) as xs:boolean {
     (: if username is blacklisted: deny login :)
-    if ($config:users-login-blacklist = $username) then
-        false()
+    if ($config:users-login-blacklist = $username)
+    then false()
     else
         let $username := config:rewrite-username($username)
             return
@@ -227,31 +227,25 @@ declare function security:get-last-login-time($user as xs:string) as xs:dateTime
 :)
 
 declare function security:user-has-access($user as xs:string, $path as xs:anyURI, $mode as xs:string) {
-(:
-        let $log := util:log("INFO", "user: " || $user)
-        let $log := util:log("INFO", $path)
-:)
-
-    let $permissions := sm:get-permissions($path)
+    let $permissions := sm:get-permissions($path)/sm:permission
     let $usergroups := sm:get-user-groups($user)
     
-    let $is-owner := $permissions/sm:permission/@owner/string() = $user
-    let $has-group := $permissions/sm:permission/@group/string() = $usergroups
+    let $is-owner := $permissions/@owner/string() = $user
+    let $has-group := $permissions/@group/string() = $usergroups
     
     (: check POSIX access :)
-    let $user-access := $is-owner and fn:matches($permissions/sm:permission/@mode, $mode || "......")
-    let $group-access := $has-group and fn:matches($permissions/sm:permission/@mode, "..." || $mode || "...")
-    let $others-access := fn:matches($permissions/sm:permission/@mode, "......" || $mode)
-    
-    let $log := util:log("INFO", "$user-access: " || $user-access || " $group-access: " || $group-access || " $others-access:" || $others-access)
+    let $user-access := $is-owner and matches($permissions/@mode, $mode || "......")
+    let $group-access := $has-group and matches($permissions/@mode, "..." || $mode || "...")
+    let $others-access := matches($permissions/@mode, "......" || $mode)
     
     return
         (: if one of the POSIX permissions fits, return true :)
-        if($user-access or $group-access or $others-access)
+        if ($user-access or $group-access or $others-access)
         then true()
         (: check for ACLs:)
         else
-            let $valid-acls := $permissions/sm:permission/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
+            let $valid-acls := $permissions/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
+            
             return
                 if (count($valid-acls) > 0)
                 then true()
@@ -265,16 +259,7 @@ declare function security:user-has-access($user as xs:string, $path as xs:anyURI
 : @param collection The path of the collection
 :)
 declare function security:can-read-collection($collection as xs:string) as xs:boolean {
-    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then
-        let $current-user := security:get-user-credential-from-session()[1]
-        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
-        
-        return
-            if ($current-user = ($permissions/@owner, //sm:ace[@target = "USER"]/@who))
-            then true()
-            else false()
-    else sm:has-access($collection, "r")
+    security:user-has-access(security:get-user-credential-from-session()[1], $collection, "r..")
 };
 
 (:~
@@ -284,16 +269,7 @@ declare function security:can-read-collection($collection as xs:string) as xs:bo
 : @param collection The path of the collection
 :)
 declare function security:can-write-collection($collection as xs:string) as xs:boolean {
-    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then 
-        let $current-user := security:get-user-credential-from-session()[1]
-        let $permissions := sm:get-permissions(xs:anyURI($collection))/*
-        
-        return
-            if ($current-user = $permissions/@owner or contains($permissions//sm:ace[@target = "USER" and @who = $current-user]/@mode, "w"))
-            then true()
-            else false()        
-    else sm:has-access($collection, "w")
+    security:user-has-access(security:get-user-credential-from-session()[1], $collection, ".w.")
 };
 
 (:~
@@ -303,10 +279,7 @@ declare function security:can-write-collection($collection as xs:string) as xs:b
 : @param collection The path of the collection
 :)
 declare function security:can-execute-collection($collection as xs:string) as xs:boolean {
-    if (session:get-attribute($security:SESSION_USER_ATTRIBUTE) and  session:get-attribute($security:SESSION_PASSWORD_ATTRIBUTE))
-    then system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        sm:has-access($collection, "x"))
-    else sm:has-access($collection, "x")
+    security:user-has-access(security:get-user-credential-from-session()[1], $collection, "..x")
 };
 
 (:~
@@ -1068,16 +1041,13 @@ declare function security:get-resources($ids as xs:string*) as node()* {
                     then
                     (: only return data if user has access to resource   :)
                         if ($token-user) then
-                            if(security:user-has-access($token-user, $fullPath , "r..")) then 
-                                $resource
-                            else 
-                                error( xs:QName('unauthorized') ) 
+                            if (security:user-has-access($token-user, $fullPath , "r.."))
+                            then $resource
+                            else error(xs:QName('unauthorized'))
                         else
-                            if(system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                                sm:has-access($fullPath, "r"))) then
-                                    $resource
-                                else
-                                    error( xs:QName('unauthorized') ) 
+                            if (security:user-has-access(security:get-user-credential-from-session()[1], $fullPath, "r.."))
+                            then $resource
+                            else error(xs:QName('unauthorized'))
                     else
                         (: Resource not found :)
                         error( xs:QName('notFound') ) 
@@ -1094,27 +1064,25 @@ declare function security:get-resource($id as xs:string) {
     let $resource := collection($config:content-root)//(mods:mods[@ID eq $id][1] | vra:vra/vra:work[@id eq $id][1] | vra:vra/vra:image[@id eq $id][1] | svg:svg[@xml:id = $id][1] | tei:TEI[@xml:id = $id][1])
 
     return
-        if ($resource) then
+        if ($resource)
+        then
             let $resource-path := util:collection-name($resource)
             let $resource-name := util:document-name($resource)
             let $fullPath := xs:anyURI($resource-path || "/" || $resource-name)
             return
             (: only return data if user has access to resource   :)
-                if ($token-user) then
-                    if(security:user-has-access($token-user, $fullPath , "r..")) then 
-                        $resource
-                    else 
-                        error( xs:QName('unauthorized') ) 
-
-                else
-                    if (system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-                        sm:has-access($fullPath, "r")))
+                if ($token-user)
+                then 
+                    if (security:user-has-access($token-user, $fullPath , "r.."))
                     then $resource
-                    else error( xs:QName('unauthorized') ) 
-                            
+                    else error(xs:QName('unauthorized'))
+                else
+                    if (security:user-has-access(security:get-user-credential-from-session()[1], $fullPath, "r.."))
+                    then $resource
+                    else error(xs:QName('unauthorized'))
         else
             (: Resource not found :)
-            error( xs:QName('notFound') ) 
+            error(xs:QName('notFound')) 
 };
 
 declare function security:duplicate-acl($source as xs:anyURI, $target as xs:anyURI) {
