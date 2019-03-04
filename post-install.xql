@@ -17,15 +17,25 @@ declare function local:set-special-permissions($path as xs:anyURI) {
 
 (    
     (: set special permissions for xquery scripts :)
-    sm:chmod(xs:anyURI($target || "/modules/upload/upload.xq"), "rwsr-xr-x")
+    local:set-special-permissions(xs:anyURI($target || "/modules/upload/upload.xq"))
     ,
-    sm:chmod(xs:anyURI($target || "/modules/search/collections.xql"), "rwsr-xr-x") 
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/collections.xql")) 
     ,
-    sm:chmod(xs:anyURI($target || "/modules/search/simple-search.xql"), "rwsr-xr-x")     
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/operations.xql"))
     ,
-    sm:chmod(xs:anyURI($target || "/modules/search/advanced-search.xql"), "rwsr-xr-x") 
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/sharing.xql"))
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/sharing.xqm"))    
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/simple-search.xql"))     
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/advanced-search.xql")) 
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/frameworks/tei-hra/get-data.xq"))     
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/vra-hra/vra-hra.xqm"))
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/utils/utils.xqm"))    
     ,
     sm:chmod(xs:anyURI($target || "/docs/controller.xql"), "rwxr-xr-x")
     ,

@@ -260,9 +260,6 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
         for $relation in $allRelations
             let $type := $relation/@type
             let $relids := data($relation/@relids)
-(:            let $log := util:log("INFO", "relids: " || $relids):)
-(:            let $log := util:log("INFO", "type: " || $type):)
-(:            let $log := util:log("INFO", $relation):)
             let $annotations := 
                 if($relids) then
                     vra-hra-framework:_create-annotations-display-node($relids, "/" || xmldb:decode-uri($collection-short))
@@ -292,15 +289,6 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
 (:                        $relation/string():)
 
             (: get annotations for vra:image records :)
-            
-            (: Elevate rights because user is not able to search whole $config:content-root :)
-            (: ToDo: do not search whole $config:content-root, since we know the image-record is in VRA_images/ relative to work record  :)
-(:            let $vra-image := :)
-(:                system:as-user($config:dba-credentials[1], $config:dba-credentials[2], :)
-(:                    collection($config:content-root)//vra:image[@id = $relids]:)
-(:                ):)
-(:(:            let $list-view := vra-hra-framework:format-list-view('', $list-view, ''):):)
-(:            let $log := util:log("INFO", $relation):)
             return
                 <tr>
                     <td class="collection-label">{$type-label}</td>

@@ -10,9 +10,7 @@ return
     (
 (:        sm:remove-ace($collection-path, 2),:)
 (:        sm:add-group-ace($collection-path, $config:biblio-users-group, true(), "r--"),:)
-(:        system:as-user($config:dba-credentials[1],$config:dba-credentials[2],:)
 (:            sm:get-account-metadata(sm:get-permissions($collection-path)//sm:ace[3]/@who, xs:anyURI("http://axschema.org/namePerson/first")):)
-(:        ):)
 (:        sm:add-user-ace($collection-path, "a29", true(), "rwx"),:)
 (:        for $subcollection in xmldb:get-child-collections($collection-path):)
 (:        return :)

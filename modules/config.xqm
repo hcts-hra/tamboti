@@ -3,9 +3,7 @@ xquery version "3.1";
 module namespace config = "http://exist-db.org/mods/config";
 
 (:~ Credentials for the dba admin user :)
-declare variable $config:dba-credentials := ("admin", "");
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
-
 
 (: 
     Determine the application root collection from the current module load path.

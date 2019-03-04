@@ -30,12 +30,12 @@ let $header := response:set-header("Content-Disposition", "inline; filename=""in
 
 return 
     try {
-        system:as-user("admin", $config:dba-credentials[2], (
+		(
             let $anno-map := hra-anno-framework:generate-anno($html, "anno-config-1", "anno-type-1")
 (:            let $log := util:log("INFO", "hier"):)
             return
                 serialize($anno-map, $parameters)
-        ))
+        )
     } catch * {
         let $log := util:log("ERROR", "Error: adding annotation failed with exception: " ||  $err:code || ": " || $err:description)
         return

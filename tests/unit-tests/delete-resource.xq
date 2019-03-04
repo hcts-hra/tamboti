@@ -4,7 +4,7 @@ import module namespace config = "http://exist-db.org/mods/config" at "../../mod
 
 let $cluster-publications-collection-name := "Cluster Publications"    
 let $cluster-publications-db-path := xmldb:encode-uri($config:mods-commons || "/" || $cluster-publications-collection-name)
-let $credentials := "editor:" || $config:dba-credentials[2]
+let $credentials := "editor:editor"
 
 let $http-headers :=
     <headers>

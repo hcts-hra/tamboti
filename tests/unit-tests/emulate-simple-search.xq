@@ -17,7 +17,7 @@ declare function local:get-aces($collection-path as xs:anyURI) as element()* {
 
 let $start := util:system-time()
 
-let $aces-as-admin := system:as-user("admin", $config:dba-credentials[2], count(local:get-aces(xs:anyURI($config:users-collection))))
+let $aces-as-admin := count(local:get-aces(xs:anyURI($config:users-collection)))
 
 let $aces-as-guest := system:as-user("editor", "", count(local:get-aces(xs:anyURI($config:users-collection))))
 
