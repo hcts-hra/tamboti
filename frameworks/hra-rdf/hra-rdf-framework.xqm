@@ -213,9 +213,8 @@ declare function hra-rdf-framework:add-annotation($resourceUUID as xs:string, $a
                 (: get the annotation UUID :)
                 let $anno-iri := $new-anno/@rdf:about/string()
                 (: check as dba, if annotation exists:)
-                let $existing-anno := system:as-user($tamboti-config:dba-credentials[1], $tamboti-config:dba-credentials[2], 
-                    $col//rdf:RDF/oa:Annotation[@rdf:about=$anno-iri]
-                )
+                let $existing-anno := $col//rdf:RDF/oa:Annotation[@rdf:about=$anno-iri]
+                
                 return
                     (: if the annotation exists, try to update it  :)
                     if ($existing-anno) then

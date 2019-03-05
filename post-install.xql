@@ -9,7 +9,7 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     (
         sm:chown($path, "admin")
         ,
-        sm:chgrp($path, "dba")
+        sm:chgrp($path, "biblio.users")
         ,
         sm:chmod($path, "rwsr-xr-x")
     )
@@ -29,7 +29,15 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/simple-search.xql"))     
     ,
-    local:set-special-permissions(xs:anyURI($target || "/modules/search/advanced-search.xql")) 
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/advanced-search.xql"))
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/autocomplete-username.xql"))    
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/autocomplete.xql"))   
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/user.xql"))   
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/frameworks/hra-rdf/hra-rdf-framework.xqm"))     
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/tei-hra/get-data.xq"))     
     ,
