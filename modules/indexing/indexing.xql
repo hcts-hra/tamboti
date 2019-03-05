@@ -6,9 +6,9 @@ declare function local:set-computed-indexes($resource) {
     let $document-uri := $resource/root()/document-uri(.)
     let $document-root-namespace-uri := $resource/root()/*/namespace-uri()
     let $document-root-local-name := $resource/root()/*/local-name()
-    let $document-type-identifier := "{" || $document-root-namespace-uri || "}" || $document-root-local-name
+    let $document-type-identifier := "urn:" || $document-root-namespace-uri || ":" || $document-root-local-name
     
-    let $module-details := catalog-resolver:resolve-clark-notation-system-id($document-type-identifier)
+    let $module-details := catalog-resolver:resolve-system-id($document-type-identifier)
     let $module-namespace-uri := $module-details("namespace-uri")
     let $module-location-uri := $module-details("location-uri")
     let $module := load-xquery-module($module-namespace-uri, map {"location-hints": $module-location-uri})
