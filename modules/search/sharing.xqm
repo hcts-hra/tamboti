@@ -32,22 +32,20 @@ declare function sharing:set-collection-ace-writeable($collection as xs:anyURI, 
  : @param $is-writeable writeable or not
  :)
 declare function sharing:set-collection-ace-writeable-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string, $is-writeable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $parent-collection-result :=
-            if (security:set-ace-writeable-by-name($collection, $target, $name, $is-writeable)) then
-                (
-                    for $resource in xmldb:get-child-resources($collection)
-                        let $useless := security:set-ace-writeable-by-name(xs:anyURI($collection || "/" || $resource), $target, $name, $is-writeable)
-                        return
-                            ()
-                    ,
-                    true()
-                )
-            else false()
-        return
-            $parent-collection-result
-    )
-    
+    let $parent-collection-result :=
+        if (security:set-ace-writeable-by-name($collection, $target, $name, $is-writeable))
+        then
+            (
+                for $resource in xmldb:get-child-resources($collection)
+                let $useless := security:set-ace-writeable-by-name(xs:anyURI($collection || "/" || $resource), $target, $name, $is-writeable)
+                
+                return()
+                ,
+                true()
+            )
+        else false()
+        
+    return $parent-collection-result
 };
 
 (:~
@@ -58,9 +56,7 @@ declare function sharing:set-collection-ace-writeable-by-name($collection as xs:
  : @param $is-executable executable or not
  :)
 declare function sharing:set-ace-executable-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        security:set-ace-executable-by-name($collection, $target, $name, $is-executable)
-    )
+    security:set-ace-executable-by-name($collection, $target, $name, $is-executable)
 };
 
 (: removes an ace on a collection and all the documents in that collection :)
@@ -91,108 +87,107 @@ declare function sharing:remove-collection-ace($collection as xs:anyURI, $id as 
 
 (: removes an ace on a collection and all the documents in that collection by ACE target and name:)
 declare function sharing:remove-collection-ace-by-name($collection as xs:anyURI, $target as xs:string, $name as xs:string)  {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],(
-        let $removed := security:remove-ace-by-name($collection, $target, $name)
-        return 
-            if(exists($removed)) then
+    let $removed := security:remove-ace-by-name($collection, $target, $name)
+    
+    return 
+        if (exists($removed))
+        then
             (
                 for $resource in xmldb:get-child-resources($collection)
-                    let $resource-path := $collection || "/" || $resource
-                    return 
-                        if (not(empty(security:remove-ace-by-name($resource-path, $target, $name)))) then
-                            true()
-                        else
-                            fn:error(xs:QName("sharing:remove-collection-ace-by-name"), "Could not remove ace for " || $target  || " '" || $name || "' for '" || $resource-path || "'")
+                let $resource-path := $collection || "/" || $resource
+                
+                return 
+                    if (not(empty(security:remove-ace-by-name($resource-path, $target, $name))))
+                    then true()
+                    else error(xs:QName("sharing:remove-collection-ace-by-name"), "Could not remove ace for " || $target  || " '" || $name || "' for '" || $resource-path || "'")
                 ,
-                if ($removed[1] eq "USER") then
-                    sharing:send-share-user-removal-mail($collection, $removed[2])
+                if ($removed[1] eq "USER")
+                then sharing:send-share-user-removal-mail($collection, $removed[2])
                 else 
-                    if($removed[1] eq "GROUP") then
-                        sharing:send-share-group-removal-mail($collection, $removed[2])
-                    else()
+                    if ($removed[1] eq "GROUP")
+                    then sharing:send-share-group-removal-mail($collection, $removed[2])
+                    else ()
                 ,
                 true()
             )
-            else
-               false()                        
-        ()
-        )
-    )
+        else
+           false()                        
+    ()
 };
 
 (: adds a user ace on a collection, and also to all the documents in that collection (at the same acl index) :)
 declare function sharing:add-collection-user-ace($collection as xs:anyURI, $username as xs:string, $mode as xs:string) as xs:int {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
-        (: check for existing user ACE :)
-        let $user-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="USER" and @who=$username]
+    (: check for existing user ACE :)
+    let $user-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="USER" and @who=$username]
+    
+    return
+        if (count($user-ace) > 0)
+        then error(xs:QName("sharing:add-collection-user-ace"), "ACE for user already exists")
+        else
+            let $id := security:add-user-ace($collection, $username, $mode)
+            
             return
-                if (count($user-ace) > 0) then 
-                    fn:error(xs:QName("sharing:add-collection-user-ace"), "ACE for user already exists")
-                else
-                    let $id := security:add-user-ace($collection, $username, $mode)
+                if (not(empty($id)))
+                then
+                    (
+                        (: add ace to child resources:)
+                        (: no exec-bit for resources :)
+                        let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
+                        
                         return
-                            if (fn:not(fn:empty($id)))
-                                then
-                                    (
-                                        (: add ace to child resources:)
-                                        (: no exec-bit for resources :)
-                                        let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
-                                            for $resource in xmldb:get-child-resources($collection)
-                                            let $resource-path := fn:concat($collection, "/", $resource) return
-                                                if (not(empty(security:add-user-ace($resource-path, $username, $mode)))) then
-                                                    ()
-                                                else
-                                                    fn:error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not add ace for '", $username , "' for '", $resource-path, "'"))
-                                        ,
-                                        let $send-email :=
-                                            (: do not send notification email if function is called recursively on VRA_images :)
-                                            if (not(functx:substring-after-last($collection, "/") = "VRA_images")) then
-                                                sharing:send-share-user-invitation-mail($collection, $username)
-                                            else
-                                                ()
-                                        return
-                                            $id
-                                    )
-                                else -1
-    )
+                            for $resource in xmldb:get-child-resources($collection)
+                            let $resource-path := fn:concat($collection, "/", $resource)
+                            
+                            return
+                                if (not(empty(security:add-user-ace($resource-path, $username, $mode))))
+                                then ()
+                                else error(xs:QName("sharing:add-collection-user-ace"), fn:concat("Could not add ace for '", $username , "' for '", $resource-path, "'"))
+                        ,
+                        let $send-email :=
+                            (: do not send notification email if function is called recursively on VRA_images :)
+                            if (not(functx:substring-after-last($collection, "/") = "VRA_images"))
+                            then sharing:send-share-user-invitation-mail($collection, $username)
+                            else ()
+                            
+                        return $id
+                    )
+                    else -1
 };
 
 (: adds a group ace on a collection, and also to all the documents in that collection (at the same acl index) :)
 declare function sharing:add-collection-group-ace($collection as xs:anyURI, $groupname as xs:string, $mode as xs:string) as xs:int {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        (: check for existing group ACE :)
-        let $group-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="GROUP" and @who=$groupname]
+    (: check for existing group ACE :)
+    let $group-ace := sm:get-permissions(xs:anyURI($collection))//sm:ace[@target="GROUP" and @who=$groupname]
+    
+    return
+        if (count($group-ace) > 0)
+        then error(xs:QName("sharing:add-collection-group-ace"), "ACE for group already exists")
+        else
+            let $id := security:add-group-ace($collection, $groupname, $mode)
+            
             return
-                if (count($group-ace) > 0) then 
-                    fn:error(xs:QName("sharing:add-collection-group-ace"), "ACE for group already exists")
-                else
-                    let $id := security:add-group-ace($collection, $groupname, $mode)
-                        return
-                            if (fn:not(fn:empty($id)))
-                                then
-                                    (
-                                        (: add ACE to child resources :)
-                                        (: get correspondent resource mode for Collection :)
+                if (not(empty($id)))
+                then
+                    (
+                        (: add ACE to child resources :)
+                        (: get correspondent resource mode for Collection :)
 
-                                        (: no exec-bit for resources :)
-                                        let $mode := fn:replace($mode, "(.)(.)(.)", "$1$2-")
-                                        for $resource in xmldb:get-child-resources($collection)
-                                        let $resource-path := fn:concat($collection, "/", $resource) return
-                                            if(not(empty(security:add-group-ace($resource-path, $groupname, $mode))))then
-                                                ()
-                                            else
-                                                fn:error(xs:QName("sharing:add-collection-group-ace"), fn:concat("Could not insert ace at index '", $id, "' for '", $resource-path, "'")),
-                                        let $send-email :=
-                                            (: do not send notification email if function is called recursively on VRA_images :)
-                                            if (not(functx:substring-after-last($collection, "/") = "VRA_images")) then
-                                                sharing:send-share-group-invitation-mail($collection, $groupname)
-                                            else
-                                                ()
-                                        return
-                                            $id
-                                    )
-                                else -1
-    )
+                        (: no exec-bit for resources :)
+                        let $mode := replace($mode, "(.)(.)(.)", "$1$2-")
+                        for $resource in xmldb:get-child-resources($collection)
+                        let $resource-path := fn:concat($collection, "/", $resource) return
+                            if (not(empty(security:add-group-ace($resource-path, $groupname, $mode))))
+                            then ()
+                            else error(xs:QName("sharing:add-collection-group-ace"), fn:concat("Could not insert ace at index '", $id, "' for '", $resource-path, "'")),
+                        let $send-email :=
+                            (: do not send notification email if function is called recursively on VRA_images :)
+                            if (not(functx:substring-after-last($collection, "/") = "VRA_images"))
+                            then sharing:send-share-group-invitation-mail($collection, $groupname)
+                            else ()
+                            
+                        return $id
+                    )
+                    else -1
 };
 
 declare function sharing:send-share-user-invitation-mail($collection-path as xs:string, $username as xs:string) as empty-sequence()
@@ -265,63 +260,63 @@ declare function sharing:get-shared-collection-roots($write-required as xs:boole
     let $user-id := security:get-user-credential-from-session()[1]
     
     return
-    if (fn:not(($user-id eq 'guest'))) then
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
+        if (fn:not(($user-id eq 'guest')))
+        then
             for $child-collection in xmldb:get-child-collections($config:users-collection)
-                let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) 
+            let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) 
+            
+            return
+                for $user-subcollection in xmldb:get-child-collections($child-collection-path)
+                let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) 
+    (:            let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode):)
+                
                 return
-                    for $user-subcollection in xmldb:get-child-collections($child-collection-path)
-                        let $user-subcollection-path := fn:concat($child-collection-path, "/", $user-subcollection) 
-        (:            let $ace-mode := data(sm:get-permissions(xs:anyURI($user-subcollection-path))//sm:ace[@who = $user-id]/@mode):)
-                        return
-                                system:as-user($user-id, security:get-user-credential-from-session()[2],
-                                    (
-                                        if($write-required) then
-                                                if (sm:has-access(xs:anyURI($user-subcollection-path), "rw-"))
-                                                    then $user-subcollection-path
-                                                    else ()                            
-                                            else
-                                                if (sm:has-access(xs:anyURI($user-subcollection-path), "r--"))
-                                                    then $user-subcollection-path
-                                                    else ()
-                                    )
-                                )
-        )
-    else()
+                    (
+                        if($write-required)
+                        then
+                            if (security:user-has-access(security:get-user-credential-from-session()[1], $user-subcollection-path, "rw."))
+                                then $user-subcollection-path
+                                else ()                            
+                            else
+                                if (security:user-has-access(security:get-user-credential-from-session()[1], $user-subcollection-path, "r.."))
+                                then $user-subcollection-path
+                                else ()
+                    )
+        else()
 };
 
 declare function sharing:recursively-get-shared-subcollections($collection as xs:anyURI, $write-required as xs:boolean) as xs:string* {
-    system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
-        let $user-id := security:get-user-credential-from-session()[1]
-        let $ace-mode := data(sm:get-permissions($collection)//sm:ace[@who = $user-id]/@mode)
-    
-        return
-                if (fn:not(($user-id eq 'guest'))) then
-                    (
-                            if ($write-required) then
-                                if (contains($ace-mode, 'w')) then 
-                                        $collection
-                                else 
-                                    ()                            
-                            else
-                                if (contains($ace-mode, 'r')) then 
-                                    $collection
-                                else 
-                                    ()
-                        ,
-                        (: recursively call function for all subcollections:)
-                        for $child-collection in xmldb:get-child-collections($collection)
-                        order by $child-collection ascending
-                            return sharing:recursively-get-shared-subcollections(xs:anyURI($collection || "/" || $child-collection), $write-required)   
-                    )
+    let $user-id := security:get-user-credential-from-session()[1]
+    let $ace-mode := data(sm:get-permissions($collection)//sm:ace[@who = $user-id]/@mode)
+
+    return
+        if (fn:not(($user-id eq 'guest')))
+        then
+            (
+                if ($write-required)
+                then
+                    if (contains($ace-mode, 'w'))
+                    then $collection
+                    else ()                            
                 else
-                    ()
-    )
+                    if (contains($ace-mode, 'r'))
+                    then $collection
+                    else ()
+                ,
+                (: recursively call function for all subcollections:)
+                for $child-collection in xmldb:get-child-collections($collection)
+                order by $child-collection ascending
+                
+                return sharing:recursively-get-shared-subcollections(xs:anyURI($collection || "/" || $child-collection), $write-required)   
+            )
+        else
+            ()
 };
 
 declare function sharing:get-shared-with($collection-path as xs:string) as xs:string* {
     let $permissions := sm:get-permissions(xs:anyURI($collection-path))/sm:permission
     let $mode := $permissions/@mode 
+    
     return
         fn:string-join(
             (
@@ -333,10 +328,7 @@ declare function sharing:get-shared-with($collection-path as xs:string) as xs:st
 (:                else():)
 (:                ,:)
                 for $ace in $permissions/sm:acl/sm:ace[@target = "USER" and @access_type = "ALLOWED"] 
-                return 
-                    system:as-user($config:dba-credentials[1], $config:dba-credentials[2], 
-                            sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
-                        )
+                return sm:get-account-metadata($ace/@who, xs:anyURI("http://axschema.org/namePerson"))
             )
             ,
             ", "
@@ -354,19 +346,14 @@ declare function sharing:is-valid-group-for-share($groupname as xs:string) as xs
 };
 
 declare function sharing:get-resource-ace-mode-for-collection-ace($collection as xs:anyURI, $target as xs:string, $name as xs:string) {
-    let $user-ace := 
-        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
-            sm:get-permissions($collection)//sm:ace[@target=$target and @who=$name][1]
-        )
-        
+    let $user-ace := sm:get-permissions($collection)//sm:ace[@target=$target and @who=$name][1]
     let $collection-mode := $user-ace/@mode/string()
     
     for $key in map:keys($config:sharing-permissions)
     return
-        if($config:sharing-permissions($key)("collection") = $collection-mode) then
-            $key
-        else
-            ()
+        if ($config:sharing-permissions($key)("collection") = $collection-mode)
+        then $key
+        else ()
     
         
 (:        $config:sharing-permissions($key)("resource"):)

@@ -1,26 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.uni-hd.hra</groupId>
 	<artifactId>tamboti</artifactId>
-	<version>1.2.1</version>
+	<version>1.3.8</version>
 	<packaging>pom</packaging>
-
 	<url>http://exist-db.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<package-name>http://exist-db.org/apps/tamboti</package-name>
-		<package-title>Tamboti Metadata Framework</package-title>
-		<package-type>application</package-type>
+		<package.name>http://exist-db.org/apps/tamboti</package.name>
+		<package.title>Tamboti Metadata Framework</package.title>
+		<package.type>application</package.type>
 	</properties>
-
-	<issueManagement>
-		<system>changes.xml</system>
-		<url />
-	</issueManagement>
 
 	<developers>
 		<developer>
@@ -37,407 +32,54 @@
 		</developer>
 		<developer>
 			<name>Claudius Teodorescu</name>
-			<email>claudius.teodorescu@asia-europe.uni-heidelberg.de</email>
+			<email>claudius.teodorescu@gmail.com</email>
 		</developer>
 	</developers>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>com.google.code.maven-replacer-plugin</groupId>
-					<artifactId>replacer</artifactId>
-					<version>1.5.3</version>
-				</plugin>
-				<plugin>
-					<groupId>ro.kuberam.maven.plugins</groupId>
-					<artifactId>kuberam-expath-plugin</artifactId>
-					<version>0.5.9</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>wagon-maven-plugin</artifactId>
-					<version>1.0</version>
-				</plugin>
-				<plugin>
-					<groupId>com.coderplus.maven.plugins</groupId>
-					<artifactId>copy-rename-maven-plugin</artifactId>
-					<version>1.0.1</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-
-	<profiles>
-		<profile>
-			<id>general-production-build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<executions>
-							<execution>
-								<id>filter-config.template.xqm</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/modules/config.template.xqm</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/config.xqm</outputFile>
-									<replacements>
-										<replacement>
-											<token>config:app-version := ""</token>
-											<value>config:app-version := "${project.version}"</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.coderplus.maven.plugins</groupId>
-						<artifactId>copy-rename-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-services.xml</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
-									<destinationFile>${project.build.directory}/services.xml</destinationFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>ro.kuberam.maven.plugins</groupId>
-						<artifactId>kuberam-expath-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>create-general-test-build</id>
-								<phase>package</phase>
-								<goals>
-									<goal>make-xar</goal>
-								</goals>
-								<configuration>
-									<descriptor>build/general-production-assembly.xml</descriptor>
-									<finalName>${project.build.finalName}</finalName>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>general-test-build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<executions>
-							<execution>
-								<id>filter-index.html</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/themes/tamboti/pages/index.html</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/index.html</outputFile>
-									<replacements>
-										<replacement>
-											<token>theme/images/tamboti.png</token>
-											<value>theme/images/tamboti-test.png</value>
-										</replacement>
-										<replacement>
-											<token>&lt;div id="page-head-right"&gt;</token>
-											<value>&lt;div&gt;Version ${project.version}, build ${maven.build.timestamp} by
-												${user.name}&lt;/div&gt;&lt;div
-												id="page-head-right"&gt;</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-							<execution>
-								<id>filter-config.template.xqm</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/modules/config.template.xqm</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/config.xqm</outputFile>
-									<replacements>
-										<replacement>
-											<token>config:actual-app-id := "tamboti"</token>
-											<value>config:actual-app-id := "${project.artifactId}-${user.name}"</value>
-										</replacement>
-										<replacement>
-											<token>config:app-version := ""</token>
-											<value>config:app-version := "${project.version}"</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.coderplus.maven.plugins</groupId>
-						<artifactId>copy-rename-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-services.xml</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
-									<destinationFile>${project.build.directory}/services.xml</destinationFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>ro.kuberam.maven.plugins</groupId>
-						<artifactId>kuberam-expath-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>create-general-test-build</id>
-								<phase>package</phase>
-								<goals>
-									<goal>make-xar</goal>
-								</goals>
-								<configuration>
-									<descriptor>build/general-test-assembly.xml</descriptor>
-									<finalName>${project.build.finalName}-test-${user.name}</finalName>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>cluster-production-build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<executions>
-							<execution>
-								<id>filter-config.template.xqm</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/modules/config.template.xqm</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/config.xqm</outputFile>
-									<replacements>
-										<replacement>
-											<token>config:enforced-realm-id := "ldap-server.yourdomain.com"</token>
-											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
-										</replacement>
-										<replacement>
-											<token>config:dba-credentials := ("admin", "")</token>
-											<value>config:dba-credentials := ("admin","${test-tamboti.admin-password}")</value>
-										</replacement>
-										<replacement>
-											<token>config:app-version := ""</token>
-											<value>config:app-version := "${project.version}"</value>
-										</replacement>
-									</replacements>
-									<regex>false</regex>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.coderplus.maven.plugins</groupId>
-						<artifactId>copy-rename-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-services.xml</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
-									<destinationFile>${project.build.directory}/services.xml</destinationFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>					
-					<plugin>
-						<groupId>ro.kuberam.maven.plugins</groupId>
-						<artifactId>kuberam-expath-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>create-general-production-build</id>
-								<phase>package</phase>
-								<goals>
-									<goal>make-xar</goal>
-								</goals>
-								<configuration>
-									<descriptor>build/cluster-production-assembly.xml</descriptor>
-									<finalName>${project.build.finalName}</finalName>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>cluster-test-build</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<executions>
-							<execution>
-								<id>filter-index.html</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/themes/tamboti/pages/index.html</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/index.html</outputFile>
-									<replacements>
-										<replacement>
-											<token>theme/images/tamboti.png</token>
-											<value>theme/images/tamboti-test.png</value>
-										</replacement>
-										<replacement>
-											<token>&lt;div id="page-head-right"&gt;</token>
-											<value>&lt;div&gt;Version ${project.version}, build ${maven.build.timestamp} by
-												${user.name}&lt;/div&gt;&lt;div
-												id="page-head-right"&gt;</value>
-										</replacement>
-									</replacements>
-								</configuration>
-							</execution>
-							<execution>
-								<id>filter-config.template.xqm</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-								<configuration>
-									<file>${basedir}/modules/config.template.xqm</file>
-									<outputFile>${project.build.directory}/maven-replacer-plugin/config.xqm</outputFile>
-									<replacements>
-										<replacement>
-											<token>config:enforced-realm-id := "ldap-server.yourdomain.com"</token>
-											<value>config:enforced-realm-id := "${tamboti.enforced-realm-id}"</value>
-										</replacement>
-										<replacement>
-											<token>config:dba-credentials := ("admin", "")</token>
-											<value>config:dba-credentials := ("admin","${test-tamboti.admin-password}")</value>
-										</replacement>
-										<replacement>
-											<token>config:app-version := ""</token>
-											<value>config:app-version := "${project.version}"</value>
-										</replacement>
-									</replacements>
-									<regex>false</regex>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.coderplus.maven.plugins</groupId>
-						<artifactId>copy-rename-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>copy-services.xml</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<sourceFile>${basedir}/modules/configuration/services.default.xml</sourceFile>
-									<destinationFile>${project.build.directory}/services.xml</destinationFile>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>ro.kuberam.maven.plugins</groupId>
-						<artifactId>kuberam-expath-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>create-general-production-build</id>
-								<phase>package</phase>
-								<goals>
-									<goal>make-xar</goal>
-								</goals>
-								<configuration>
-									<descriptor>build/cluster-test-assembly.xml</descriptor>
-									<finalName>${project.build.finalName}-test-${user.name}</finalName>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>test-mail</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-changes-plugin</artifactId>
-						<version>2.9</version>
-						<executions>
-							<execution>
-								<id>generate-announcement-mail</id>
-								<phase>package</phase>
-								<goals>
-									<goal>announcement-generate</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>send-announcement-mail</id>
-								<phase>package</phase>
-								<goals>
-									<goal>announcement-mail</goal>
-								</goals>
-							</execution>
-						</executions>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
 						<configuration>
-							<!-- <smtpHost>extmail.urz.uni-heidelberg.de</smtpHost> -->
-							<!-- <smtpPort implementation="java.lang.Integer">25</smtpPort> -->
-							<!-- <username>claudius.teodorescu@asia-europe.uni-heidelberg.de</username> -->
-							<!-- <password></password> -->
-
-							<smtpHost>smtp.gmail.com</smtpHost>
-							<smtpPort implementation="java.lang.Integer">587</smtpPort>
-							<username>claudius.teodorescu@gmail.com</username>
-							<password></password>
-
-
-							<!-- <sslMode>true</sslMode> -->
-							<toAddresses>
-								<toAddress implementation="java.lang.String">guth@asia-europe.uni-heidelberg.de</toAddress>
-							</toAddresses>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/modules</directory>
+									<include>config.xqm</include>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
 						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>ro.kuberam.maven.plugins</groupId>
+				<artifactId>kuberam-expath-plugin</artifactId>
+				<version>0.5.9</version>
+				<executions>
+					<execution>
+						<id>create-general-test-build</id>
+						<phase>package</phase>
+						<goals>
+							<goal>make-xar</goal>
+						</goals>
+						<configuration>
+							<descriptor>build/assembly.xml</descriptor>
+							<finalName>${project.build.finalName}</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

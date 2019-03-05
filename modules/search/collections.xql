@@ -20,58 +20,60 @@ declare variable $collections-to-skip-for-all := ('VRA_images');
 declare function local:lazy-read($collection-uri as xs:anyURI) {
     (: if searching for shared collections, do not display shares in own home collection:)
     let $skip-collections :=
-        if ( ($collection-uri = $config:users-collection) ) then
-            ($collections-to-skip-for-all, xmldb:encode(security:get-user-credential-from-session()[1]))
-        else
-            $collections-to-skip-for-all
+        if (($collection-uri = $config:users-collection))
+        then
+            (
+                $collections-to-skip-for-all
+                ,
+                xmldb:encode(security:get-user-credential-from-session()[1])
+            )
+        else $collections-to-skip-for-all
 
     (: elevate rights for going into the collection structure :)
-    let $subcollections := 
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-                xmldb:get-child-collections($collection-uri)
-            )
-        )
+    let $subcollections := xmldb:get-child-collections($collection-uri)
 
-    for $subcol in $subcollections
-    order by lower-case($subcol)
     return
-        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
-        let $readable := security:can-read-collection($fullpath)
-        let $executeable := security:can-execute-collection($fullpath) 
-        let $writeable := security:can-write-collection($fullpath) 
-        let $readable-children := local:has-readable-children($fullpath)
-        let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
-        let $extra-classes := (
-            if ($writeable)
-            then 'fancytree-writeable' 
-            else 'fancytree-readable'
-            ,
-            if ($is-owner and count(security:get-acl($fullpath)) > 0 )
-            then 'fancytree-shared'
-(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
-            else ()
-        )
+        for $subcol in $subcollections
+        order by lower-case($subcol)
+        
         return
-            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
-            then map:merge((
-                map {
-                    "title": xmldb:decode($subcol),
-                    "key": xmldb:decode($fullpath),
-                    "folder": true(),
-                    "writeable": $writeable,
-                    "lazy": true(),
-                    "extraClasses": $extra-classes
-                }                
+            let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+            let $readable := security:can-read-collection($fullpath)
+            let $executeable := security:can-execute-collection($fullpath) 
+            let $writeable := security:can-write-collection($fullpath) 
+            let $readable-children := local:has-readable-children($fullpath)
+            let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
+            let $extra-classes := (
+                if ($writeable)
+                then 'fancytree-writeable' 
+                else 'fancytree-readable'
                 ,
-                if (exists($readable-children))
-                then map {"children": $readable-children}
+                if ($is-owner and count(security:get-acl($fullpath)) > 0 )
+                then 'fancytree-shared'
+    (:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
                 else ()
-                ,
-                if ($is-owner and count(security:get-acl($fullpath)) > 0)
-                then () (: "icon": $writeable-and-shared-folder-icon :)
-                else ()                
-            ))                
-            else array {()}
+            )
+            return
+                if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
+                then map:merge((
+                    map {
+                        "title": xmldb:decode($subcol),
+                        "key": xmldb:decode($fullpath),
+                        "folder": true(),
+                        "writeable": $writeable,
+                        "lazy": true(),
+                        "extraClasses": $extra-classes
+                    }                
+                    ,
+                    if (exists($readable-children))
+                    then map {"children": $readable-children}
+                    else ()
+                    ,
+                    if ($is-owner and count(security:get-acl($fullpath)) > 0)
+                    then () (: "icon": $writeable-and-shared-folder-icon :)
+                    else ()                
+                ))                
+                else array {()}
 };
 
 declare function local:has-readable-children($collection-uri as xs:anyURI) {
@@ -83,53 +85,52 @@ declare function local:has-readable-children($collection-uri as xs:anyURI) {
         else $collections-to-skip-for-all
 
     (: elevate rights for going into the collection structure :)
-    let $subcollections := 
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2], (
-                xmldb:get-child-collections($collection-uri)
-            )
-        )
-    for $subcol in $subcollections
-    order by lower-case($subcol)
+    let $subcollections := xmldb:get-child-collections($collection-uri)
+    
     return
-        let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
-        let $readable := security:can-read-collection($fullpath)
-        let $executeable := security:can-execute-collection($fullpath) 
-        let $writeable := security:can-write-collection($fullpath) 
-        let $readable-children := local:has-readable-children($fullpath)
-        let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
-        let $extra-classes := (
-            if ($writeable)
-            then 'fancytree-writeable' 
-            else 'fancytree-readable'
-            ,
-            if ($is-owner and count(security:get-acl($fullpath)) > 0 )
-            then
-(:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
-                'fancytree-shared'
-            else ()
-        )
+        for $subcol in $subcollections
+        order by lower-case($subcol)
         
         return
-            if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
-            then map:merge((
-                map {
-                    "title": xmldb:decode($subcol),
-                    "key": xmldb:decode($fullpath),
-                    "folder": true(),
-                    "writeable": $writeable,
-                    "lazy": true(),
-                    "extraClasses": $extra-classes
-                }
+            let $fullpath := xs:anyURI($collection-uri || "/" || $subcol)
+            let $readable := security:can-read-collection($fullpath)
+            let $executeable := security:can-execute-collection($fullpath) 
+            let $writeable := security:can-write-collection($fullpath) 
+            let $readable-children := local:has-readable-children($fullpath)
+            let $is-owner := security:is-collection-owner(security:get-user-credential-from-session()[1],  $fullpath)
+            let $extra-classes := (
+                if ($writeable)
+                then 'fancytree-writeable' 
+                else 'fancytree-readable'
                 ,
-                if (exists($readable-children))
-                then map {"children": $readable-children}
+                if ($is-owner and count(security:get-acl($fullpath)) > 0 )
+                then
+    (:                            <icon>{$writeable-and-shared-folder-icon}</icon>:)
+                    'fancytree-shared'
                 else ()
-                ,
-                if ($is-owner and count(security:get-acl($fullpath)) > 0)
-                then () (: "icon": $writeable-and-shared-folder-icon :)
-                else ()                 
-            ))
-            else ()
+            )
+            
+            return
+                if (not($skip-collections = $subcol) and (($readable and $executeable) or not(empty($readable-children))))
+                then map:merge((
+                    map {
+                        "title": xmldb:decode($subcol),
+                        "key": xmldb:decode($fullpath),
+                        "folder": true(),
+                        "writeable": $writeable,
+                        "lazy": true(),
+                        "extraClasses": $extra-classes
+                    }
+                    ,
+                    if (exists($readable-children))
+                    then map {"children": $readable-children}
+                    else ()
+                    ,
+                    if ($is-owner and count(security:get-acl($fullpath)) > 0)
+                    then () (: "icon": $writeable-and-shared-folder-icon :)
+                    else ()                 
+                ))
+                else ()
 
 };
 

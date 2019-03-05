@@ -1,6 +1,6 @@
 xquery version "3.1";
 
-module namespace biblio="http://exist-db.org/xquery/biblio";
+module namespace biblio = "http://exist-db.org/xquery/biblio";
 
 (:~
     The core XQuery script for the bibliographic demo. It receives a template XML document
@@ -638,6 +638,7 @@ declare function biblio:process-form2($parameters) as element(query)? {
     let $fields := array {
         for $field in $fields
         order by $field?index
+        
         return $field
     }
     
@@ -978,10 +979,11 @@ declare function biblio:list-collection($query-as-xml as element(query)?, $sort 
             switch ($sort)
             case "Author"
             return
-                for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
-                let $title := biblio:order-by-author($item)
-                order by $title
-                return $item
+                for $resource in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
+                let $author := ft:get-field($resource/root()/document-uri(.), "author")
+                order by $author
+                
+                return $resource
             case "Year"
             return
                 for $item in collection($collection)[vra:vra[vra:work] | mods:mods | tei:TEI | atom:entry]/*
@@ -1279,7 +1281,7 @@ declare function biblio:get-writeable-subcollection-paths($path as xs:string) {
 declare function biblio:apply-search($collection as xs:string?, $search-field as xs:string, $value as xs:string) {
     let $collection := if ($collection)
     then $collection
-    else '/db' || $config:mods-root || '/'
+    else $config:content-root
     
     return
         <query>
@@ -1370,7 +1372,7 @@ declare function biblio:prepare-query($id as xs:string?, $collection as xs:strin
     if ($id)
     then
         <query>
-            <collection>{$config:mods-root}</collection>
+            <collection>{$config:content-root}</collection>
             <field m="1" name="the Record ID Field (MODS, VRA)">{$id}</field>
         </query>
     else 
@@ -1409,7 +1411,7 @@ declare function biblio:prepare-query2($parameters) as element(query)? {
         if ($id)
         then
             <query>
-                <collection>{$config:mods-root}</collection>
+                <collection>{$config:content-root}</collection>
                 <field m="1" name="the Record ID Field (MODS, VRA)">{$id}</field>
             </query>
         else 
@@ -1520,7 +1522,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                 in word-initial or word-final position, but if any of them occur elsewhere, 
                 they will make the query invalid anyway, so there is actually no need to do this.:)
                 (:Since a final period is itself treated as whitespace, it is removed, since otherwise it would reseult in expressions
-                sunce as "\bW.\b" which do not highlight.:)
+                sunce as "\s+W.\s+" which do not highlight.:)
                 
                 let $from := ("^\-", "\{", "\}", "\[", "\]", "\^", "\(", "\)", "~", "," , "\.^")
                 let $to := (" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
@@ -1537,7 +1539,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                         for $expression in $query
                         return
                             concat(
-                                '\b'
+                                '\s+'
                                 ,
                                 replace(
                                     replace(
@@ -1547,7 +1549,7 @@ declare function biblio:get-query-as-regex($query-as-xml) as xs:string {
                                     , '\?', '\\w')
                                 , '\*', '\\w*?')
                                 ,
-                                '\b')
+                                '\s+')
                 (:Join all regex expressions with the or operator.:)
                 let $query := string-join($query, '|')
                 

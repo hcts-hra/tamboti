@@ -9,7 +9,6 @@ declare function local:get-shared-collection-roots($write-required as xs:boolean
     
     return
     if (fn:not(($user-id eq 'guest'))) then
-        system:as-user($config:dba-credentials[1], $config:dba-credentials[2],
             for $child-collection in xmldb:get-child-collections($config:users-collection)
             let $child-collection-path := fn:concat($config:users-collection, "/", $child-collection) return
                 for $user-subcollection in xmldb:get-child-collections($child-collection-path)
@@ -25,7 +24,6 @@ declare function local:get-shared-collection-roots($write-required as xs:boolean
                                 if (contains($ace-mode, 'r'))
                                     then $user-subcollection-path
                                     else ()
-        )
     else()
 };
 

@@ -2,10 +2,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/xml; charset=UTF-8"/>
         <title>Filters Module Unit Test</title>
-        <script src="../../resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
-        <script type="text/javascript" src="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js">/**/</script>
+        <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js">/**/</script>
         <script src="https://cdn.jsdelivr.net/gh/gwendall/way.js/dist/way.js">/**/</script>
-        <link rel="stylesheet" type="text/css" href="../../resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
+        <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
         <link rel="stylesheet" type="text/css" href="../../themes/tamboti/css/theme.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <script type="text/javascript" src="filters-module.js">/**/</script>

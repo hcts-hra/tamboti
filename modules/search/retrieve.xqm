@@ -113,32 +113,21 @@ declare function retrieve:list-view-table($item as node(), $currentPos as xs:int
 (:    let $useless := util:log("INFO", $item):)
 (::)
 (:    return:)
-        if (namespace-uri($item/*[1]) = "http://www.w3.org/2000/svg") then
-            svg-hra-framework:format-list-view($item, $currentPos)
+        if (namespace-uri($item/*[1]) = "http://www.w3.org/2000/svg")
+        then svg-hra-framework:format-list-view($item, $currentPos)
         else
             typeswitch ($item)
-                case element(mods:mods) return
-                    mods-hra-framework:list-view-table($item, $currentPos)
-                case element(vra:vra) return
-                    vra-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:person) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:p) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:term) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:head) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:TEI) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:bibl) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(tei:titleStmt) return
-                    tei-hra-framework:list-view-table($item, $currentPos)
-                case element(atom:entry) return
-                    wiki-hra-framework:list-view-table($item, $currentPos)
-                default return
-                    retrieve:plain-list-view-table($item, $currentPos)
+                case element(mods:mods) return mods-hra-framework:list-view-table($item, $currentPos)
+                case element(vra:vra) return vra-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:person) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:p) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:term) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:head) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:TEI) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:bibl) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(tei:titleStmt) return tei-hra-framework:list-view-table($item, $currentPos)
+                case element(atom:entry) return wiki-hra-framework:list-view-table($item, $currentPos)
+                default return retrieve:plain-list-view-table($item, $currentPos)
 };
 
 declare function retrieve:view-table($cached as item()*, $stored as item()*, $start as xs:int, $count as xs:int, $available as xs:int, $total as xs:int) {
@@ -212,10 +201,9 @@ declare function retrieve:retrieve($start as xs:int, $count as xs:int) {
     let $stored := session:get-attribute("personal-list")    
     let $total := count($cached)
     let $available :=
-        if ($start + $count gt $total) then
-            $total - $start + 1
-        else
-            $count
+        if ($start + $count gt $total)
+        then $total - $start + 1
+        else $count
     return
         (: A single entry is always shown in table view for now :)
         if ($mode eq "ajax" and $count eq 1) 

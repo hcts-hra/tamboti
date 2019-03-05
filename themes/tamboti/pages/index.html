@@ -1,9 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xf="http://www.w3.org/2002/xforms">
     <head>
         <title>Tamboti Metadata Framework</title>
-        <script src="resources/scripts/jquery-1.11.2/jquery-1.11.2.min.js">/**/</script>
-        <script type="text/javascript" src="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.js">/**/</script>
-        <link rel="stylesheet" type="text/css" href="resources/scripts/jquery-ui-1.11.4/jquery-ui.min.css"/>
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js">/**/</script>
+        <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js">/**/</script>
+        <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
         <script type="text/javascript" src="$shared/resources/scripts/jquery/jquery-utils.js">/**/</script>
         <script type="text/javascript" src="resources/scripts/qtip/jquery.qtip.min.js">/**/</script>
         <link rel="stylesheet" href="resources/scripts/qtip/jquery.qtip.min.css" type="text/css"/>
@@ -23,7 +23,7 @@
         <link rel="stylesheet" type="text/css" href="theme/css/biblio.css"/>
         <link rel="stylesheet" type="text/css" href="theme/css/theme.css"/>
         <link rel="stylesheet" type="text/css" href="theme/css/upload.css"/>
-        <link rel="shortcut icon" href="theme/images/favicon.ico"/>
+        <link rel="shortcut icon" href="../../themes/tamboti/images/favicon.ico"/>
         <link rel="unapi-server" type="application/xml" title="unAPI" href="unapi.xql"/>
         <link rel="stylesheet" type="text/css" href="../../themes/default/css/upload_angular.css"/>
     </head>
@@ -190,9 +190,6 @@
 						$("#ddlcb-container").trigger("flag-ddlcb-partial-checked");
 						}
 						});
-						
-						$("#simple-search-form input[name='collection']").val(tamboti.currentCollection);
-						$("#advanced-search-form input[name='collection']").val(tamboti.currentCollection);
 					</script>
                 </xf:action>
                 <xf:action ev:event="set-number-of-all-options" ev:observer="main-content">
@@ -261,7 +258,7 @@
         <div id="page-head">
             <div id="page-head-left">
                 <a href="/exist/apps/tamboti/">
-                    <img src="theme/images/tamboti-test.png" title="Tamboti Metadata Framework" alt="Tamboti Metadata Framework"/>
+                    <img src="theme/images/tamboti.png" title="Tamboti Metadata Framework" alt="Tamboti Metadata Framework"/>
                 </a>
             </div>
             <div id="page-head-right">

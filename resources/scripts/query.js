@@ -82,10 +82,16 @@ $(function() {
     //check if the URL has a query string for search, in order to trigger that search
     if ($.getParameter('search-field') != undefined && $.getParameter('value') != undefined) {
     	$("#advanced-search-form input[name='value']").val($.getParameter('value'));
-        tamboti.apis.advancedSearch();
+    } else if ($.getParameter('collection') != undefined) {
+        var collection = decodeURI($.getParameter('collection'));
+        $("#simple-search-form input[name='collection']").val(collection);
+		$("#advanced-search-form input[name='collection']").val(collection);        
     } else {
-        tamboti.apis.initialSearch();    
+        $("#simple-search-form input[name='collection']").val(tamboti.currentCollection);
+        $("#advanced-search-form input[name='collection']").val(tamboti.currentCollection);
     }
+    
+    tamboti.apis.initialSearch();
     
     $(".pagination-mode-gallery").click(function(ev) {
         ev.preventDefault();
