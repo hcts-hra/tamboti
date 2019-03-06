@@ -484,7 +484,8 @@ declare function security:remove-ace-by-name($resource as xs:anyURI, $target as 
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
         let $id := $ace/@index
         return
-            if (exists($ace)) then
+            if (exists($ace))
+            then
                 (
                     let $null := sm:remove-ace($resource, $id)
                     return 
@@ -493,7 +494,6 @@ declare function security:remove-ace-by-name($resource as xs:anyURI, $target as 
     
             else
                 (())
-        )
 };
 
 declare function security:clear-aces-by-name($resource as xs:anyURI, $name as xs:string, $target-type as xs:string) {
