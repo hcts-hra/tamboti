@@ -549,21 +549,6 @@ function login(dialog) {
     });
 }
 
-/**
- * Called from the create indexes dialog if the user clicks on "Start".
- */
-function createIndexes() {
-    var pass = $('#optimize-dialog input[name = password]');
-    $('#optimize-message').text('Running ...');
-    $.get('optimize.xql?pass=' + pass.val(),
-            function(data, status) {
-                if (status != "success")
-                    $('#optimize-message').text('Error during optimize!');
-                else
-                    $('#optimize-dialog').dialog("close");
-            });
-}
-
 function loadIndexTerms() {
     var input = $('input[name = input-keyword-prefix]');
     $("#keywords-result").load("filters.xql?type=keywords&prefix=" + input.val(), function() {

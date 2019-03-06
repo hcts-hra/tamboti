@@ -288,18 +288,16 @@ declare function security:can-execute-collection($collection as xs:string) as xs
 : @param user The username
 : @param collection The path of the collection
 :)
-declare function security:is-collection-owner($user as xs:string, $collection as xs:string) as xs:boolean
-{
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-        let $username := if ($config:force-lower-case-usernames) then (fn:lower-case($user)) else ($user) 
+declare function security:is-collection-owner($user as xs:string, $collection as xs:string) as xs:boolean {
+    let $username := if ($config:force-lower-case-usernames) then (fn:lower-case($user)) else ($user) 
+    
+    return
+        if (xmldb:collection-available($collection)) then
+          let $owner := security:get-owner($collection)
             return
-                if (xmldb:collection-available($collection)) then
-                  let $owner := security:get-owner($collection)
-                    return
-                        $username eq $owner
-                else
-                    false()
-    )
+                $username eq $owner
+        else
+            false()
 };
 
 (:~
@@ -340,7 +338,7 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
                     "-"
                 ,
                 $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode)
                 return
                     true()
                 
@@ -357,7 +355,6 @@ declare function security:set-ace-writeable($resource as xs:anyURI, $id as xs:in
 :)
 
 declare function security:set-ace-writeable-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $is-writeable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
         let $id := $ace/@index
@@ -372,12 +369,11 @@ declare function security:set-ace-writeable-by-name($resource as xs:anyURI, $tar
                         "-"
                     ,
                     $new-mode := fn:replace($ace/@mode, "(.).(.)", fn:concat("$1", $regexp-replacement, "$2")),
-                    $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                    $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode)
                     return
                         true()
                     
                 )
-    )
 };
 
 (:~
@@ -390,7 +386,6 @@ declare function security:set-ace-writeable-by-name($resource as xs:anyURI, $tar
 :)
 
 declare function security:set-ace-executable-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $is-executable as xs:boolean) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
         let $id := $ace/@index
@@ -406,12 +401,11 @@ declare function security:set-ace-executable-by-name($resource as xs:anyURI, $ta
                     ,
                     $new-mode := fn:replace($ace/@mode, "(.)(.)(.)", "$1" || "$2" || $regexp-replacement)
                     ,
-                    $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode))
+                    $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $new-mode)
                     return
                         true()
                     
                 )
-    )
 };
 
 (:~
@@ -424,7 +418,6 @@ declare function security:set-ace-executable-by-name($resource as xs:anyURI, $ta
 :)
 
 declare function security:set-ace-mode-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string, $ace-mode as xs:string) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],    
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
         let $id := $ace/@index
@@ -432,11 +425,10 @@ declare function security:set-ace-mode-by-name($resource as xs:anyURI, $target a
                 if (empty($ace)) then
                     false()
                 else (
-                    let $null := system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $ace-mode))
+                    let $null := sm:modify-ace($resource, $id, $ace/@access_type eq 'ALLOWED', $ace-mode)
                     return
                         true()
                 )
-    )
 };
 
 
@@ -445,7 +437,6 @@ declare function security:set-ace-mode-by-name($resource as xs:anyURI, $target a
 :   The sequence contains USER or GROUP as the first item, and then the who as the second item
 :)
 declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as xs:string* {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[xs:int(@index) eq $id]
         
@@ -457,7 +448,6 @@ declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as x
                     return ($ace/@target, $ace/@who)
                 )
             else (())
-    )
 };
 
 (:~
@@ -467,7 +457,6 @@ declare function security:remove-ace($resource as xs:anyURI, $id as xs:int) as x
 : @param collection The path of the collection
 :)
 declare function security:remove-user-ace($resource as xs:anyURI, $user as xs:string) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target="USER" and @who=$user][1]
         let $id := $ace/@index
@@ -481,7 +470,6 @@ declare function security:remove-user-ace($resource as xs:anyURI, $user as xs:st
     
             else
                 (())
-    )
 };
 
 (:~
@@ -492,7 +480,6 @@ declare function security:remove-user-ace($resource as xs:anyURI, $user as xs:st
 : @param name The user- or groupname
 :)
 declare function security:remove-ace-by-name($resource as xs:anyURI, $target as xs:string, $name as xs:string) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],(
         let $permissions := sm:get-permissions($resource)
         let $ace := $permissions/sm:permission/sm:acl/sm:ace[@target=$target and @who=$name][1]
         let $id := $ace/@index
@@ -507,7 +494,6 @@ declare function security:remove-ace-by-name($resource as xs:anyURI, $target as 
             else
                 (())
         )
-    )
 };
 
 declare function security:clear-aces-by-name($resource as xs:anyURI, $name as xs:string, $target-type as xs:string) {
@@ -521,16 +507,13 @@ declare function security:clear-aces-by-name($resource as xs:anyURI, $name as xs
 
 (: adds a group ace and returns its index:)
 declare function security:add-group-ace($resource as xs:anyURI, $groupname as xs:string, $mode as xs:string) as xs:int? {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         (
             sm:add-group-ace($resource, $groupname, true(), $mode),
             sm:get-permissions($resource)//sm:ace[@who = $groupname]/@index/string()
         )
-    )
 };
 
 declare function security:insert-group-ace($resource as xs:anyURI, $id as xs:int, $groupname as xs:string, $mode as xs:string) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], 
         (: if the ace index is one past the end of the acl, then we actually want an append :)
         if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
             fn:not(fn:empty(security:add-group-ace($resource, $groupname, $mode)))
@@ -539,21 +522,17 @@ declare function security:insert-group-ace($resource as xs:anyURI, $id as xs:int
             ,
             true()
             )
-    )
 };
 
 (: adds a user ace and returns its index:)
 declare function security:add-user-ace($resource as xs:anyURI, $username as xs:string, $mode as xs:string) as xs:int? {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         (
             sm:add-user-ace($resource, $username, true(), $mode),
             sm:get-permissions($resource)//sm:ace[@who = $username]/@index/string()
         )
-    )
 };
 
 declare function security:insert-user-ace($resource as xs:anyURI, $id as xs:int, $username as xs:string, $mode as xs:string) as xs:boolean {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
         (: if the ace index is one past the end of the acl, then we actually want an append:)
         if ($id eq xs:int(sm:get-permissions($resource)/sm:permission/sm:acl/@entries)) then
             fn:not(fn:empty(security:add-user-ace($resource, $username, $mode)))
@@ -562,7 +541,6 @@ declare function security:insert-user-ace($resource as xs:anyURI, $id as xs:int,
             ,
             true()
             )
-    )
 };
 
 (: ~
@@ -1158,7 +1136,6 @@ declare function security:copy-collection-ace-to-resource-apply-modechange($coll
 : @param $target-collection the target collection
 :)
 declare function security:move-resource-to-tamboti-collection($source-collection as xs:anyURI, $resource as xs:anyURI, $target-collection as xs:anyURI) {
-    system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], (
         (: first move the resource :)
         try {
             xmldb:move($source-collection, $target-collection, $resource),
@@ -1178,7 +1155,6 @@ declare function security:move-resource-to-tamboti-collection($source-collection
         } catch * {
             util:log("INFO", $err:code || ": " || $err:description)
         }
-    ))
 };
 
 declare function security:copy-collection-acl($source-collection as xs:anyURI, $target-collection as xs:anyURI) {

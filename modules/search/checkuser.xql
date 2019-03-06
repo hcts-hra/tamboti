@@ -45,16 +45,14 @@ declare function local:check-collection-remove-permissions($collection-uri as xs
     let $col-and-subcols := local:get-all-subcollections($collection-uri)
     let $rwx := 
         for $col in $col-and-subcols
-            return 
-                system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2], (
-                    sm:has-access($col, "rwx")
-                ))
+        
+        return sm:has-access($col, "rwx")
+        
     return
         (: if user does not have acces to one of the subcols: removing selected collection is not allowed :)
-        if (false() = distinct-values($rwx)) then
-            false()
-        else
-            true()
+        if (false() = distinct-values($rwx))
+        then false()
+        else true()
 };
 
 (:~
@@ -136,10 +134,7 @@ declare function local:collection-relationship($collection as xs:string) as elem
                 security:can-write-collection($parent)
             }
             </write-parent>
-            <execute-parent json:literal="true">
-            {
-                security:can-execute-collection($parent)
-            }
+            <execute-parent json:literal="true">{security:can-execute-collection($parent)}
             </execute-parent>
         </relationship>
 };
@@ -148,9 +143,9 @@ let $output-type := request:get-parameter("output", "")
 let $action := request:get-parameter("action", ())
 
 return
-    if ($action) then
-        system:as-user(security:get-user-credential-from-session()[1], security:get-user-credential-from-session()[2],
-            (
+    if ($action)
+    then
+        (
             switch($action) 
                 case "is-collection-owner" return
                     let $collection := xmldb:encode(request:get-parameter("collection",()))
@@ -206,8 +201,8 @@ return
                                 let $cookie := response:set-cookie("IIIFAUTH2", $cookie-value , xs:duration(("PT" || $security:cookie-lifetime div 1000) || "S"), (), "universalviewer.io", "/")
                                 let $cookie := response:set-cookie("T-AUTH", $cookie-value , xs:duration(("PT" || $security:cookie-lifetime div 1000) || "S"), (), request:get-server-name(), "/exist")
                                 let $header := response:set-header('Content-Type', 'text/javascript; charset=utf8')
-(:                                let $json := :)
-(:                                    serialize("true", $local:json-serialize-parameters):)
+    (:                                let $json := :)
+    (:                                    serialize("true", $local:json-serialize-parameters):)
                                 return
                                     (
                                         response:set-status-code(200),
@@ -239,6 +234,5 @@ return
                         response:set-status-code(403),
                         <unknown action="{$action}"/>
                     )
-            )
         )
     else local:authenticate(request:get-parameter("user", ()), xmldb:decode(request:get-parameter("password", ())))

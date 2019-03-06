@@ -256,7 +256,6 @@ declare function hra-iiif:generate-collection-manifest($collection-name as xs:an
         try {
             (:  get all pref (or first) Images :)
             let $imageUUIDs := 
-(:                system:as-user(security:get-user-credential-from-session()[1],security:get-user-credential-from-session()[2],:)
                     for $imageIs-vra in collection($collection-name)//vra:work[./vra:relationSet/vra:relation[@type="imageIs"]]
             (:        order by data($imageIs-vra/vra:titleSet/vra:title[1]) ascending:)
                         return
@@ -268,7 +267,6 @@ declare function hra-iiif:generate-collection-manifest($collection-name as xs:an
                                 else
                                     $imageIs-relations[1]
                             return $pref-image/@relids/string()
-(:                ):)
         let $imageVRAs := collection($collection-name)//vra:image[@id=$imageUUIDs]
 (:        let $log := util:log("INFO", $imageVRAs):)
 (:        let $imageVRAs := security:get-resources($imageUUIDs):)

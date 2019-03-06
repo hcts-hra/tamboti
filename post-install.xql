@@ -25,7 +25,9 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/sharing.xql"))
     ,
-    local:set-special-permissions(xs:anyURI($target || "/modules/search/sharing.xqm"))    
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/sharing.xqm")) 
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/security.xqm")) 
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/simple-search.xql"))     
     ,
@@ -35,13 +37,17 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/autocomplete.xql"))   
     ,
-    local:set-special-permissions(xs:anyURI($target || "/modules/search/user.xql"))   
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/user.xql")) 
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/search/checkuser.xql"))       
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/hra-rdf/hra-rdf-framework.xqm"))     
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/tei-hra/get-data.xq"))     
     ,
     local:set-special-permissions(xs:anyURI($target || "/frameworks/vra-hra/vra-hra.xqm"))
+    ,
+    local:set-special-permissions(xs:anyURI($target || "/frameworks/mods-hra/mods-hra.xqm"))    
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/utils/utils.xqm"))    
     ,

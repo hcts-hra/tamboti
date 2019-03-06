@@ -17,5 +17,5 @@ let $job-parameters :=
 return (
     update value doc("counters.xml")//write-record-to-zotero with 1
     ,
-    system:as-user('admin', '', scheduler:schedule-xquery-periodic-job("/apps/tamboti/modules/tamboti2zotero/write-record-to-zotero.xql", 6000, "write-record-to-zotero", $job-parameters, 0, $number-of-tamboti-resources - 1))
+    scheduler:schedule-xquery-periodic-job("/apps/tamboti/modules/tamboti2zotero/write-record-to-zotero.xql", 6000, "write-record-to-zotero", $job-parameters, 0, $number-of-tamboti-resources - 1)
 )

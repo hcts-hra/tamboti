@@ -112,9 +112,7 @@ return
                         let $user-access := security:user-has-access($user, $path, "r..")
 (:                        let $log := util:log("INFO", $user || " has access to " || $path || ":" || $user-access) :)
                         
-(:                                system:as-user(security:get-user-credential-from-session()[1],security:get-user-credential-from-session()[2],:)
-(:                                    sm:has-access(document-uri(root($image-vra)), "r"):)
-(:                                ):)
+(:                                    security:user-has-access(security:get-user-credential-from-session()[1], document-uri(root($image-vra)), "r.."):)
                         return
                             if($user-access) then
                                 (: check for cookie :)
