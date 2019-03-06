@@ -124,7 +124,7 @@ declare function local:resources($collection as xs:string, $user as xs:string) {
                             if (xs:date($date) = current-date())
                             then format-dateTime($date, "Today [H00]:[m00]:[s00]")
                             else format-dateTime($date, "[M00]/[D00]/[Y0000] [H00]:[m00]:[s00]")
-                    let $canWrite := security:user-has-access(security:get-user-credential-from-session()[1], $collection || "/" || $resource, "w..")
+                    let $canWrite := security:user-has-access(security:get-user-credential-from-session()[1], $collection || "/" || $resource, ".w.")
                     let $image_vra := collection($config:content-root)//vra:image[@id=fn:tokenize($resource,'.xml')[1]]
                     return 
                         if (exists($image_vra))

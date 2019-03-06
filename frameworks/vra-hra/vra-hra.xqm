@@ -957,8 +957,8 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                         let $collection-name := util:collection-name(root($resolvedIRI))
                         let $resource-name :=  util:document-name(root($resolvedIRI))
     
-                        let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
-                        let $collection-can-create := sm:has-access(xs:anyURI($collection-name), "wx")
+                        let $resource-can-edit := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name || "/" || $resource-name, ".w.")
+                        let $collection-can-create := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name, ".wx")
 (:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
                         let $motivation-label := map:get($vra-hra-framework:motivations, $motivation)
 
@@ -984,8 +984,8 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                         let $collection-name := util:collection-name(root($resolvedIRI))
                         let $resource-name :=  util:document-name(root($resolvedIRI))
 
-                        let $resource-can-edit := sm:has-access(xs:anyURI($collection-name || "/" || $resource-name), "w")
-                        let $collection-can-create := sm:has-access(xs:anyURI($collection-name), "wx")
+                        let $resource-can-edit := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name || "/" || $resource-name, ".w.")
+                        let $collection-can-create := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name, ".wx")
 (:                        let $log := util:log("INFO", xs:anyURI($collection-name || "/" || $resource-name)):)
 (:                        let $log := util:log("INFO", "can-edit: " || $resource-can-edit):)
 

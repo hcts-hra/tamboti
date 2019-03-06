@@ -48,9 +48,10 @@ declare variable $config:public-collection-mode := "rwxr-xr-x";
 declare variable $config:public-resource-mode := "rw-r--r--";
 
 (: Sharing permission definition :)
-declare variable $config:sharing-permissions := map {
-        "readonly" := map {"rank" := 1, "name" := "Read only",  "collection" := "r-x", "resource" := "r--"},
-(:        "write" := map {"rank" := 2, "name" := "Write", "collection" := "r-x", "resource" := "rw-"},:)
+declare variable $config:sharing-permissions :=
+	map {
+		"readonly" := map {"rank" := 1, "name" := "Read only",  "collection" := "r-x", "resource" := "r--"},
+		(:        "write" := map {"rank" := 2, "name" := "Write", "collection" := "r-x", "resource" := "rw-"},:)
         "full" := map {"rank" := 3, "name" := "Full Access", "collection" := "rwx", "resource" := "rwx"}
 };
 

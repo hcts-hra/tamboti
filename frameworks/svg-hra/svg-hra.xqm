@@ -199,7 +199,7 @@ declare function svg-hra-framework:format-detail-view($entry as node(), $current
                         let $collection-name := util:collection-name(root($resolvedIRI))
                         let $resource-name :=  util:document-name(root($resolvedIRI))
                         let $anno-uuid := functx:substring-after-last($target/@rdf:about/string(), "/")
-                        let $resource-can-edit := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name || "/" || $resource-name, "w..")
+                        let $resource-can-edit := security:user-has-access(security:get-user-credential-from-session()[1], $collection-name || "/" || $resource-name, ".w.")
                         let $motivation-label := map:get($svg-hra-framework:motivations, $motivation)
                         return
                             <tr>

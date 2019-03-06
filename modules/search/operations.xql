@@ -385,7 +385,7 @@ declare function op:get-move-folder-list($chosen-collection as xs:anyURI) as ele
                 (:leave out descendant folders, since you cannot move a folders into a descendant:)
                 (:if (contains($path, $chosen-collection) or contains($chosen-collection, $path)):)
                     if (starts-with($path, $chosen-collection)
-                        or not(sm:has-access($path, $valid-col-mode))
+                        or not(security:user-has-access(security:get-user-credential-from-session()[1], $path, $valid-col-mode))
                         or $path eq $chosen-collection
                         or functx:substring-after-last($path, "/") = "VRA_images") then
                         () 

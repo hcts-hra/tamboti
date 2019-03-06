@@ -46,7 +46,7 @@ declare function local:check-collection-remove-permissions($collection-uri as xs
     let $rwx := 
         for $col in $col-and-subcols
         
-        return sm:has-access($col, "rwx")
+        return security:user-has-access(security:get-user-credential-from-session()[1], $col, "rwx")
         
     return
         (: if user does not have acces to one of the subcols: removing selected collection is not allowed :)
