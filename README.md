@@ -5,8 +5,7 @@ Icon stock is from http://www.famfamfam.com/lab/icons/silk/ and http://fontaweso
 
 ### Installation
 
-* Build the xar pakage according to the building section below, along with the dependencies mentioned below, and install all these xar-s in eXist.
-* Modify "modules/config.xqm", section "Credentials for the dba admin user".
+* Build the xar package according to the building section below, along with the dependencies mentioned below, and install all these xar-s in eXist.
 * Modify "modules/configuration/services.xml" according to your needs. 
 * Access tamboti at <http://localhost:8080/exist/apps/tamboti/>.
 
