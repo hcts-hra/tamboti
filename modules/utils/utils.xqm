@@ -15,7 +15,7 @@ declare function tamboti-utils:create-vra-image-collection($collection-uri as xs
         try {
             xmldb:create-collection($collection-uri, "/VRA_images"),
 	            (
-	                sm:chown(xs:anyURI($collection-uri || "/VRA_images"), xmldb:get-owner($collection-uri)),
+	                sm:chown(xs:anyURI($collection-uri || "/VRA_images"), sm:get-permissions(xs:anyURI($collection-uri))/*/@owner/data(.)),
 	                sm:chmod(xs:anyURI($collection-uri || "/VRA_images"), $config:collection-mode),
 	                sm:chgrp(xs:anyURI($collection-uri || "/VRA_images"), $config:biblio-users-group),
 	                security:duplicate-acl($collection-uri, $collection-uri || "/VRA_images")

@@ -594,7 +594,7 @@ declare function security:get-group($path as xs:string) as xs:string {
 };
 
 declare function security:copy-collection-rights-to-child-resources($collection as xs:anyURI) {
-    let $collection-owner := xmldb:get-owner($collection)
+    let $collection-owner := sm:get-permissions(xs:anyURI($collection))/*/@owner/data(.)
     let $collection-group := xmldb:get-group($collection)
     
     for $resource-name in xmldb:get-child-resources($collection)
@@ -668,7 +668,7 @@ declare function security:recursively-set-owner-and-group($collection as xs:anyU
 };
 
 declare function security:copy-owner-and-group($source as xs:anyURI, $target as xs:anyURI) {
-    let $source-owner := xmldb:get-owner($source)
+    let $source-owner := sm:get-permissions(xs:anyURI($source))/*/@owner/data(.)
     let $source-group := xmldb:get-group($source)
     return
         (
@@ -1140,7 +1140,7 @@ declare function security:move-resource-to-tamboti-collection($source-collection
         try {
             xmldb:move($source-collection, $target-collection, $resource),
             (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
-            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+            if(sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.) = security:get-user-credential-from-session()[1]) then
                 (
                     security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource))
                     ,
@@ -1221,7 +1221,7 @@ declare function security:store-resource($target-collection as xs:anyURI, $resou
 (:        let $resource := xmldb:store($target-collection, $resource-name, $content) :)
 (:        let $chmod := sm:chmod($resource, $config:resource-mode) :)
 (:        let $set-permissions := :)
-(:            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then :)
+(:            if(sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.) = security:get-user-credential-from-session()[1]) then :)
 (:                ( :)
 (:                    security:copy-owner-and-group(xs:anyURI($target-collection), $resource):)
 (:                    ,:)

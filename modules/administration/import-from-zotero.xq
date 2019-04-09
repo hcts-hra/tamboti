@@ -76,7 +76,7 @@ return
         <setPermissions>
             {
                security:recursively-inherit-collection-acl($target-collection),
-               security:recursively-set-owner-and-group($target-collection, xmldb:get-owner($target-collection), xmldb:get-group($target-collection))
+               security:recursively-set-owner-and-group($target-collection, sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.), xmldb:get-group($target-collection))
             }
         </setPermissions>
     )

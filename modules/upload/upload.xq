@@ -112,7 +112,7 @@ declare function upload:upload($filetype, $filesize, $filename, $data, $doc-type
 
     let $image-record-filename := concat($image-uuid, '.xml')
     let $image-record-file-path := xs:anyURI($image-collection-path || '/' || $image-record-filename)
-    let $collection-owner-username := xmldb:get-owner($upload-collection-path)
+    let $collection-owner-username := sm:get-permissions(xs:anyURI($upload-collection-path))/*/@owner/data(.)
     let $upload :=  
         (
             security:copy-collection-ace-to-resource-apply-modechange($upload-collection-path, $workrecord-file-path)
@@ -222,7 +222,7 @@ let $result :=
                     else
                         (:record for the collection:)
                         let $collection-folder := xmldb:encode-uri(xmldb:decode(request:get-header('X-File-Folder')))
-                        let $collection-owner-username := xmldb:get-owner($collection-folder)
+                        let $collection-owner-username := sm:get-permissions(xs:anyURI($collection-folder))/*/@owner/data(.)
                         let $work-xml-generate :=
                         let $workrecord-uuid := concat('w_', util:uuid())
                         let $vra-work-xml := local:get-vra-workrecord-template($workrecord-uuid, $filename[$x])

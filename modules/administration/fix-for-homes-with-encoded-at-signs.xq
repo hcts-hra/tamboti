@@ -12,7 +12,7 @@ return
                 if (contains($subcol, "@")) then
                     if (xmldb:collection-available(xmldb:encode-uri($col || "/" || $subcol))) then
                         let $new-col := xmldb:create-collection(xmldb:encode-uri($col), xmldb:encode-uri($subcol))
-                        let $chown := sm:chown($new-col, xmldb:get-owner($col || "/" || $subcol))
+                        let $chown := sm:chown($new-col, sm:get-permissions(xs:anyURI($col || "/" || $subcol))/*/@owner/data(.))
                         let $chgrp := sm:chgrp($new-col, xmldb:get-group($col || "/" || $subcol))
                         let $chmod := sm:chmod($new-col, $config:collection-mode)
                         (: copy move all collections in unencoded-@-homefolder to encoded one :)

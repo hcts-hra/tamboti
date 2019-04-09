@@ -37,7 +37,7 @@ the buttons do not show up (except Delete Folder).:)
 declare function op:create-collection($parent as xs:string, $name as xs:string) as element(status) {
 (:    let $log := util:log("DEBUG", "call: xmldb:create-collection('" || $parent || "', '" || $name || "')"):)
     let $create-collection :=
-        let $parent-collection-owner := xmldb:get-owner($parent)
+        let $parent-collection-owner := sm:get-permissions(xs:anyURI($parent))/*/@owner/data(.)
         let $parent-collection-group := xmldb:get-group($parent)
         let $collection := xmldb:create-collection($parent, $name)
         
@@ -59,8 +59,8 @@ declare function op:create-collection($parent as xs:string, $name as xs:string) 
 
 (:TODO: Perform search for contents of collection after it has been moved.:)
 declare function op:move-collection($collection as xs:anyURI, $target-collection as xs:anyURI, $inherit-acl-from-parent as xs:boolean) as element(status) {
-    let $source-collection-owner := xmldb:get-owner($collection)
-    let $target-collection-owner := xmldb:get-owner($target-collection)
+    let $source-collection-owner := sm:get-permissions(xs:anyURI($collection))/*/@owner/data(.)
+    let $target-collection-owner := sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.)
     let $target-collection-group := xmldb:get-group($target-collection)
     let $collection-name := functx:substring-after-last($collection, "/")
     let $moved-collection-path := xs:anyURI($target-collection || "/" || $collection-name)

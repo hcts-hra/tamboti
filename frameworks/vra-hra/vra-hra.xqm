@@ -811,7 +811,7 @@ declare function vra-hra-framework:move-resource($source-collection as xs:anyURI
                         sm:chmod($vra-images-target-collection, $config:collection-mode),
                         sm:chgrp($vra-images-target-collection, $config:biblio-users-group),
                         security:duplicate-acl($target-collection, $vra-images-target-collection),
-                        sm:chown($vra-images-target-collection, xmldb:get-owner($target-collection))
+                        sm:chown($vra-images-target-collection, sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.))
                     )
 
 (:                    let $create-VRA-image-collection := tamboti-utils:create-vra-image-collection($target-collection):)
@@ -862,7 +862,7 @@ declare function vra-hra-framework:move-xmldb-resource($source-collection as xs:
         let $move-resource :=  xmldb:move($source-collection, $target-collection, $resource-id)
         let $change-permissions :=
             (: if user is owner of target collection first change owner since he will get no ACE and will shut out himself  :)
-            if(xmldb:get-owner($target-collection) = security:get-user-credential-from-session()[1]) then
+            if(sm:get-permissions(xs:anyURI($target-collection))/*/@owner/data(.) = security:get-user-credential-from-session()[1]) then
                 (
                     security:copy-owner-and-group(xs:anyURI($target-collection), xs:anyURI($target-collection || "/" || $resource-id))
                     ,
