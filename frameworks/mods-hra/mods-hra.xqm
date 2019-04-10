@@ -116,7 +116,7 @@ declare function mods-hra-framework:get-icon($size as xs:int, $item, $currentPos
                     (: Otherwise it is non-XML contents extracted from a document by tika. This could be a PDF, a Word document, etc. :) 
                     else 'text-x-changelog'
             return 
-                <img title="{$hint}" src="theme/images/{$type}.png"/>
+                <img title="{$hint}" src="resources/images/{$type}.png"/>
 };
 
 declare function mods-hra-framework:toolbar($item as element(), $isWritable as xs:boolean, $id as xs:string) {
@@ -130,7 +130,7 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
     return
         <div class="actions-toolbar">
             <a target="_new" href="source.xql?id={$id}&amp;clean=yes">
-                <img title="View XML Source of Record" src="theme/images/script_code.png"/>
+                <img title="View XML Source of Record" src="resources/images/script_code.png"/>
             </a>
             {
                 (: if the item's collection is writable, display edit/delete and move buttons :)
@@ -138,13 +138,13 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                     (
                         <form id="edit-mods-record-form" method="post" action="{$config:web-path-to-mods-editor-api}/{$id}" target="_blank">
                             <a onclick="document.getElementById('edit-mods-record-form').submit();">
-                                <img title="Edit MODS Record" src="theme/images/page_edit.png"/>
+                                <img title="Edit MODS Record" src="resources/images/page_edit.png"/>
                             </a>
                         </form>                       
                         ,
-                        <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="theme/images/delete.png"/></a>
+                        <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="resources/images/delete.png"/></a>
                         ,
-                        <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>
+                        <a class="move-resource" href="#{$id}"><img title="Move Record" src="resources/images/shape_move_front.png"/></a>
                     )
                 else
                     ()
@@ -154,7 +154,7 @@ declare function mods-hra-framework:toolbar($item as element(), $isWritable as x
                 if (security:get-user-credential-from-session()[1] ne "guest") 
                 then
                     <a class="add-related" href="#{if ($isWritable) then $workdir else $home}#{$item/@ID}">
-                        <img title="Create Related MODS Record" src="theme/images/page_add.png"/>
+                        <img title="Create Related MODS Record" src="resources/images/page_add.png"/>
                     </a>
                 else ()
             }
@@ -730,7 +730,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
             <td class="pagination-number">{$currentPos}</td>
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Removes Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Removes Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             <td class="magnify detail-type">
@@ -904,7 +904,7 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
             {
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             }

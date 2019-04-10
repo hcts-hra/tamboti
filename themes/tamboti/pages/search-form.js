@@ -53,7 +53,7 @@ $(function() {
                     resultsLoaded(options);
                     $("#results td.actions-cell img").each(function(index) {
                         var $this = $(this);
-                        $this.attr('src', 'theme/images/disk_gew.gif');
+                        $this.attr('src', 'resources/images/disk_gew.gif');
                         $this.addClass('stored');
                     });                     
                 }
@@ -61,7 +61,7 @@ $(function() {
                 $("#results").pagination({
                     url: "retrieve",
                     totalItems: $("#result-items-count").text(),
-                    itemsPerPage: 20,
+                    itemsPerPage: tamboti.itemsPerPage,
                     navContainer: "#results-head .navbar",
                     readyCallback: displayPersonalListCallback,
                     params: { "mode": "list", "initialiseNavbar": false }

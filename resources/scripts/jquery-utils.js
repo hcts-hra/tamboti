@@ -1,3 +1,7 @@
+tamboti = {};
+tamboti.currentCollection = "/data/commons/Cluster Publications";
+tamboti.itemsPerPage = 50;
+
 (function($) {
 
     /**
@@ -14,7 +18,7 @@
         var defaults = {
             url: null,
             totalItems: 0,
-            itemsPerPage: 20,
+            itemsPerPage: 50,
             singleItemView: ".pagination-toggle",
             startParam: "start",
             countParam: "count",
@@ -75,7 +79,6 @@
         
         // helper functions only available within the plugin.
         var helpers = {
-            
             displayPage: function(base, data) {
                 helpers.updateNavbar(base);
                 base.element.html(data);
@@ -83,8 +86,9 @@
                     $(base.options.singleItemView, base.element).click(function (ev) {
                         ev.preventDefault();
                         var nr = $(this).parent(".pagination-item").find(".pagination-number");
-                        if (!nr || nr.length == 0)
+                        if (!nr || nr.length == 0) {
                             return;
+                        }
                         base.options.itemsPerPage = 1;
                         nr = parseInt(nr.text());
                         console.log("[pagination] Showing single entry: %d", nr);
@@ -141,7 +145,7 @@
                 if (base.options.singleItemView) {
                     $(base.options.singleItemView, div).hide().click(function (ev) {
                         ev.preventDefault();
-                        base.options.itemsPerPage = 20;
+                        base.options.itemsPerPage = tamboti.itemsPerPage;
                         var currentPage = Math.floor(base.currentItem / base.options.itemsPerPage);
                         var item = currentPage * base.options.itemsPerPage;
                         item += 1;

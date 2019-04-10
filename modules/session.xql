@@ -90,7 +90,7 @@ declare function bs:plain-list-view-table($item as node(), $currentPos as xs:int
             {
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="Save Record to My List" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="Save Record to My List" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             }

@@ -89,7 +89,7 @@ declare function vra-hra-framework:toolbar($item as element(), $isWritable as xs
     return
         <div class="actions-toolbar">
             <a target="_new" href="source.xql?id={$id}&amp;clean=yes">
-                <img title="View XML Source of Record" src="theme/images/script_code.png"/>
+                <img title="View XML Source of Record" src="resources/images/script_code.png"/>
             </a>
             {
                 (: if the item's collection is writable, display edit/delete and move buttons :)
@@ -98,18 +98,18 @@ declare function vra-hra-framework:toolbar($item as element(), $isWritable as xs
                         (: ToDo: define editor for VRA in config.xqm instead of hard-coding Ziziphus here:)
                         if (xmldb:collection-available("/db/apps/ziziphus/")) then
                             <a target="_new" href="/exist/apps/ziziphus/record.xql?id={$id}&amp;workdir={$workdir}&amp;imagepath={$imagepath}">
-                                <img title="Edit VRA Record" src="theme/images/page_edit.png"/>
+                                <img title="Edit VRA Record" src="resources/images/page_edit.png"/>
                             </a>
                         else 
                             ()
                         ,
-                        <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="theme/images/delete.png"/></a>
+                        <a class="remove-resource" href="#{$id}"><img title="Delete Record" src="resources/images/delete.png"/></a>
                         ,
-                        <a class="move-resource" href="#{$id}"><img title="Move Record" src="theme/images/shape_move_front.png"/></a>
+                        <a class="move-resource" href="#{$id}"><img title="Move Record" src="resources/images/shape_move_front.png"/></a>
                         ,
                         if (not($item/vra:image/@id)) then
                             <a class="upload-file-style" directory="false" href="#{$id}" onclick="updateAttachmentDialog">
-                                <img title="Upload Attachment" src="theme/images/database_add.png" />
+                                <img title="Upload Attachment" src="resources/images/database_add.png" />
                             </a>
                         else ()
                     )
@@ -613,11 +613,11 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
             <td class="pagination-number">{$currentPos}</td>
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             <td class="detail-type" style="vertical-align:top">
-                <img src="theme/images/image.png" title="Still Image"/>
+                <img src="resources/images/image.png" title="Still Image"/>
             </td>
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
@@ -689,11 +689,11 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
             {
             <td class="actions-cell" style="vertical-align:middle">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             }
-            <td class="list-type" style="vertical-align:middle"><img src="theme/images/image.png" title="Still Image"/></td>
+            <td class="list-type" style="vertical-align:middle"><img src="resources/images/image.png" title="Still Image"/></td>
             { 
                 (: relids/refid workaround :)
                 let $relations := 
@@ -936,7 +936,7 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
             let $parameters := "openBinaryMethod=tamboti&amp;openSVGMethod=tamboti&amp;binary=" || $uuid || "&amp;tambotiCollection=" || encode-for-uri($collection-name)
             return
                 <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
-                    <img src="theme/images/add.png" style="width:16px;height:16px;cursor:pointer" title="new annotation" alt="new annotation"/>
+                    <img src="resources/images/add.png" style="width:16px;height:16px;cursor:pointer" title="new annotation" alt="new annotation"/>
                 </a>
         else 
             ()
@@ -1022,7 +1022,7 @@ declare function vra-hra-framework:_create-annotations-display-node($uuid as xs:
                                                                             return
                                                                                 <div class="svg-actions-overlay" style="width:128px;">
                                                                                     <a href="{$config:canvas-editor-path}?{$parameters}" target="_blank">
-                                                                                        <img src="theme/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
+                                                                                        <img src="resources/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" title="edit canvas" alt="edit canvas"/>
                                                                                     </a>
                                                                                 </div>
                                                                             else

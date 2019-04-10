@@ -1,6 +1,4 @@
-tamboti = {};
 tamboti.apis = {};
-tamboti.currentCollection = "/data/commons/Cluster Publications";
 
 // tamboti.apis.initialSearch has to be removed when the paginator will be a standalone component
 tamboti.apis.initialSearch = function() {
@@ -157,7 +155,7 @@ tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
         $("#results").pagination({
             url: "retrieve",
             totalItems: $("#result-items-count").text(),
-            itemsPerPage: 20,
+            itemsPerPage: tamboti.itemsPerPage,
             navContainer: navContainer,
             readyCallback: resultsLoaded,
             params: { "mode": "list", "initialiseNavbar": initialiseNavbar }

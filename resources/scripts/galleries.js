@@ -242,7 +242,7 @@ tamboti.galleries.Viewer = (function () {
         $this.heading = $("h4", $this.view);
         $this.heading.attr("id", "viewer-image-title");
         $this.indicator = new Image();
-        $this.indicator.src = "theme/images/ajax-loader.gif";
+        $this.indicator.src = "resources/images/ajax-loader.gif";
         $this.filmstrip = new tamboti.galleries.FilmStrip($this, $("#filmstrip"), $this.url);
         
         $(document).ready(function() {

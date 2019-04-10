@@ -41,7 +41,7 @@ declare option output:media-type "text/html";
             </ul>
         </li>
     </ul>
-    <p>You can also access the above collections by clicking the Folder View icon <img src="theme/images/tree.gif" align="center" valign="middle"/> and double-clicking
+    <p>You can also access the above collections by clicking the Folder View icon <img src="resources/images/tree.gif" align="center" valign="middle"/> and double-clicking
         on the respective folders. </p>
     <p>Our collections on visual material are hosted on another server.
         Please access them through the following links: </p>

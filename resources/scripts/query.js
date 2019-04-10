@@ -33,8 +33,8 @@ tamboti.createGuid = function() {
 // Add a hidden span with status display on 
 function addStatusDisplay(selector){
     selector.append('<span class="result"> \
-                        <image class="progress" style="height:2em;vertical-align:bottom;display:none;" src="theme/images/ajax-loader.gif"/> \
-                        <image class="success" style="height:2em;vertical-align:bottom;display:none;" src="theme/images/task-complete.png"/> \
+                        <image class="progress" style="height:2em;vertical-align:bottom;display:none;" src="resources/images/ajax-loader.gif"/> \
+                        <image class="success" style="height:2em;vertical-align:bottom;display:none;" src="resources/images/task-complete.png"/> \
                     </span>');
     selector.bind('showLoading', function(){
         selector.find('span.result img.progress').show();
@@ -597,10 +597,10 @@ function saveToPersonalList(anchor) {
     if (img.hasClass('stored')) {
         var id = anchor.id;
         img.removeClass('stored');
-        img.attr('src', 'theme/images/disk.gif');
+        img.attr('src', 'resources/images/disk.gif');
         $.get('user.xql', {list: 'remove', id: id});
     } else {
-        img.attr('src', 'theme/images/disk_gew.gif');
+        img.attr('src', 'resources/images/disk_gew.gif');
         img.addClass('stored');
         $.get('user.xql', {list: 'add', pos: pos});
     }
@@ -690,7 +690,7 @@ function attachedDetailsRowCallback(nRow, aData, iDisplayIndex) {
     $('td:eq(0)', nRow).html('<img alt="User Icon" src="' + img_src + '" width="100px"/>');
 
     /*else if(aData[0] == "GROUP") {
-     $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
+     $('td:eq(0)', nRow).html('<img alt="Group Icon" src="resources/images/group.png"/>');
      }
      */
 
@@ -702,7 +702,7 @@ function attachedDetailsRowCallback(nRow, aData, iDisplayIndex) {
 
     //add a delete button, with action to perform an update on the server
     //var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    //$('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + iDisplayIndex + ');"/>');
+    //$('td:eq(4)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="resources/images/cross.png" onclick="javascript: removeAce(\'' + getCurrentCollection() + '\',' + iDisplayIndex + ');"/>');
     //add jQuery cick action to image to perform an update on the server
 
     return nRow;
@@ -1096,9 +1096,9 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     $(nRow).attr("data-entry-type", aceTarget);
     //determine user or group icon for first column
     if (aceTarget == "USER") {
-        $('td:eq(0)', nRow).html('<img alt="User Icon" src="theme/images/user.png"/>');
+        $('td:eq(0)', nRow).html('<img alt="User Icon" src="resources/images/user.png"/>');
     } else if (aceTarget == "GROUP") {
-        $('td:eq(0)', nRow).html('<img alt="Group Icon" src="theme/images/group.png"/>');
+        $('td:eq(0)', nRow).html('<img alt="Group Icon" src="resources/images/group.png"/>');
     }
 
     // build role dropdown
@@ -1137,7 +1137,7 @@ function collectionSharingDetailsRowCallback(nRow, aData, iDisplayIndex) {
     $('td:eq(4)', nRow).html(dropdown);
     // //add a delete button, with action to perform an update on the server
     var imgDeleteId = 'imgDelete_' + iDisplayIndex;
-    $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="theme/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
+    $('td:eq(5)', nRow).html('<img id="' + imgDeleteId + '" alt="Delete Icon" src="resources/images/cross.png" onclick="javascript: removeAceByName(\'' + getCurrentCollection() + '\',\'' + aData[0] + '\',\'' + aData[2] + '\');"/>');
     
     return nRow;
 }

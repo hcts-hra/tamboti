@@ -112,16 +112,6 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="/apps/shared-resources/{substring-after($exist:path, '/$shared/')}" absolute="yes"/>
         </dispatch>
-
-    else if (starts-with($exist:path, "/item/theme")) then
-        let $path := theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, substring-after($exist:path, "/item/theme"))
-        let $themePath := replace($path, "^(.*)/[^/]+$", "$1")
-        return
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <forward url="{$path}">
-                    <set-attribute name="theme-collection" value="{theme:get-path()}"/>
-                </forward>
-            </dispatch>
             
     else if (starts-with($exist:path, "/item/resources")) then
         let $real-resources-path := fn:concat($exist:controller, "/", substring-after($exist:path, "/item/")) return

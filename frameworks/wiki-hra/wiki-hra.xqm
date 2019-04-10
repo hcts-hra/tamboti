@@ -69,7 +69,7 @@ declare function wiki-hra-framework:get-icon($size as xs:int, $item, $currentPos
                     (: Otherwise it is non-XML contents extracted from a document by tika. This could be a PDF, a Word document, etc. :) 
                     else 'text-x-changelog'
             return 
-                <img title="{$hint}" src="theme/images/{$type}.png"/>
+                <img title="{$hint}" src="resources/images/{$type}.png"/>
 };
 
 
@@ -89,7 +89,7 @@ declare function wiki-hra-framework:list-view-table($item as node(), $currentPos
             {
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
             }
@@ -444,10 +444,10 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
             <td class="pagination-number">{$currentPos}</td>
             <td class="actions-cell">
                 <a id="save_{$id}" href="#{$currentPos}" class="save">
-                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="theme/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
+                    <img title="{if ($saved) then 'Remove Record from My List' else 'Save Record to My List'}" src="resources/images/{if ($saved) then 'disk_gew.gif' else 'disk.gif'}" class="{if ($saved) then 'stored' else ''}"/>
                 </a>
             </td>
-            <td class="detail-type" style="vertical-align:top"><img src="theme/images/image.png" title="Still Image"/></td>
+            <td class="detail-type" style="vertical-align:top"><img src="resources/images/image.png" title="Still Image"/></td>
             <td style="vertical-align:top;">
                 <div id="image-cover-box"> 
                 { 

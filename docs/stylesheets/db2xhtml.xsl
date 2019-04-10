@@ -26,7 +26,6 @@
                         <link rel="stylesheet" type="text/css" href="{$styleref}"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <!--<link rel="stylesheet" type="text/css" href="theme/css/default-style2.css"/>-->
                         <link rel="stylesheet" type="text/css" href="stylesheets/default-style2.css"/>
                     </xsl:otherwise>
                 </xsl:choose>
@@ -340,7 +339,7 @@
                     </div>
                     <div id="page-head-right">
                         <a href="http://www.asia-europe.uni-heidelberg.de/en/home.html" target="_blank">
-                            <!--<img src="theme/images/logovjc.gif" title="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" alt="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" width="75" height="69" style="border-style: none"/>-->
+                            <!--<img src="resources/images/logovjc.gif" title="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" alt="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" width="75" height="69" style="border-style: none"/>-->
                             <img src="images/logovjc.gif" title="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" alt="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" width="75" height="69" style="border-style: none"/>
                         </a>
                     </div>
@@ -353,7 +352,7 @@
                     </div>
                     <div id="page-head-right">
                         <a href="http://www.asia-europe.uni-heidelberg.de/en/home.html" target="_blank">
-                            <!--<img src="theme/images/logovjc.gif" title="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" alt="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" width="75" height="69" style="border-style: none"/>-->
+                            <!--<img src="resources/images/logovjc.gif" title="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" alt="The Cluster of Excellence "Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows" at Heidelberg University" width="75" height="69" style="border-style: none"/>-->
                             <img src="images/logovjc.gif" title="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" alt="The Cluster of Excellence &#34;Asia and Europe in a Global Context: Shifting Asymmetries in Cultural Flows&#34; at Heidelberg University" width="75" height="69" style="border-style: none"/>
                         </a>
                     </div>

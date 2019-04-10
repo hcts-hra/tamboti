@@ -141,4 +141,4 @@ declare variable $config:error-message-href := " mailto:hra@asia-europe.uni-heid
 declare variable $config:error-message-link-text := "Send email.";
 
 (: paginator component :)
-declare variable $config:number-of-items-per-page := 20;
+declare variable $config:number-of-items-per-page := 50;
