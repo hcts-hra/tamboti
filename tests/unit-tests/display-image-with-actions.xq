@@ -12,13 +12,13 @@ return
     <html>
         <head>
             <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"/>
-            <link rel="stylesheet" type="text/css" href="/exist/apps/tamboti/themes/default/css/biblio.css"/>
+            <link rel="stylesheet" type="text/css" href="/exist/apps/tamboti/resources/css/biblio.css"/>
         </head>
         <body>
             <div class="img-container" onmouseenter="$(this).find('.img-actions-overlay').fadeIn(200);" onmouseleave="$(this).find('.img-actions-overlay').fadeOut(200);" style="max-width:128px; max-height:128px;width:128px;height:128px;">
                 {vra-hra-framework:create-thumbnail-span($uuid, false(), 128, 128)}
                 <span class="img-actions-overlay">
-                    <img src="/exist/apps/tamboti/themes/default/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" alt="edit"/>
+                    <img src="/exist/apps/tamboti/resources/images/page_edit.png" style="width:16px;height:16px;cursor:pointer" alt="edit"/>
                 </span>
             </div>
             <div>somethingsome</div>

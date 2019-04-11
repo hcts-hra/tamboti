@@ -142,7 +142,7 @@ declare function tei-hra-framework:list-view-table($item as node(), $currentPos 
             <td/>
             {
             <td class="pagination-toggle">
-                <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import tei records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 <a>
                 {
                     let $collection := util:collection-name($item)
@@ -303,7 +303,7 @@ declare function tei-hra-framework:detail-view-table($item as element(), $curren
             <td class="detail-xml">
                 { tei-hra-framework:toolbar($item) }
                 <!--NB: why is this phoney HTML tag used to anchor the Zotero unIPA?-->
-                <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import tei records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
                     let $collection := functx:replace-first($collection, '/db/', '')

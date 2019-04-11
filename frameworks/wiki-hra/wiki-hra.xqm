@@ -99,7 +99,7 @@ declare function wiki-hra-framework:list-view-table($item as node(), $currentPos
             <td/>
             {
             <td class="pagination-toggle">
-                <!--Zotero does not import tei records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import tei records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 <a>
                 {
                     let $collection := util:collection-name($item)
@@ -477,7 +477,7 @@ declare function wiki-hra-framework:detail-view-table($item as element(), $curre
             </td>            
             <td class="detail-xml" style="vertical-align:top;">
                 { vra-hra-framework:toolbar($item, $isWritable) }
-                <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import vra records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
                     return

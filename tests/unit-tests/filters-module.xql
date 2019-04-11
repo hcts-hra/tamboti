@@ -59,7 +59,7 @@
                 </xf:instance>
                 <xf:instance id="i-variables">
                     <variables xmlns="">
-                        <progress-indicator relevant="false">../../themes/default/images/ajax-loader-small.gif</progress-indicator>
+                        <progress-indicator relevant="false">../../resources/images/ajax-loader-small.gif</progress-indicator>
                         <ui-language>en</ui-language>
                         <selected-filter/>
                         <selected-exclusions/>

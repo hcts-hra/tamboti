@@ -24,7 +24,7 @@ declare variable $vra-hra-framework:ERROR := xs:QName("vra-hra-framework:error")
 (:The $vra-hra-framework:primary-roles values are lower-cased when compared.:)
 declare variable $vra-hra-framework:primary-roles := ('aut', 'author', 'cre', 'creator', 'composer', 'cmp', 'artist', 'art', 'director', 'drt');
 
-declare variable $vra-hra-framework:loading-image := $config:app-http-root || "/themes/default/images/ajax-loader.gif";
+declare variable $vra-hra-framework:loading-image := $config:app-http-root || "/resources/images/ajax-loader.gif";
 
 declare variable $vra-hra-framework:THUMB_SIZE_FOR_GRID := 64;
 declare variable $vra-hra-framework:THUMB_SIZE_FOR_GALLERY := 128;
@@ -645,7 +645,7 @@ declare function vra-hra-framework:detail-view-table($item as element(vra:vra), 
             </td>            
             <td class="detail-xml" style="vertical-align:top;">
                 { vra-hra-framework:toolbar($item, $isWritable) }
-                <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import vra records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 {
                     let $collection := util:collection-name($item)
                     let $collection := functx:replace-first($collection, '/db/', '')
@@ -724,7 +724,7 @@ declare function vra-hra-framework:list-view-table($item as node(), $currentPos 
             }
             {
             <td class="pagination-toggle" style="vertical-align:middle">
-                <!--Zotero does not import vra records <abbr class="unapi-id" title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
+                <!--Zotero does not import vra records <abbr title="{bs:get-item-uri(concat($item, $id-position))}"></abbr>-->
                 <a>
                 {
                     let $collection := util:collection-name($item)

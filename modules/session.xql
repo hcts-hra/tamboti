@@ -44,7 +44,7 @@ declare variable $bs:THUMB_SIZE_FOR_GALLERY := 128;
 declare variable $bs:THUMB_SIZE_FOR_DETAIL_VIEW := 256;
 declare variable $bs:THUMB_SIZE_FOR_LIST_VIEW := 128;
 
-declare variable $local:loading-image := $config:app-http-root || "/themes/default/images/ajax-loader.gif";
+declare variable $local:loading-image := $config:app-http-root || "/resources/images/ajax-loader.gif";
 
 declare function bs:get-item-uri($item-id as xs:string) {
     fn:concat(
@@ -121,7 +121,7 @@ declare function bs:plain-list-view-table($item as node(), $currentPos as xs:int
 };
 
 (:NB: If an element is returned which is not covered by this typeswitch, the following error occurs, i.e. it defaults to kwic:summarize():
-the actual cardinality for parameter 1 does not match the cardinality declared in the function's signature: kwic:summarize($hit as element(), $config as element()) element()*. Expected cardinality: exactly one, got 0. [at line 349, column 34, source: /db/apps/tamboti/themes/default/modules/session.xql]
+the actual cardinality for parameter 1 does not match the cardinality declared in the function's signature: kwic:summarize($hit as element(), $config as element()) element()*. Expected cardinality: exactly one, got 0. [at line 349, column 34, source: /db/apps/tamboti/modules/session.xql]
 :)
 (:NB: each element checked for here should appear in bs:view-table(), otherwise the detail view will show the list view.:)
 declare function bs:list-view-table($item as node(), $currentPos as xs:int) {

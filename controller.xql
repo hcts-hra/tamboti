@@ -4,7 +4,6 @@ import module namespace session ="http://exist-db.org/xquery/session";
 
 import module namespace config = "http://exist-db.org/mods/config" at "modules/config.xqm";
 import module namespace security = "http://exist-db.org/mods/security" at "modules/search/security.xqm";
-import module namespace theme = "http://exist-db.org/xquery/biblio/theme" at "modules/theme.xqm";
 import module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/" at "modules/apis/apis.xqm";
 
 declare namespace exist = "http://exist.sourceforge.net/NS/exist";
@@ -22,7 +21,7 @@ declare function local:get-item($controller as xs:string, $root as xs:string, $p
     let $item-id := fn:replace($path, $local:item-uri-regexp, "$1") return
     
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">        
-            <forward url="{theme:resolve-uri($prefix, $root, 'pages/index.html')}">
+            <forward url="themes/tamboti/index.html">
                 { local:set-user($username, $password) }
             </forward>
             <view>
@@ -86,11 +85,6 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/bib.html"/>
         </dispatch>
-     else if ($exist:path = ('/database','/databases')) then
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <redirect url="modules/search/databases.html"/>
-        </dispatch>
-        
      else if ($exist:path eq '/') then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/index.html"/>

@@ -1,3 +1,7 @@
+tamboti = {};
+tamboti.currentCollection = "/data/commons/Cluster Publications";
+tamboti.itemsPerPage = 50;
+
 tamboti.utils = {};
 tamboti.browser = {};
 
@@ -5,6 +9,9 @@ tamboti.browser.chrome = (typeof window.chrome === "object");
 
 tamboti.totalSearchResultOptions = 0;
 tamboti.selectedSearchResultOptions = {};
+
+tamboti.shareRoles = {};
+tamboti.shareRoles.options = [];
 
 $.extend({
   getParameterNames: function(){
@@ -47,8 +54,6 @@ function addStatusDisplay(selector){
 }
 
 // get roles for sharing defined in config.xml
-tamboti.shareRoles = {};
-tamboti.shareRoles.options = [];
 $.ajax({
     url: "operations.xql",
         dataType: "json",
@@ -84,11 +89,11 @@ $(function() {
     	$("#advanced-search-form input[name='value']").val($.getParameter('value'));
     } else if ($.getParameter('collection') != undefined) {
         var collection = decodeURI($.getParameter('collection'));
-        $("#simple-search-form input[name='collection']").val(collection);
-		$("#advanced-search-form input[name='collection']").val(collection);        
+        $("#simple-search-collection-path").val(collection);
+		$("#advanced-search-collection-path").val(collection);        
     } else {
-        $("#simple-search-form input[name='collection']").val(tamboti.currentCollection);
-        $("#advanced-search-form input[name='collection']").val(tamboti.currentCollection);
+        $("#simple-search-collection-path").val(tamboti.currentCollection);
+        $("#advanced-search-collection-path").val(tamboti.currentCollection);
     }
     
     tamboti.apis.initialSearch();
@@ -113,8 +118,6 @@ $(function() {
     });
 
     pingSession();
-
-    $("#splash").fadeOut(1000);
 
     // add event listener for sharing dialog. If closed: update selected node
     $("#sharing-collection-dialog").on("dialogclose", function( event, ui) {

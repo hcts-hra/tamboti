@@ -3,8 +3,7 @@
 (:~
  : HTML templating module
 :)
-import module namespace config="http://exist-db.org/mods/config" at "config.xqm";
-import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "theme.xqm";
+import module namespace config = "http://exist-db.org/mods/config" at "config.xqm";
 
 (:~
  : Start processing the provided content using the modules defined by $modules. $modules should
@@ -111,17 +110,17 @@ declare function templates:extract-prefixes($modules as element(modules)) as xs:
 
 declare function templates:include($node as node(), $params as element(parameters)?, $model as item()*) {
     let $relPath := $params/param[@name = "path"]/@value
-    let $path := theme:resolve(request:get-attribute("exist:prefix"), request:get-attribute("exist:root"), $relPath)
-    return
-        templates:process(doc($path), $model)
+    let $path := concat($config:themes, "/tamboti/", $relPath)
+    
+    return templates:process(doc($path), $model)
 };
 
 declare function templates:surround($node as node(), $params as element(parameters)?, $model as item()*) {
     let $with := $params/param[@name = "with"]/@value
-    let $template := theme:resolve(request:get-attribute("exist:prefix"), request:get-attribute("exist:root"), $with)
-    (:let $log := util:log("DEBUG", ("template: ", $template)):)
+    let $template := concat($config:themes, "/tamboti/", $with)
     let $at := $params/param[@name = "at"]/@value
     let $merged := templates:process-surround(doc($template), $node, $at)
+    
     return
         templates:process($merged, $model)
 };
@@ -143,104 +142,13 @@ declare function templates:process-surround($node as node(), $content as node(),
             $node
 };
 
-declare function templates:if-parameter-set($node as node(), $params as element(parameters), $model as item()*) as node()* {
-    let $paramName := $params/param[@name = "param"]/@value/string()
-    let $param := request:get-parameter($paramName, ())
-    return
-        if ($param and string-length($param) gt 0) then
-            templates:process($child/node(), $model)
-        else
-            ()
-};
-
-declare function templates:if-parameter-unset($node as node(), $params as element(parameters), $model as item()*) as node()* {
-    let $paramName := $params/param[@name = "param"]/@value/string()
-    let $param := request:get-parameter($paramName, ())
-    return
-        if (not($param) or string-length($param) eq 0) then
-            $node
-        else
-            ()
-};
-
-declare function templates:load-source($node as node(), $params as element(parameters), $model as item()*) as node()* {
-    let $href := $node/@href/string()
-    let $context := request:get-context-path()
-    return
-        <a href="{$context}/eXide/index.html?open={$config:app-root}/{$href}" target="eXide">{$node/node()}</a>
-};
-
-(:~
-    Processes input and select form controls, setting their value/selection to
-    values found in the request - if present.
- :)
-declare function templates:form-control($node as node(), $params as element(parameters), $model as item()*) as node()* {
-    typeswitch ($node)
-        case element(input) return
-            let $name := $node/@name
-            let $value := request:get-parameter($name, ())
-            return
-                if ($value) then
-                    element { node-name($node) } {
-                        $node/@* except $node/@value,
-                        attribute value { $value },
-                        $node/node()
-                    }
-                else
-                    $node
-        case element(select) return
-            let $value := request:get-parameter($node/@name/string(), ())
-            return
-                element { node-name($node) } {
-                    $node/@* except $node/@class,
-                    for $option in $node/option
-                    return
-                        <option>
-                        {
-                            $option/@*,
-                            if ($option/@value = $value) then
-                                attribute selected { "selected" }
-                            else
-                                (),
-                            $option/node()
-                        }
-                        </option>
-                }
-        default return
-            $node
-};
-
-declare function templates:copy-set-attribute($input as element(), $attrName as xs:string, $attrValue as xs:string?,
-    $model as item()*) {
+declare function templates:copy-set-attribute($input as element(), $attrName as xs:string, $attrValue as xs:string?, $model as item()*) {
     let $name := xs:QName($attrName)
+    
     return
         element { node-name($input) } {
             $input/@*[node-name(.) != $name],
             attribute { $name } { $attrValue },
             templates:process($input/node(), $model)
         }
-};
-
-declare function templates:set-attribute-from-param($node as node(), $params as element(parameters), $model as item()*) as node()* {
-    let $attrName := $params/param[@name = "attribute"]/@value/string()
-    let $attrNS := $params/param[@name = "namespace"]/@value/string()
-    let $attrQName := if ($attrNS) then QName($attrNS, $attrName) else $attrName
-    let $paramName := $params/param[@name = "parameter"]/@value
-    let $paramDefault := $params/param[@name = "default"]/@value/string()
-    let $value := request:get-parameter($paramName, $paramDefault)
-    return
-        if ($attrName) then
-            element { node-name($node) } {
-                for $attr in $node/@*
-                return
-                    if (local-name($attr) eq $attrName and (empty($attrNS) or namespace-uri($attr) eq $attrNS)) then
-                        attribute { $attrQName } { $value }
-                    else
-                        $attr,
-                templates:process($node/node(), $model)
-            }
-        else
-            element { node-name($node) } {
-                $node/@*, templates:process($node/node(), $model)
-            }
 };

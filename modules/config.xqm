@@ -2,26 +2,7 @@ xquery version "3.1";
 
 module namespace config = "http://exist-db.org/mods/config";
 
-(:~ Credentials for the dba admin user :)
 declare variable $config:enforced-realm-id := "ldap-server.yourdomain.com";
-
-(: 
-    Determine the application root collection from the current module load path.
-:)
-declare variable $config:app-root := 
-    let $rawPath := system:get-module-load-path()
-    let $modulePath :=
-        (: strip the xmldb: part :)
-        if (starts-with($rawPath, "xmldb:exist://")) then
-            if (starts-with($rawPath, "xmldb:exist://embedded-eXist-server")) then
-                substring($rawPath, 36)
-            else
-                substring($rawPath, 15)
-        else
-            $rawPath
-    return
-        substring-before($modulePath, "/modules")
-;
 
 declare variable $config:exist-context := request:get-context-path();
 declare variable $config:web-context := '/apps';
@@ -67,7 +48,7 @@ declare variable $config:url-image-size := "256";
 (: modules :)
 declare variable $config:db-path-to-modules := $config:db-path-to-app || "/modules";
 
-declare variable $config:search-app-root := concat($config:app-root, "/modules/search");
+declare variable $config:search-app-root := concat($config:db-path-to-app, "/modules/search");
 
 (: frameworks :)
 declare variable $config:web-path-to-tei-hra-framework := $config:web-path-to-app || "/frameworks/tei-hra";
@@ -94,11 +75,11 @@ declare variable $config:canvas-editor-path :=
 
 declare variable $config:force-lower-case-usernames as xs:boolean := true();
 declare variable $config:mads-collection := "/db/" || $config:mods-root || "/mads";
-declare variable $config:themes := concat($config:app-root, "/themes");
+declare variable $config:themes := concat($config:db-path-to-app, "/themes");
 
 declare variable $config:images-subcollection := ("VRA_images");
 
-declare variable $config:app-http-root := "/exist" || substring-after($config:app-root, "/db");
+declare variable $config:app-http-root := "/exist" || $config:db-path-to-app;
 
 (: email invitation settings :)
 declare variable $config:send-notification-emails := false();

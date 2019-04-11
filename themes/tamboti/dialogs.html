@@ -1,0 +1,220 @@
+<div xmlns="http://www.w3.org/1999/xhtml" style="display: none">
+    <div id="login-dialog">
+        <table>
+            <tr>
+                <td id="login-message" colspan="2"/>
+            </tr>
+            <tr>
+                <td>Username:</td>
+                <td>
+                    <input id="loginUsername" name="user" type="text"/>
+                </td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td>
+                    <input id="loginPassword" name="password" type="password"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="new-collection-dialog">
+        <form id="create-collection-form" action="operations.xql">
+            <div>Name of new folder: </div>
+            <div>
+                <br/>
+            </div>
+            <div>
+                <input id="new-collection-name" type="text"/>
+            </div>
+        </form>
+    </div>
+    <div id="upload-file-dialog" class="upload-file-style">
+        <div class="row"/>
+        <div class="dropbox-wrapper">
+            <div id="dropbox" class="dropbox" ng-class="dropClass">
+                <span>{{dropText}}</span>
+            </div>
+        </div>
+        <div ng-show="files.length" id="file-list">
+            <div ng-repeat="file in files.slice(0)">
+                <table>
+                    <tr>
+                        <td colspan="1">{{file.webkitRelativePath || file.name}}</td>
+                        <td ng-switch="file.size &gt; 1024*1024" colspan="1">
+                            <span>{{file.size / 1024 / 1024 | number:2}} MB</span>
+                            <span>{{file.size / 1024 | number:2}} kB</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <input type="button" ng-click="uploadFile()" value="Upload"/>
+            <div ng-show="progressVisible">
+                <div class="percent">{{progress}}%</div>
+                <div class="progress-bar">
+                    <div class="uploaded" ng-style="{'width': progress+'%'}"/>
+                </div>
+            </div>
+        </div>
+        <table>
+            <tr>
+                <td>
+                    <div id="upload-resource-id" name="resource"/>
+                    <div id="file-upload-folder" style="display: none;"/>
+                </td>
+            </tr>
+        </table>
+        <input type="button" ng-click="hideUploadDialog()" value="Cancel" style="float: right;"/>
+    </div>
+    <div id="rename-collection-dialog">
+        <form id="rename-collection-form" action="operations.xql">
+            <input id="rename-collection-path_" type="hidden" name="collection"/>
+            <div>New folder name: </div>
+            <div>
+                <br/>
+            </div>
+            <div>
+                <input id="rename-new-name" name="name" type="text"/>
+            </div>
+        </form>
+    </div>
+    <div id="move-collection-dialog">
+        <form id="move-collection-form" action="operations.xql">
+            <input id="move-collection-path_" type="hidden" name="collection"/>
+            <div>Move folder '<span id="move-collection-path_"/>' to </div>
+            <div>
+                <br/>
+            </div>
+            <div>
+                <select id="collection-move-destinations" name="path"/>
+            </div>
+        </form>
+    </div>
+    <div id="remove-collection-dialog">
+        <form id="remove-collection-form" action="operations.xql">
+            <input id="remove-collection-path_" type="hidden" name="collection"/>
+            <div>Remove the folder named "<span id="sharing-collection-path_"/>"? </div>
+            <div>
+                <br/>
+            </div>
+            <div>NB: If you remove the folder, the folder and its contents will be deleted and cannot be restored.</div>
+        </form>
+    </div>
+    <div id="sharing-collection-dialog">
+        <div id="sharing-collection-dialog-tabs">
+            <ul>
+                <li>
+                    <a href="#shared-to-tab">Shared To (<span id="shared-to-counter">0/0</span>)</a>
+                </li>
+                <li>
+                    <a href="#add-user-tab">Add User</a>
+                </li>
+                <li>
+                    <a href="#add-group-tab">Add Project</a>
+                </li>
+            </ul>
+            <div id="shared-to-tab">
+                <div>Folder <strong>
+                        <span id="sharing-collection-path_"/>
+                    </strong> is shared with:</div>
+                <table id="collectionSharingDetails">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Full Name</th>
+                            <th>UserID</th>
+                            <th>Permission</th>
+                            <th>Role</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody/>
+                </table>
+                <form id="copy-acl-to">
+                    <div class="messageContainer">copy sharing table to <select id="copy-acl-target-collection-list"/>
+                        <button type="sumbit">copy</button>
+                    </div>
+                </form>
+            </div>
+            <div id="add-user-tab">
+                <div>Enter the user's name:</div>
+                <div>
+                    <input id="user-auto-list"/>
+                </div>
+                <div style="font-weight:bold;">Role:</div>
+                <div>
+                    <select class="shareRoles" style="display: inline;" name="role"/>
+                </div>
+                <input id="add-new-user-to-share-button" type="button" value="Add"/>
+            </div>
+            <div id="add-group-tab">
+                <div>Enter the project's name:</div>
+                <div>
+                    <input id="group-auto-list"/>
+                </div>
+                <div style="font-weight:bold;">Role:</div>
+                <div>
+                    <select class="shareRoles" style="display: inline;" name="role"/>
+                </div>
+                <input id="add-new-group-to-share-button" type="button" value="Add"/>
+            </div>
+        </div>
+    </div>
+    <div id="remove-resource-dialog">
+        <form id="remove-resource-form" action="operations.xql">
+            <div>Are you sure you wish to remove the current record?</div>
+            <input id="remove-resource-id" name="resource" type="hidden" value=""/>
+        </form>
+    </div>
+    <div id="move-resource-dialog">
+        <form id="move-resource-form" action="operations.xql">
+            <div>Move record from
+                '<span id="move-resource-collection-path-label"/>' to
+                <div>
+                    <select id="resource-move-destinations" name="path"/>
+                </div>
+            </div>
+            <input id="move-resource-id" name="resource" type="hidden" value=""/>
+        </form>
+    </div>
+    <div id="new-resource-dialog">
+        <div class="biblio:resource-types stand-alone"/>
+    </div>
+    <div id="add-related-dialog" modal="true" title="Create Related MODS Record" width="550">
+        <div class="biblio:resource-types related-item"/>
+    </div>
+    <div id="lightbox" class="lightbox" style="display: none">
+        <div class="view">
+            <div class="image">
+                <img class="content" src=""/>
+                <a href="" class="next">
+                    <img src="resources/images/nextlabel.gif"/>
+                </a>
+                <a href="" class="previous">
+                    <img src="resources/images/prevlabel.gif"/>
+                </a>
+            </div>
+            <h4>Title</h4>
+            <a href="" class="close">
+                <img src="resources/images/closelabel.gif"/>
+            </a>
+        </div>
+        <a href="" class="show-metadata">Metadata</a>
+        <div class="metadata">
+            <div class="metadata-content"/>
+            <a href="" class="close">
+                <img src="resources/images/closelabel.gif"/>
+            </a>
+        </div>
+    </div>
+    <div id="filmstrip" class="filmstrip">
+        <div class="filmstripPageButtonContainer">
+            <span class="filmstripPageButton" id="film-up">˄</span>
+        </div>
+        <ul id="filmstrip-items"/>
+        <div class="filmstripPageButtonContainer">
+            <span class="filmstripPageButton" id="film-down">˅</span>
+        </div>
+        <span class="clear"/>
+    </div>
+</div> 

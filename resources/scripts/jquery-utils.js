@@ -1,7 +1,3 @@
-tamboti = {};
-tamboti.currentCollection = "/data/commons/Cluster Publications";
-tamboti.itemsPerPage = 50;
-
 (function($) {
 
     /**

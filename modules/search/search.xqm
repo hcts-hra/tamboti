@@ -20,7 +20,6 @@ module namespace search = "http://hra.uni-heidelberg.de/ns/tamboti/search/";
     of the query.
 :)
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates" at "../templates.xql";
 import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
@@ -282,7 +281,7 @@ declare variable $search:FORMATS :=
 :)
 declare variable $search:DEFAULT_QUERY :=
     <query>
-        <collection>{theme:get-root()}</collection>
+        <collection>{$config:content-root}</collection>
         <and>
             <field m="1" name="any Field (MODS, TEI, VRA, Wiki)"></field>
         </and>
@@ -998,8 +997,6 @@ declare function search:login($node as node(), $params as element(parameters)?, 
             then 
                 (
                     <div class="help"><a href="../../docs/">Help</a></div>
-                    ,   
-                    <div class="help"><a id="optimize-trigger" href="#">Create custom indexes for sorting</a></div>
                     ,
                     <div class="login">Logged in as <span class="username">{$user}</span>. <a href="?logout=1">Logout</a></div>
                 )
@@ -1012,9 +1009,9 @@ declare function search:login($node as node(), $params as element(parameters)?, 
 };
 
 declare function search:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $collection := functx:replace-first(request:get-parameter("collection", theme:get-root()), "/db/", "")
-        return
-            templates:copy-set-attribute($node, "value", $collection, $model)
+    let $collection := functx:replace-first(request:get-parameter("collection", $config:content-root), "/db/", "")
+    
+    return templates:copy-set-attribute($node, "value", $collection, $model)
 };
 
 declare function search:resource-types($node as node(), $params as element(parameters)?, $model as item()*) {
@@ -1125,14 +1122,6 @@ declare function search:resource-types($node as node(), $params as element(param
                 <input type="hidden" name="host"/>
             </form>
         </div>
-};
-
-declare function search:optimize-trigger($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $user := request:get-attribute("xquery.user")
-    return
-        if (sm:is-dba($user))
-        then <a id="optimize-trigger" href="#">Create custom indexes for sorting</a>
-        else ()
 };
 
 declare function search:form-select-current-user-groups($select-name as xs:string) as element(select) {

@@ -20,7 +20,6 @@ module namespace biblio = "http://exist-db.org/xquery/biblio";
     of the query.
 :)
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
-import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace templates="http://exist-db.org/xquery/templates" at "../templates.xql";
 import module namespace jquery="http://exist-db.org/xquery/jquery" at "resource:org/exist/xquery/lib/jquery.xql";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
@@ -282,7 +281,7 @@ declare variable $biblio:FORMATS :=
 :)
 declare variable $biblio:DEFAULT_QUERY :=
     <query>
-        <collection>{theme:get-root()}</collection>
+        <collection>{$config:content-root}</collection>
         <and>
             <field m="1" name="any Field (MODS, TEI, VRA, Wiki)"></field>
         </and>
@@ -591,7 +590,7 @@ declare function biblio:process-form-parameters2($params) as element() {
     the query. Filter out empty parameters and take care of boolean operators.
 :)
 declare function biblio:process-form() as element(query)? {
-    let $collection := xmldb:encode-uri(request:get-parameter("collection", theme:get-root()))
+    let $collection := xmldb:encode-uri(request:get-parameter("collection", $config:content-root))
     let $fields :=
         (:  Get a list of all input parameters which are not empty,
             ordered by input name. :)
@@ -1119,8 +1118,6 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
                 (
                     <div class="help"><a href="../../docs/">Help</a></div>
                     ,   
-                    <div class="help"><a id="optimize-trigger" href="#">Create custom indexes for sorting</a></div>
-                    ,
                     <div class="login">Logged in as <span class="username">{$user}</span>. <a href="?logout=1">Logout</a></div>
                 )
             else
@@ -1129,12 +1126,6 @@ declare function biblio:login($node as node(), $params as element(parameters)?, 
                 ,
                 <div class="login">Logged in as <span class="username">{let $human-name := security:get-human-name-for-user($user) return if (not(empty($human-name))) then $human-name else $user}</span>. <a href="?logout=1">Logout</a></div>
             )
-};
-
-declare function biblio:collection-path($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $collection := functx:replace-first(request:get-parameter("collection", theme:get-root()), "/db/", "")
-    
-    return templates:copy-set-attribute($node, "value", $collection, $model)
 };
 
 declare function biblio:resource-types($node as node(), $params as element(parameters)?, $model as item()*) {
@@ -1245,14 +1236,6 @@ declare function biblio:resource-types($node as node(), $params as element(param
                 <input type="hidden" name="host"/>
             </form>
         </div>
-};
-
-declare function biblio:optimize-trigger($node as node(), $params as element(parameters)?, $model as item()*) {
-    let $user := request:get-attribute("xquery.user")
-    return
-        if (sm:is-dba($user))
-        then <a id="optimize-trigger" href="#">Create custom indexes for sorting</a>
-        else ()
 };
 
 declare function biblio:form-select-current-user-groups($select-name as xs:string) as element(select) {

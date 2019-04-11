@@ -766,7 +766,7 @@ declare function mods-hra-framework:detail-view-table($item as element(mods:mods
             
             <td class="detail-xml" style="vertical-align:top;">
                 { mods-hra-framework:toolbar($item, $isWritable, $id) }
-                <abbr class="unapi-id" title="{mods-hra-framework:get-item-uri($item/@ID)}"></abbr>
+                <abbr title="{mods-hra-framework:get-item-uri($item/@ID)}"></abbr>
                 {
                     let $collection := util:collection-name($item)
                     let $collection := functx:replace-first($collection, '/db/', '')
@@ -914,7 +914,7 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
             <td/>
             {
             <td class="pagination-toggle">
-                <abbr class="unapi-id" title="{mods-hra-framework:get-item-uri($item/@ID)}"></abbr>
+                <abbr title="{mods-hra-framework:get-item-uri($item/@ID)}"></abbr>
                 <a>
                 {
                     let $collection := util:collection-name($item)

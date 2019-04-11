@@ -29,6 +29,8 @@ declare function local:set-special-permissions($path as xs:anyURI) {
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/security.xqm")) 
     ,
+    local:set-special-permissions(xs:anyURI($target || "/modules/session.xql")) 
+    ,    
     local:set-special-permissions(xs:anyURI($target || "/modules/search/simple-search.xql"))     
     ,
     local:set-special-permissions(xs:anyURI($target || "/modules/search/advanced-search.xql"))

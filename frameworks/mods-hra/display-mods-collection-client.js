@@ -209,7 +209,7 @@ var TambotiColViewer = {
         var html = '\
                 <tr>\
                     <td colspan="4" style="text-align:center;">\
-                        <img src="' + TambotiColViewer.options.tambotiURL + '/themes/default/images/ajax-loader.gif" />\
+                        <img src="' + TambotiColViewer.options.tambotiURL + '/resources/images/ajax-loader.gif" />\
                     </td>\
                 </tr>';
         $('#results').append(html);

@@ -2,7 +2,6 @@ xquery version "3.1";
 
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace security="http://exist-db.org/mods/security" at "security.xqm";
-import module namespace theme="http://exist-db.org/xquery/biblio/theme" at "../theme.xqm";
 import module namespace apis = "http://hra.uni-heidelberg.de/ns/tamboti/apis/" at "../../modules/apis/apis.xqm";
 
 declare namespace request="http://exist-db.org/xquery/request";
@@ -38,7 +37,8 @@ declare function local:set-user() {
         )
 };
 
-if ($exist:path eq '/') then
+if ($exist:path eq '/')
+then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
 		<redirect url="index.html"/>
 	</dispatch>
@@ -49,34 +49,35 @@ if ($exist:path eq '/') then
 :)
 else if (ends-with($exist:resource, '.html')) then
 
-    if(request:get-parameter("logout",()))then
-    (
-        session:clear(),
-        session:invalidate(),
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <redirect url="index.html"/>
-        </dispatch>
-    )
+    if(request:get-parameter("logout",()))
+    then
+	    (
+	        session:clear(),
+	        session:invalidate(),
+	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+	            <redirect url="index.html"/>
+	        </dispatch>
+	    )
     else
-    (
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="{theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, concat('pages/', $exist:resource))}">
-                { local:set-user() }
-            </forward>
-            <view>
-                <forward url="../view.xql">
-                    <!-- Errors should be passed through instead of terminating the request -->
-                    { local:set-user() }
-            		<set-attribute name="xquery.report-errors" value="yes"/>
-            		<set-attribute name="exist:root" value="{$exist:root}"/>
-                    <set-attribute name="exist:path" value="{$exist:path}"/>
-                    <set-attribute name="exist:prefix" value="{$exist:prefix || "/" || $config:app-id}"/>
-                </forward>
-    		</view>
-    	</dispatch>,
-    	
-    	response:set-header("Last-Modified", fn:current-dateTime() cast as xs:string) (: TODO the XQueryURLRewrite filter should be able to infer that a static resource has been pre-procesed and this should be set:)
-	)
+	    (
+	        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+	            <forward url="../../themes/tamboti/{$exist:resource}">
+	                { local:set-user() }
+	            </forward>
+	            <view>
+	                <forward url="../view.xql">
+	                    <!-- Errors should be passed through instead of terminating the request -->
+	                    { local:set-user() }
+	            		<set-attribute name="xquery.report-errors" value="yes"/>
+	            		<set-attribute name="exist:root" value="{$exist:root}"/>
+	                    <set-attribute name="exist:path" value="{$exist:path}"/>
+	                    <set-attribute name="exist:prefix" value="{$exist:prefix || "/" || $config:app-id}"/>
+	                </forward>
+	    		</view>
+	    	</dispatch>,
+	    	
+	    	response:set-header("Last-Modified", fn:current-dateTime() cast as xs:string) (: TODO the XQueryURLRewrite filter should be able to infer that a static resource has been pre-procesed and this should be set:)
+		)
 else if ($exist:resource eq 'retrieve') then
 
     (:  Retrieve an item from the query results stored in the HTTP session. The
@@ -99,16 +100,6 @@ else if (contains($exist:path, "/$shared/")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="/apps/shared-resources/{substring-after($exist:path, '/$shared/')}" absolute="yes"/>
     </dispatch>
-
-else if (starts-with($exist:path, "/theme")) then
-    let $path := theme:resolve-uri($exist:prefix || "/" || $config:app-id, $exist:root, substring-after($exist:path, "/theme"))
-    let $themePath := replace($path, "^(.*)/[^/]+$", "$1")
-    return
-        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="{$path}">
-                <set-attribute name="theme-collection" value="{theme:get-path()}"/>
-            </forward>
-        </dispatch>
 
 else if (starts-with($exist:path, "/images/")) then
         let $real-resources-path := substring-after($exist:path, "/images")
