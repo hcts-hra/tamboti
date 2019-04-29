@@ -56,18 +56,6 @@ sm:passwd("guest", "guest")
 util:log($log-level, "Security: Done.")
 ,
 
-(: Load collection.xconf documents:)
-util:log($log-level, "Config: Loading collection configuration ...")
-,
-installation:mkcol($config-collection, $config:content-root, $config:public-collection-mode)
-,
-if (doc-available($config-collection || $config:content-root || "collection.xconf"))
-then ()
-else xmldb:store-files-from-pattern($config-collection || $config:content-root, $dir, "data/xconf/data/*.xconf")
-,
-util:log($log-level, "Config: Done.")
-,
-
 (: Create temp collection :)
 util:log($log-level, concat("Config: Creating temp collection '", $temp-collection, "'..."))
 ,
