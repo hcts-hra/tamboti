@@ -15,7 +15,7 @@ $(function() {
     }    
     
     tamboti.utils.resetSimpleSearchForm = function() {
-        var form = $('#simple-search-form');
+        var form = $('#simple-search-tab');
         $("input[name='input1']", form).val('');
         $("select[name = 'sort'] option:first-child", form).each(function() {
             $(this).prop("selected", "selected");
@@ -23,7 +23,7 @@ $(function() {
     };    
     
     tamboti.utils.resetAdvancedSearchForm = function() {
-        var form = $('#advanced-search-form > form');
+        var form = $('#advanced-search-tab');
         $("table", form).find("tr.repeat:gt(0)").remove();
         $("td.operator select option:first-child", form).each(function() {
             $(this).prop("selected", "selected");
@@ -92,10 +92,10 @@ $(function() {
     $("#about-tamboti").load("../../includes/about-tamboti.xq");
     $("#cluster-collections").load("../../includes/tamboti-collections.xq");
     
-    $("#simple-search-form input[name = 'input1']").autocomplete({
+    $("#simple-search-tab input[name = 'input1']").autocomplete({
         source: function(request, response) {
             var data = { term: request.term };
-            autocompleteCallback($("#simple-search-form input[name = 'input1']"), data);
+            autocompleteCallback($("#simple-search-tab input[name = 'input1']"), data);
             $.ajax({
                 url: "autocomplete.xql",
                 dataType: "json",
@@ -108,10 +108,10 @@ $(function() {
         delay: 700
     });
     
-    $("#advanced-search-form input[name = 'input1']").autocomplete({
+    $("#advanced-search-tab input[name = 'input1']").autocomplete({
         source: function(request, response) {
             var data = { term: request.term };
-            autocompleteCallback($("#advanced-search-form input[name = 'input1']"), data);
+            autocompleteCallback($("#advanced-search-tab input[name = 'input1']"), data);
             $.ajax({
                 url: "autocomplete.xql",
                 dataType: "json",
@@ -124,16 +124,17 @@ $(function() {
         delay: 700
     });            
     
-    $('.search-form').repeat('#add-field', {
+    $('#advanced-search-tab').repeat('#add-field', {
         deleteTrigger: '',
         onReady: repeatCallback}
     );
     
-    $("#simple-search-form-submit-button").click(function() {
+    $("#simple-search-submit-button").click(function() {
+    	sessionStorage.setItem("tamboti.simple-search-term", $("#simple-search-tab input[name = 'input1']").val());
         tamboti.apis.simpleSearch();
     }); 
     
-    $("#advanced-search-form-submit-button").click(function() {
+    $("#advanced-search-submit-button").click(function() {
         tamboti.apis.advancedSearch();
     });
     

@@ -25,7 +25,7 @@ declare function local:get-images-from-collection($start as xs:int, $end as xs:i
 };
 
 declare function local:get-images-from-cache($start as xs:int, $end as xs:int) as element(mods:url)* {
-    let $cached := session:get-attribute("mods:cached") return
+    let $cached := session:get-attribute("tamboti:cache") return
     
         for $pos in $start to $end
         let $entry := $cached[$pos] 
@@ -48,7 +48,7 @@ declare function local:_get-collection-resources() as xs:string* {
 };
 
 declare function local:get-cache-image-count() as xs:integer {
-    let $cached := session:get-attribute("mods:cached") return
+    let $cached := session:get-attribute("tamboti:cache") return
         fn:count($cached)
 };
 
@@ -106,7 +106,7 @@ declare function local:thumbnails($filmstrip-width as xs:int, $page as xs:int, $
 };
 
 declare function local:image($item as xs:int) {
-    let $cached := session:get-attribute("mods:cached")
+    let $cached := session:get-attribute("tamboti:cache")
     return
         if ($cached[$item]) then
             let $entry := $cached[$item]

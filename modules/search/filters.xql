@@ -28,7 +28,6 @@ declare function local:key($key, $options) {
         <data>
             <filter>Title</filter>
             <value>{$key}</value>
-            <query-tabs>advanced-search-form</query-tabs>
             <default-operator>and</default-operator>
             <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
         </data>
@@ -57,7 +56,7 @@ return
 };
 
 let $type := request:get-parameter("type", ())
-let $record-count := count(session:get-attribute("mods:cached"))
+let $record-count := count(session:get-attribute("tamboti:cache"))
 (: There is a load problem with setting this variable to the cache each time a facet button is clicked. 
 10,000 records amount to about 20 MB and several people could easily access this function at the same time. 
 Even if the cache contains too many items and we do not allow it to be processed, it still takes up memory. 
@@ -66,7 +65,7 @@ If the result set is larger than that, a message is shown. :)
 let $cached := 
     if ($record-count lt $local:MAX_RECORD_COUNT) 
     then ()
-    else session:get-attribute("mods:cached")
+    else session:get-attribute("tamboti:cache")
 return
     if ($type eq 'name') 
     then
@@ -93,7 +92,6 @@ return
                                         <data>
                                             <filter>Name</filter>
                                             <value>{$name}</value>
-                                            <query-tabs>advanced-search-form</query-tabs>
                                             <default-operator>and</default-operator>
                                             <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                         </data>                                    
@@ -133,7 +131,6 @@ return
                                 <data>
                                     <filter>Date</filter>
                                     <value>{$date}</value>
-                                    <query-tabs>advanced-search-form</query-tabs>
                                     <default-operator>and</default-operator>
                                     <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                 </data>                            
@@ -170,7 +167,6 @@ return
                                     <data>
                                         <filter>Subject</filter>
                                         <value>{replace($subject, '-', '')}</value>
-                                        <query-tabs>advanced-search-form</query-tabs>
                                         <default-operator>and</default-operator>
                                         <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                     </data>                                
@@ -209,7 +205,6 @@ return
                                             <data>
                                                 <filter>Language</filter>
                                                 <value>{replace($language, '-', '')}</value>
-                                                <query-tabs>advanced-search-form</query-tabs>
                                                 <default-operator>and</default-operator>
                                                 <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                             </data>                                                
@@ -255,7 +250,6 @@ return
                                                 <data>
                                                     <filter>Genre</filter>
                                                     <value>{$genre}</value>
-                                                    <query-tabs>advanced-search-form</query-tabs>
                                                     <default-operator>and</default-operator>
                                                     <collection>{$local:SEARCH-COLLECTION//collection/string()}</collection>
                                                 </data>                                                    

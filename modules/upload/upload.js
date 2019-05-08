@@ -108,7 +108,7 @@ function FileUploadCtrl(scope) {
     function uploadComplete(evt) {
         /* This event is raised when the server send back a response */
         //$('#upload-file-dialog').dialog('close');
-         $('#simple-search-form').submit();
+         tamboti.apis.simpleSearch();
         //alert(evt.target.responseText)
     }
     

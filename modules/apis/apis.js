@@ -4,13 +4,12 @@ tamboti.apis = {};
 tamboti.apis.initialSearch = function() {
     $("#results").html("Searching ...");
 
-    var advancedSearchForm = $("#advanced-search-form");
+    var advancedSearchForm = $("#advanced-search-tab");
     var data = {
         "format": $("select[name='format']", advancedSearchForm).val(),
         "default-operator": $("select[name='default-operator']", advancedSearchForm).val(),
         "sort": "Author",
         "sort-direction": "descending",
-        "query-tabs": $("input[name='query-tabs']", advancedSearchForm).val(),
         "collection-tree": $("input[name='collection-tree']", advancedSearchForm).val(),
         "collection": $("#simple-search-collection-path").val(),
         "filter": $("input[name='filter']", advancedSearchForm).val(),
@@ -50,33 +49,30 @@ tamboti.apis.initialSearch = function() {
 
 tamboti.apis.simpleSearch = function() {
     $("#results").html("Searching ...");
+    const q = "q=" + document.querySelector("#simple-search-tab input[name='input1']").value;
+    const collection = "collection=" + document.querySelector("#simple-search-collection-path").value;
+    const queryString = "?" + q + "&" + collection;
+     console.log("queryString = " + queryString);
+    
     $.ajax({
-        url: "search/simple/",
-        data: {
-            "input1": $("#simple-search-form input[name='input1']").val(),
-            "sort": $("#simple-search-form select[name='sort']").val(),
-            "field1": $("#simple-search-form input[name='field1']").val(),
-            "query-tabs": $("#simple-search-form input[name='query-tabs']").val(),
-            "collection-tree": $("#simple-search-form input[name='collection-tree']").val(),
-            "collection": $("#simple-search-collection-path").val()
-        },
-        dataType: "html",
-        type: "POST",
+        url: "../../api/search/simple" + queryString,
+        dataType: "text",
+        type: "GET",
         success: function (data) {
+            console.log("data = " + data);
         	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-            tamboti.totalSearchResultOptions = $("#result-items-count").text();            	
+            tamboti.totalSearchResultOptions = data;            	
         }
     });
 };
 
 tamboti.apis.advancedSearch = function() {
-    var advancedSearchForm = $("#advanced-search-form");
+    var advancedSearchForm = $("#advanced-search-tab");
     var data = {
         "format": $("select[name='format']", advancedSearchForm).val(),
         "default-operator": $("select[name='default-operator']", advancedSearchForm).val(),
         "sort": $("select[name='sort']", advancedSearchForm).val(),
         "sort-direction": $("select[name='sort-direction']", advancedSearchForm).val(),
-        "query-tabs": $("input[name='query-tabs']", advancedSearchForm).val(),
         "collection-tree": $("input[name='collection-tree']", advancedSearchForm).val(),
         "collection": $("advanced-search-collection-path").val(),
         "filter": $("input[name='filter']", advancedSearchForm).val(),

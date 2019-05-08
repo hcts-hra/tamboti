@@ -275,7 +275,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                         'Work Record'
                         
                     case 'relatedTo' return
-                        <a href="?search-field=ID&amp;value={$relation/@href}&amp;query-tabs=advanced-search-form&amp;default-operator=and">{'&lt;&lt;' || $type}</a>
+                        <a href="?search-field=ID&amp;value={$relation/@href}&amp;default-operator=and">{'&lt;&lt;' || $type}</a>
                         
                     default return
                         $type

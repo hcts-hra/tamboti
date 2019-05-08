@@ -8,7 +8,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace config="http://exist-db.org/mods/config" at "../config.xqm";
 
 declare function user:add-to-personal-list() {
-    let $cached := session:get-attribute("mods:cached")
+    let $cached := session:get-attribute("tamboti:cache")
     let $pos := xs:integer(request:get-parameter("pos", 1))
     let $oldList := session:get-attribute("personal-list")
     let $oldList :=

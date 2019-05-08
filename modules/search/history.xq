@@ -14,7 +14,6 @@ import module namespace json="http://www.json.org";
     let $advanced-search-data :=
         <data>
             <history>{data($query-as-string/@id)}</history>
-            <query-tabs>advanced-search-form</query-tabs>
         </data>        
     return
         <li><a onclick="tamboti.apis.advancedSearchWithData({json:contents-to-json($advanced-search-data)})" href="#">{biblio:xml-query-to-string($query-as-string)}</a></li>

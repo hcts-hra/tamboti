@@ -1,4 +1,4 @@
-<div xmlns="http://www.w3.org/1999/xhtml" id="query-panel">
+<div xmlns="http://www.w3.org/1999/xhtml">
 	<div id="privacy-policy">
 		<a href="https://www.uni-heidelberg.de/privacypolicy_web.html"
 			target="_blank">Privacy policy</a>
@@ -9,7 +9,7 @@
 				<a href="#simple-search-tab">Simple Search</a>
 			</li>
 			<li>
-				<a href="#advanced-search-form">Advanced Search</a>
+				<a href="#advanced-search-tab">Advanced Search</a>
 			</li>
 			<li>
 				<a href="#query-history">Query History</a>
@@ -30,93 +30,80 @@
 				<a href="#cluster-collections">Tamboti Collections</a>
 			</li>
 		</ul>
-		<div id="simple-search-tab">
-			<form id="simple-search-form" class="search-form">
-				<table>
-					<tr>
-						<td class="label">Search for </td>
-						<td colspan="2">
-							<input class="clearable" name="input1" type="search" />
-						</td>
-					</tr>
-					<tr>
-						<td class="label">inside </td>
-						<td id="collection-path">
-							<input id="simple-search-collection-path" type="text"
-								name="collection" readonly="true" />
-						</td>
-						<td />
-					</tr>
-					<tr>
-						<td class="label">sorting by </td>
-						<td class="dropdown">
-							<select name="sort">
-								<option value="Score" selected="selected">Score</option>
-								<option value="Author">Author</option>
-								<option value="Title">Title</option>
-								<option value="Year">Year</option>
-							</select>
-							<button id="simple-search-form-submit-button"
-								type="button" class="button">Search</button>
-							<input type="hidden" name="field1" value="All" />
-						</td>
-					</tr>
-				</table>
-				<input type="hidden" name="query-tabs"
-					value="simple-search-tab" />
-				<input type="hidden" name="collection-tree" value="hidden" />
-			</form>
+		<div id="simple-search-tab" class="search-form">
+			<table>
+				<tr>
+					<td class="label">Search for </td>
+					<td colspan="2">
+						<input class="clearable" name="input1" type="search" />
+					</td>
+				</tr>
+				<tr>
+					<td class="label">inside </td>
+					<td id="collection-path">
+						<input id="simple-search-collection-path" type="text" name="collection" readonly="true" />
+					</td>
+					<td />
+				</tr>
+				<tr>
+					<td class="label">sorting by </td>
+					<td class="dropdown">
+						<select name="sort">
+							<option value="Score" selected="selected">Score</option>
+							<option value="Author">Author</option>
+							<option value="Title">Title</option>
+							<option value="Year">Year</option>
+						</select>
+						<button id="simple-search-submit-button" type="button" class="button">Search</button>
+						<input type="hidden" name="field1" value="All" />
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="collection-tree" value="hidden" />
 		</div>
-		<div id="advanced-search-form">
-			<form id="advanced-search" class="search-form">
-				<table>
-					<tr class="biblio:form-from-query" />
-					<tr>
-						<td class="label">inside </td>
-						<td colspan="2">
-							<input id="advanced-search-collection-path" type="text"
-								name="collection" readonly="true" />
-						</td>
-					</tr>
-					<tr>
-						<td class="label"> sorting by </td>
-						<td class="dropdown">
-							<select name="sort">
-								<option value="Score" selected="selected">Score</option>
-								<option value="Author">Author</option>
-								<option value="Title">Title</option>
-								<option value="Year">Year</option>
-							</select>
-							<select name="sort-direction">
-								<option value="descending" selected="selected">descending</option>
-								<option value="ascending">ascending</option>
-							</select>
-						</td>
-						<td />
-					</tr>
-					<tr>
-						<td />
-						<td class="add-field" align="center" colspan="2">
-							<button class="button" id="add-field">
-								<span>+</span>
-								Add Search Field
-							</button>
-							<button id="clear-search-fields" class="button"
-								name="clear" value="clear" type="button">Clear Search Terms</button>
-							<div class="advanced-search">
-								<button id="advanced-search-form-submit-button"
-									type="button" class="advanced-search">Search</button>
-							</div>
-						</td>
-					</tr>
-				</table>
-				<input type="hidden" name="query-tabs"
-					value="advanced-search-form" />
-				<input type="hidden" name="collection-tree" value="hidden" />
-				<input type="hidden" name="filter" value="" />
-				<input type="hidden" name="value" value="" />
-				<input type="hidden" name="history" value="" />
-			</form>
+		<div id="advanced-search-tab" class="search-form">
+			<table>
+				<tr class="biblio:form-from-query" />
+				<tr>
+					<td class="label">inside </td>
+					<td colspan="2">
+						<input id="advanced-search-collection-path" type="text" name="collection" readonly="true" />
+					</td>
+				</tr>
+				<tr>
+					<td class="label"> sorting by </td>
+					<td class="dropdown">
+						<select name="sort">
+							<option value="Score" selected="selected">Score</option>
+							<option value="Author">Author</option>
+							<option value="Title">Title</option>
+							<option value="Year">Year</option>
+						</select>
+						<select name="sort-direction">
+							<option value="descending" selected="selected">descending</option>
+							<option value="ascending">ascending</option>
+						</select>
+					</td>
+					<td />
+				</tr>
+				<tr>
+					<td />
+					<td class="add-field" align="center" colspan="2">
+						<button class="button" id="add-field">
+							<span>+</span>
+							Add Search Field
+						</button>
+						<button id="clear-search-fields" class="button" name="clear" value="clear" type="button">Clear Search Terms</button>
+						<div class="advanced-search">
+							<button id="advanced-search-submit-button" type="button" class="advanced-search">Search</button>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="collection-tree" value="hidden" />
+			<input type="hidden" name="filter" value="" />
+			<input type="hidden" name="value" value="" />
+			<input type="hidden" name="history" value="" />
 		</div>
 		<div id="query-history" />
 		<div id="personal-list">

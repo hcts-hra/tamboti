@@ -244,7 +244,7 @@ declare function security:user-has-access($user as xs:string, $path as xs:anyURI
         then true()
         (: check for ACLs:)
         else
-            let $valid-acls := $permissions/sm:acl/sm:ace[@who=$user and @access_type="ALLOWED" and fn:matches(./@mode, $mode)]
+            let $valid-acls := $permissions//sm:ace[@who = $user and @access_type="ALLOWED" and matches(./@mode, $mode)]
             
             return
                 if (count($valid-acls) > 0)
@@ -1299,7 +1299,7 @@ declare function security:iiifauth-clean-expired-cookies(){
     let $cookie-doc := doc("../../data/temp/tokens.xml")
     return update delete $cookie-doc/cookies/cookie[xs:dateTime(@expires) lt datetime:timestamp-to-datetime(datetime:timestamp())]
 };
-
+`
 (:~
 : delete a token
 :)

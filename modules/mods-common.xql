@@ -672,7 +672,6 @@ declare function mods-common:format-name($name as element()?, $position as xs:in
                         <collection>{$config:data-collection-name}</collection>
                         <field1>Name</field1>
                         <input1>{string-join($name/mods:namePart, ' ')}</input1>
-                        <query-tabs>advanced-search-form</query-tabs>
                         <default-operator>and</default-operator>
                     </data>                
 
@@ -853,7 +852,6 @@ declare function mods-common:format-name($name as element()?, $position as xs:in
                             <collection>{$config:data-collection-name}</collection>
                             <field1>Name</field1>
                             <input1>{normalize-space($name-link)}</input1>
-                            <query-tabs>advanced-search-form</query-tabs>
                             <default-operator>and</default-operator>
                         </data>
                     
@@ -2249,7 +2247,6 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
         map {
             "search-field": "ID",
             "value": $xlinked-ID,
-            "query-tabs": "advanced-search-form",
             "default-operator": "and"
             
         },

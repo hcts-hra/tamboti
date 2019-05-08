@@ -450,7 +450,6 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                                 <action />
                                 <search-field>XLink</search-field>
                                 <value>{$ID}</value>
-                                <query-tabs>advanced-search-form</query-tabs>
                             </data>
                         return            
                             <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
@@ -473,7 +472,6 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                             <data>
                                 <search-field>XLink</search-field>
                                 <value>{$link-ID}</value>
-                                <query-tabs>advanced-search-form</query-tabs>
                             </data>                    
                         return
                         <tr xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-row">
@@ -697,7 +695,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
             ,
             if (contains($collection-short, 'Priya Paul Collection')) 
             then 
-            let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/modules/search/index.html', '?search-field=ID&amp;value=', $ID, '&amp;query-tabs=advanced-search-form')
+            let $link := concat('http://kjc-fs1.kjc.uni-heidelberg.de:8080/exist/apps/ppcoll/modules/search/index.html', '?search-field=ID&amp;value=', $ID)
             return
             mods-common:simple-row(
                 <a target="_blank" href="{$link}">{$link}</a>, 'View Full Record with Image in The Priya Paul Collection') 

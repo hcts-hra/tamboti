@@ -36,20 +36,20 @@ declare function apis:process() {
 (:        let $info := util:log("INFO", "user:" || tamboti-security:iiifauth-validate-cookie($cookieToken)):)
 
     return
-     switch($method)
-        case "GET"
-        return apis:get($method, $scope, $parameters, $query-string)
-        case "POST"
-        return apis:post($method, $scope, $parameters)        
-        case "PUT"
-        return apis:put($method, $scope, $parameters)
-        case "DELETE"
-        return apis:delete($method, $scope, $parameters)
-        case "HEAD"
-        return apis:head($method, $scope, $parameters)
-        case "OPTIONS"
-        return apis:options($method, $scope, $parameters)
-        default return ()    
+        switch($method)
+            case "GET"
+            return apis:get($method, $scope, $parameters, $query-string)
+            case "POST"
+            return apis:post($method, $scope, $parameters)        
+            case "PUT"
+            return apis:put($method, $scope, $parameters)
+            case "DELETE"
+            return apis:delete($method, $scope, $parameters)
+            case "HEAD"
+            return apis:head($method, $scope, $parameters)
+            case "OPTIONS"
+            return apis:options($method, $scope, $parameters)
+            default return ()    
 };
 
 declare function apis:get($method as xs:string, $scope as xs:string, $parameters as xs:string*, $query-string as xs:string?) {
@@ -68,6 +68,8 @@ declare function apis:get($method as xs:string, $scope as xs:string, $parameters
         return apis:getAnnoCallbacks($parameters)
         case "iiif"
         return apis:iiif($method, $scope, $parameters)
+        case "search" return apis:search($parameters)  
+        case "resources" return apis:resources()        
         default return () 
 };
 
@@ -166,6 +168,21 @@ declare function apis:search($exist-prefix as xs:string) {
    </dispatch>
 };
 
+declare function apis:search($parameters as xs:string*) {
+    let $parameter := $parameters[1]
+    
+    return (
+        response:set-header("Content-Type", "text/plain")
+        ,
+        switch ($parameter)
+            case "simple"
+            return apis:search-simple()
+            case "advanced"
+            return apis:search-advanced()        
+            default return ()
+    )
+};
+
 declare function apis:search-simple() {
    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
       <forward url="/modules/search/simple-search.xql" />
@@ -178,18 +195,23 @@ declare function apis:search-advanced() {
    </dispatch>
 };
 
-declare function apis:search($exist-prefix as xs:string) {
-   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-      <forward url="/modules/search/search.xql">
-        <set-attribute name="exist:prefix" value="{$exist-prefix}"/>
-      </forward>
-   </dispatch>
-};
-
 declare function apis:search-history() {
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
         <forward url="../history.xq" />
     </dispatch> 
+};
+
+declare function apis:resources($parameters as xs:string*) {
+    let $start := request:get-parameter("start", "")
+    let $uuid-search-string := request:get-parameter("uuid", "")
+    
+    return (
+        response:set-header("Content-Type", "text/html")
+        ,
+        if ($start != "")
+        then session:get-attribute("tamboti:cached")[position() = ($start to $start)]
+        else ()
+    )
 };
 
 declare function apis:uuid() {

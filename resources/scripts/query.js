@@ -74,11 +74,7 @@ $(function() {
         return false;
     });
     
-    $("#simple-search-form").on("submit", function(){
-        sessionStorage.setItem("tamboti.simple-search-term", $("#simple-search-form input[name = 'input1']").val());
-    });
-    
-    $("#simple-search-form input[name = 'input1']").val(sessionStorage.getItem("tamboti.simple-search-term"));    
+    $("#simple-search-tab input[name = 'input1']").val(sessionStorage.getItem("tamboti.simple-search-term"));    
 
     initCollectionTree();
 
@@ -86,7 +82,7 @@ $(function() {
 
     //check if the URL has a query string for search, in order to trigger that search
     if ($.getParameter('search-field') != undefined && $.getParameter('value') != undefined) {
-    	$("#advanced-search-form input[name='value']").val($.getParameter('value'));
+    	$("#advanced-search-tab input[name='value']").val($.getParameter('value'));
     } else if ($.getParameter('collection') != undefined) {
         var collection = decodeURI($.getParameter('collection'));
         $("#simple-search-collection-path").val(collection);
@@ -240,7 +236,7 @@ $(document).ready(function() {
     bindKeyPressActions();
 
     $('#clear-all').click(function() {
-        var form = $('#advanced-search-form > form');
+        var form = $('#advanced-search-tab');
         form.find(':input').each(function() {
             switch (this.type) {
                 case 'text':
@@ -269,7 +265,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#simple-search-form input[name='input1']").bind("keyup keypress", function(e) {
+    $("#simple-search-tab input[name='input1']").bind("keyup keypress", function(e) {
         var code = e.keyCode || e.which;
         if (code == 13) {
             e.preventDefault();
@@ -431,8 +427,8 @@ function showNotices() {
 function updateCollectionPaths(title, key) {
     // key = key.replace(/^\/db/, "");
 
-    $("#simple-search-form input[name = collection]").val(key);
-    $("#advanced-search-form input[name = collection]").val(key);
+    $("#simple-search-collection-path").val(key);
+    $("#advanced-search-collection-path").val(key);
     tamboti.currentCollection = key;
     
     //dialog collection paths
@@ -443,7 +439,7 @@ function updateCollectionPaths(title, key) {
 }
 
 function getCurrentCollection() {
-    return "/db" + $("#simple-search-form input[name = collection]").val();
+    return "/db" + $("#simple-search-collection-path").val();
 }
 
 function showHideCollectionControls() {
@@ -854,6 +850,7 @@ function initCollectionTree() {
             updateCollectionPaths(title, key);
             showHideCollectionControls();
             tamboti.apis.simpleSearch();
+            
             return false;
         },
         collapse: function(event, data){
@@ -919,14 +916,14 @@ function toggleCollectionTree(show) {
         $('#collection-tree').css({width: '310px', height: 'auto', 'background-color': 'transparent'});
         $('#main-content').css('margin-left', '320px');
         $('#collection-tree-main').css('display', '');
-        $('#simple-search-form input[name = collection-tree]').val('show');
-        $('#advanced-search-form input[name = collection-tree]').val('show');
+        $('#simple-search-tab input[name = collection-tree]').val('show');
+        $('#advanced-search-tab input[name = collection-tree]').val('show');
     } else {
         $('#collection-tree').css({width: '40px', height: '450px', 'background-color': '#EDEDED'});
         $('#main-content').css('margin-left', '50px');
         $('#collection-tree-main').css('display', 'none');
-        $('#simple-search-form input[name = collection-tree]').val('hidden');
-        $('#advanced-search-form input[name = collection-tree]').val('hidden');
+        $('#simple-search-tab input[name = collection-tree]').val('hidden');
+        $('#advanced-search-tab input[name = collection-tree]').val('hidden');
     }
 }
 

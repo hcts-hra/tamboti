@@ -189,7 +189,7 @@ declare function retrieve:view-all($cached as item()*) {
 
  declare function retrieve:get-resource($start as xs:int, $count as xs:int){
  
-  let $resouce := session:get-attribute("mods:cached")
+  let $resouce := session:get-attribute("tamboti:cache")
  
   return $resouce
  };
@@ -197,7 +197,7 @@ declare function retrieve:view-all($cached as item()*) {
  
 declare function retrieve:retrieve($start as xs:int, $count as xs:int) {
     let $mode := request:get-parameter("mode", "gallery")
-    let $cached := session:get-attribute("mods:cached")
+    let $cached := session:get-attribute("tamboti:cache")
     let $stored := session:get-attribute("personal-list")    
     let $total := count($cached)
     let $available :=

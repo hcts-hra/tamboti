@@ -92,7 +92,6 @@ else if ($exist:resource eq 'retrieve') then
 	
 else if ($exist:path eq '/search/') then apis:search($exist:prefix)
 
-else if ($exist:path eq '/search/simple/') then apis:search-simple()
 else if ($exist:path eq '/search/advanced/') then apis:search-advanced()
 
 else if ($exist:path = "/history/") then apis:search-history()

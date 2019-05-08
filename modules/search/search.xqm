@@ -830,7 +830,7 @@ declare function search:eval-query($query-as-xml as element(query)?, $sort as it
                     default 
                         return $item
         (:~ Take the query results and store them into the HTTP session. :)
-        let $null := session:set-attribute('mods:cached', $processed)
+        let $null := session:set-attribute('tamboti:cache', $processed)
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
@@ -876,7 +876,7 @@ declare function search:list-collection($query-as-xml as element(query)?, $sort 
                     
                     return $item
         (:~ Take the query results and store them into the HTTP session. :)
-        let $null := session:set-attribute('mods:cached', $processed)
+        let $null := session:set-attribute('tamboti:cache', $processed)
         let $null := session:set-attribute('query', $query-as-xml)
         let $null := session:set-attribute('sort', $query-as-xml)
         let $null := session:set-attribute('collection', $query-as-xml)
@@ -1228,7 +1228,7 @@ $id
 $operator
 $sort
 query-tabs
-    can have values "simple-search-form", "advanced-search-form", "personal-list" (search-form.html)
+    can have values "personal-list" (search-form.html)
 
 $param
 :
@@ -1284,7 +1284,7 @@ declare function search:get-or-create-cached-results($mylist as xs:string?, $que
             for $item in $list/listitem
             return
                 util:node-by-id(doc(substring-before($item/@id, '#')), substring-after($item/@id, '#'))
-        let $null := session:set-attribute('mods:cached', $items)
+        let $null := session:set-attribute('tamboti:cache', $items)
         return
             count($items)
     )

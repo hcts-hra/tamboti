@@ -73,14 +73,14 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{concat(request:get-uri(), '/')}"/>
         </dispatch>
-    else if (contains($exist:path, "/api/")) then
+    else if (starts-with($exist:path, "/api/"))
+    then
         switch (request:get-header("Accept"))
             case "application/json" return
                 <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
                     <forward url="/modules/apis/json-apis.xq"/>
                 </dispatch>
-            default return
-                apis:process()
+            default return apis:process()
     else if ($exist:path = ('/bib')) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="modules/search/bib.html"/>

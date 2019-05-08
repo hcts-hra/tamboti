@@ -9,7 +9,7 @@ declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "json";
 declare option output:media-type "application/json";
 
-let $cached :=  session:get-attribute("mods:cached")
+let $cached :=  session:get-attribute("tamboti:cache")
 
 let $mods-filters := for $author in $cached//mods:name return filters:format-name($author)
 let $vra-filters := $cached//vra:agentSet//vra:name[1]/text()
