@@ -1299,7 +1299,7 @@ declare function security:iiifauth-clean-expired-cookies(){
     let $cookie-doc := doc("../../data/temp/tokens.xml")
     return update delete $cookie-doc/cookies/cookie[xs:dateTime(@expires) lt datetime:timestamp-to-datetime(datetime:timestamp())]
 };
-`
+
 (:~
 : delete a token
 :)

@@ -201,7 +201,7 @@ declare function apis:search-history() {
     </dispatch> 
 };
 
-declare function apis:resources($parameters as xs:string*) {
+declare function apis:resources() {
     let $start := request:get-parameter("start", "")
     let $uuid-search-string := request:get-parameter("uuid", "")
     

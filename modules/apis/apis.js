@@ -52,16 +52,13 @@ tamboti.apis.simpleSearch = function() {
     const q = "q=" + document.querySelector("#simple-search-tab input[name='input1']").value;
     const collection = "collection=" + document.querySelector("#simple-search-collection-path").value;
     const queryString = "?" + q + "&" + collection;
-     console.log("queryString = " + queryString);
     
     $.ajax({
         url: "../../api/search/simple" + queryString,
         dataType: "text",
         type: "GET",
         success: function (data) {
-            console.log("data = " + data);
-        	tamboti.apis._loadPaginator(data, "#results-head .navbar", false);
-            tamboti.totalSearchResultOptions = data;            	
+        	tamboti.apis._loadPaginator2(data, "#results-head .navbar", false);
         }
     });
 };
@@ -151,6 +148,24 @@ tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
         $("#results").pagination({
             url: "retrieve",
             totalItems: $("#result-items-count").text(),
+            itemsPerPage: tamboti.itemsPerPage,
+            navContainer: navContainer,
+            readyCallback: resultsLoaded,
+            params: { "mode": "list", "initialiseNavbar": initialiseNavbar }
+        });
+    } else {
+        $("#results").html("No records found.");
+    }
+};
+
+tamboti.apis._loadPaginator2 = function(hitCounts, navContainer, initialiseNavbar) {
+    $("#result-items-count").text(hitCounts);
+    tamboti.totalSearchResultOptions = hitCounts;
+    
+    if (hitCounts > 0) {
+        $("#results").pagination({
+            url: "retrieve",
+            totalItems: hitCounts,
             itemsPerPage: tamboti.itemsPerPage,
             navContainer: navContainer,
             readyCallback: resultsLoaded,
