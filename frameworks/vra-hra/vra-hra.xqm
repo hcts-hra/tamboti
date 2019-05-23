@@ -188,7 +188,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
     let $date-node :=
         for $date in $entry//vra:dateSet/vra:date
             return
-                let $date-type := functx:capitalize-first($date/@type) 
+                let $date-type := $date/@type/string()
                 let $earliestDate := $date/vra:earliestDate
                 let $earliestDate := 
                     if (contains($earliestDate, 'T')) then
@@ -226,17 +226,20 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                 (:let $log := util:log("DEBUG", ("##$date-type): ", $date-type)):)
                 return 
                     <tr>
-                        <td class="collection-label">{$date-type}</td>
+                        <td class="collection-label capitalized-first-letter">{$date-type}</td>
                         <td>{$date}</td>
                     </tr>
     (: location :)
     let $location-node :=
         for $location in $entry//vra:locationSet/vra:location
-            return
-                <tr>
-                    <td class="collection-label">{functx:capitalize-first($location/@type/string())}</td>
-                    <td>{$location/vra:name}</td>
-                </tr>
+        let $href := $location/vra:name/@href/string()
+        let $label := $location/vra:name/string()
+        
+        return
+            <tr>
+                <td class="collection-label capitalized-first-letter">{$location/@type/string()}</td>
+                <td><a href="{$href}" target="_blank">{$label}</a></td>
+            </tr>
     (: description :)
     let $description-node :=
         for $description in $entry//vra:descriptionSet/vra:description[not(vra:text)]
@@ -363,9 +366,10 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
     let $measurement-node :=
         let $measurements := $entry//vra:measurementsSet/vra:measurements
         return
-            if (not(empty($measurements))) then
+            if (not(empty($measurements)))
+            then
                 <tr>
-                    <td class="collection-label">Measuremenets</td>
+                    <td class="collection-label">Measurements</td>
                     <td>
                     {
                         for $measurement in $measurements
@@ -378,8 +382,7 @@ declare function vra-hra-framework:format-detail-view($position as xs:string, $e
                     }
                     </td>
                 </tr>
-            else
-                ()
+            else ()
                 
     (: stable link:)
     let $stable-link-href := replace(request:get-url(), '/retrieve', '/index.html') || '?search-field=ID&amp;value=' || $entry/vra:work/@id
@@ -533,25 +536,22 @@ declare function vra-hra-framework:format-list-view($position as xs:string, $ent
             }
         </div>
         
-    let $location-node := 
-        if (not(empty($entry//vra:locationSet/vra:location))) then
-            <div><span class="vra-location">Repositories: </span>
-                {
-                    for $location in $entry//vra:locationSet/vra:location
+    let $location-node :=
+        let $location-elements := $entry//vra:locationSet/vra:location
+        
+        return
+            if ($location-elements)
+            then
+                <div><span class="vra-location">Repositories: </span>
+                    {
+                        for $location-element in $location-elements
                         return
-                            
-                            switch(data($location/@type))
-                                case "repository" return
-                                    (
-                                        <span class="vra-location">{string-join($location/vra:name/string(), ", ")}; </span>
-                                    )
-                                default return
-                                    ()  
-                }
-            </div>
-        else
-            ()
-
+                            switch (data($location-element/@type))
+                            case "repository" return <span class="vra-location">{string-join($location-element/vra:name/string(), ", ")}; </span>
+                            default return ()  
+                    }
+                </div>
+            else ()
     
     let $result :=
         <div class="vra-record">

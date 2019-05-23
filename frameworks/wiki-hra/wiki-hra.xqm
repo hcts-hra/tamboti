@@ -331,7 +331,7 @@ declare function wiki-hra-framework:format-detail-view($position as xs:string, $
                 let $measurements := string-join($measurements, '; ')
                     return
                         <tr>
-                            <td class="collection-label">Measuremenets</td><td>{$measurements}</td>
+                            <td class="collection-label">Measurements</td><td>{$measurements}</td>
                         </tr>
             else ()
 ,

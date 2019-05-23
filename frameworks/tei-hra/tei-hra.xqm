@@ -198,9 +198,7 @@ declare function tei-hra-framework:format-detail-view($position as xs:string, $e
     let $format := 'TEI Record'
     return
         <tr>
-            <td class="collection-label">
-                Record Format
-            </td>
+            <td class="collection-label">Record Format</td>
             <td>
                 <div id="record-format" style="display:none;">TEI</div>
                 <div>
