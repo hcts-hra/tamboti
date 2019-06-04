@@ -92,6 +92,18 @@ $(function() {
     $("#about-tamboti").load("../../includes/about-tamboti.xq");
     $("#cluster-collections").load("../../includes/tamboti-collections.xq");
     
+    document.querySelector("#simple-search-tab input[name = 'input1']").value= "";
+    document.querySelector("#simple-search-tab input[name = 'input1']").addEventListener("keyup", function() {
+        const queryString = this.value;
+        const searchButton = document.getElementById("simple-search-submit-button");
+        
+        if (queryString != "") {
+            searchButton.removeAttribute("disabled");
+        } else {
+            searchButton.setAttribute("disabled", null);
+        }
+    });    
+    
     $("#simple-search-tab input[name = 'input1']").autocomplete({
         source: function(request, response) {
             var data = { term: request.term };

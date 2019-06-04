@@ -178,7 +178,9 @@ declare function apis:search($parameters as xs:string*) {
             case "simple"
             return apis:search-simple()
             case "advanced"
-            return apis:search-advanced()        
+            return apis:search-advanced() 
+            case "initial"
+            return apis:search-initial()            
             default return ()
     )
 };
@@ -190,6 +192,12 @@ declare function apis:search-simple() {
 };
 
 declare function apis:search-advanced() {
+   <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+      <forward url="/modules/search/advanced-search.xql" />
+   </dispatch>
+};
+
+declare function apis:search-initial() {
    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
       <forward url="/modules/search/advanced-search.xql" />
    </dispatch>

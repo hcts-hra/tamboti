@@ -48,7 +48,7 @@ declare %private function local:process-query-string($query-string as xs:string)
     let $results := local:execute-query($collection,  $query-string)
     let $filtered-results := local:filter-results($results)
     let $null := session:set-attribute("tamboti:cache", $filtered-results)
-(:    let $null := session:set-attribute("tamboti:query", $query-as-xml):)
+    let $null := session:set-attribute("tamboti:query", $query-string)
 (:    let $null := session:set-attribute("tamboti:sort", $query-as-xml):)
     
     return count($filtered-results)
