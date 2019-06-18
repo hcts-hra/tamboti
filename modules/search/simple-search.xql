@@ -1,9 +1,11 @@
 xquery version "3.1";
 
 import module namespace security = "http://exist-db.org/mods/security" at "/apps/tamboti/modules/search/security.xqm";
+import module namespace search = "http://hra.uni-heidelberg.de/ns/tamboti/search/" at "/apps/tamboti/modules/search/search.xqm";
 
 declare function local:execute-query($collection as xs:string, $query-string as xs:string) {
     let $query-string := string-join(tokenize($query-string, " ") ! local:process-query-string(.), " AND ")
+    let $null := search:query-as-regex($query-string)
     let $options :=
         <options>
             <default-operator>and</default-operator>
@@ -48,7 +50,6 @@ declare %private function local:process-query-string($query-string as xs:string)
     let $results := local:execute-query($collection,  $query-string)
     let $filtered-results := local:filter-results($results)
     let $null := session:set-attribute("tamboti:cache", $filtered-results)
-    let $null := session:set-attribute("tamboti:query", $query-string)
 (:    let $null := session:set-attribute("tamboti:sort", $query-as-xml):)
     
     return count($filtered-results)

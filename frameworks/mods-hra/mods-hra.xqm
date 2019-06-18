@@ -799,96 +799,93 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
     let $entry := mods-common:remove-parent-with-missing-required-node($entry)
     let $global-transliteration := $entry/mods:extension/ext:transliterationOfResource/text()
     let $global-language := $entry/mods:language[1]/mods:languageTerm[1]/text()
+    
     return
-    let $result :=
-        (
-        (: The author, etc. of the primary publication. These occur in front, with no role labels.:)
-        (: NB: conference? :)
-        let $names := $entry/mods:name
-        let $names-primary := 
-            <primary-names>{
-                $names
-                    [@type = ('personal', 'corporate', 'family') or not(@type)]
-                    [(mods:role/mods:roleTerm[lower-case(.) = $mods-hra-framework:primary-roles]) or empty(mods:role/mods:roleTerm)]
-            }</primary-names>
+        let $result :=
+            (
+            (: The author, etc. of the primary publication. These occur in front, with no role labels.:)
+            (: NB: conference? :)
+            let $names := $entry/mods:name
+            let $names-primary := 
+                <primary-names>{
+                    $names
+                        [@type = ('personal', 'corporate', 'family') or not(@type)]
+                        [(mods:role/mods:roleTerm[lower-case(.) = $mods-hra-framework:primary-roles]) or empty(mods:role/mods:roleTerm)]
+                }</primary-names>
+                return
+                    if (string($names-primary))
+                    then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language), '. ')
+                    else ()
+            ,
+            (: The title of the primary publication. :)
+            mods-common:get-short-title($entry)
+            ,
+            let $names := $entry/mods:name
+            let $role-terms-secondary := $names/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]
+            
             return
-                if (string($names-primary))
-                then (mods-common:format-multiple-names($names-primary, 'list-first', $global-transliteration, $global-language), '. ')
-                else ()
-        ,
-        (: The title of the primary publication. :)
-        mods-common:get-short-title($entry)
-        ,
-        let $names := $entry/mods:name
-        let $role-terms-secondary := $names/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]
-        
-        return
-            for $role-term-secondary in distinct-values($role-terms-secondary) 
-            return
-                let $names-secondary := <entry>{$entry/mods:name[mods:role/lower-case(mods:roleTerm) = $role-term-secondary]}</entry>
-                    return                            (
-                        (: Introduce secondary role label with comma. :)
-                        (: NB: What if there are multiple secondary roles? :)
-                        ', '
-                        ,
-                        mods-common:get-role-label-for-list-view($role-term-secondary)
-                        ,
-                        (: Terminate secondary role with period if there is no related item. :)
-                        mods-common:format-multiple-names($names-secondary, 'secondary', $global-transliteration, $global-language)
-                        )
-        ,
-        (:If there are no secondary names, insert a period after the title, if there is no related item.:)
-        if (not($entry/mods:name/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]))
-        then
-            if (not($entry/mods:relatedItem[@type eq 'host'])) 
-            then ''
-            else '.'
-        else ()
-        , ' '
-        ,
-        (: The conference of the primary publication, containing originInfo and part information. :)
-        if ($entry/mods:name[@type eq 'conference']) 
-        then mods-common:get-conference-hitlist($entry)
-        (: If not a conference publication, get originInfo and part information for the primary publication. :)
-        else 
-            (:The series that the primary publication occurs in is spliced in between the secondary names and the originInfo.:)
-            (:NB: Should not be  italicised.:)
-            if ($entry/mods:relatedItem[@type eq 'series'])
-            then ('. ', <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>)
-            else ()
-        ,
-        mods-common:get-part-and-origin($entry)
-        ,
-        (: The periodical, edited volume or series that the primary publication occurs in. :)
-        (: if ($entry/mods:relatedItem[@type=('host','series')]/mods:part/mods:extent or $entry/mods:relatedItem[@type=('host','series')]/mods:part/mods:detail/mods:number/text()) :)
-        if ($entry/mods:relatedItem[@type eq 'host'])
-        then <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>
-        else 
-        (: The url of the primary publication. :)
-            if (contains($collection-short, 'Priya'))
-            then ()
-            else
-                if ($entry/mods:location/mods:url/text())
-                then
-                    for $url in $entry/mods:location/mods:url
-                        return
-                            let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;')) 
-                            return
-                                (: NB: The link is not clickable. :)
-                                concat(' <', $url-for-display, '>', '.')
+                for $role-term-secondary in distinct-values($role-terms-secondary) 
+                return
+                    let $names-secondary := <entry>{$entry/mods:name[mods:role/lower-case(mods:roleTerm) = $role-term-secondary]}</entry>
+                        return                            (
+                            (: Introduce secondary role label with comma. :)
+                            (: NB: What if there are multiple secondary roles? :)
+                            ', '
+                            ,
+                            mods-common:get-role-label-for-list-view($role-term-secondary)
+                            ,
+                            (: Terminate secondary role with period if there is no related item. :)
+                            mods-common:format-multiple-names($names-secondary, 'secondary', $global-transliteration, $global-language)
+                            )
+            ,
+            (:If there are no secondary names, insert a period after the title, if there is no related item.:)
+            if (not($entry/mods:name/mods:role/mods:roleTerm[not(lower-case(.) = $mods-hra-framework:primary-roles)]))
+            then
+                if (not($entry/mods:relatedItem[@type eq 'host'])) 
+                then ''
                 else '.'
-        )
-    
-    let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}</span>
-    let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $regex := session:get-attribute('regex')
-    let $result := 
-        if ($regex) 
-        then tamboti-common:highlight-matches($result, $regex, $highlight) 
-        else $result
-    let $result := mods-common:clean-up-punctuation($result)
-    
-    return $result
+            else ()
+            , ' '
+            ,
+            (: The conference of the primary publication, containing originInfo and part information. :)
+            if ($entry/mods:name[@type eq 'conference']) 
+            then mods-common:get-conference-hitlist($entry)
+            (: If not a conference publication, get originInfo and part information for the primary publication. :)
+            else 
+                (:The series that the primary publication occurs in is spliced in between the secondary names and the originInfo.:)
+                (:NB: Should not be  italicised.:)
+                if ($entry/mods:relatedItem[@type eq 'series'])
+                then ('. ', <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>)
+                else ()
+            ,
+            mods-common:get-part-and-origin($entry)
+            ,
+            (: The periodical, edited volume or series that the primary publication occurs in. :)
+            (: if ($entry/mods:relatedItem[@type=('host','series')]/mods:part/mods:extent or $entry/mods:relatedItem[@type=('host','series')]/mods:part/mods:detail/mods:number/text()) :)
+            if ($entry/mods:relatedItem[@type eq 'host'])
+            then <span xmlns="http://www.w3.org/1999/xhtml" class="relatedItem-span">{mods-common:get-related-items($entry, 'list', $global-language, $collection-short)}</span>
+            else 
+            (: The url of the primary publication. :)
+                if (contains($collection-short, 'Priya'))
+                then ()
+                else
+                    if ($entry/mods:location/mods:url/text())
+                    then
+                        for $url in $entry/mods:location/mods:url
+                            return
+                                let $url-for-display := replace(replace($url, '([%?])', concat('&#8203;', '$1')), '([\.=&amp;])', concat('$1', '&#8203;')) 
+                                return
+                                    (: NB: The link is not clickable. :)
+                                    concat(' <', $url-for-display, '>', '.')
+                    else '.'
+            )
+        
+        let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}{$entry}</span>
+        let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
+        let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
+        let $result := mods-common:clean-up-punctuation($result)
+        
+        return $result
 };
 
 declare function mods-hra-framework:list-view-table($item as node(), $currentPos as xs:int) {

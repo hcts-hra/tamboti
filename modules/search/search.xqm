@@ -1389,3 +1389,7 @@ declare function search:query($node as node(), $params as element(parameters)?, 
     return
         templates:process($node/node(), ($query-as-xml, $results))
 };
+
+declare function search:query-as-regex($query-string as xs:string) as empty-sequence() { 
+    session:set-attribute("tamboti:query", replace($query-string, "\*", "\\p{Ll}*"))
+};

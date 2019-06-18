@@ -5,6 +5,7 @@ import module namespace hra-rdf-framework = "http://hra.uni-heidelberg.de/ns/hra
 import module namespace hra-anno-framework = "http://hra.uni-heidelberg.de/ns/hra-anno-framework" at "../../frameworks/hra-annotations/hra-annotations.xqm";
 import module namespace config = "http://exist-db.org/mods/config" at "../config.xqm";
 import module namespace tamboti-security = "http://exist-db.org/mods/security" at "../../modules/search/security.xqm";
+import module namespace retrieve = "http://hra.uni-heidelberg.de/ns/tamboti/retrieve" at "../../modules/search/retrieve.xqm";
 
 declare function apis:process() {
     let $method := request:get-method()
@@ -16,7 +17,8 @@ declare function apis:process() {
 
     let $query-string := request:get-query-string()
     let $query-string := 
-        if($query-string) then xmldb:decode($query-string)
+        if ($query-string)
+        then xmldb:decode($query-string)
         else ""
     let $parameters := subsequence($tokenized-path, 2)
     
@@ -86,7 +88,8 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
             $target-collection
     (: Only allow PUTting into /data/users/ :)
     return
-        if(starts-with($target-collection, "/data/users") or starts-with($target-collection, "/data/commons")) then
+        if(starts-with($target-collection, "/data/users") or starts-with($target-collection, "/data/commons"))
+        then
         	let $content := request:get-data()
         	let $target-collection := xmldb:encode-uri(
                 if (starts-with($target-collection, "/db")) then
@@ -98,7 +101,8 @@ declare function apis:put($method as xs:string, $scope as xs:string, $parameters
             return
                 let $result := tamboti-security:store-resource($target-collection, $resource-name, $content)
                     return
-                        if($result instance of xs:boolean and $result = true()) then
+                        if ($result instance of xs:boolean and $result = true())
+                        then
                             (
                                 (: creation was successful -  return 201 Created:)
                                 response:set-status-code(201), 
@@ -210,15 +214,20 @@ declare function apis:search-history() {
 };
 
 declare function apis:resources() {
-    let $start := request:get-parameter("start", "")
-    let $uuid-search-string := request:get-parameter("uuid", "")
+    let $start := request:get-parameter("offset", "")
+    let $limit := request:get-parameter("limit", "")
+    let $uuid := request:get-parameter("uuid", "")
     
-    return (
+    return ( 
         response:set-header("Content-Type", "text/html")
         ,
-        if ($start != "")
-        then session:get-attribute("tamboti:cached")[position() = ($start to $start)]
-        else ()
+        if ($uuid != "")
+        then ()
+        else text {""}
+        ,
+        if ($start != '' and $limit != '')
+        then retrieve:retrieve(xs:integer($start), xs:integer($limit))
+        else text {""}
     )
 };
 
@@ -245,14 +254,11 @@ declare function apis:editors($parameters as xs:string*) {
         default return ()     
 };
 
-
-
-
 declare function apis:resource($parameters as xs:string*, $query-string as xs:string) {
     try {
         hra-rdf-framework:get-tamboti-resource($parameters[1], $query-string)
     } catch * {
-        switch($err:code)
+        switch ($err:code)
             case xs:QName("unauthorized") return
                 let $header := response:set-status-code(401)
                 return

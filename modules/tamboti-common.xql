@@ -32,22 +32,22 @@ functx:trim()
 :)
 declare function tamboti-common:highlight-matches($nodes as node()*, $pattern as xs:string, $highlight as function(xs:string) as item()* ) { 
     for $node in $nodes
+    
     return
-        typeswitch ( $node )
-            case element() return
-                element { name($node) } { $node/@*, tamboti-common:highlight-matches($node/node(), $pattern, $highlight) }
-            case text() return
+        typeswitch ($node)
+            case element()
+            return element {name($node)} {$node/@*, tamboti-common:highlight-matches($node/node(), $pattern, $highlight)}
+            case text()
+            return
                 let $normalized := replace($node, '\s+', ' ')
                 (:apply case-insensitive search for use with Lucene:)
                 for $segment in analyze-string($normalized, $pattern, 'i')/node()
+                
                 return
-                    if ($segment instance of element(fn:match)) then 
-                        $highlight($segment/string())
-                    else 
-                        $segment/string()
-            case document-node() return
-                document { tamboti-common:highlight-matches($node/node(), $pattern, $highlight) }
-            default return
-                $node
+                    if ($segment instance of element(fn:match))
+                    then $highlight($segment/string())
+                    else $segment/string()
+            case document-node()
+            return document {tamboti-common:highlight-matches($node/node(), $pattern, $highlight)}
+            default return $node
 };
-

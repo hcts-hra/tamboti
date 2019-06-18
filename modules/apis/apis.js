@@ -58,7 +58,7 @@ tamboti.apis.simpleSearch = function() {
         dataType: "text",
         type: "GET",
         success: function (data) {
-        	tamboti.apis._loadPaginator2(data, "#results-head .navbar", false);
+        	tamboti.apis._loadPaginator2(data, "#results-head .navbar", true);
         }
     });
 };
@@ -164,7 +164,7 @@ tamboti.apis._loadPaginator2 = function(hitCounts, navContainer, initialiseNavba
     
     if (hitCounts > 0) {
         $("#results").pagination({
-            url: "retrieve",
+            url: "../../api/resources",
             totalItems: hitCounts,
             itemsPerPage: tamboti.itemsPerPage,
             navContainer: navContainer,

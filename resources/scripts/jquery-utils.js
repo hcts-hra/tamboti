@@ -106,6 +106,7 @@
                     if (base.currentItem != 1) {
                         helpers.retrievePage(base, 1);                    	
                     }
+                    
                     return false;
                 });
                 $(".pagination-previous", div).click(function () {                    
@@ -167,13 +168,15 @@
                     $(".pagination-info", div).text('Record ' + base.currentItem);
                 } else {
                     var recordSpan;
-                    if (base.options.totalItems == base.currentItem)
+                    if (base.options.totalItems == base.currentItem) {
                         recordSpan = ('Record ' + base.currentItem);
-                    else if (base.options.totalItems < (base.currentItem + base.options.itemsPerPage - 1))
+                    }
+                    else if (base.options.totalItems < (base.currentItem + base.options.itemsPerPage - 1)) {
                         recordSpan = ('Records ' + base.currentItem + ' to ' + base.options.totalItems);
-                    else
-                        recordSpan = ('Records ' + base.currentItem + ' to ' + 
-                            ((base.currentItem + base.options.itemsPerPage - 1)));
+                    }
+                    else {
+                        recordSpan = ('Records ' + base.currentItem + ' to ' + ((base.currentItem + base.options.itemsPerPage - 1)));
+                    }
                     $(".pagination-info", div).text(recordSpan);
                 }
         
@@ -209,7 +212,9 @@
             retrievePage: function(base, start) {
                 var params = {
                     start: start,
-                    count: base.options.itemsPerPage
+                    count: base.options.itemsPerPage,
+                    "offset": start,
+                    "limit": tamboti.itemsPerPage
                 };
                 if (base.options.params) {
                     for (var option in base.options.params) {
