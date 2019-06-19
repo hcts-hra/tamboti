@@ -87,7 +87,6 @@
                         }
                         base.options.itemsPerPage = 1;
                         nr = parseInt(nr.text());
-                        console.log("[pagination] Showing single entry: %d", nr);
                         helpers.retrievePage(base, nr)
                     });
                 }
@@ -214,7 +213,7 @@
                     start: start,
                     count: base.options.itemsPerPage,
                     "offset": start,
-                    "limit": tamboti.itemsPerPage
+                    "limit": base.options.itemsPerPage
                 };
                 if (base.options.params) {
                     for (var option in base.options.params) {

@@ -131,7 +131,7 @@ declare function retrieve:list-view-table($item as node(), $currentPos as xs:int
 };
 
 declare function retrieve:view-table($cached as item()*, $stored as item()*, $start as xs:int, $count as xs:int, $available as xs:int, $total as xs:int) {
-    <table xmlns="http://www.w3.org/1999/xhtml" data-result-count="{$total}">
+    <table xmlns="http://www.w3.org/1999/xhtml">
     {
         for $item at $pos in subsequence($cached, $start, $available)
         let $currentPos := $start + $pos - 1

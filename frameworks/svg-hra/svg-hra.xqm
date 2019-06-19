@@ -115,12 +115,7 @@ declare function svg-hra-framework:format-list-view($entry as node(), $position 
 (:    let $svg-viewbox-width := $:)
 
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $regex := session:get-attribute('regex')
-    let $result := 
-        if ($regex) then 
-            tamboti-common:highlight-matches($result, $regex, $highlight) 
-        else 
-            $result
+    let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
 
     return
         $result

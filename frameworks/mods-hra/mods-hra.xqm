@@ -704,11 +704,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
         </table>
     
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $regex := session:get-attribute('regex')
-    let $result := 
-        if ($regex) 
-        then tamboti-common:highlight-matches($result, $regex, $highlight) 
-        else $result
+    let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
     let $result := mods-common:clean-up-punctuation($result)
         return
             $result
