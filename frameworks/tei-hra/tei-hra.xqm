@@ -236,7 +236,11 @@ declare function tei-hra-framework:format-detail-view($position as xs:string, $e
     }
     </table>
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
+    let $regex := session:get-attribute('tamboti:query')
+    let $result := 
+        if ($regex)
+        then tamboti-common:highlight-matches($result, $regex, $highlight)
+        else $result
     let $result := mods-common:clean-up-punctuation($result)
     return
         $result
@@ -262,7 +266,11 @@ declare function tei-hra-framework:format-list-view($position as xs:string, $ent
 	    <span>{tei-common:render($entry, <parameters xmlns=""><destination>detail-view</destination></parameters>)}</span>
     </div>
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
+    let $regex := session:get-attribute('tamboti:query')
+    let $result := 
+        if ($regex)
+        then tamboti-common:highlight-matches($result, $regex, $highlight)
+        else $result
     let $result := mods-common:clean-up-punctuation($result)
     return
         $result

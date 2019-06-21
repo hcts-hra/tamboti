@@ -71,7 +71,7 @@ declare function apis:get($method as xs:string, $scope as xs:string, $parameters
         case "iiif"
         return apis:iiif($method, $scope, $parameters)
         case "search" return apis:search($parameters)  
-        case "resources" return apis:resources()        
+        case "resources" return apis:resources()
         default return () 
 };
 
@@ -183,8 +183,8 @@ declare function apis:search($parameters as xs:string*) {
             return apis:search-simple()
             case "advanced"
             return apis:search-advanced() 
-            case "initial"
-            return apis:search-initial()            
+            case "collection"
+            return apis:search-collection()            
             default return ()
     )
 };
@@ -201,9 +201,9 @@ declare function apis:search-advanced() {
    </dispatch>
 };
 
-declare function apis:search-initial() {
+declare function apis:search-collection() {
    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-      <forward url="/modules/search/advanced-search.xql" />
+      <forward url="/modules/search/search-collection.xql" />
    </dispatch>
 };
 
@@ -221,6 +221,8 @@ declare function apis:resources() {
     return ( 
         response:set-header("Content-Type", "text/html")
         ,
+        
+        
         if ($uuid != "")
         then ()
         else text {""}
@@ -228,7 +230,7 @@ declare function apis:resources() {
         if ($start != '' and $limit != '')
         then retrieve:retrieve(xs:integer($start), xs:integer($limit))
         else text {""}
-    )
+    ) 
 };
 
 declare function apis:uuid() {

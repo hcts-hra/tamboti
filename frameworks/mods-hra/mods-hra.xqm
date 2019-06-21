@@ -704,7 +704,11 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
         </table>
     
     let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-    let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
+    let $regex := session:get-attribute('tamboti:query')
+    let $result := 
+        if ($regex)
+        then tamboti-common:highlight-matches($result, $regex, $highlight)
+        else $result
     let $result := mods-common:clean-up-punctuation($result)
         return
             $result
@@ -878,7 +882,11 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
         
         let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}{$entry}</span>
         let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
-        let $result := tamboti-common:highlight-matches($result, session:get-attribute('tamboti:query'), $highlight)
+	    let $regex := session:get-attribute('tamboti:query')
+	    let $result := 
+	        if ($regex)
+	        then tamboti-common:highlight-matches($result, $regex, $highlight)
+	        else $result
         let $result := mods-common:clean-up-punctuation($result)
         
         return $result

@@ -92,7 +92,7 @@ $(function() {
         $("#advanced-search-collection-path").val(tamboti.currentCollection);
     }
     
-    tamboti.apis.initialSearch();
+    tamboti.apis.collectionSearch();
     
     $(".pagination-mode-gallery").click(function(ev) {
         ev.preventDefault();

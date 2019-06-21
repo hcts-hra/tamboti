@@ -1,50 +1,37 @@
 tamboti.apis = {};
 
-// tamboti.apis.initialSearch has to be removed when the paginator will be a standalone component
-tamboti.apis.initialSearch = function() {
-    $("#results").html("Searching ...");
-
-    var advancedSearchForm = $("#advanced-search-tab");
-    var data = {
-        "format": $("select[name='format']", advancedSearchForm).val(),
-        "default-operator": $("select[name='default-operator']", advancedSearchForm).val(),
-        "sort": "Author",
-        "sort-direction": "descending",
-        "collection-tree": $("input[name='collection-tree']", advancedSearchForm).val(),
-        "collection": $("#simple-search-collection-path").val(),
-        "filter": $("input[name='filter']", advancedSearchForm).val(),
-        "value": $("input[name='value']", advancedSearchForm).val(),
-        "history": $("input[name='history']", advancedSearchForm).val(),
-        "search-field": $.getParameter('search-field')
+tamboti.apis._loadPaginator = function(hitCounts, navContainer, initialiseNavbar) {
+    $("#result-items-count").text(hitCounts);
+    tamboti.totalSearchResultOptions = hitCounts;
+    
+    if (hitCounts > 0) {
+        $("#results").pagination({
+            url: "../../api/resources",
+            totalItems: hitCounts,
+            itemsPerPage: tamboti.itemsPerPage,
+            navContainer: navContainer,
+            readyCallback: resultsLoaded,
+            params: { "mode": "list", "initialiseNavbar": initialiseNavbar }
+        });
+    } else {
+        $("#results").html("No records found.");
     }
-    var inputs = $("input[name ^= 'input']", advancedSearchForm);
-    $.each(inputs, function(key, value) {
-        var $this = $(this);
-        data[$this.prop('name')] = $this.val();
-    });
-    var fields = $("select[name ^= 'field']", advancedSearchForm);
-    $.each(fields, function(key, value) {
-        var $this = $(this);
-        data[$this.prop('name')] = $this.val();
-    });
-    var operators = $("select[name ^= 'operator']", advancedSearchForm);
-    $.each(operators, function(key, value) {
-        var $this = $(this);
-        data[$this.prop('name')] = $this.val();
-    }); 
+};
 
+// tamboti.apis.collectionSearch has to be removed when the paginator will be a standalone component
+tamboti.apis.collectionSearch = function() {
+    $("#results").html("Searching ...");
+    const collection = "collection=" + document.querySelector("#simple-search-collection-path").value;
+    const queryString = "?" + collection;
+    
     $.ajax({
-        url: "search/advanced/",
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        dataType: "html",
-        type: "POST",
+        url: "../../api/search/collection" + queryString,
+        dataType: "text",
+        type: "GET",
         success: function (data) {
         	tamboti.apis._loadPaginator(data, "#results-head .navbar", true);
-        	tamboti.totalSearchResultOptions = $("#result-items-count").text();
         }
-    });    
-    
+    });
 };
 
 tamboti.apis.simpleSearch = function() {
@@ -58,7 +45,7 @@ tamboti.apis.simpleSearch = function() {
         dataType: "text",
         type: "GET",
         success: function (data) {
-        	tamboti.apis._loadPaginator2(data, "#results-head .navbar", true);
+        	tamboti.apis._loadPaginator(data, "#results-head .navbar", true);
         }
     });
 };
@@ -96,7 +83,7 @@ tamboti.apis.advancedSearch = function() {
     
     $("#results").html("Searching ...");        
     $.ajax({
-        url: "search/advanced/",
+        url: "../../api/search/advanced/",
         data: JSON.stringify(data),
         contentType: "application/json",
         dataType: "html",
@@ -114,7 +101,7 @@ tamboti.apis.advancedSearchWithData = function(data) {
     var collection = data['collection'];
 
     $.ajax({
-        url: "search/advanced/",
+        url: "../../api/search/advanced/",
         data: {
             "format": 'MODS or TEI or VRA or Wiki',
             "default-operator": data['default-operator'],
@@ -138,40 +125,4 @@ tamboti.apis.advancedSearchWithData = function(data) {
         	tamboti.totalSearchResultOptions = $("#result-items-count").text();
         }
     });        
-};
-
-tamboti.apis._loadPaginator = function(data, navContainer, initialiseNavbar) {
-    var hitCounts = $(data).data("result-count");
-    $("#result-items-count").text(hitCounts);
-    
-    if (hitCounts > 0) {
-        $("#results").pagination({
-            url: "retrieve",
-            totalItems: $("#result-items-count").text(),
-            itemsPerPage: tamboti.itemsPerPage,
-            navContainer: navContainer,
-            readyCallback: resultsLoaded,
-            params: { "mode": "list", "initialiseNavbar": initialiseNavbar }
-        });
-    } else {
-        $("#results").html("No records found.");
-    }
-};
-
-tamboti.apis._loadPaginator2 = function(hitCounts, navContainer, initialiseNavbar) {
-    $("#result-items-count").text(hitCounts);
-    tamboti.totalSearchResultOptions = hitCounts;
-    
-    if (hitCounts > 0) {
-        $("#results").pagination({
-            url: "../../api/resources",
-            totalItems: hitCounts,
-            itemsPerPage: tamboti.itemsPerPage,
-            navContainer: navContainer,
-            readyCallback: resultsLoaded,
-            params: { "mode": "list", "initialiseNavbar": initialiseNavbar }
-        });
-    } else {
-        $("#results").html("No records found.");
-    }
 };
