@@ -16,11 +16,11 @@ declare variable $db-root := "/db";
 declare variable $config-collection := "/system/config/db";
 
 (:~ Collection names :)
-declare variable $temp-collection-name := "temp";
+declare variable $temp-collection-name := "tmp";
 declare variable $samples-collection-name := "Samples";
 
 (:~ Collection paths :)
-declare variable $temp-collection := $config:content-root || $temp-collection-name;
+declare variable $temp-collection := $db-root || "/" || $temp-collection-name;
 
 declare function local:strip-prefix($str as xs:string, $prefix as xs:string) as xs:string? {
     replace($str, $prefix, "")
@@ -59,7 +59,7 @@ util:log($log-level, "Security: Done.")
 (: Create temp collection :)
 util:log($log-level, concat("Config: Creating temp collection '", $temp-collection, "'..."))
 ,
-installation:mkcol($db-root, local:strip-prefix($temp-collection, concat($db-root, "/")), $config:temp-collection-mode)
+installation:mkcol($db-root, $temp-collection-name, $config:temp-collection-mode)
 ,
 util:log($log-level, "Config: Done.")
 ,

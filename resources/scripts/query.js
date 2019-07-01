@@ -849,7 +849,7 @@ function initCollectionTree() {
             tamboti.utils.resetAdvancedSearchForm();
             updateCollectionPaths(title, key);
             showHideCollectionControls();
-            tamboti.apis.simpleSearch();
+            tamboti.apis.collectionSearch();
             
             return false;
         },

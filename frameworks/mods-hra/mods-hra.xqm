@@ -880,7 +880,7 @@ declare function mods-hra-framework:format-list-view($position as xs:string, $en
                     else '.'
             )
         
-        let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}{$entry}</span>
+        let $result := <span xmlns="http://www.w3.org/1999/xhtml" class="record">{$result}</span>
         let $highlight := function($string as xs:string) { <span class="highlight">{$string}</span> }
 	    let $regex := session:get-attribute('tamboti:query')
 	    let $result := 

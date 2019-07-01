@@ -95,6 +95,8 @@ declare function retrieve:plain-list-view-table($item as node(), $currentPos as 
                                 {$config:error-message-before-link} 
                                 <a href="{$config:error-message-href}{$item/@ID/string()}.">{$config:error-message-link-text}</a>
                                 {$config:error-message-after-link}
+                                <p>Caught error {$err:code}: {$err:description}. {("(line ", $err:line-number, ", column ", $err:column-number, ")")}</p>
+                                <p>Collection '{$collection-short}', record '{$item}'</p>
                             </td>
                         }
                 }</span>
