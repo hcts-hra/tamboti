@@ -57,5 +57,6 @@ declare function local:inherit-tamboti-collection-user-acl($collection as xs:any
     
 let $collection-path := $config:mods-commons
 for $collection-name in xmldb:get-child-collections($collection-path)
+
 return local:inherit-tamboti-collection-user-acl(xs:anyURI($collection-path || $collection-name || "/"))
 

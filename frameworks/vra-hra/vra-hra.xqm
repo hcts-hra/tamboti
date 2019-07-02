@@ -783,7 +783,7 @@ declare function vra-hra-framework:get-vra-image-records-list($work-record as el
     let $image-record-ids := tokenize($image-record-ids, ' ')
     return
         for $image-record-id in $image-record-ids
-        let $image-record := collection($config:mods-root-minus-temp)/vra:vra[vra:image/@id eq $image-record-id]
+        let $image-record := collection($config:content-root)/vra:vra[vra:image/@id eq $image-record-id]
         let $image-record-url := base-uri($image-record)
         let $image-url := resolve-uri($image-record/*/@href, $image-record-url)        
         return
@@ -887,7 +887,7 @@ declare function vra-hra-framework:remove-resource($document-uri as xs:anyURI){
     let $doc-name := util:document-name(root($vra-work))
 
     let $resource-id := vra-hra-framework:get-UUID($vra-work//vra:vra)
-    let $vra-images := collection($config:mods-root-minus-temp)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
+    let $vra-images := collection($config:content-root)//vra:vra[vra:image/vra:relationSet/vra:relation[contains(@relids, $resource-id)]]
     (:NB: we assume that all image files are in the same collection as their metadata and that all image records belonging to a work record are in the same collection:)
     let $vra-image-collection := util:collection-name($vra-images[1])
     let $vra-binary-names := $vra-images/vra:image/@href/string()   

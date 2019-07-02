@@ -41,7 +41,6 @@ declare variable $config:content-root := "/" || $config:data-collection-name || 
 declare variable $config:mods-root := "/" || $config:data-collection-name;
 declare variable $config:mods-commons := $config:content-root || "commons";
 declare variable $config:users-collection := xs:anyURI($config:content-root || "users");
-declare variable $config:mods-root-minus-temp := ($config:mods-commons, $config:users-collection);
 
 declare variable $config:url-image-size := "256";
 
@@ -123,3 +122,5 @@ declare variable $config:error-message-link-text := "Send email.";
 
 (: paginator component :)
 declare variable $config:number-of-items-per-page := 50;
+
+declare variable $config:tamboti-cookies-filename := "tamboti-cookies.xml";

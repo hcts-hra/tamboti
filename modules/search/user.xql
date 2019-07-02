@@ -85,7 +85,7 @@ declare function user:get-vra-image-records() as element()* {
             
             return
                 for $image-record-id in $image-record-ids
-                let $image-record := collection($config:mods-root-minus-temp)/vra:vra[vra:image/@id eq $image-record-id]
+                let $image-record := collection($config:content-root)/vra:vra[vra:image/@id eq $image-record-id]
                 
                 return $image-record
                             

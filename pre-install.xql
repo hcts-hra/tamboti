@@ -61,7 +61,7 @@ util:log($log-level, concat("Config: Creating temp collection '", $temp-collecti
 ,
 installation:mkcol($db-root, $temp-collection-name, $config:temp-collection-mode)
 ,
-util:log($log-level, "Config: Done.")
+xmldb:store-files-from-pattern($temp-collection, $dir, "data/tmp/" || $config:tamboti-cookies-filename)
 ,
 
 (: Create "commons" collections :)

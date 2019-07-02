@@ -7,10 +7,10 @@ import module namespace vra-hra-framework = "http://hra.uni-heidelberg.de/ns/vra
 declare namespace earl = "http://www.w3.org/ns/earl#";
 declare namespace rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-declare variable $config:mods-root-minus-temp := "/apps/" || $config:actual-app-id || "/tests/resources";
+declare variable $config:content-root := "/apps/" || $config:actual-app-id || "/tests/resources";
 
 declare function local:run-unit-test($resource-id as xs:string, $target-collection as xs:string) {
-    let $run-tamboti-function := vra-hra-framework:move-resource($config:mods-root-minus-temp || "/temp", $target-collection, $resource-id)
+    let $run-tamboti-function := vra-hra-framework:move-resource($config:content-root || "/temp", $target-collection, $resource-id)
     
     return
         <earl:TestResult rdf:about="#result">
@@ -19,8 +19,8 @@ declare function local:run-unit-test($resource-id as xs:string, $target-collecti
 };
 
 (
-    local:run-unit-test("w_46647ced-6a0a-4a06-9575-f7bed1a2d07f", $config:mods-root-minus-temp || "/temp"),
-    xmldb:move($config:mods-root-minus-temp || "/temp", $config:mods-root-minus-temp, "w_46647ced-6a0a-4a06-9575-f7bed1a2d07f.xml"),
-    xmldb:move($config:mods-root-minus-temp || "/temp/VRA_images", $config:mods-root-minus-temp || "/VRA_images", "i_e1a29053-6987-4210-b922-39042e36ff9d.xml"),
-    xmldb:move($config:mods-root-minus-temp || "/temp/VRA_images", $config:mods-root-minus-temp || "/VRA_images", "i_e1a29053-6987-4210-b922-39042e36ff9d.jpg")
+    local:run-unit-test("w_46647ced-6a0a-4a06-9575-f7bed1a2d07f", $config:content-root || "/temp"),
+    xmldb:move($config:content-root || "/temp", $config:content-root, "w_46647ced-6a0a-4a06-9575-f7bed1a2d07f.xml"),
+    xmldb:move($config:content-root || "/temp/VRA_images", $config:content-root || "/VRA_images", "i_e1a29053-6987-4210-b922-39042e36ff9d.xml"),
+    xmldb:move($config:content-root || "/temp/VRA_images", $config:content-root || "/VRA_images", "i_e1a29053-6987-4210-b922-39042e36ff9d.jpg")
 )

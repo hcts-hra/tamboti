@@ -182,7 +182,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                 <td class="collection-label">Record Location</td>
                 <td>
                     <div id="file-location-folder" style="display: none;">{xmldb:decode-uri($collection-short)}</div>
-                    <div class="collection" >
+                    <div class="collection">
                         {replace(replace(xmldb:decode($collection-short), '^' || $config:mods-commons || '/', $config:content-root),'^' || $config:users-collection || '/', $config:content-root)}
                     </div>
                  </td>
@@ -437,7 +437,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                 (:The $ID is passed to the query; when the query is constructed, the hash is appended (application.xql, $biblio:FIELDS). 
                 This is necessary since a hash in the URL is interpreted as a fragment identifier and not passed as a param.:)
                 let $linked-ID := concat('#',$ID)
-                let $linked-records := collection($config:mods-root-minus-temp)//mods:mods[mods:relatedItem[@type = ('host', 'series', 'otherFormat')]/@xlink:href eq $linked-ID]
+                let $linked-records := collection($config:content-root)//mods:mods[mods:relatedItem[@type = ('host', 'series', 'otherFormat')]/@xlink:href eq $linked-ID]
                 let $linked-records-count := count($linked-records)
                 return
                 if ($linked-records-count eq 0)
@@ -652,7 +652,7 @@ declare function mods-hra-framework:format-detail-view($position as xs:string, $
                         , 
                         if ($type eq 'local')
                         then
-                            let $local-identifiers := collection($config:mods-root-minus-temp)//mods:mods[.//mods:identifier eq $identifier]/@ID/string()
+                            let $local-identifiers := collection($config:content-root)//mods:mods[.//mods:identifier eq $identifier]/@ID/string()
                             let $local-identifiers := 
                                 (for $local-identifier in $local-identifiers where $local-identifier ne $ID return $local-identifier)
                             return
@@ -941,7 +941,7 @@ declare function mods-hra-framework:list-view-table($item as node(), $currentPos
 
 declare function mods-hra-framework:move-resource($resource-id as xs:string, $destination-collection as xs:string) as element(status) {
     
-    let $resource := collection($config:mods-root-minus-temp)//mods:mods[@ID eq $resource-id][1]
+    let $resource := collection($config:content-root)//mods:mods[@ID eq $resource-id][1]
     let $resource-name := $resource-id || ".xml"    
     let $resource-collection := substring-before(base-uri($resource), $resource-name)
     let $destination-path := $destination-collection || "/" || $resource-name
@@ -980,7 +980,7 @@ declare function mods-hra-framework:remove-resource($document-uri as xs:anyURI){
     let $resource-id := $doc/mods:mods/@ID/string()
     let $xlink := concat('#', $resource-id)
     (:since xlinks are also inserted manually, check also for cases when the pound sign has been forgotten:)
-    let $xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
+    let $xlink-recs := collection($config:content-root)//mods:relatedItem[@xlink:href = ($xlink, $resource-id)]
     return
         try {
             let $result := 

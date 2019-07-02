@@ -2227,7 +2227,7 @@ declare function mods-common:get-related-items($entry as element(mods:mods), $de
         (: Any MODS record in /db{$config:mods-root} is retrieved if there is a @xlink:href/@ID match and the relatedItem has no string value. If there should be duplicate IDs, only the first record is retrieved.:)
         (: The linked record is only retrieved if there is no title information inside the related item. :)
         if ($xlinked-record-format eq 'MODS' and exists($xlinked-ID) and not($titleInfo))
-        then collection($config:mods-root-minus-temp)//mods:mods[@ID eq $xlinked-ID][1]
+        then collection($config:content-root)//mods:mods[@ID eq $xlinked-ID][1]
         else ()
     let $related-item :=
         (:If the related item is recorded in another record than the current record.:)

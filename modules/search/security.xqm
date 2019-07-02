@@ -1251,7 +1251,7 @@ declare function security:store-resource($target-collection as xs:anyURI, $resou
 declare function security:iiifauth-set-cookie(){
     let $cookie-value := request:get-cookie-value("T-AUTH")
     let $log := util:log("INFO", "existing cookie: " || $cookie-value)
-    let $cookie-doc := doc("/db/tmp/tamboti-cookies.xml")
+    let $cookie-doc := doc("/db/tmp/" || $config:tamboti-cookies-filename)
     let $log := util:log("INFO", $cookie-doc)
     let $cookie-expires := datetime:timestamp-to-datetime(datetime:timestamp() + $security:cookie-lifetime)
     return

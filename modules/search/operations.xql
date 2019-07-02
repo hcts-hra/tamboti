@@ -114,7 +114,7 @@ declare function op:remove-collection($collection as xs:anyURI) as element(statu
         string-join(
         for $collection-id in $collection-ids
             let $xlink := concat('#', $collection-id)
-            let $xlink-recs := collection($config:mods-root-minus-temp)//mods:relatedItem[@xlink:href eq $xlink]/ancestor::mods:mods/@ID
+            let $xlink-recs := collection($config:content-root)//mods:relatedItem[@xlink:href eq $xlink]/ancestor::mods:mods/@ID
             return
                 (:It is OK to delete a record using an ID as an xlink if the record is inside the folder to be deleted.:)
                 if (not($xlink-recs = $collection-ids))
@@ -139,7 +139,7 @@ declare function op:remove-collection($collection as xs:anyURI) as element(statu
 TODO: Perform search for contents of the collection that the removed resource belonged to.
 :)
 declare function op:remove-resource($resource-id as xs:string) as element(status)* {
-    let $resource := collection($config:mods-root-minus-temp)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1] | svg:svg[@xml:id = $resource-id][1] | tei:TEI[@xml:id = $resource-id][1])
+    let $resource := collection($config:content-root)//(mods:mods[@ID eq $resource-id][1] | vra:vra[vra:work[@id eq $resource-id]][1] | svg:svg[@xml:id = $resource-id][1] | tei:TEI[@xml:id = $resource-id][1])
     let $document-uri := xs:anyURI(document-uri(root($resource)))
 
     let $record-namespace := namespace-uri($resource)
