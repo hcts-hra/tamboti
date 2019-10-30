@@ -5,7 +5,7 @@ var TambotiColViewer = {
         start: 1,
         limit: 20,
         tambotiURL: 'http://localhost:8080/exist/apps/tamboti',
-        tambotiService: '/frameworks//mods-hra/get-collection-mods.xq',
+        tambotiService: '/frameworks/mods-hra/get-collection-mods.xq',
         tambotiImageService: 'http://localhost:8080/exist/apps/tamboti/modules/display/image.xql', 
         collection: '/db/resources/commons/Cluster Publications',
         embedVRA: false,

@@ -1,6 +1,6 @@
 xquery version "3.1";
 
-import module namespace catalog-resolver = "http://hra.uni-heidelberg.de/ns/tamboti/catalog-resolver/" at "../catalogs/catalog-resolver.xqm";
+import module namespace catalog-resolver = "http://hra.uni-heidelberg.de/ns/tamboti/catalog-resolver/" at "/apps/tamboti/modules/catalogs/catalog-resolver.xqm";
 
 declare function local:set-computed-indexes($resource) {
     let $document-uri := $resource/root()/document-uri(.)
@@ -21,7 +21,10 @@ declare function local:set-computed-indexes($resource) {
             $document-uri
             ,
             <doc>
-                <field name="author" store="yes">{$computed-indexes("author")}</field>
+                <field name="authors" store="yes">{$computed-indexes("authors")}</field>
+                <field name="names" store="yes">{$computed-indexes("names")}</field>
+                <field name="year" store="yes">{$computed-indexes("year")}</field>
+                <field name="title" store="yes">{$computed-indexes("title")}</field>
             </doc>
         )
         ,
@@ -29,7 +32,16 @@ declare function local:set-computed-indexes($resource) {
     )
 };
 
-for $resource in collection("/data/commons/Cluster%20Publications")
 
-return ft:has-index($resource/root()/document-uri(.)) 
+
+for $resource in collection("/data/commons")/*[@ID = "uuid-6128d855-45dd-3f72-af14-f72def28caa4"]/root()
+
+return (
+     local:set-computed-indexes($resource/*)
+     ,
+     parse-xml(ft:get-field($resource/root()/document-uri(.), "title"))
+(:     ,:)
+(:     ft:get-field($resource/root()/document-uri(.), "names"):)
+)
+    
 (:    local:set-computed-indexes($resource):)
